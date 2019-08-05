@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+<record id="tree_view_bono" model="ir.ui.view">
+    <field name="name">Bonos</field>
+    <field name="model">motgama.bonos</field>
+    <field name="arch" type="xml">
+    <tree string="Bonos">
+        <field name="codigo" />
+        <field name="validodesde"/>
+        <field name="validohasta"/>
+    </tree>
+    </field>
+</record>
+<!--Formulario-->
+<record id="form_view_bono" model="ir.ui.view">
+    <field name="name">Bonos</field>
+    <field name="model">motgama.bonos</field>
+    <field name="arch" type="xml">
+    <form string="Bonos">
+    <sheet>
+    <group name="group_bottom">
+        <field name="codigo" placeholder="Código del bono" options="{'no_create_edit': True}" required="1" />
+        <field name="multiple" />
+        <field name="validodesde" placeholder="Bono valido desde?"/>
+        <field name="validohasta" placeholder="Bono valido hasta?"/>
+        <field name="descuentavalor"/>
+        <field name="valorpagoefectivo" placeholder="Valor a pagar en efectivo?"/>
+        <field name="valorpagotromedio" placeholder="Valor a pagar con otro medio?"/>
+        <field name="aplicahospedaje"/>
+        <field name="aplicarestaurante"/>
+        <field name="aplicaconsumos"/>
+        <field name="active"/>
+        </group>        
+     
+    </sheet>    
+    </form>
+    </field>
+</record>
+</odoo>

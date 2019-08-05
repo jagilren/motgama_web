@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+<record id="tree_view_zona" model="ir.ui.view">
+    <field name="name">Zona</field>
+    <field name="model">motgama.zona</field>
+    <field name="arch" type="xml">
+    <tree string="Zona">
+        <field name="recepcion_id" />
+        <field name="codigo" />
+        <field name="nombre" />
+        <field name="active" />
+    </tree>
+    </field>
+</record>
+<!--Formulario-->
+<record id="form_view_zona" model="ir.ui.view">
+    <field name="name">Zona</field>
+    <field name="model">motgama.zona</field>
+    <field name="arch" type="xml">
+    <form string="Zona">
+    <sheet>
+    <group name="group_bottom">
+        <group name="group_left">            
+            <field name="recepcion_id" class="oe_inline"
+                placeholder="Seleccione la recepcion" />
+            <field name="codigo" class="oe_inline"
+                placeholder="Ingrese el codigo de la zona" options="{'no_create_edit': True}" required="1" />
+            <field name="nombre" class="oe_inline"
+                placeholder="Ingrese el nombre de la zona" />
+            <field name="active"/>
+        </group>
+        </group>
+    
+    <group>            
+        <field name="habitacion_ids" />                  
+    </group>   
+     
+    </sheet>    
+    </form>
+    </field>
+</record>
+</odoo>

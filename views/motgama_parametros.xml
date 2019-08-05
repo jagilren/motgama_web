@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+<record id="tree_view_parametros" model="ir.ui.view">
+    <field name="name">Parametros</field>
+    <field name="model">motgama.parametros</field>
+    <field name="arch" type="xml">
+        <tree string="Parametros">
+            <field name="sucursal_id" />
+            <field name="nombre" />
+            <field name="valor" />
+        </tree>
+    </field>
+</record>
+<!--Formulario-->
+<record id="form_view_parametros" model="ir.ui.view">
+    <field name="name">Parametros</field>
+    <field name="model">motgama.parametros</field>
+    <field name="arch" type="xml">
+    <form string="Parametros">
+    <sheet>
+        <group name="group_bottom">
+            <field name="sucursal_id" />
+            <field name="nombre" />
+            <field name="valor" />
+            <field name="active" />
+        </group>     
+    </sheet>    
+    </form>
+    </field>
+</record>
+</odoo>

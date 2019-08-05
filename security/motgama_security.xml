@@ -1,0 +1,28 @@
+<?xml version="1.0" ?>
+<odoo>
+<record id="categoria_modulo_motgama" model="ir.module.category">
+    <field name="name">Motgama</field>
+</record>
+
+<!-- Permisos para el grupo usuario -->
+<record id="grupo_usuario_recepcion" model="res.groups">
+    <field name="name">Usuario</field>
+    <field name="category_id"
+        ref="categoria_modulo_motgama"/>
+    <field name="implied_ids"
+        eval="[(4, ref('base.group_user'))]"/>
+</record>
+
+<!-- Permisos para el superusuario -->
+<record id="grupo_administrador_propietario" model="res.groups">
+    <field name="name">Administrador</field>
+    <field name="category_id"
+        ref="categoria_modulo_motgama"/>
+    <field name="implied_ids"
+        eval="[(4, ref('grupo_usuario_recepcion'))]"/>
+    <field name="users"
+        eval="[(4, ref('base.user_root')),
+               (4, ref('base.user_admin'))]"/>
+</record>
+
+</odoo>

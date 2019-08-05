@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <act_window
+        id="action_wizard_habitacion"               
+        res_model="motgama.wizardhabitacion" 
+        name="Habitacion"
+        src_model="motgama.habitacion"
+        view_type="form"    
+        view_mode="form" 
+        multi="True"
+        target="new"
+    />
+
+<!--Tree-->
+<record id="tree_view_habitacion" model="ir.ui.view">
+  <field name="name">Habitación</field>
+  <field name="model">motgama.habitacion</field>
+  <field name="limit">100</field>
+  <field name="arch" type="xml">
+  
+   <tree string="Habitación" colors="green:estado=='D';red:state=='OA'">
+        <field name="codigo"/>
+        <field name="zona_id"/>
+        <field name="tema_id"/>
+        <field name="tipo_id"/>
+        <!--<field name="estado" options='{"bg_color": "#00FF40: estado == 'D'; #FACC2E: estado == 'OO'; #FA5858: estado == 'OA'"}'/>-->
+        <field name="estado_tree"/>
+   </tree>
+  </field>
+ </record>
+<!--Formulario-->
+ <record id="form_view_habitacion" model="ir.ui.view">
+  <field name="name">Habitación</field>
+  <field name="model">motgama.habitacion</field>
+  <field name="arch" type="xml">
+    <form string="Habitaciones">
+    <sheet>
+        <group name="group_bottom">
+            <group name="group_left">            
+                <field name="codigo" string="Codigo de la habitación" style="width:20%; font-size:20px; font-weight: bold;"/>
+            </group>
+        </group>
+        <group name="group_top">
+            <field name="zona_id" string="Zona"/>
+            <field name="tema_id" string="Tema de habitación"/>
+            <field name="tipo_id" string="Tipo de Habitación"/>
+            <field name="estado" string="Estado"/>
+            <field name="active" string="Activar"/>
+        <!--Los precios se encuentran invisibles no se veran reflejados en las vistas-->
+        </group><br/>
+        <notebook>
+            <page string="Lista de Precios">                         
+                    <tree string="Caption" create="true" delete="true" edit="true" editable="bottom">
+                        <!-- <field name="listaprecio" string="Lista de Precio"/>                    
+                        <field name="tarifaocasional" string="Ocasional"  widget="monetary" />                    
+                        <field name="tarifamanecida" string="Amanecida" widget="monetary"/>                    
+                        <field name="tarifahoradicional" string="Hora Adicional" widget="monetary"/>      -->
+                    </tree>
+            </page>
+        </notebook>
+        <br/><br/><br/><br/>
+        <footer>
+        
+           <group name="group_top" col="10">
+                <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
+                                            class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'FS', 'FU'])]}" /><!--Falta realizar la funcion-->
+                <button name="button_desasignar" type="object" string="desasignar habitación"
+                                            class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ','FS', 'FU'])]}" /><!--Falta realizar la funcion-->
+                <button name="button_cambio_de_plan" type="object" string="Cambio de plan"
+                                            class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/><!--Falta realizar la funcion-->
+                <button name="button_cambio_de_habitacion" type="object" string="Cambio de habitación"
+                                            class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/><!--Falta realizar la funcion-->
+                <button name="button_fuera_de_servicio" type="object" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
+                                            class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/><!--Falta realizar la funcion-->
+                <button name="button_fuera_de_uso" type="object" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
+                                            class="btn btn-dark" attrs="{'invisible':[('estado','!=','D')]}"/><!--Falta realizar la funcion-->
+                <button name="button_habilitar" string="Habilitar habitacion" type="object"
+                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/><!--Falta realizar la funcion-->
+                <button name="button_liquidar" string="Liquidar" type="object"
+                    class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/><!--Falta realizar la funcion-->
+                <button name="button_recaudar" string="Recaudar" type="object"
+                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/><!--Falta realizar la funcion-->
+                <button name="button_continuar" string="Continuar" type="object"
+                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/><!--Falta realizar la funcion-->
+                    <!--'|',('estado','in',['OA','OO','D']), '|',('estado','=','OA'),('estado','=','OO'),('estado','=','LQ') -->
+            </group>
+
+        </footer>
+     </sheet>   
+   </form>
+  </field>
+ </record>
+
+<record id="class_dashboard" model="ir.ui.view">
+<field name="name">Habitación</field>
+<field name="model">motgama.habitacion</field>
+<field name="type">kanban</field>
+<field name="arch" type="xml">
+<kanban quick_create="false" create="false" delete="false" >
+    <field name="codigo"/>
+    <field name="tipo_id"/>
+    <field name="estado"/>
+    <field name="tema_id"/>
+    <field name="zona_id"/>
+<templates>
+    <t t-name="kanban-box">
+    <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.estado.raw_value)}}"  class="o_kanban_record" style="pointer-events: none; position: relative; width: 50px; height: 90px;"> 
+        <button style="pointer-events:auto; position: relative; width:100%; height:100%; background:none; border:none;" title="open" type="object" name="open_record">
+            <t t-if="record.estado.raw_value === 'D'">
+                <img alt="Disponible" t-att-src="_s + &quot;/motgama/static/src/img/estado_verde.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'OO'">
+                <img alt="Ocupado Ocasional" t-att-src="_s + &quot;/motgama/static/src/img/estado_rojo.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'OA'">
+                <img alt="Ocupado Amanecida" t-att-src="_s + &quot;/motgama/static/src/img/estado_naranjado.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'LQ'">
+                <img alt="Liquidada" t-att-src="_s + &quot;/motgama/static/src/img/estado_fucsia.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'RC'">
+                <img alt="Recaudada" t-att-src="_s + &quot;/motgama/static/src/img/estado_cafe.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'LM'">
+                <img alt="Limpieza" t-att-src="_s + &quot;/motgama/static/src/img/estado_azul.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'R'">
+                <img alt="Reservada" t-att-src="_s + &quot;/motgama/static/src/img/estado_amarillo.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'FS'">
+                <img alt="Fuera de Servicio" t-att-src="_s + &quot;/motgama/static/src/img/estado_azulclaro.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>
+            <t t-if="record.estado.raw_value === 'FU'">
+                <img alt="Fuera de Uso" t-att-src="_s + &quot;/motgama/static/src/img/estado_negro.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>    
+            <t t-if="record.estado.raw_value === 'HB'">
+                <img alt="Habilitar habitacón" t-att-src="_s + &quot;&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+            </t>    
+            <strong style="font-size:16px; text-align: center;">
+                <field name="codigo"/>
+            </strong> 
+        </button>
+    </div>
+    </t>
+</templates>
+</kanban>
+</field>
+</record> 
+<record id="wizard_asignacion_habitacion" model="ir.ui.view">
+            <field name="name">Asignación de habitacion</field>
+            <field name="model">motgama.wizardhabitacion</field>
+            <field name="arch" type="xml">
+                <form>
+                    <div style="white-space: pre-line;">
+                        <p><h5>Asignacion de Habitación</h5></p>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="tipovehiculo"/>
+                            <field name="placa"/>
+                            <field name="asignatipo"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <footer>
+                        <button type="object" name="button_asignar_wizard" string="Asignar" class="oe_highlight"/>
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+        
+    <record id="motgama_search_view" model="ir.ui.view">
+        <field name="name">motgama.search.view</field>
+        <field name="model">motgama.habitacion</field>
+        <field name="arch" type="xml">
+            <search string="Habitaciónes en la recepcion">
+                <filter name="searchrecepcion" icon="terp-personal" string="zona" domain="[('zona_id','in',[0,1])]"/>
+            </search>
+        </field>
+    </record>   
+</odoo>

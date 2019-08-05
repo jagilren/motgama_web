@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="tree_view_consumo" model="ir.ui.view">
+    <field name="name">Consumos</field>
+    <field name="model">motgama.consumo</field>
+    <field name="limit">100</field>
+    <field name="arch" type="xml">   
+      <tree string="Consumo" editable="bottom">
+                <field name="producto_id" string="Producto" required="1"/>
+                <field name="cantidad" string="Cantidad" required="1"/>
+                <field name="vlrUnitario" string="Valor Unitario $"/>
+                <field name="impuesto" string="Impuestos" widget="many2many_tags" options="{'no_create': True}"/>
+                <field name="vlrSubtotal" string="Subtotal $" invisible="1"/>
+      </tree>
+    </field>
+  </record>
+</odoo>
+
+
+

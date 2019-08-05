@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+    <record id="tree_view_habitacion" model="ir.ui.view">
+        <field name="name">Movimiento</field>
+        <field name="model">motgama.movimiento</field>
+        <field name="limit">100</field>
+        <field name="arch" type="xml">  
+            <tree string="Movimiento">
+                <field name="habitacion_id"/>
+                <field name="tipovehiculo"/>
+                <field name="asignahora"/>
+                <field name="asignatipo"/>
+            </tree>
+        </field>
+    </record>  
+</odoo>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Formulario-->
+<record id="form_view_cambioprecios" model="ir.ui.view">
+    <field name="name">Cambio de precios</field>
+    <field name="model">motgama.wizardcambioprecios</field>
+    <field name="arch" type="xml">
+        <form string="Cambio de precios">
+            <sheet>
+                <group>
+                <p>Esta seguro que desea modificar todos los precios de las habitaciones?</p><br/>
+                <button class="btn btn-info" type="object" name="btn_cambiar_precios" string="Si, cambielos todos" />
+                </group>
+            </sheet>    
+        </form>
+    </field>
+</record>
+</odoo>
