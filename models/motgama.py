@@ -878,12 +878,3 @@ class MotgamaCierreTurno(models.TransientModel):
 class MotgamaWizardCambioPrecios(models.TransientModel):
     _name = 'motgama.wizardcambioprecios'
     _description = 'Formulario para cambiar masivamente los precios'
-    
-    @api.multi
-    def btn_cambiar_precios(self):
-        raise Warning('Entro a cambiar precios')
-        # TiposHabitacion = self.env['motgama.tipo'].search([()])
-        # for fila in TiposHabitacion:
-        #     Listas = self.env['motgama.listapreciotipo'].search([('tipo_id','=',fila['id'])])
-        #     for lista in Listas:
-        #         Habitaciones = self
