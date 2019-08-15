@@ -5,7 +5,7 @@
     <field name="name">Cambio de precios</field>
     <field name="model">motgama.wizardcambioprecios</field>
     <field name="arch" type="xml">
-        <form string="Cambio de precios">
+        <form string="Cambio de precios" create='false' edit='false' save='false' cancel='false'>
             <sheet>
                 <group>
                 <p>Esta seguro que desea modificar todos los precios de las habitaciones?</p><br/>

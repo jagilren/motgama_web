@@ -27,7 +27,7 @@ class MotgamaWizardCambioPrecios(models.TransientModel):
             #   Se recorre cada habitación y cada lista de precios
             for habitacion in Habitaciones:
                 for lista in Listas:
-                    #   Se carga una variable con la información de la lista de precios
+                    #   Se carga un diccionario con la información de la lista de precios
                     infoLista = {
                         'nombrelista':lista.nombrelista,
                         'tarifaocasional':lista.tarifaocasional,
@@ -40,4 +40,5 @@ class MotgamaWizardCambioPrecios(models.TransientModel):
                     #   Se graba la información cargada de la lista de precios del tipo en la tabla de lista de precios de habitación
                     self.env['motgama.listapreciohabitacion'].create(infoLista)
         
-                    #   TODO: Salir de la vista de actualizar precios
+        #   TODO: Salir de la vista de actualizar precios
+        #   raise Warning('Fin del proceso')

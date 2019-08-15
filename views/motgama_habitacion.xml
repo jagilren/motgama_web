@@ -11,6 +11,20 @@
         multi="True"
         target="new"
     />
+<!-- Búsqueda -->
+<record id="search_view_habitacion" model="ir.ui.view">
+  <field name="name">Habitación</field>
+  <field name="model">motgama.habitacion</field>
+  <field name="arch" type="xml">
+   <search>
+        <field name="codigo"/>
+        <field name="zona_id"/>
+        <field name="tema_id"/>
+        <field name="tipo_id"/>
+        <field name="estado_tree"/>
+   </search>
+  </field>
+ </record>
 
 <!--Tree-->
 <record id="tree_view_habitacion" model="ir.ui.view">
