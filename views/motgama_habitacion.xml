@@ -11,6 +11,7 @@
         multi="True"
         target="new"
     />
+    
 <!-- Búsqueda -->
 <record id="search_view_habitacion" model="ir.ui.view">
   <field name="name">Habitación</field>
@@ -78,25 +79,44 @@
         
            <group name="group_top" col="10">
                 <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
-                                            class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'FS', 'FU'])]}" /><!--Falta realizar la funcion-->
+                    class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'FS', 'FU'])]}" />
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_desasignar" type="object" string="desasignar habitación"
-                                            class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ','FS', 'FU'])]}" /><!--Falta realizar la funcion-->
+                    class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ','FS', 'FU'])]}" />
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_cambio_de_plan" type="object" string="Cambio de plan"
-                                            class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/><!--Falta realizar la funcion-->
+                    class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_cambio_de_habitacion" type="object" string="Cambio de habitación"
-                                            class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/><!--Falta realizar la funcion-->
-                <button name="button_fuera_de_servicio" type="object" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
-                                            class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/><!--Falta realizar la funcion-->
-                <button name="button_fuera_de_uso" type="object" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
-                                            class="btn btn-dark" attrs="{'invisible':[('estado','!=','D')]}"/><!--Falta realizar la funcion-->
+                    class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
+                    <!--Falta realizar la funcion-->
+
+                <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
+                    class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
+                    <!--Falta realizar la funcion-->
+
+                <button type="action" name="%(motgama.action_wizard_fuera_uso)d" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
+                    class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_habilitar" string="Habilitar habitacion" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/><!--Falta realizar la funcion-->
+                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_liquidar" string="Liquidar" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/><!--Falta realizar la funcion-->
+                    class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_recaudar" string="Recaudar" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/><!--Falta realizar la funcion-->
+                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/>
+                    <!--Falta realizar la funcion-->
+
                 <button name="button_continuar" string="Continuar" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/><!--Falta realizar la funcion-->
+                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/>
+                    <!--Falta realizar la funcion-->
                     <!--'|',('estado','in',['OA','OO','D']), '|',('estado','=','OA'),('estado','=','OO'),('estado','=','LQ') -->
             </group>
 
@@ -162,29 +182,29 @@
 </field>
 </record> 
 <record id="wizard_asignacion_habitacion" model="ir.ui.view">
-            <field name="name">Asignación de habitacion</field>
-            <field name="model">motgama.wizardhabitacion</field>
-            <field name="arch" type="xml">
-                <form>
-                    <div style="white-space: pre-line;">
-                        <p><h5>Asignacion de Habitación</h5></p>
-                    </div>
-                    <group>
-                        <group>
-                            <field name="tipovehiculo"/>
-                            <field name="placa"/>
-                            <field name="asignatipo"/>
-                        </group>
-                        <group>
-                        </group>
-                    </group>
-                    <footer>
-                        <button type="object" name="button_asignar_wizard" string="Asignar" class="oe_highlight"/>
-                        <button string="Cancel" class="oe_link" special="cancel"/>
-                    </footer>
-                </form>
-            </field>
-        </record>
+    <field name="name">Asignación de habitacion</field>
+    <field name="model">motgama.wizardhabitacion</field>
+    <field name="arch" type="xml">
+        <form>
+            <div style="white-space: pre-line;">
+                <p><h5>Asignacion de Habitación</h5></p>
+            </div>
+            <group>
+                <group>
+                    <field name="tipovehiculo"/>
+                    <field name="placa"/>
+                    <field name="asignatipo"/>
+                </group>
+                <group>
+                </group>
+            </group>
+            <footer>
+                <button type="object" name="button_asignar_wizard" string="Asignar" class="oe_highlight"/>
+                <button string="Cancel" class="oe_link" special="cancel"/>
+            </footer>
+        </form>
+    </field>
+</record>
         
     <record id="motgama_search_view" model="ir.ui.view">
         <field name="name">motgama.search.view</field>
@@ -194,5 +214,6 @@
                 <filter name="searchrecepcion" icon="terp-personal" string="zona" domain="[('zona_id','in',[0,1])]"/>
             </search>
         </field>
-    </record>   
+    </record>
+
 </odoo>

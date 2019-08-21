@@ -213,22 +213,6 @@ class MotgamaHabitacion(models.Model):#ok
 
     #Funcion para asignar la cabaña
     @api.multi 
-    def button_fuera_de_servicio(self):
-        if self.estado == 'D':
-            for record in self:
-                record['estado']='FS'
-        #raise Warning('Ingreso al botón fuera de servicio')
-
-    #Funcion para asignar la cabaña
-    @api.multi 
-    def button_fuera_de_uso(self):
-        if self.estado == 'D':
-            for record in self:
-                record['estado']='FU'
-        #raise Warning('Ingreso al botón fuera de uso')
-
-    #Funcion para asignar la cabaña
-    @api.multi 
     def button_habilitar(self):
         if self.estado == 'FS' or self.estado == 'FU' :
             for record in self:
@@ -643,7 +627,7 @@ class MotgamaMovimiento(models.Model):#ok
     placa_vehiculo = fields.Char(string=u'Placa del Vehiculo')
     asignatipo = fields.Selection(string=u'Tipo de Asignación',selection=[('OO', 'Ocasional'), ('OA', 'Amanecida')]) # (09/05/2019) 
     asignafecha = fields.Date(string=u'Asignación de Fecha')
-    asignahora = fields.Datetime(string=u'Asignación de Hora',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
+    asignahora = fields.Datetime(string=u'Hora de Asignación',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     liquidafecha = fields.Date(string=u'Liquida Fecha')
     liquidahora = fields.Datetime(string=u'Liquida Hora')
@@ -678,6 +662,15 @@ class MotgamaMovimiento(models.Model):#ok
     active = fields.Boolean(string=u'Activo?',default=True)
     nroestadocuenta = fields.Char(string=u'Nro estado de cuenta') # Se añade 11 de Julio
     nrofactura = fields.Char(string=u'Nro de factura') # Se añade 11 de Julio
+    # Proceso de Fuera de servicio
+    fueradeserviciohora = fields.Datetime(string='Fecha fuera de servicio')
+    fueradeservicio_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    fueradeservicioobservacion = fields.Char(string='Observaciones fuera de servicio')
+    # Proceso de Fuera de uso
+    fueradeusohora = fields.Datetime(string='Fecha fuera de uso')
+    fueradeuso_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    fueradeusoobservacion = fields.Char(string='Observaciones fuera de servicio')
+    fueradeuso_usuarioorden = fields.Char(string='Persona que dio la orden')
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
@@ -874,7 +867,3 @@ class MotgamaCierreTurno(models.TransientModel):
     ultfactura = fields.Char('Ultima Factura')
     fecha = fields.Date(string=u'Fecha')
     hora = fields.Datetime(string=u'Hora')
-
-class MotgamaWizardCambioPrecios(models.TransientModel):
-    _name = 'motgama.wizardcambioprecios'
-    _description = 'Formulario para cambiar masivamente los precios'
