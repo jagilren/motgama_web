@@ -76,3 +76,4 @@ class MotgamaWizardHabitacion(models.TransientModel):
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
         #Termina
         return True # Esta instruccion no es estrictamente necesaria pero es una buena práctica.
+        # POR REVISSAR
