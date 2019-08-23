@@ -1,3 +1,9 @@
+import time
+from datetime import datetime, timedelta
+from odoo import models, fields, api, _
+from odoo.exceptions import UserError,Warning, ValidationError
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
+
 class MotgamaWizardHabitacion(models.TransientModel):
     _inherit = 'motgama.wizardhabitacion'
 
