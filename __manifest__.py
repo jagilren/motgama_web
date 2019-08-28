@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# hola
 {
     'name':'MOTGAMA',
     'version':'0.0.1',
