@@ -9,7 +9,7 @@
             <tree string="Movimiento">
                 <field name="habitacion_id"/>
                 <field name="tipovehiculo"/>
-                <field name="asignahora"/>
+                <field name="asignafecha"/>
                 <field name="asignatipo"/>
             </tree>
         </field>
