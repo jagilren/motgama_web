@@ -306,16 +306,6 @@ class MotgamaHabitacion(models.Model):#ok
     def button_continuar(self):
         raise Warning('Ingreso al botón continuar')
 
-    #Funcion para asignar la cabaña
-    @api.multi 
-    def button_recaudar(self):
-        raise Warning('Ingreso al botón recaudar')
-
-    #Funcion para asignar la cabaña
-    @api.multi 
-    def button_continuar(self):
-        raise Warning('Ingreso al botón continuar')
-
 class MotgamaListaPrecioTipo(models.Model): #Lista de precios por habitacion
     _name = 'motgama.listapreciotipo'
     _description = 'Listas de Precios por tipo de habitación'
@@ -350,6 +340,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         # Sacar el id que trae por debajo el contexto del Wizard
         habitacion = self.env.context['active_id']
 
+    '''
     @api.multi # 14 junio
     def button_asignar_wizard(self):
         self.ensure_one()
@@ -515,6 +506,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
             qryactualizaestadohabitacion1 = "UPDATE motgama_habitacion SET estado = '" + self.asignatipo + "' WHERE id = " + str(habitacion) + ";"
             self.env.cr.execute(qryactualizaestadohabitacion1)
             return True
+        '''
 
 # Se añade el historico de Placas para que tener registro si esta tuvo algun problema o tiene un acceso prioritario
 class MotgamaPlaca(models.Model):#10 julio
