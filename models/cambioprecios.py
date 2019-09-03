@@ -3,8 +3,7 @@ from odoo.exceptions import UserError,Warning, ValidationError
 
 #   Se instancia la clase heredada de motgama.py
 class MotgamaWizardCambioPrecios(models.TransientModel):
-    _name = 'motgama.wizardcambioprecios'
-    _description = 'Formulario para cambiar masivamente los precios'
+    _inherit = 'motgama.wizardcambioprecios'
 
     @api.multi
     #   Se define la función del botón de cambio de precios

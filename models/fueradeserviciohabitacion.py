@@ -2,9 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 
 class MotgamaWizardFueradeservicio(models.TransientModel):
-    _name = 'motgama.wizardfueradeservicio'
-    _description = 'Habitación fuera de servicio'
-    observacion = fields.Char(string='Observaciones')
+    _inherit = 'motgama.wizardfueradeservicio'
 
     @api.multi
     def button_fuera_servicio(self):

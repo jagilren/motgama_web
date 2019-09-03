@@ -867,3 +867,18 @@ class MotgamaCierreTurno(models.TransientModel):
     ultfactura = fields.Char('Ultima Factura')
     fecha = fields.Date(string=u'Fecha')
     hora = fields.Datetime(string=u'Hora')
+
+class MotgamaWizardCambioPrecios(models.TransientModel):
+    _name = 'motgama.wizardcambioprecios'
+    _description = 'Formulario para cambiar masivamente los precios'
+
+class MotgamaWizardFueradeservicio(models.TransientModel):
+    _name = 'motgama.wizardfueradeservicio'
+    _description = 'Habitación fuera de servicio'
+    observacion = fields.Char(string='Observaciones')
+
+class MotgamaWizardFueradeuso(models.TransientModel):
+    _name = 'motgama.wizardfueradeuso'
+    _description = 'Habitación fuera de uso'
+    observacion = fields.Char(string='Observaciones')
+    usuario_orden = fields.Char(string='Nombre de quien autoriza')
