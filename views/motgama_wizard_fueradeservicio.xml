@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <act_window
+        id="action_wizard_fuera_servicio"               
+        res_model="motgama.wizardfueradeservicio" 
+        name="Fuera de servicio"
+        src_model="motgama.habitacion"
+        view_type="form"    
+        view_mode="form"
+        multi="True"
+        target="new"
+    />
+
+    <record id="wizard_fueradeservicio_habitacion" model="ir.ui.view">
+        <field name="name">Habitación fuera de servicio</field>
+        <field name="model">motgama.wizardfueradeservicio</field>
+        <field name="arch" type="xml">
+            <form>
+                <div style="white-space: pre-line;">
+                    <p><h5>Habitación fuera de servicio</h5></p>
+                </div>
+                <group>
+                    <group>
+                        <field name="observacion"/>
+                    </group>
+                </group>
+                <footer>
+                    <button type="object" name="button_fuera_servicio" string="Fuera de servicio" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

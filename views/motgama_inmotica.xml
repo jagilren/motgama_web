@@ -24,8 +24,7 @@
         <field name="estado" placeholder="Estado de la habitación" />
         <field name="control_accion" placeholder="Control de acción de la habitación"/>
             <field name="active"/>
-        </group>        
-     
+        </group>
     </sheet>    
     </form>
     </field>
