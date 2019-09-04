@@ -22,7 +22,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 ###############################################################################
 
 class MotgamaSucursal(models.Model):#ok
-#    Fields:SUCURSAL: Cada una de las sedes que tiene los Moteles.
+#    Fields:SUCURSAL: Cada una de las sedes (Moteles).
     _name = 'motgama.sucursal'
     _description = u'Motgama Sucursal'
     _rec_name = 'nombre'
@@ -53,17 +53,18 @@ class MotgamaInmotica(models.Model):#ok
     active = fields.Boolean(string=u'Activo?',default=True,)
     
 class MotgamaParametros(models.Model):#ok
-#   Fields: PARAMETROS: se deben de definir todos los parametros que se necesitan en la plataforma.
+#   Fields: PARAMETROS: se deben de definir todos los parametros que se necesitan por sucursal.
 #   Modification date: Mayo 6 del 2019: se modifica la base de datos ya que este se hace para que los parametros sean creados libremente
     _name = 'motgama.parametros'
     _description = u'parametros'
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
+    codigo = fields.Char(string=u'Codigo',)
     nombre = fields.Char(string=u'Nombre',)
     valor = fields.Char(string=u'Valor',)
     active = fields.Boolean(string=u'Activo?',default=True,)
 
 class MotgamaCalendario(models.Model):#ok
-#    Fields:CALENDARIO: .Modification date:  Mayo 9 del 2019: (Se escoje los dias en que se les va aplicar el valor a las habitaciones)
+#    Fields:CALENDARIO: Listas de precios a aplicar por cada dia de la semana, diurno y nocturno
     _name = 'motgama.calendario'
     _description = u'Calendario'
     _rec_name = 'diasemana'
@@ -90,14 +91,14 @@ class MotgamaRecepcion(models.Model):#ok
 
 class MotgamaLugares(models.Model):#ok OJO
 #    Fields: LUGARES: esta tiene una similitud con el modulo de inventarios de ERP ODOO
-#      ESTA EN ESPERA YA QUE SE PUEDE CONECTAR CON EL MODULO DE INVENTARIOS QUE TRAE ODOO
+#     TODO: ESTA EN ESPERA YA QUE SE PUEDE CONECTAR CON EL MODULO DE INVENTARIOS QUE TRAE ODOO
     _name = 'motgama.lugares'
     _description = u'Bodega'
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
     recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')
 
 class MotgamaZona(models.Model):#ok
-#    Fields: ZONA: Zona es igual a los pisos que tiene los moteles. 
+#    Fields: ZONA: Zona equivale a pisos que tiene los moteles. 
     _name = 'motgama.zona'
     _description = u'Zona'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
@@ -111,7 +112,7 @@ class MotgamaZona(models.Model):#ok
     habitacion_ids = fields.One2many(string=u'Habitaciones en esta zona',comodel_name='motgama.habitacion',inverse_name='zona_id',) # HABITACION EN ESTA ZONA
 
 class MotgamaTipo(models.Model):#ok Tipo de habitaciones
-#    Fields: TIPO DE HABITACION: .Modification date:  Mayo 6 del 2019: se comenta precio01,02,03,04,05 y se agrega listaprecio_id.
+#    Fields: TIPO DE HABITACION: Caracteristicas de las habitaciones y datos generales para el mismo tipo
     _name = 'motgama.tipo'
     _description = u'Tipo de habitación'
     _rec_name = 'nombre'
@@ -196,29 +197,29 @@ class MotgamaHabitacion(models.Model):#ok
                 'target': 'current',
             }
 
-    #Funcion para asignar la cabaña
+    #Funcion para desasignar la cabaña
     @api.multi 
     def button_desasignar(self):
         raise Warning('Ingreso al botón desasignar')
 
-    #Funcion para asignar la cabaña
+    #Funcion para cambiar de amanecida a ocasional cabaña
     @api.multi 
     def button_cambio_de_plan(self):
         raise Warning('Ingreso al botón cambio de plan')
 
-    #Funcion para asignar la cabaña
+    #Funcion para cambio de la cabaña
     @api.multi 
     def button_cambio_de_habitacion(self):
         raise Warning('Ingreso al botón de habitacion')
 
-    #Funcion para asignar la cabaña
+    #Funcion para fuera de servicio la cabaña
     @api.multi 
     def button_habilitar(self):
         if self.estado == 'FS' or self.estado == 'FU' :
             for record in self:
                 record['estado']='D'
     
-    #Funcion para asignar la cabaña
+    #Funcion para liquidar la cabaña
 
     @api.multi 
     def button_liquidar(self):
@@ -287,7 +288,7 @@ class MotgamaHabitacion(models.Model):#ok
         else:
             raise Warning('Ingreso al botón liquidar de Ocupacion Amanecida')
 
-    #Funcion para asignar la cabaña
+    #Funcion para recaudar la cabaña
     @api.multi 
     def button_recaudar(self):
         raise Warning('Ingreso al botón recaudar')
@@ -297,17 +298,7 @@ class MotgamaHabitacion(models.Model):#ok
     def button_continuar(self):
         raise Warning('Ingreso al botón continuar')
 
-    #Funcion para asignar la cabaña
-    @api.multi 
-    def button_recaudar(self):
-        raise Warning('Ingreso al botón recaudar')
-
-    #Funcion para asignar la cabaña
-    @api.multi 
-    def button_continuar(self):
-        raise Warning('Ingreso al botón continuar')
-
-class MotgamaListaPrecioTipo(models.Model): #Lista de precios por habitacion
+class MotgamaListaPrecioTipo(models.Model): #Lista de precios por tipo de habitacion
     _name = 'motgama.listapreciotipo'
     _description = 'Listas de Precios por tipo de habitación'
     nombrelista = fields.Selection([('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')], string='Lista')
@@ -626,32 +617,32 @@ class MotgamaMovimiento(models.Model):#ok
     tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
     placa_vehiculo = fields.Char(string=u'Placa del Vehiculo')
     asignatipo = fields.Selection(string=u'Tipo de Asignación',selection=[('OO', 'Ocasional'), ('OA', 'Amanecida')]) # (09/05/2019) 
-    asignafecha = fields.Date(string=u'Asignación de Fecha')
-    asignahora = fields.Datetime(string=u'Hora de Asignación',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
+   # asignafecha = fields.Date(string=u'Asignación de Fecha')
+    asignafecha = fields.Datetime(string=u'Fecha de Asignación',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    liquidafecha = fields.Date(string=u'Liquida Fecha')
-    liquidahora = fields.Datetime(string=u'Liquida Hora')
+   # liquidafecha = fields.Date(string=u'Liquida Fecha')
+    liquidafecha= fields.Datetime(string=u'Fecha y hora Liquidacion')
     liquida_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    recaudafecha = fields.Date(string=u'Fecha de recaudo')
-    recaudahora = fields.Datetime(string=u'Hora de recuado')
+   # recaudafecha = fields.Date(string=u'Fecha de recaudo')
+    recaudafecha = fields.Datetime(string=u'Fecha y hora de recaudo')
     recauda_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    aseofecha = fields.Date(string=u'Fecha de aseo')
-    aseohora = fields.Datetime(string=u'Hora de aseo')
+   # aseofecha = fields.Date(string=u'Fecha de aseo')
+    aseofecha = fields.Datetime(string=u'Fecha y hora aseo')
     aseo_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    habilitafecha = fields.Date(string=u'Fecha de habilitación')
-    habilitahora = fields.Datetime(string=u'Hora de habilitación')
+   # habilitafecha = fields.Date(string=u'Fecha de habilitación')
+    habilitafecha = fields.Datetime(string=u'Fecha y hora de habilitación')
     habilita_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    reasignafecha = fields.Date(string=u'Fecha de reasignación')
-    reasignahora = fields.Datetime(string=u'Hora de reasignación')
+   # reasignafecha = fields.Date(string=u'Fecha de reasignación')
+    reasignafecha = fields.Datetime(string=u'Fecha y Hora de reasignación')
     reasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     reasignanueva_id = fields.Char(string=u'Reasignacion Nueva') # Este es un Integer Many2One de donde sale *
     reasignaanterior_uid = fields.Char(string=u'Reasignacion Anterior') # Este es un Integer Many2One de donde sale *
     reasignada = fields.Boolean(string=u'Reasignada')
-    reservafecha = fields.Date(string=u'Fecha de la reserva')
-    reservahora = fields.Datetime(string=u'Hora de la reserva')
+   # reservafecha = fields.Date(string=u'Fecha de la reserva')
+    reservafecha = fields.Datetime(string=u'Fecha y Hora de la reserva')
     reserva_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    desasignafecha = fields.Date(string=u'Fecha de la desasigna')
-    desasignahora = fields.Datetime(string=u'Hora de la desasigna')
+   # desasignafecha = fields.Date(string=u'Fecha de la desasigna')
+    desasignafecha = fields.Datetime(string=u'Fecha y Hora de la desasigna')
     desasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     incluyedecora = fields.Boolean(string=u'Incluye decoración')    
     tarifaocasional = fields.Float(string=u'Tarifa ocasional')
@@ -660,6 +651,9 @@ class MotgamaMovimiento(models.Model):#ok
     tarifapersonadicional = fields.Float(string=u'Tarifa persona adicional')
     tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
     active = fields.Boolean(string=u'Activo?',default=True)
+    anticipo = fields.Float(string=u'Valor anticipo')
+    formapagoanticipo = fields.Char(string=u'Forma pago anticipo')
+    reciboanticipo = fields.Float(string=u'Nro recibo caja anticipo')
     nroestadocuenta = fields.Char(string=u'Nro estado de cuenta') # Se añade 11 de Julio
     nrofactura = fields.Char(string=u'Nro de factura') # Se añade 11 de Julio
     # Proceso de Fuera de servicio
