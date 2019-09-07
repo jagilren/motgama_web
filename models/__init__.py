@@ -4,3 +4,4 @@ from . import motgama
 from . import fueradeserviciohabitacion
 from . import fueradeusohabitacion
 from . import cambioprecios
+from . import wizardhabitacion
