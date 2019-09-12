@@ -1,4 +1,5 @@
 import time
+import pytz
 from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError,Warning, ValidationError
@@ -12,23 +13,36 @@ class MotgamaWizardHabitacion(models.TransientModel):
         self.ensure_one()
         # Extrae del contexto el ID de la habitaciòn actual
         Habitacion = self.env.context['active_id']
-        fullHabitacion = self.env['motgama.habitacion'].search([('id','=',Habitacion)], limit=1) # Trae todos los datos de la habitacion actual        
-        # TODO: Usar solo datetime
-        fechaActual = datetime.now().date()
-        horaActual = datetime.now().time()
+        fullHabitacion = self.env['motgama.habitacion'].search([('id','=',Habitacion)], limit=1) # Trae todos los datos de la habitacion actual
+        fechaActual = datetime.now()
+
+        if not self.env.user.tz:
+            raise Warning('Su usuario no tiene una zona horaria definida, contacte al administrador')
+        
+        tz = pytz.timezone(self.env.user.tz)
+
         # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida
         # Verifica tambien que se este dentro del horario permitido para asignar amanecidas      
         if self.asignatipo == 'OA':
-            # TODO: Cambiar nombre por codigo de parametro
-            flagAmanecida = self.env['motgama.parametros'].search([('nombre','=','Permite Amanecida?')], limit=1)
-            if flagAmanecida['valor'] == 'NO':
-
-                raise Warning('Lo sentimos, este lugar no permite amanecida!')
-            # CONDICION -> Horas en formato militar por favor HORAS:MINUTOS:SEGUNDOS
-            flagInicioAmanecida = self.env['motgama.parametros'].search([('nombre','=','Hora Inicio Amanecida?')], limit=1)
-            flagfinAmanecida = self.env['motgama.parametros'].search([('nombre','=','Hora Fin Amanecida?')], limit=1)
-            if not (flagInicioAmanecida['valor'] < horaActual < flagfinAmanecida['valor']): # OJO No incluye los extremos
-                raise Warning('Lo sentimos, no esta disponible la asignación para amanecida en este momento!')
+            flagInicioAmanecida = self.env['motgama.parametros'].search([('codigo','=','HINIAMANECIDA')], limit=1)
+            flagfinAmanecida = self.env['motgama.parametros'].search([('codigo','=','HFINAMANECIDA')], limit=1)
+            if not flagInicioAmanecida:
+                raise Warning('No se ha definido el parámetro "Hora Inicio Amanecida"')
+            if not flagfinAmanecida:
+                raise Warning('No se ha definido el parámetro "Hora Fin Amanecida"')
+            if flagInicioAmanecida['valor'] == '0' and flagfinAmanecida['valor'] == '0':
+                raise Warning('No se admite amanecida')
+            # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
+            flagInicioTz = datetime.strptime(str(flagInicioAmanecida['valor']),"%H:%M")
+            flagFinTz = datetime.strptime(str(flagfinAmanecida['valor']),"%H:%M")
+            flagInicio = tz.localize(flagInicioTz).astimezone(pytz.utc).time()
+            flagFin = tz.localize(flagFinTz).astimezone(pytz.utc).time()
+            if flagInicio > flagFin:
+                if flagFin < fechaActual.time() < flagInicio:
+                    raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
+            else:
+                if not (flagInicio < fechaActual.time() < flagFin): # OJO No incluye los extremos
+                    raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
         # Ahora busca en las placas para verificar alguna novedad y mostrarla al operador. El mensaje aparece en el chatter
         novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(self.placa))], limit=1)
         if novedadPlaca:
@@ -41,20 +55,24 @@ class MotgamaWizardHabitacion(models.TransientModel):
         valores.update({'placa_vehiculo': self.placa})
         valores.update({'asignatipo': self.asignatipo})
         valores.update({'asignafecha': fechaActual})
-        valores.update({'asignahora': horaActual})
         valores.update({'asigna_uid': self.env.user.id})
         # Se consultan las tarifas de la lista de precios que corresponde al día y la hora
-        flagInicioDia = self.env['motgama.parametros'].search([('nombre','=','Hora Inicio Dia')], limit=1)
+        flagInicioDia = self.env['motgama.parametros'].search([('codigo','=','HINICIODIA')], limit=1)
         if not flagInicioDia:
             raise Warning('Error: No se ha definido el parámetro "Hora Inicio Día"')
-        flagInicioNoche = self.env['motgama.parametros'].search([('nombre','=','Hora Inicio Noche')], limit=1)
-        if not flagInicioDia:
+        flagInicioNoche = self.env['motgama.parametros'].search([('codigo','=','HINICIONOCHE')], limit=1)
+        if not flagInicioNoche:
             raise Warning('Error: No se ha definido el parámetro "Hora Inicio Noche"')
-        nroDia = datetime.strptime(fechaActual, '%d %m %Y').weekday() # Esto me da el numero del día de la semana, python arranca con 0->lunes
+        # nroDia = datetime.strptime(fechaActual.date(), '%d %m %Y').weekday() # Esto me da el numero del día de la semana, python arranca con 0->lunes
+        nroDia = fechaActual.weekday()
         # nombreDia = calendar.day_name[nroDia] # Utilizo el calendario para saber el nombre del día.
+        inicioDiaTz = datetime.strptime(str(flagInicioDia['valor']),"%H:%M")
+        inicioDia = tz.localize(inicioDiaTz).astimezone(pytz.utc).time()
+        inicioNocheTz = datetime.strptime(str(flagInicioNoche['valor']),"%H:%M")
+        inicioNoche = tz.localize(inicioNocheTz).astimezone(pytz.utc).time()
         qryLista = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
         if qryLista:
-            if (flagInicioDia['valor'] < horaActual < flagInicioNoche['valor']):
+            if (inicioDia < fechaActual.time() < inicioNoche):
                 Lista = qryLista['listapreciodia']
             else:
                 Lista = qryLista['listaprecionoche']
@@ -68,7 +86,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
             valores.update({'tarifahoradicional': tarifaHabitacion['tarifahoradicional']})
         else:
             # Si la habitacion no tiene seteada unas tarifas, se procede con las que hay por tipo de habitacion            
-            tarifaTipoHabitacion = self.env['motgama.listapreciotipo'].search([('tipo_id','=',fullHabitacion['tipo_id']),('nombrelista','=',Lista)], limit=1)
+            tarifaTipoHabitacion = self.env['motgama.listapreciotipo'].search([('tipo_id','=',fullHabitacion['tipo_id'].id),('nombrelista','=',Lista)], limit=1)
             if tarifaTipoHabitacion:
                 valores.update({'tarifaocasional': tarifaTipoHabitacion['tarifaocasional']})
                 valores.update({'tarifamanecida': tarifaTipoHabitacion['tarifamanecida']})

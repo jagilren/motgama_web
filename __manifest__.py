@@ -10,6 +10,7 @@
     'images':['static/src/img/estado_amarillo.png','static/src/img/estado_azul.png','static/src/img/estado_azulclaro.png','static/src/img/estado_fucsia.png','static/src/img/img/estado_naranjado.png','static/src/img/estado_rojo.png','static/src/img/estado_verde.png'],
     'depends':['base'],
     'installable':True,
+    'application': True,
     'data':['security/groups.xml',
         'security/ir.model.access.csv',       
         'views/motgama_sucursal.xml',        
