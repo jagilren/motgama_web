@@ -6,10 +6,11 @@
         <field name="model">motgama.calendario</field>
         <field name="arch" type="xml">
         <tree string="Calendario">
-            <field name="diasemana"/>
             <field name="sucursal_id" />
+            <field name="diasemana"/>
             <field name="listapreciodia"/>
             <field name="listaprecionoche"/>
+            <field name="listaprecioproducto"/>
         </tree>
         </field>
     </record>
@@ -22,9 +23,10 @@
             <sheet>
                 <group name="group_bottom">
                     <field name="sucursal_id" placeholder="Sucursal" />
+                    <field name="diasemana"/>
                     <field name="listapreciodia"/><br/>
                     <field name="listaprecionoche"/>
-                    <field name="diasemana"/>
+                    <field name="listaprecioproducto"/>
                     <field name="active"/>
                 </group>     
             </sheet>    

@@ -23,7 +23,7 @@
         <form string="Lista de Precios">
             <sheet>
                 <group name="group_bottom">
-                    <field name="tipo_id" invisible="1"/>
+                    <field name="tipo_id"/>
                     <field name="nombrelista"/>
                     <field name="tarifaocasional" />
                     <field name="tarifamanecida"/>
