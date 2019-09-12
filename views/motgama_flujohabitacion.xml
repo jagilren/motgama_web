@@ -4,8 +4,8 @@
     <act_window
         id="action_wizard_habitacion"               
         res_model="motgama.wizardhabitacion" 
-        name="Habitacion"
-        src_model="motgama.habitacion"
+        name="Flujo Habitacion"
+        src_model="motgama.flujohabitacion"
         view_type="form"    
         view_mode="form" 
         multi="True"
@@ -13,30 +13,25 @@
     />
     
 <!-- Búsqueda -->
-<record id="search_view_habitacion" model="ir.ui.view">
-  <field name="name">Habitación</field>
-  <field name="model">motgama.habitacion</field>
+<record id="search_view_flujohabitacion" model="ir.ui.view">
+  <field name="name">Flujo Habitación</field>
+  <field name="model">motgama.flujohabitacion</field>
   <field name="arch" type="xml">
    <search>
         <field name="codigo"/>
-        <field name="nombre"/>
-        <field name="zona_id"/>
-        <field name="tema_id"/>
-        <field name="tipo_id"/>
-        <field name="inmotica"/>
-        <field name="estado_tree"/>
-   </search>
+        <field name="estado"/>
+        <field name="ultmovimiento"/>
+    </search>
   </field>
  </record>
 
 <!--Tree-->
-<record id="tree_view_habitacion" model="ir.ui.view">
+<!-- <record id="tree_view_habitacion" model="ir.ui.view">
   <field name="name">Habitacion</field>
   <field name="model">motgama.habitacion</field>
   <field name="limit">100</field>
   <field name="arch" type="xml">
   
-   <!-- <tree string="Habitación" colors="green:estado=='D';red:state=='OA'"> -->
    <tree string="Habitacion">
         <field name="codigo"/>
         <field name="nombre"/>
@@ -44,17 +39,16 @@
         <field name="tema_id"/>
         <field name="tipo_id"/>
         <field name="inmotica"/>
-        <!--<field name="estado" options='{"bg_color": "#00FF40: estado == 'D'; #FACC2E: estado == 'OO'; #FA5858: estado == 'OA'"}'/>-->
         <field name="estado_tree"/>
    </tree>
   </field>
- </record>
+ </record> -->
 <!--Formulario-->
- <record id="form_view_habitacion" model="ir.ui.view">
+  <record id="form_view_flujohabitacion" model="ir.ui.view">
   <field name="name">Habitación</field>
-  <field name="model">motgama.habitacion</field>
+  <field name="model">motgama.flujohabitacion</field>
   <field name="arch" type="xml">
-    <form string="Habitaciones">
+    <form string="Flujo Habitaciones">
     <sheet>
         <group name="group_bottom">
             <group name="group_left">            
@@ -62,80 +56,62 @@
             </group>
         </group>
         <group name="group_top">
-            <field name="nombre" string="Nombre"/>
-            <field name="zona_id" string="Zona"/>
-            <field name="tema_id" string="Tema de habitación"/>
-            <field name="tipo_id" string="Tipo de Habitación"/>
-            <field name="inmotica" string="inmotica"/>
             <!-- <field name="estado" string="Estado" readonly="1"/> -->
-            <field name="active" string="Activar"/>
-        <!--Los precios se encuentran invisibles no se veran reflejados en las vistas-->
+            <field name="estado" string="Estado"/>
+            <field name="active" string="Activar" readonly="1"/>
+            <br/><br/><br/><br/>
         </group><br/>
-        <group>
-                <field name="listapreciohabitacion_ids" />
-        </group>
-        <!-- <notebook> # retirado por Gabriel en sep 6 para colocarlo como group similar a tipos
-            <page string="Lista de Precios">                         
-                    <tree string="Caption" create="true" delete="true" edit="true" editable="bottom">
-                        <field name="listaprecio" string="Lista de Precio"/>                    
-                        <field name="tarifaocasional" string="Ocasional"  widget="monetary" />                    
-                        <field name="tarifamanecida" string="Amanecida" widget="monetary"/>                    
-                        <field name="tarifahoradicional" string="Hora Adicional" widget="monetary"/> 
-                    </tree>
-            </page>
-        </notebook> -->
-        <br/><br/><br/><br/>
-<!--         <footer>
+        
+        <footer>
         
            <group name="group_top" col="10">
                 <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
                     class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'FS', 'FU'])]}" />
-
+                    
                 <button name="button_desasignar" type="object" string="desasignar habitación"
                     class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ','FS', 'FU'])]}" />
-
+                    
                 <button name="button_cambio_de_plan" type="object" string="Cambio de plan"
                     class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
-
+                    
                 <button name="button_cambio_de_habitacion" type="object" string="Cambio de habitación"
                     class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
-
+                    
                 <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
                     class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
-
+                    
                 <button type="action" name="%(motgama.action_wizard_fuera_uso)d" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
                     class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
-
+                    
                 <button name="button_habilitar" string="Habilitar habitacion" type="object"
                     class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
-
+                    
                 <button name="button_liquidar" string="Liquidar" type="object"
                     class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
-
+                    
                 <button name="button_recaudar" string="Recaudar" type="object"
                     class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/>
-
+                    
                 <button name="button_continuar" string="Continuar" type="object"
                     class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/>
             </group>
 
-        </footer> -->
+        </footer>
      </sheet>   
    </form>
   </field>
  </record>
-
+ 
 <record id="class_dashboard" model="ir.ui.view">
-<field name="name">Habitación</field>
-<field name="model">motgama.habitacion</field>
+<field name="name">Flujo Habitación   colores</field>
+<field name="model">motgama.flujohabitacion</field>
 <field name="type">kanban</field>
 <field name="arch" type="xml">
 <kanban quick_create="false" create="false" delete="false" >
     <field name="codigo"/>
-    <field name="tipo_id"/>
-    <field name="tema_id"/>
-    <field name="zona_id"/>
-<!-- <templates>
+    <field name="estado"/>
+
+<templates>
     <t t-name="kanban-box">
     <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.estado.raw_value)}}"  class="o_kanban_record" style="pointer-events: none; position: relative; width: 50px; height: 90px;"> 
         <button style="pointer-events:auto; position: relative; width:100%; height:100%; background:none; border:none;" title="open" type="object" name="open_record">
@@ -175,7 +151,7 @@
         </button>
     </div>
     </t>
-</templates> -->
+</templates>
 </kanban>
 </field>
 </record> 
@@ -204,7 +180,7 @@
     </field>
 </record>
         
-    <record id="motgama_search_view" model="ir.ui.view">
+<!--     <record id="motgama_search_view" model="ir.ui.view"> la zona esta en habit y no en flujohab
         <field name="name">motgama.search.view</field>
         <field name="model">motgama.habitacion</field>
         <field name="arch" type="xml">
@@ -213,5 +189,5 @@
             </search>
         </field>
     </record>
-
+ -->
 </odoo>

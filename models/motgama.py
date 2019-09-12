@@ -69,10 +69,11 @@ class MotgamaCalendario(models.Model):#ok
     _description = u'Calendario'
     _rec_name = 'diasemana'
     _order = 'diasemana ASC'
+    _sql_constraints = [('codigo_uniq', 'unique (diasemana)', "El dia ya Existe, Verifique!")]
     diasemana = fields.Selection(string=u'Día Semana',selection=[('0', 'Lunes'), ('1', 'Martes'), ('2', 'Miércoles'), ('3', 'Jueves'), ('4', 'Viernes'), ('5', 'Sábado'), ('6', 'Domingo')])
-    listapreciodia = fields.Selection(string=u'Lista precio Día ',selection=[('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')])    
-    listaprecionoche = fields.Selection(string=u'Lista precio Noche',selection=[ ('l1', 'L1'),('l2', 'L2'),('l3', 'L3'),('l4', 'L4'),('l5', 'L5')])
-    listaprecioproducto = fields.Char('Lista de precio de productos')
+    listapreciodia = fields.Selection(string=u'Lista precio Día ',selection=[('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)    
+    listaprecionoche = fields.Selection(string=u'Lista precio Noche',selection=[ ('l1', 'L1'),('l2', 'L2'),('l3', 'L3'),('l4', 'L4'),('l5', 'L5')],required=True)
+    listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist',required=True) #Toma listas de odoo
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -143,24 +144,58 @@ class MotgamaTipo(models.Model):#ok Tipo de habitaciones
     # Enlaza las listas de precios por tipo
     listapreciotipo_ids = fields.One2many('motgama.listapreciotipo', 'tipo_id', string='Listas de precios')
 
+class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
+    _name = 'motgama.flujohabitacion'
+    _description = u'Flujo Habitación'
+    _rec_name = 'codigo'
+    _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El código habitación ya Existe, Verifique!")]
+    codigo = fields.Char(string=u'Código')
+    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
+    ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
+    fecha = fields.Datetime 
+    active = fields.Boolean(string=u'Activo?',default=True)
+
+    #Función para abrir la información de la habitación cuando el usuario de de click
+    @api.multi 
+    def open_record(self):
+        return {
+            'type': 'ir.actions.act_window', 
+            'res_model': 'motgama.flujohabitacion', 
+            'name': 'boton', 
+            'view_type': 'form', 
+            'view_mode': 'form', 
+            'res_id': self.id, 
+            'target': 'current' 
+        }
+
 class MotgamaHabitacion(models.Model):#ok
-#    Fields: HABITACION: .Modification Date: Mayo 6 del 2019: 
-#            - nombre = se agrega para la identificación en la habitacion (Preguntar si va).
-#            - immotica = se agrega para saber si esta habitacion es controlada por inmotica.
     _name = 'motgama.habitacion'
     _description = u'Habitación'
     _rec_name = 'codigo'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
     codigo = fields.Char(string=u'Código')
-    nombre = fields.Char(string=u'Nombre') # (06/05/2019)
+    nombre = fields.Char(string=u'Nombre') 
     zona_id = fields.Many2one(string=u'Zona',comodel_name='motgama.zona',ondelete='set null')
     tipo_id = fields.Many2one(string=u'Tipo de Habitación',comodel_name='motgama.tipo',ondelete='set null') #Tipo de Habitación
     tema_id = fields.Many2one(string=u'Tema',comodel_name='motgama.tema',ondelete='set null')
-    inmotica = fields.Boolean(string=u'¿La habitacion es controlada con inmotica?',) # (06/05/2019)
-    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
+    inmotica = fields.Boolean(string=u'¿La habitacion es controlada con inmotica?',) 
+    #estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
+    #ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     active = fields.Boolean(string=u'Activo?',default=True)
     estado_tree = fields.Char(string=u'Estado -',)
+    # Enlaza las listas de precios por habitacion
+    listapreciohabitacion_ids = fields.One2many('motgama.listapreciohabitacion', 'habitacion_id', string='Listas de precios')
     
+    @api.model
+    def create(self,values):
+        record = super(MotgamaHabitacion, self).create(values)
+        flujo = {
+            'codigo' : record.codigo,
+            'estado' : 'D'
+        }
+        self.env['motgama.flujohabitacion'].create(flujo)
+        return record
+        
     #Función para abrir la información de la habitación cuando el usuario de de click
     @api.multi 
     def open_record(self):
@@ -685,7 +720,7 @@ class MotgamaReservas(models.Model):#ok
     hora = fields.Datetime(string=u'hora')
     condecoracion = fields.Boolean(string=u'Con decoración?')
     notadecoracion = fields.Text(string=u'Nota para la decoración')
-    habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='model.habitacion',ondelete='set null')
+    habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
     anticipo = fields.Float(string=u'Anticipo $:')
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -743,7 +778,7 @@ class MotgamaBonos(models.Model):
     # El descuento se lo puede aplicar a :
     aplicahospedaje = fields.Boolean(string=u'Aplicar descuento en hospedaje',)
     aplicarestaurante = fields.Boolean(string=u'Aplicar descuento en restaurante',)
-    aplicaconsumos = fields.Boolean(string=u'Aplicar descuento en restaurante',)    
+    aplicaconsumos = fields.Boolean(string=u'Aplicar descuento en otros productos',)    
     active = fields.Boolean(string=u'Activo?',default=True)
 
 class MotgamaConsumo(models.Model):
@@ -753,8 +788,9 @@ class MotgamaConsumo(models.Model):
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
     consecutivo =  fields.Float(string=u'Total $',)
     nrocomanda = fields.Char('Nro. Comanda')
+    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.habitacion',ondelete='set null',required=True)
     movimiento_id = fields.Integer('Movimiento')
-    producto_id = fields.Many2one(string=u'pruducto_id',comodel_name='product.template',ondelete='set null',required=True)    
+    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)    
     cantidad = fields.Float(string=u'cantidad',required=True)
     vlrUnitario = fields.Float('Vlr Unitario')
     impuesto = fields.Float('Impuesto')

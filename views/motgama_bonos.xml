@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <!--Tree-->
-<record id="tree_view_bono" model="ir.ui.view">
+<record id="tree_view_bonos" model="ir.ui.view">
     <field name="name">Bonos</field>
     <field name="model">motgama.bonos</field>
     <field name="arch" type="xml">
@@ -13,7 +13,7 @@
     </field>
 </record>
 <!--Formulario-->
-<record id="form_view_bono" model="ir.ui.view">
+<record id="form_view_bonos" model="ir.ui.view">
     <field name="name">Bonos</field>
     <field name="model">motgama.bonos</field>
     <field name="arch" type="xml">
