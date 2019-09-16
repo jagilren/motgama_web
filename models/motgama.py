@@ -22,7 +22,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 ###############################################################################
 
 class MotgamaSucursal(models.Model):#ok
-#    Fields:SUCURSAL: Cada una de las sedes (Moteles).
+#    Fields:SUCURSAL: Cada una de las sedes (Moteles).                                                      P7.0.4R
     _name = 'motgama.sucursal'
     _description = u'Motgama Sucursal'
     _rec_name = 'nombre'
@@ -99,7 +99,7 @@ class MotgamaLugares(models.Model):#ok OJO
     recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')
 
 class MotgamaZona(models.Model):#ok
-#    Fields: ZONA: Zona equivale a pisos que tiene los moteles. 
+#    Fields: ZONA: Zona equivale a pisos que tiene los moteles.                                                     P7.0.4R
     _name = 'motgama.zona'
     _description = u'Zona'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
@@ -150,7 +150,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     _rec_name = 'codigo'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El código habitación ya Existe, Verifique!")]
     codigo = fields.Char(string=u'Código')
-    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
+    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Camarera'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     fecha = fields.Datetime 
     active = fields.Boolean(string=u'Activo?',default=True)
@@ -344,7 +344,7 @@ class MotgamaListaPrecioTipo(models.Model): #Lista de precios por tipo de habita
     active = fields.Boolean(string=u'Activo?',default=True)    
     #tipo_id = fields.Many2one(string=u'Tipo',comodel_name='motgama.habitacion',ondelete='set null',)
 
-class MotgamaListaPrecioHabitacion(models.Model): #Lista de precios por habitacion
+class MotgamaListaPrecioHabitacion(models.Model): #Lista de precios por habitacion                                          P7.0.4R
     _name = 'motgama.listapreciohabitacion'
     _description = 'Listas de Precios para esta habitacion'
     nombrelista = fields.Selection([('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')], string='Lista')
@@ -628,7 +628,7 @@ class MotgamaPlaca(models.Model):#10 julio
     tipovinculo = fields.Text(string=u'Tipo de vinculo',)
     descvinculo = fields.Text(string=u'Descripción del vínculo',)    
 
-class MotgamaTema(models.Model):#ok
+class MotgamaTema(models.Model):#ok                                                                                 P7.0.4R
 #   Fields: TEMA: .
     _name = 'motgama.tema'
     _description = u'Tema'
@@ -743,10 +743,10 @@ class MotgamaObjetosPerdidos(models.Model):
     active = fields.Boolean(string=u'Activo?', default=True)
 
 class MotgamaPrendas(models.Model):
-#    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019
+#    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        
     _name = 'motgama.prendas'
     _description = u'MotgamaPrendas'
-    habitacion_id = fields.Char('Habitación') # Habitacion del cliente que dejo la prende como pago
+    habitacion_id = fields.Char('Habitación') # Habitacion del cliente que dejo la prende como pago                                 P7.0.4R
     movimiento_id = fields.Integer('Movimiento',)
     movimiento_nrofactura = fields.Char('Nro. Factura')
     tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
@@ -793,7 +793,7 @@ class MotgamaConsumo(models.Model):
     producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)    
     cantidad = fields.Float(string=u'cantidad',required=True)
     vlrUnitario = fields.Float('Vlr Unitario')
-    impuesto = fields.Float('Impuesto')
+    impuesto = fields.Float('Impuesto')     # IVA                                                                                       P7.0.4R
     vlrSubtotal = fields.Float(string=u'Subtotal $',compute = "_compute_vlrsubtotal",store = True) 
     #vlrTotal =  fields.Float(string=u'Total $',compute = "_compute_vlrtotal",store = True)
     estado = fields.Char(string=u'estado')    
@@ -899,7 +899,7 @@ class MotgamaCierreTurno(models.TransientModel):
     hora = fields.Datetime(string=u'Hora')
 
 class MotgamaWizardCambioPrecios(models.TransientModel):
-    _name = 'motgama.wizardcambioprecios'
+    _name = 'motgama.wizardcambioprecios'   # sobreescribe en cada habitacion el precio del tipo                    P7.0.4R
     _description = 'Formulario para cambiar masivamente los precios'
 
 class MotgamaWizardFueradeservicio(models.TransientModel):

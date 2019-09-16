@@ -10,6 +10,7 @@
         multi="True"
         target="new"
     />
+        <!-- Formulario                                                                                                                     P7.0.4R -->
 
     <record id="wizard_fueradeuso_habitacion" model="ir.ui.view">
         <field name="name">Habitación fuera de uso</field>

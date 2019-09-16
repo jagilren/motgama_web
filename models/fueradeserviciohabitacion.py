@@ -9,7 +9,7 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
         self.ensure_one()
         habitacion_id = self.env.context['active_id']
 
-        infomovimiento = {
+        infomovimiento = {      # crea registro de movimiento para fuera de servicio                                P7.0.4R
             'habitacion_id':habitacion_id,
             'fueradeserviciohora':fields.Datetime.now(),
             'fueradeservicio_uid':self.env.user.id,

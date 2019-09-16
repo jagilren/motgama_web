@@ -12,7 +12,7 @@
         target="new"
     />
     
-<!-- Búsqueda -->
+<!-- Búsqueda                                                                                                       P7.0.4R -->
 <record id="search_view_flujohabitacion" model="ir.ui.view">
   <field name="name">Flujo Habitación</field>
   <field name="model">motgama.flujohabitacion</field>
@@ -43,7 +43,7 @@
    </tree>
   </field>
  </record> -->
-<!--Formulario-->
+<!--Formulario                                                                                                           P7.0.4R -->
   <record id="form_view_flujohabitacion" model="ir.ui.view">
   <field name="name">Habitación</field>
   <field name="model">motgama.flujohabitacion</field>
@@ -56,8 +56,8 @@
             </group>
         </group>
         <group name="group_top">
-            <!-- <field name="estado" string="Estado" readonly="1"/> -->
             <field name="estado" string="Estado"/>
+            <!-- <field name="estado" string="Estado" readonly="1"/> -->
             <field name="active" string="Activar" readonly="1"/>
             <br/><br/><br/><br/>
         </group><br/>
@@ -66,16 +66,16 @@
         
            <group name="group_top" col="10">
                 <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
-                    class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'FS', 'FU'])]}" />
+                    class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'RC', 'R', 'FS', 'FU'])]}" />
                     
                 <button name="button_desasignar" type="object" string="desasignar habitación"
-                    class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ','FS', 'FU'])]}" />
+                    class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}" />
                     
                 <button name="button_cambio_de_plan" type="object" string="Cambio de plan"
-                    class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
+                    class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
                     
                 <button name="button_cambio_de_habitacion" type="object" string="Cambio de habitación"
-                    class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
+                    class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
                     
                 <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
                     class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
@@ -84,16 +84,19 @@
                     class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
                     
                 <button name="button_habilitar" string="Habilitar habitacion" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
+                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['RC'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
                     
+                <button name="button_aseo" string="Asear" type="object"
+                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
+
                 <button name="button_liquidar" string="Liquidar" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'FS', 'FU'])]}"/>
+                    class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
                     
                 <button name="button_recaudar" string="Recaudar" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/>
+                    class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'OA', 'OO', 'RC', 'R', 'FS', 'FU'])]}"/>
                     
-                <button name="button_continuar" string="Continuar" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ', 'FS', 'FU')]}"/>
+                <button name="button_continuar" string="Rehabilitar" type="object"
+                    class="btn btn"  attrs="{'invisible': [('estado','!=', 'LQ')]}"/>
             </group>
 
         </footer>
@@ -128,10 +131,7 @@
                 <img alt="Liquidada" t-att-src="_s + &quot;/motgama/static/src/img/estado_fucsia.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
             </t>
             <t t-if="record.estado.raw_value === 'RC'">
-                <img alt="Recaudada" t-att-src="_s + &quot;/motgama/static/src/img/estado_cafe.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
-            </t>
-            <t t-if="record.estado.raw_value === 'LM'">
-                <img alt="Limpieza" t-att-src="_s + &quot;/motgama/static/src/img/estado_azul.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                <img alt="Recaudada" t-att-src="_s + &quot;/motgama/static/src/img/estado_azul.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
             </t>
             <t t-if="record.estado.raw_value === 'R'">
                 <img alt="Reservada" t-att-src="_s + &quot;/motgama/static/src/img/estado_amarillo.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
@@ -140,7 +140,7 @@
                 <img alt="Fuera de Servicio" t-att-src="_s + &quot;/motgama/static/src/img/estado_azulclaro.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
             </t>
             <t t-if="record.estado.raw_value === 'FU'">
-                <img alt="Fuera de Uso" t-att-src="_s + &quot;/motgama/static/src/img/estado_negro.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                <img alt="Fuera de Uso" t-att-src="_s + &quot;/motgama/static/src/img/estado_cafe.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
             </t>    
             <t t-if="record.estado.raw_value === 'HB'">
                 <img alt="Habilitar habitacón" t-att-src="_s + &quot;&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>

@@ -14,7 +14,7 @@ class MotgamaWizardCambioPrecios(models.TransientModel):
             #   Si existe al menos una lista de precios: Borra toda la tabla de lista de precios de Habitación
             ListasPreciosHabitacion.unlink()
 
-        #   Se cargan los tipos de habitación
+        #   Se cargan los tipos de habitación                                                                           P7.0.4R
         TiposHabitacion = self.env['motgama.tipo'].search([])
 
         #   Se recorre cada uno de los tipos
@@ -26,7 +26,7 @@ class MotgamaWizardCambioPrecios(models.TransientModel):
             #   Se recorre cada habitación y cada lista de precios
             for habitacion in Habitaciones:
                 for lista in Listas:
-                    #   Se carga un diccionario con la información de la lista de precios
+                    #   Se carga un diccionario con la información de la lista de precios                               P7.0.4R
                     infoLista = {
                         'nombrelista':lista.nombrelista,
                         'tarifaocasional':lista.tarifaocasional,

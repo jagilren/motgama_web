@@ -196,7 +196,7 @@ action="accion_motgama_bonos_form"
 />
 
 <!-- PROCESOS -->
-<!-- FLUJO DE HABITACIONES (CORE NEGOCIO) -->
+<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
 <!-- Accion -->
 <act_window id="accion_motgama_flujohabitacion_form"
 name="Flujo Habitaciones"
@@ -299,7 +299,7 @@ name="Movimiento"
 res_model="motgama.movimiento"
 view_mode="tree,form"
 />
-<!-- Item de menu -->
+<!-- Item de menu                                                                                                       P7.0.4R -->
 <menuitem id="menu_motgama_movimiento_form"
 name="Movimiento"
 parent="menu_motgama_query"

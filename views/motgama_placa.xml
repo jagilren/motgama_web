@@ -15,7 +15,7 @@
             </tree>
         </field>
     </record>
-    <!--Form-->
+    <!--Form                                                                                                                P7.0.4R -->
     <record id="form_view_placa" model="ir.ui.view">
         <field name="name">Historico de Placas</field>
         <field name="model">motgama.placa</field>
