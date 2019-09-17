@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--Tree-->
+<!--Tree                                                                                                            P7.0.4R -->
 <record id="tree_view_bonos" model="ir.ui.view">
     <field name="name">Bonos</field>
     <field name="model">motgama.bonos</field>

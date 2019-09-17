@@ -11,7 +11,7 @@
     </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                                              P7.0.4R -->
 <record id="form_view_tema" model="ir.ui.view">
     <field name="name">Zona</field>
     <field name="model">motgama.tema</field>

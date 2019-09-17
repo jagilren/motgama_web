@@ -11,6 +11,7 @@
         target="new"
     />
 
+        <!-- Formulario                                                                                                                     P7.0.4R -->
     <record id="wizard_fueradeservicio_habitacion" model="ir.ui.view">
         <field name="name">Habitación fuera de servicio</field>
         <field name="model">motgama.wizardfueradeservicio</field>

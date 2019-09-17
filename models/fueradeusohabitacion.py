@@ -12,7 +12,7 @@ class MotgamaWizardFueradeuso(models.TransientModel):
         habitacion = self.env['motgama.habitacion'].search([('codigo','=',flujo['codigo'])])
         habitacion_id = habitacion.id
 
-        infomovimiento = {
+        infomovimiento = {      # Crea registro de movimiento para colocar la hab fuera de uso                      P7.0.4R
             'habitacion_id':habitacion_id,
             'fueradeusohora':fields.Datetime.now(),
             'fueradeuso_uid':self.env.user.id,

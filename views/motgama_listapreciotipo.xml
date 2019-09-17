@@ -15,7 +15,7 @@
     </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                                                  P7.0.4R -->
 <record id="form_view_listapreciotipo" model="ir.ui.view">
     <field name="name">Lista de precios por tipo de habitación</field>
     <field name="model">motgama.listapreciotipo</field>

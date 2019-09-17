@@ -12,7 +12,7 @@
         target="new"
     />
     
-<!-- Búsqueda -->
+<!-- Búsqueda                                                                                                            P7.0.4R -->
 <record id="search_view_habitacion" model="ir.ui.view">
   <field name="name">Habitación</field>
   <field name="model">motgama.habitacion</field>

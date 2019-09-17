@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--Formulario-->
+<!--Formulario                                                                                                              P7.0.4R -->
 <record id="form_view_cambioprecios" model="ir.ui.view">
     <field name="name">Cambio de precios</field>
     <field name="model">motgama.wizardcambioprecios</field>

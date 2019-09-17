@@ -16,7 +16,7 @@
     </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                              P7.0.4R -->
 <record id="form_view_sucursal" model="ir.ui.view">
     <field name="name">Sucursal</field>
     <field name="model">motgama.sucursal</field>
