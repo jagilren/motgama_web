@@ -12,12 +12,14 @@ class MotgamaWizardHabitacion(models.TransientModel):
     def button_asignar_wizard(self):
         self.ensure_one()
         # Extrae del contexto el ID de la habitaciòn actual
-        Habitacion = self.env.context['active_id']
-        fullHabitacion = self.env['motgama.habitacion'].search([('id','=',Habitacion)], limit=1) # Trae todos los datos de la habitacion actual
+        flujo_id = self.env.context['active_id']
+        flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
+        Habitacion = flujo['codigo']
+        fullHabitacion = self.env['motgama.habitacion'].search([('codigo','=',Habitacion)], limit=1) # Trae todos los datos de la habitacion actual
         fechaActual = datetime.now()
 
         if not self.env.user.tz:
-            raise Warning('Su usuario no tiene una zona horaria definida, contacte al administrador')
+            raise Warning('El usuario no tiene una zona horaria definida, contacte al administrador')
         
         tz = pytz.timezone(self.env.user.tz)
 
@@ -50,7 +52,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro
         valores = {}
         # Se rellena el diccionario con los valores del registro
-        valores.update({'habitacion_id': Habitacion})
+        valores.update({'habitacion_id': fullHabitacion.id})
         valores.update({'tipovehiculo': self.tipovehiculo})
         valores.update({'placa_vehiculo': self.placa})
         valores.update({'asignatipo': self.asignatipo})
@@ -102,7 +104,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         nuevoMovimiento = Movimiento.create(valores)
         # Si fue exitosa la creación del registro entonces se cambia el estado de la habitación
         if nuevoMovimiento:
-            fullHabitacion.sudo().write({'estado':self.asignatipo})
+            flujo.sudo().write({'estado':self.asignatipo})
         else:
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
         #Termina

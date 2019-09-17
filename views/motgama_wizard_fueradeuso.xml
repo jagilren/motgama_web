@@ -4,7 +4,7 @@
         id="action_wizard_fuera_uso"               
         res_model="motgama.wizardfueradeuso" 
         name="Fuera de uso"
-        src_model="motgama.habitacion"
+        src_model="motgama.flujohabitacion"
         view_type="form"    
         view_mode="form"
         multi="True"

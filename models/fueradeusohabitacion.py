@@ -7,7 +7,10 @@ class MotgamaWizardFueradeuso(models.TransientModel):
     @api.multi
     def button_fuera_uso(self):
         self.ensure_one()
-        habitacion_id = self.env.context['active_id']
+        flujo_id = self.env.context['active_id']
+        flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)])
+        habitacion = self.env['motgama.habitacion'].search([('codigo','=',flujo['codigo'])])
+        habitacion_id = habitacion.id
 
         infomovimiento = {
             'habitacion_id':habitacion_id,
@@ -16,8 +19,11 @@ class MotgamaWizardFueradeuso(models.TransientModel):
             'fueradeusoobservacion':self.observacion,
             'fueradeuso_usuarioorden':self.usuario_orden
         }
-        self.env['motgama.movimiento'].create(infomovimiento)
+        nuevoMovimiento = self.env['motgama.movimiento'].create(infomovimiento)
 
-        # TODO: Enviar correo de movimiento
+        if nuevoMovimiento:
+            flujo.sudo().write({'estado':'FU'})
+            # TODO: Enviar correo de movimiento
 
-        self.env['motgama.habitacion'].search([('id','=',habitacion_id)]).write({'estado':'FU'})
+        else:
+            raise Warning('No se pudo cambiar el estado de la habitación')
