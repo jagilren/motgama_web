@@ -150,6 +150,9 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     _description = u'Flujo Habitación'
     _rec_name = 'codigo'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El código habitación ya Existe, Verifique!")]
+
+    _inherit = 'base'
+
     codigo = fields.Char(string=u'Código')
     estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Camarera'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
@@ -168,6 +171,18 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             'res_id': self.id, 
             'target': 'current' 
         }
+    
+    @api.multi
+    def write(self, values):
+        record = super(MotgamaFlujoHabitacion, self).write(values)
+        self.refresh_views()
+        return record
+
+    @api.model
+    def create(self, values):
+        record = super(MotgamaFlujoHabitacion, self).create(values)
+        self.refresh_views()
+        return record
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'
