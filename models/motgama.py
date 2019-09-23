@@ -628,6 +628,9 @@ class MotgamaMovimiento(models.Model):#ok
     fueradeuso_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     fueradeusoobservacion = fields.Char(string='Observaciones fuera de servicio')
     fueradeuso_usuarioorden = fields.Char(string='Persona que dio la orden')
+    # Se agrega lista de precios traida del calendario según el día de la semana
+    listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist')
+
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
@@ -716,11 +719,11 @@ class MotgamaConsumo(models.Model):
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
     consecutivo =  fields.Float(string=u'Total $',)
     nrocomanda = fields.Char('Nro. Comanda')
-    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.habitacion',ondelete='set null',required=True)
-    movimiento_id = fields.Integer('Movimiento')
-    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)    
-    cantidad = fields.Float(string=u'cantidad',required=True)
-    vlrUnitario = fields.Float('Vlr Unitario')
+    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento')
+    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.product',ondelete='set null',required=True)   
+    cantidad = fields.Float(string=u'Cantidad',required=True)
+    vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario')
     impuesto = fields.Float('Impuesto')     # IVA                                                                                       P7.0.4R
     vlrSubtotal = fields.Float(string=u'Subtotal $',compute = "_compute_vlrsubtotal",store = True) 
     #vlrTotal =  fields.Float(string=u'Total $',compute = "_compute_vlrtotal",store = True)
@@ -729,10 +732,17 @@ class MotgamaConsumo(models.Model):
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id) #Este dato se trae del usuario        #compute = "_compute_consecutivo",
         #store = True
 
-    @api.depends('producto_id')
+    @api.depends('habitacion')
+    def _compute_movimiento(self):
+        for record in self:
+            record.movimiento_id = record.habitacion.ultmovimiento
+
+    @api.depends('habitacion','producto_id')
     def _compute_vlrunitario(self):
         for record in self:
-            record['vlrUnitario'] = record.producto_id.list_price
+            lista = record.movimiento_id.listaprecioproducto
+            precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_id','=',record['producto_id'])])
+            record['vlrUnitario'] = precioLista.fixed_price
     
     """ @api.depends('amount')
     def _compute_iva(self):

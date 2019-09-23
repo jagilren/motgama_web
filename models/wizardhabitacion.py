@@ -74,6 +74,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         inicioNoche = tz.localize(inicioNocheTz).astimezone(pytz.utc).time()
         qryLista = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
         if qryLista:
+            # valores.update('listaprecioproducto':qryLista['listaprecioproducto'])
             if (inicioDia < fechaActual.time() < inicioNoche):
                 Lista = qryLista['listapreciodia']
             else:
@@ -81,14 +82,15 @@ class MotgamaWizardHabitacion(models.TransientModel):
         else:
             raise Warning('Error: No existe calendario para la lista de precios')
         # Chequear primero si la habitacion tiene seteada la lista de precios
-        tarifaHabitacion = self.env['motgama.listapreciohabitacion'].search([('habitacion_id','=',Habitacion),('nombrelista','=',Lista)], limit=1)
+        tarifaHabitacion = self.env['motgama.listapreciohabitacion'].search(['&',('habitacion_id','=',fullHabitacion.id),('nombrelista','=',Lista)], limit=1)
+        raise Warning(fullHabitacion.id)
         if tarifaHabitacion:
             valores.update({'tarifaocasional': tarifaHabitacion['tarifaocasional']})
             valores.update({'tarifamanecida': tarifaHabitacion['tarifamanecida']})
             valores.update({'tarifahoradicional': tarifaHabitacion['tarifahoradicional']})
         else:
             # Si la habitacion no tiene seteada unas tarifas, se procede con las que hay por tipo de habitacion            
-            tarifaTipoHabitacion = self.env['motgama.listapreciotipo'].search([('tipo_id','=',fullHabitacion['tipo_id'].id),('nombrelista','=',Lista)], limit=1)
+            tarifaTipoHabitacion = self.env['motgama.listapreciotipo'].search(['&',('tipo_id','=',fullHabitacion.tipo_id.id),('nombrelista','=',Lista)], limit=1)
             if tarifaTipoHabitacion:
                 valores.update({'tarifaocasional': tarifaTipoHabitacion['tarifaocasional']})
                 valores.update({'tarifamanecida': tarifaTipoHabitacion['tarifamanecida']})
@@ -105,6 +107,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         # Si fue exitosa la creación del registro entonces se cambia el estado de la habitación
         if nuevoMovimiento:
             flujo.sudo().write({'estado':self.asignatipo})
+            flujo.sudo().write({'ultmovimiento':nuevoMovimiento.id})
         else:
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
         #Termina

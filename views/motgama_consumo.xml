@@ -7,7 +7,7 @@
     <field name="limit">100</field>
     <field name="arch" type="xml">   
       <tree string="Consumo" editable="bottom">
-                <field name="habitacion" string="Habitacion" required="1"/>
+                <field name="habitacion" string="Habitacion" required="1" domain="[('estado','in',['OO','OA','LQ'])]" options="{'no_create':True}"/>
                 <field name="producto_id" string="Producto" required="1"/>
                 <field name="cantidad" string="Cantidad" required="1"/>
                 <field name="vlrUnitario" string="Valor Unitario $"/>
