@@ -83,7 +83,6 @@ class MotgamaWizardHabitacion(models.TransientModel):
             raise Warning('Error: No existe calendario para la lista de precios')
         # Chequear primero si la habitacion tiene seteada la lista de precios
         tarifaHabitacion = self.env['motgama.listapreciohabitacion'].search(['&',('habitacion_id','=',fullHabitacion.id),('nombrelista','=',Lista)], limit=1)
-        raise Warning(fullHabitacion.id)
         if tarifaHabitacion:
             valores.update({'tarifaocasional': tarifaHabitacion['tarifaocasional']})
             valores.update({'tarifamanecida': tarifaHabitacion['tarifamanecida']})
