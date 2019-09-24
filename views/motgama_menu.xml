@@ -23,19 +23,33 @@ action="accion_motgama_cambioprecios"
 />
 
 <!-- PRINCIPAL -->
+<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
 <!-- Accion -->
-<act_window id="accion_motgama_habitacion"
-name="Habitaciones"
-res_model="motgama.habitacion"
+<act_window id="accion_motgama_flujohabitacion_form"
+name="Flujo Habitaciones"
+res_model="motgama.flujohabitacion"
 view_mode="kanban"
 limit="100"
 />
 <!-- Item de menu -->
-<menuitem id="menu_motgama_habitacion"
+<menuitem id="menu_motgama_flujohabitacion_form"
+name="Flujo Habitaciones"
+parent="menu_motgama"
+action="accion_motgama_flujohabitacion_form"
+/>
+<!-- Accion -->
+<!-- <act_window id="accion_motgama_habitacion"
+name="Habitaciones"
+res_model="motgama.habitacion"
+view_mode="kanban"
+limit="100"
+/> -->
+<!-- Item de menu -->
+<!-- <menuitem id="menu_motgama_habitacion"
 name="Habitaciones"
 parent="menu_motgama"
 action="accion_motgama_habitacion"
-/>
+/> -->
 
 <!-- ARCHIVOS MAESTROS -->
 <!-- Accion -->
@@ -196,20 +210,6 @@ action="accion_motgama_bonos_form"
 />
 
 <!-- PROCESOS -->
-<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
-<!-- Accion -->
-<act_window id="accion_motgama_flujohabitacion_form"
-name="Flujo Habitaciones"
-res_model="motgama.flujohabitacion"
-view_mode="kanban"
-limit="100"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_flujohabitacion_form"
-name="Flujo Habitaciones"
-parent="menu_motgama_processes"
-action="accion_motgama_flujohabitacion_form"
-/>
 
 <!-- Accion  -->
 <act_window id="accion_motgama_reserva_form"
