@@ -9,10 +9,9 @@
       <tree string="Consumo" editable="bottom">
                 <field name="habitacion" string="Habitacion" required="1" domain="[('estado','in',['OO','OA','LQ'])]" options="{'no_create':True}"/>
                 <field name="producto_id" string="Producto" required="1"/>
-                <field name="cantidad" string="Cantidad" required="1"/>
                 <field name="vlrUnitario" string="Valor Unitario $"/>
-                <field name="impuesto" string="Impuestos" widget="many2many_tags" options="{'no_create': True}"/>
-                <field name="vlrSubtotal" string="Subtotal $" invisible="1"/>
+                <field name="cantidad" string="Cantidad" required="1"/>
+                <field name="vlrSubtotal" string="Subtotal $"/>
       </tree>
     </field>
   </record>

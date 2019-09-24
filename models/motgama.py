@@ -22,7 +22,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 ###############################################################################
 
 class MotgamaSucursal(models.Model):#ok
-#    Fields:SUCURSAL: Cada una de las sedes (Moteles).                                                      P7.0.4R
+#    Fields:SUCURSAL: Cada una de las sedes (Moteles).                                                      #P7.0.4R
     _name = 'motgama.sucursal'
     _description = u'Motgama Sucursal'
     _rec_name = 'nombre'
@@ -100,7 +100,7 @@ class MotgamaLugares(models.Model):#ok OJO
     recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')
 
 class MotgamaZona(models.Model):#ok
-#    Fields: ZONA: Zona equivale a pisos que tiene los moteles.                                                     P7.0.4R
+#    Fields: ZONA: Zona equivale a pisos que tiene los moteles.                                                     #P7.0.4R
     _name = 'motgama.zona'
     _description = u'Zona'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
@@ -353,7 +353,7 @@ class MotgamaListaPrecioTipo(models.Model): #Lista de precios por tipo de habita
     active = fields.Boolean(string=u'Activo?',default=True)    
     #tipo_id = fields.Many2one(string=u'Tipo',comodel_name='motgama.habitacion',ondelete='set null',)
 
-class MotgamaListaPrecioHabitacion(models.Model): #Lista de precios por habitacion                                          P7.0.4R
+class MotgamaListaPrecioHabitacion(models.Model): #Lista de precios por habitacion                                          #P7.0.4R
     _name = 'motgama.listapreciohabitacion'
     _description = 'Listas de Precios para esta habitacion'
     nombrelista = fields.Selection([('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')], string='Lista')
@@ -556,7 +556,7 @@ class MotgamaPlaca(models.Model):#10 julio
     tipovinculo = fields.Text(string=u'Tipo de vinculo',)
     descvinculo = fields.Text(string=u'Descripción del vínculo',)    
 
-class MotgamaTema(models.Model):#ok                                                                                 P7.0.4R
+class MotgamaTema(models.Model):#ok                                                                                 #P7.0.4R
 #   Fields: TEMA: .
     _name = 'motgama.tema'
     _description = u'Tema'
@@ -677,7 +677,7 @@ class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        
     _name = 'motgama.prendas'
     _description = u'MotgamaPrendas'
-    habitacion_id = fields.Char('Habitación') # Habitacion del cliente que dejo la prende como pago                                 P7.0.4R
+    habitacion_id = fields.Char('Habitación') # Habitacion del cliente que dejo la prende como pago                                 #P7.0.4R
     movimiento_id = fields.Integer('Movimiento',)
     movimiento_nrofactura = fields.Char('Nro. Factura')
     tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
@@ -720,29 +720,33 @@ class MotgamaConsumo(models.Model):
     consecutivo =  fields.Float(string=u'Total $',)
     nrocomanda = fields.Char('Nro. Comanda')
     habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
-    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento')
-    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.product',ondelete='set null',required=True)   
+    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento',store=True)
+    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
     cantidad = fields.Float(string=u'Cantidad',required=True)
-    vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario')
-    impuesto = fields.Float('Impuesto')     # IVA                                                                                       P7.0.4R
-    vlrSubtotal = fields.Float(string=u'Subtotal $',compute = "_compute_vlrsubtotal",store = True) 
-    #vlrTotal =  fields.Float(string=u'Total $',compute = "_compute_vlrtotal",store = True)
+    vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario',store=True)                                                                                     #P7.0.4R
+    vlrSubtotal = fields.Float(string=u'Subtotal $',compute="_compute_vlrsubtotal",store = True)
     estado = fields.Char(string=u'estado')    
     active = fields.Boolean(string=u'Activo?',default=True)    
-    asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id) #Este dato se trae del usuario        #compute = "_compute_consecutivo",
-        #store = True
+    asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
 
     @api.depends('habitacion')
     def _compute_movimiento(self):
         for record in self:
-            record.movimiento_id = record.habitacion.ultmovimiento
+            record.movimiento_id = record['habitacion'].ultmovimiento
 
     @api.depends('habitacion','producto_id')
     def _compute_vlrunitario(self):
         for record in self:
-            lista = record.movimiento_id.listaprecioproducto
-            precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_id','=',record['producto_id'])])
-            record['vlrUnitario'] = precioLista.fixed_price
+            if record.producto_id:
+                movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id)], limit=1)
+                lista = movimiento.listaprecioproducto
+                precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
+                record['vlrUnitario'] = precioLista.fixed_price
+
+    @api.depends('vlrUnitario')
+    def _compute_vlrsubtotal(self):
+        for record in self:
+            record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
     
     """ @api.depends('amount')
     def _compute_iva(self):
@@ -754,7 +758,7 @@ class MotgamaConsumo(models.Model):
         for record in self:
             record.impuesto = record.taxes_id """
     
-    @api.depends('vlrUnitario','cantidad')
+    """ @api.depends('vlrUnitario','cantidad')
     def _compute_vlrsubtotal(self):
         for record in self:
             record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
@@ -787,7 +791,7 @@ class MotgamaConsumo(models.Model):
                     self.vlrUnitario = None
                     self.impuestos = None
                     self.vlrTotal = None
-                raise Warning('No se puede cargar consumos a esta habitación, verifique que este asignada')
+                raise Warning('No se puede cargar consumos a esta habitación, verifique que este asignada') """
 
 #Añade a la tabla de usuarios el campo de recepción asociada. OJO NO SE HA MODIFICADO EN LA VISTA
 class Users(models.Model):
@@ -837,7 +841,7 @@ class MotgamaCierreTurno(models.TransientModel):
     hora = fields.Datetime(string=u'Hora')
 
 class MotgamaWizardCambioPrecios(models.TransientModel):
-    _name = 'motgama.wizardcambioprecios'   # sobreescribe en cada habitacion el precio del tipo                    P7.0.4R
+    _name = 'motgama.wizardcambioprecios'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R
     _description = 'Formulario para cambiar masivamente los precios'
 
 class MotgamaWizardFueradeservicio(models.TransientModel):

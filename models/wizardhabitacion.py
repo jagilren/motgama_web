@@ -74,7 +74,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         inicioNoche = tz.localize(inicioNocheTz).astimezone(pytz.utc).time()
         qryLista = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
         if qryLista:
-            # valores.update('listaprecioproducto':qryLista['listaprecioproducto'])
+            valores.update({'listaprecioproducto':qryLista['listaprecioproducto'].id})
             if (inicioDia < fechaActual.time() < inicioNoche):
                 Lista = qryLista['listapreciodia']
             else:
