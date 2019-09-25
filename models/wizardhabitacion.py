@@ -69,13 +69,12 @@ class MotgamaWizardHabitacion(models.TransientModel):
         nroDia = fechaActual.weekday()
         # nombreDia = calendar.day_name[nroDia] # Utilizo el calendario para saber el nombre del día.
         inicioDiaTz = datetime.strptime(str(flagInicioDia['valor']),"%H:%M")
-        inicioDia = tz.localize(inicioDiaTz).astimezone(pytz.utc).time()
         inicioNocheTz = datetime.strptime(str(flagInicioNoche['valor']),"%H:%M")
-        inicioNoche = tz.localize(inicioNocheTz).astimezone(pytz.utc).time()
+        fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
         qryLista = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
         if qryLista:
             valores.update({'listaprecioproducto':qryLista['listaprecioproducto'].id})
-            if (inicioDia < fechaActual.time() < inicioNoche):
+            if (inicioDiaTz.time() < fechaActualTz.time() < inicioNocheTz.time()):
                 Lista = qryLista['listapreciodia']
             else:
                 Lista = qryLista['listaprecionoche']
