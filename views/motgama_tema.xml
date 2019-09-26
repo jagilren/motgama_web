@@ -8,6 +8,7 @@
     <tree string="Tema">
         <field name="codigo" />
         <field name="nombre" />
+        <field name="descripcion" />
     </tree>
     </field>
 </record>
@@ -24,7 +25,7 @@
             <field name="nombre"
                 placeholder="Ingrese el nombre del tema" />
             <field name="descripcion"
-                placeholder="Ingrese el nombre del tema" />
+                placeholder="Ingrese descripcion del tema" />
             <field name="fotografia" 
                 widget="image" />
             <field name="active"/>

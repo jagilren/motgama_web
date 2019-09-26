@@ -75,6 +75,8 @@ class MotgamaCalendario(models.Model):#ok
     listapreciodia = fields.Selection(string=u'Lista precio Día ',selection=[('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)    
     listaprecionoche = fields.Selection(string=u'Lista precio Noche',selection=[ ('l1', 'L1'),('l2', 'L2'),('l3', 'L3'),('l4', 'L4'),('l5', 'L5')],required=True)
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist',required=True) #Toma listas de odoo
+    horainicioamanecida=fields.Char(string='H inic.Amanec.(hh:mm)')
+    horafinamanecida=fields.Char(string='H Fin.Amanec.(hh:mm)')
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -157,6 +159,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Camarera'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     fecha = fields.Datetime 
+    recepcion = fields.Char(string=u'Recepcion')
     active = fields.Boolean(string=u'Activo?',default=True)
 
     #Función para abrir la información de la habitación cuando el usuario de de click
@@ -212,135 +215,6 @@ class MotgamaHabitacion(models.Model):#ok
         self.env['motgama.flujohabitacion'].create(flujo)
         return record
         
-    #Función para abrir la información de la habitación cuando el usuario de de click
-    @api.multi 
-    def open_record(self):
-        return {
-            'type': 'ir.actions.act_window', 
-            'res_model': 'motgama.habitacion', 
-            'name': 'boton', 
-            'view_type': 'form', 
-            'view_mode': 'form', 
-            'res_id': self.id, 
-            'target': 'current' 
-        }
-
-    @api.multi
-    def prueba_boton(self):
-        # first you need to get the id of your record
-        # you didn't specify what you want to edit exactly
-        rec_id = self.someMany2oneField.id
-        # then if you have more than one form view then specify the form id
-        form_id = self.env.ref('module_name.form_xml_id')
-
-        # then open the form
-        return {
-                'type': 'ir.actions.act_window',
-                'name': 'title',
-                'res_model': 'your.model',
-                'res_id': rec_id.id,
-                'view_type': 'form',
-                'view_mode': 'form',
-                'view_id': form_id.id,
-                'context': {},  
-                # if you want to open the form in edit mode direclty            
-                'flags': {'initial_mode': 'edit'},
-                'target': 'current',
-            }
-
-    #Funcion para desasignar la cabaña
-    @api.multi 
-    def button_desasignar(self):
-        raise Warning('Ingreso al botón desasignar')
-
-    #Funcion para cambiar de amanecida a ocasional cabaña
-    @api.multi 
-    def button_cambio_de_plan(self):
-        raise Warning('Ingreso al botón cambio de plan')
-
-    #Funcion para cambio de la cabaña
-    @api.multi 
-    def button_cambio_de_habitacion(self):
-        raise Warning('Ingreso al botón de habitacion')
-
-    #Funcion para fuera de servicio la cabaña
-    @api.multi 
-    def button_habilitar(self):
-        if self.estado == 'FS' or self.estado == 'FU' :
-            for record in self:
-                record['estado']='D'
-    
-    #Funcion para liquidar la cabaña
-
-    @api.multi 
-    def button_liquidar(self):
-        self.ensure_one()
-        habitacion = self.env.context['active_id']
-        #habitacion_id = no hace referencia a que es una llave foranea
-        if self.estado == 'OO':
-            qrymovimiento = "SELECT * from motgama_movimiento WHERE habitacion_id = '" + str(habitacion) + "';"
-            self.env.cr.execute(qrymovimiento)
-            if self.env.cr.rowcount:
-                self.ensure_one()
-                resmovimiento = self.env.cr.dictfetchone()
-                tarifaocasional = resmovimiento['tarifaocasional']
-                valorhoraextra = resmovimiento['tarifahoradicional']
-                horasestadia = datetime.now() - resmovimiento['asignahora']
-                totalestadia = horasestadia.total_seconds()/3600.0
-                if totalestadia > resmovimiento['tiemponormalocasional']:
-                    tiempoextra = totalestadia - resmovimiento['tiemponormalocasional']
-                    """ 
-                    tiempoextra = asignahora - tiemponormalocasional
-                    total = tarifaocasional + (tarifahoradicional*tiempoextra)"""
-                else:
-                    tiempoextra = 0
-                valortiempoadicional = tiempoextra * valorhoraextra
-                valorhosedaje = tarifaocasional
-                totalhospedaje = valortiempoadicional + valorhosedaje
-                # Traemos todos los datos de los consumos que tiene la habitacion
-                #asignada = self.env.context['active_id']
-                #asigna = self._context.get('active_ids')
-                habitacion = self.env['motgama.consumobar'].search([('asignahabitacion', '=', self.codigo)], limit=1)
-                for record in habitacion:
-                    habitacion1 = record.asignahabitacion
-                    producto1 = record.producto_id.name
-                    cantidad = record.cantidad
-                    vlrUnitario = record.producto_id.list_price
-                    impuesto = record.producto_id.taxes_id
-                    vlrTotal = record.vlrTotal
-                """ idasigana = self.env['motgama.consumobar'].browse(asigna)
-                qryconsumos = "SELECT asignahabitacion, producto_id, cantidad FROM motgama_consumobar WHERE asignahabitacion = '" + str(idasigana) + "';"
-                self.env.cr.execute(qryconsumos)
-                if self.env.cr.rowcount:
-                    self.ensure_one()
-                    resconsumosbar = self.env.cr.dictfetchone()
-                    habitacion1= 0
-                    producto1 = 0
-                    habitacion1 = resconsumosbar['asignahabitacion']
-                    producto1 = resconsumosbar['producto_id']
-                    cantidad1 = resconsumosbar['cantidad'] """
-                    #if record in resconsumosbar:                    
-                        #habitacionasignada = record.asignahabitacion
-                    #asignahabitacion = resconsumosbar['asignahabitacion']
-                #productoasignado = resconsumosbar['producto_id']
-                    #cantidad = resconsumosbar['cantidad']
-                    #vlrUnitario = resconsumosbar['vlrUnitario']
-                    #impuesto = resconsumosbar['impuestos'] # Esta se trae desde el template
-                    #vlrTotal = resconsumosbar['vlrTotal']
-            #raise Warning(str(habitacion1) + ' ' + str(producto1) + ' ' + str(cantidad) + ' ' + str(vlrUnitario) + ' ' + str(impuesto) + ' ' + str(vlrTotal))
-            raise Warning( 'Valor tiempo adicional:  ' + str(valortiempoadicional) + '  Valor hospedaje :  '+ str(valorhosedaje) +' Total hospedaje:  ' + str(totalhospedaje) + 'Consumos en esta habitacion'+ str(asignahabitacion) + 'producto' +  str(valorhosedaje) +' Total hospedaje:  ' + str(productoasignado))            
-        else:
-            raise Warning('Ingreso al botón liquidar de Ocupacion Amanecida')
-
-    #Funcion para recaudar la cabaña
-    @api.multi 
-    def button_recaudar(self):
-        raise Warning('Ingreso al botón recaudar')
-
-    #Funcion para asignar la cabaña
-    @api.multi 
-    def button_continuar(self):
-        raise Warning('Ingreso al botón continuar')
 
 class MotgamaListaPrecioTipo(models.Model): #Lista de precios por tipo de habitacion
     _name = 'motgama.listapreciotipo'
@@ -643,12 +517,11 @@ class MotgamaHistoricoMovimiento(models.Model):#ok
     active = fields.Boolean(string=u'Activo?',default=True)
 
 class MotgamaReservas(models.Model):#ok
-#    Fields: Reserva: Mayo 6 del 2019: se hereda res.partner para ingresar el usuario cuando realiza la reservacion
+#    Fields: Reserva: se hereda res.partner para ingresar el usuario cuando realiza la reservacion
     _name = 'motgama.reserva'
     _description = u'Reservas'
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
-    fecha = fields.Date(string=u'fecha')
-    hora = fields.Datetime(string=u'hora')
+    fecha = fields.Datetime(string=u'fecha')
     condecoracion = fields.Boolean(string=u'Con decoración?')
     notadecoracion = fields.Text(string=u'Nota para la decoración')
     habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
@@ -699,15 +572,16 @@ class MotgamaBonos(models.Model):
 #    Fields: Bonos: el cliente tiene una forma de pago por medio de bonos Creado: Mayo 16 del 2019
     _name = 'motgama.bonos'
     _description = u'MotgamaBonos'
+    _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
     codigo = fields.Char(string=u'Código: ',)
-    multiple = fields.Boolean(string=u'Multiple ', ) #Lo pueden utilizar varias veces
+    multiple = fields.Boolean(string=u'Multiple ', ) #Lo pueden utilizar muchas personas
     validodesde = fields.Date(string=u'Valido Desde?',)
     validohasta = fields.Date(string=u'Valido Hasta?',)
-    descuentavalor = fields.Boolean(string=u'Descuenta valor?',)
-    valorpagoefectivo = fields.Float(string=u'Valor de pago en efectivo $ ',)
-    valorpagotromedio = fields.Float(string=u'Valor del pago por otro medio $',)
+    descuentavalor = fields.Float(string=u'Descontar valor $',)
+    porcpagoefectivo = fields.Float(string=u'Porc. descto. en efectivo $ ',)
+    porcpagotromedio = fields.Float(string=u'Porc. descto. por otro medio $',)
     # El descuento se lo puede aplicar a :
-    aplicahospedaje = fields.Boolean(string=u'Aplicar descuento en hospedaje',)
+    aplicahospedaje = fields.Boolean(string=u'Aplicar descuento en hospedaje',default=True)
     aplicarestaurante = fields.Boolean(string=u'Aplicar descuento en restaurante',)
     aplicaconsumos = fields.Boolean(string=u'Aplicar descuento en otros productos',)    
     active = fields.Boolean(string=u'Activo?',default=True)

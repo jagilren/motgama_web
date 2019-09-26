@@ -11,6 +11,8 @@
             <field name="listapreciodia"/>
             <field name="listaprecionoche"/>
             <field name="listaprecioproducto"/>
+            <field name="horainicioamanecida"/>
+            <field name="horafinamanecida"/>
         </tree>
         </field>
     </record>
@@ -27,6 +29,8 @@
                     <field name="listapreciodia"/><br/>
                     <field name="listaprecionoche"/>
                     <field name="listaprecioproducto"/>
+                    <field name="horainicioamanecida"/>
+                    <field name="horafinamanecida"/>
                     <field name="active"/>
                 </group>     
             </sheet>    

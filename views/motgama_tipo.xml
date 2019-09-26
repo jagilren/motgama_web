@@ -8,6 +8,24 @@
         <tree string="Tipo">
             <field name="codigo" />
             <field name="nombre" />
+            <field name="minibar" />
+            <field name="turco" />
+            <field name="jacuzzi" />
+            <field name="camamov" />
+            <field name="smartv" />
+            <field name="barrasonido" />
+            <field name="hometheater" />
+            <field name="poledance" />
+            <field name="sillatantra" />
+            <field name="columpio" />
+            <field name="aireacond" />
+            <field name="garajecarro" />
+            <field name="garajemoto" />
+            <field name="piscina" />
+            <field name="miniteca" />
+            <field name="sauna" />
+            <field name="balcon" />
+            <field name="active" />
         </tree>
     </field>
 </record>

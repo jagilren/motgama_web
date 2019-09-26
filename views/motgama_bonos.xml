@@ -7,8 +7,16 @@
     <field name="arch" type="xml">
     <tree string="Bonos">
         <field name="codigo" />
+        <field name="multiple" />
         <field name="validodesde"/>
         <field name="validohasta"/>
+        <field name="descuentavalor" />
+        <field name="porcpagoefectivo" />
+        <field name="porcpagotromedio" />
+        <field name="aplicahospedaje" />
+        <field name="aplicahospedaje"/>
+        <field name="aplicaconsumos"/>
+        <field name="active" />
     </tree>
     </field>
 </record>
@@ -24,9 +32,9 @@
         <field name="multiple" />
         <field name="validodesde" placeholder="Bono valido desde?"/>
         <field name="validohasta" placeholder="Bono valido hasta?"/>
-        <field name="descuentavalor"/>
-        <field name="valorpagoefectivo" placeholder="Valor a pagar en efectivo?"/>
-        <field name="valorpagotromedio" placeholder="Valor a pagar con otro medio?"/>
+        <field name="descuentavalor" placeholder="Descuento en valor $"/>
+        <field name="porcpagoefectivo" placeholder="Porc. descto.en efectivo"/>
+        <field name="porcpagotromedio" placeholder="Porc. descto.con otro medio"/>
         <field name="aplicahospedaje"/>
         <field name="aplicarestaurante"/>
         <field name="aplicaconsumos"/>
@@ -37,4 +45,4 @@
     </form>
     </field>
 </record>
-</odoo>
+</odoo>  
