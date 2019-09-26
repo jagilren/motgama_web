@@ -73,7 +73,7 @@ class MotgamaCalendario(models.Model):#ok
     _sql_constraints = [('codigo_uniq', 'unique (diasemana)', "El dia ya Existe, Verifique!")]
     diasemana = fields.Selection(string=u'Día Semana',selection=[('0', 'Lunes'), ('1', 'Martes'), ('2', 'Miércoles'), ('3', 'Jueves'), ('4', 'Viernes'), ('5', 'Sábado'), ('6', 'Domingo')])
     listapreciodia = fields.Selection(string=u'Lista precio Día ',selection=[('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)    
-    listaprecionoche = fields.Selection(string=u'Lista precio Noche',selection=[ ('l1', 'L1'),('l2', 'L2'),('l3', 'L3'),('l4', 'L4'),('l5', 'L5')],required=True)
+    listaprecionoche = fields.Selection(string=u'Lista precio Noche',selection=[ ('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist',required=True) #Toma listas de odoo
     horainicioamanecida=fields.Char(string='H inic.Amanec.(hh:mm)')
     horafinamanecida=fields.Char(string='H Fin.Amanec.(hh:mm)')
@@ -214,6 +214,20 @@ class MotgamaHabitacion(models.Model):#ok
         }
         self.env['motgama.flujohabitacion'].create(flujo)
         return record
+
+    @api.multi
+    def write(self,values):
+        flujo = self.env['motgama.flujohabitacion'].search([('codigo','=',self.codigo)])
+        super().write(values)
+        flujo.write(values)
+        return True
+
+    @api.multi
+    def unlink(self):
+        for record in self:
+            flujo = self.env['motgama.flujohabitacion'].search([('codigo','=',record.codigo)])
+            flujo.unlink()
+            return super().unlink()
         
 
 class MotgamaListaPrecioTipo(models.Model): #Lista de precios por tipo de habitacion
