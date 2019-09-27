@@ -22,28 +22,35 @@ class MotgamaWizardHabitacion(models.TransientModel):
             raise Warning('El usuario no tiene una zona horaria definida, contacte al administrador')
         
         tz = pytz.timezone(self.env.user.tz)
+        fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
+        
+        # nroDia = datetime.strptime(fechaActual.date(), '%d %m %Y').weekday() # Esto me da el numero del día de la semana, python arranca con 0->lunes
+        nroDia = fechaActualTz.weekday()
+        calendario = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
+        if not calendario:
+            raise Warning('Error: No existe calendario para el día actual')
 
         # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida
         # Verifica tambien que se este dentro del horario permitido para asignar amanecidas      
         if self.asignatipo == 'OA':
-            flagInicioAmanecida = self.env['motgama.parametros'].search([('codigo','=','HINIAMANECIDA')], limit=1)
-            flagfinAmanecida = self.env['motgama.parametros'].search([('codigo','=','HFINAMANECIDA')], limit=1)
+            flagInicioAmanecida = calendario.horainicioamanecida
+            flagfinAmanecida = calendario.horafinamanecida
             if not flagInicioAmanecida:
-                raise Warning('No se ha definido el parámetro "Hora Inicio Amanecida"')
+                raise Warning('No se ha definido "Hora Inicio Amanecida" en el calendario')
             if not flagfinAmanecida:
-                raise Warning('No se ha definido el parámetro "Hora Fin Amanecida"')
-            if flagInicioAmanecida['valor'] == '0' and flagfinAmanecida['valor'] == '0':
+                raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')
+            if flagInicioAmanecida == '0' and flagfinAmanecida == '0':
                 raise Warning('No se admite amanecida')
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
-            flagInicioTz = datetime.strptime(str(flagInicioAmanecida['valor']),"%H:%M")
-            flagFinTz = datetime.strptime(str(flagfinAmanecida['valor']),"%H:%M")
-            flagInicio = tz.localize(flagInicioTz).astimezone(pytz.utc).time()
-            flagFin = tz.localize(flagFinTz).astimezone(pytz.utc).time()
-            if flagInicio > flagFin:
-                if flagFin < fechaActual.time() < flagInicio:
+            flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
+            flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")
+            # flagInicio = tz.localize(flagInicioTz).astimezone(pytz.utc).time()
+            # flagFin = tz.localize(flagFinTz).astimezone(pytz.utc).time()
+            if flagInicioTz > flagFinTz:
+                if flagFinTz.time() < fechaActualTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             else:
-                if not (flagInicio < fechaActual.time() < flagFin): # OJO No incluye los extremos
+                if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
         # Ahora busca en las placas para verificar alguna novedad y mostrarla al operador. El mensaje aparece en el chatter
         novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(self.placa))], limit=1)
@@ -65,21 +72,17 @@ class MotgamaWizardHabitacion(models.TransientModel):
         flagInicioNoche = self.env['motgama.parametros'].search([('codigo','=','HINICIONOCHE')], limit=1)
         if not flagInicioNoche:
             raise Warning('Error: No se ha definido el parámetro "Hora Inicio Noche"')
-        # nroDia = datetime.strptime(fechaActual.date(), '%d %m %Y').weekday() # Esto me da el numero del día de la semana, python arranca con 0->lunes
-        nroDia = fechaActual.weekday()
         # nombreDia = calendar.day_name[nroDia] # Utilizo el calendario para saber el nombre del día.
         inicioDiaTz = datetime.strptime(str(flagInicioDia['valor']),"%H:%M")
         inicioNocheTz = datetime.strptime(str(flagInicioNoche['valor']),"%H:%M")
         fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
-        qryLista = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
-        if qryLista:
-            valores.update({'listaprecioproducto':qryLista['listaprecioproducto'].id})
-            if (inicioDiaTz.time() < fechaActualTz.time() < inicioNocheTz.time()):
-                Lista = qryLista['listapreciodia']
-            else:
-                Lista = qryLista['listaprecionoche']
+
+        valores.update({'listaprecioproducto':calendario['listaprecioproducto'].id})
+        if (inicioDiaTz.time() < fechaActualTz.time() < inicioNocheTz.time()):
+            Lista = calendario['listapreciodia']
         else:
-            raise Warning('Error: No existe calendario para la lista de precios')
+            Lista = calendario['listaprecionoche']
+
         # Chequear primero si la habitacion tiene seteada la lista de precios
         tarifaHabitacion = self.env['motgama.listapreciohabitacion'].search(['&',('habitacion_id','=',fullHabitacion.id),('nombrelista','=',Lista)], limit=1)
         if tarifaHabitacion:
