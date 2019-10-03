@@ -510,14 +510,13 @@ class MotgamaMovimiento(models.Model):#ok
     # Proceso de Fuera de servicio
     fueradeserviciohora = fields.Datetime(string='Fecha fuera de servicio')
     fueradeservicio_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    fueradeservicioobservacion = fields.Char(string='Observaciones fuera de servicio')
     # Proceso de Fuera de uso
     fueradeusohora = fields.Datetime(string='Fecha fuera de uso')
     fueradeuso_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    fueradeusoobservacion = fields.Char(string='Observaciones fuera de servicio')
     fueradeuso_usuarioorden = fields.Char(string='Persona que dio la orden')
     # Se agrega lista de precios traida del calendario según el día de la semana
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist')
+    observacion = fields.Char(string='Observación')
 
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
@@ -742,3 +741,19 @@ class MotgamaWizardFueradeuso(models.TransientModel):
     _description = 'Habitación fuera de uso'
     observacion = fields.Char(string='Observaciones')
     usuario_orden = fields.Char(string='Nombre de quien autoriza')
+
+class MotgamaWizardDesasigna(models.TransientModel):
+    _name = 'motgama.wizarddesasigna'
+    _description = 'Desasigna Habitación'
+    observacion = fields.Char(string='Observaciones')
+
+class MotgamaWizardCambiodeplan(models.TransientModel):
+    _name = 'motgama.wizardcambiodeplan'
+    _description = 'Cambio de Plan'
+    observacion = fields.Char(string='Observaciones')
+
+class MotgamaWizardCambiohabitacion(models.TransientModel):
+    _name = 'motgama.wizardcambiohabitacion'
+    _description = 'Cambio de Habitacion'
+    nuevaHabitacion = fields.Many2one(comodel_name='motgama.flujohabitacion', string='Nueva Habitación')    
+    observacion = fields.Char(string='Observaciones')

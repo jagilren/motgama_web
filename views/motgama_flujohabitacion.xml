@@ -68,14 +68,14 @@
                 <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
                     class="btn btn-success" attrs="{'invisible':[('estado','in',['OA', 'OO', 'LQ', 'RC', 'R', 'FS', 'FU'])]}" />
                     
-                <button name="button_desasignar" type="object" string="desasignar habitación"
-                    class="btn btn-danger" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}" />
-                    
-                <button name="button_cambio_de_plan" type="object" string="Cambio de plan"
-                    class="btn btn-warning" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
-                    
-                <button name="button_cambio_de_habitacion" type="object" string="Cambio de habitación"
-                    class="btn btn-primary" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
+                <button type="action" name="%(motgama.action_wizard_desasigna)d" string="Desasignar" confirm="¿Esta seguro de Desasignar la habitacion?"
+                    class="btn btn-info" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
+
+                <button type="action" name="%(motgama.action_wizard_cambio_plan)d" string="Cambio de Plan" confirm="¿Esta seguro de cambiar de plan entre amanecida y ocasional?"
+                    class="btn btn-info" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
+
+                <button type="action" name="%(motgama.action_wizard_cambio_habitacion)d" string="Cambio (Reasigna) habitación"
+                    class="btn btn-info" attrs="{'invisible':[('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>
                     
                 <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
                     class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
@@ -83,11 +83,11 @@
                 <button type="action" name="%(motgama.action_wizard_fuera_uso)d" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
                     class="btn btn-info" attrs="{'invisible':[('estado','!=','D')]}"/>
                     
-                <button name="button_habilitar" string="Habilitar habitacion" type="object"
+                <button name="button_habilita" string="Habilitar habitacion" type="object"
                     class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['RC'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
                     
                 <button name="button_aseo" string="Asear" type="object"
-                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
+                    class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Asear"/>
 
                 <button name="button_liquidar" string="Liquidar" type="object"
                     class="btn btn"  attrs="{'invisible': [('estado','in',['D', 'LQ', 'RC', 'R', 'FS', 'FU'])]}"/>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <act_window
+        id="action_wizard_cambio_plan"               
+        res_model="motgama.wizardcambiodeplan" 
+        name="Cambio de Plan"
+        src_model="motgama.flujohabitacion"
+        view_type="form"    
+        view_mode="form"
+        multi="True"
+        target="new"
+    />
+
+        <!-- Formulario                                                                                                                     P7.0.4R -->
+    <record id="wizard_cambiodeplan_habitacion" model="ir.ui.view">
+        <field name="name">Cambio de amanecida a ocasional y viceversa</field>
+        <field name="model">motgama.wizardcambiodeplan</field>
+        <field name="arch" type="xml">
+            <form>
+                <div style="white-space: pre-line;">
+                    <p><h5>Cambio de Plan</h5></p>
+                </div>
+                <group>
+                    <group>
+                        <field name="observacion"/>
+                    </group>
+                </group>
+                <footer>
+                    <button type="object" name="button_cambio_plan" string="Cambio de Plan" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

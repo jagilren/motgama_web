@@ -21,7 +21,7 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
         nuevoMovimiento = self.env['motgama.movimiento'].create(infomovimiento)
 
         if nuevoMovimiento:
-            flujo.sudo().write({'estado':'FS'})
+            flujo.sudo().write({'estado':'FS','ultmovimiento':nuevoMovimiento.id})
             # TODO: Enviar correo de movimiento
 
         else:
