@@ -159,7 +159,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Camarera'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     fecha = fields.Datetime 
-    recepcion = fields.Char(string=u'Recepcion')
+    recepcion = fields.Many2one(string=u'Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string=u'Activo?',default=True)
 
     #Función para abrir la información de la habitación cuando el usuario de de click
@@ -207,10 +207,12 @@ class MotgamaHabitacion(models.Model):#ok
     
     @api.model
     def create(self,values):
-        record = super(MotgamaHabitacion, self).create(values)
+        record = super().create(values)
+        recepcion = record.zona_id.recepcion_id
         flujo = {
             'codigo' : record.codigo,
-            'estado' : 'D'
+            'estado' : 'D',
+            'recepcion' : recepcion.id
         }
         self.env['motgama.flujohabitacion'].create(flujo)
         return record
