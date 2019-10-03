@@ -19,12 +19,13 @@ class MotgamaWizardHabitacion(models.TransientModel):
         fechaActual = datetime.now()
 
         if not self.env.user.tz:
-            raise Warning('El usuario no tiene una zona horaria definida, contacte al administrador')
-        
-        tz = pytz.timezone(self.env.user.tz)
+            tz = pytz.timezone('America/Bogota')
+        else:
+            tz = pytz.timezone(self.env.user.tz)
+            
         fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
         
-        # nroDia = datetime.strptime(fechaActual.date(), '%d %m %Y').weekday() # Esto me da el numero del día de la semana, python arranca con 0->lunes
+        # Esto me da el numero del día de la semana, python arranca con 0->lunes
         nroDia = fechaActualTz.weekday()
         calendario = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
         if not calendario:
