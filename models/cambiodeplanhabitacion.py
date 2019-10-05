@@ -17,7 +17,7 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
         movimiento = flujo.ultmovimiento
         fechaActual = datetime.now()
 
-        if flujo.estado == 'OO': # para pasar de ocasional a amanecida debe validar la hora
+        if flujo.estado == 'OO': # para pasar de ocasional a amanecida debe validar la hora             #P7.0.4R
             if not self.env.user.tz:
                 tz = pytz.timezone('America/Bogota')
             else:
@@ -25,7 +25,7 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
             #if not tz:
             #    raise Warning('El usuario no tiene una zona horaria definida, contacte al administrador')
 
-            # Esto me da el numero del dia de la semana, python arranca con 0->lunes
+            # Esto me da el numero del dia de la semana, python arranca con 0->lunes                #P7.0.4R
             fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
             nroDia = fechaActualTz.weekday()
             calendario = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)

@@ -225,16 +225,16 @@ action="accion_motgama_reserva_form"
 />
 
 <!-- Accion -->
-<act_window id="accion_motgama_objper_form"
+<act_window id="accion_motgama_objolv_form"
 name="Objetos Olvidados"
-res_model="motgama.objper"
+res_model="motgama.objolv"
 view_mode="tree,form"
 />
 <!-- Item de menu -->
-<menuitem id="menu_motgama_objper_form"
+<menuitem id="menu_motgama_objolv_form"
 name="Objetos Olvidados"
 parent="menu_motgama_processes"
-action="accion_motgama_objper_form"
+action="accion_motgama_objolv_form"
 />
 
 
@@ -266,13 +266,13 @@ action="accion_motgama_consumo_form"
 
 <!-- Accion -->
 <act_window id="accion_motgama_placa_form"
-name="Histórico de Placas"
+name="Placas Registradas"
 res_model="motgama.placa"
 view_mode="tree,form"
 />
 <!-- Item de menu -->
 <menuitem id="menu_motgama_placa_form"
-name="Histórico de Placas"
+name="Placas Registradas"
 parent="menu_motgama_processes"
 action="accion_motgama_placa_form"
 />
@@ -304,6 +304,19 @@ view_mode="tree,form"
 name="Movimiento"
 parent="menu_motgama_query"
 action="accion_motgama_movimiento_form"
+/>
+
+<!-- Accion -->
+<act_window id="accion_motgama_reasignacion_form"
+name="Reasignaciones"
+res_model="motgama.reasignacion"
+view_mode="tree,form"
+/>
+<!-- Item de menu                                                                                                       P7.0.4R -->
+<menuitem id="menu_motgama_reasignacion_form"
+name="Reasignaciones"
+parent="menu_motgama_query"
+action="accion_motgama_reasignacion_form"
 />
 
 <!-- Accion -->

@@ -486,11 +486,11 @@ class MotgamaMovimiento(models.Model):#ok
     habilitafecha = fields.Datetime(string=u'Fecha y hora de habilitación')
     habilita_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
    # reasignafecha = fields.Date(string=u'Fecha de reasignación')
-    reasignafecha = fields.Datetime(string=u'Fecha y Hora de reasignación')
-    reasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
-    reasignanueva_id = fields.Char(string=u'Reasignacion Nueva') # Este es un Integer Many2One de donde sale *
-    reasignaanterior_uid = fields.Char(string=u'Reasignacion Anterior') # Este es un Integer Many2One de donde sale *
-    reasignada = fields.Boolean(string=u'Reasignada')
+    # reasignafecha = fields.Datetime(string=u'Fecha y Hora de reasignación')
+    # reasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    # reasignanueva_id = fields.Char(string=u'Reasignacion Nueva') # Este es un Integer Many2One de donde sale *
+    # reasignaanterior_uid = fields.Char(string=u'Reasignacion Anterior') # Este es un Integer Many2One de donde sale *
+    flagreasignada = fields.Boolean(string=u'Reasignada')
    # reservafecha = fields.Date(string=u'Fecha de la reserva')
     reservafecha = fields.Datetime(string=u'Fecha y Hora de la reserva')
     reserva_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
@@ -543,19 +543,17 @@ class MotgamaReservas(models.Model):#ok
     anticipo = fields.Float(string=u'Anticipo $:')
     active = fields.Boolean(string=u'Activo?',default=True)
 
-class MotgamaObjetosPerdidos(models.Model):
-#    Fields:Objetos Perdidos: elementos que el cliente olvido.+ Creado: Mayo 10 del 2019
-    _name = 'motgama.objper' #Objetos Perdidos
-    _description = u'MotgamaObjetosPerdidos'
+class MotgamaObjetosOlvidados(models.Model):
+#    Fields:Objetos Olvidados: elementos que el cliente olvido en una habitacion.
+    _name = 'motgama.objolv' #Objetos Olvidados
+    _description = u'MotgamaObjetosOlvidados'
     habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.habitacion',ondelete='set null')
-    movimiento_id = fields.Integer(string=u'Movimiento')
-    fecha = fields.Date(string=u'Fecha')
-    hora = fields.Datetime(string=u'hora')
+    fecha = fields.Datetime(string=u'Fecha')
     descripcion = fields.Text(string=u'Descripción')
-    valor = fields.Float(string=u'Valor del objeto')
+    valor = fields.Float(string=u'Valor Estimado')
     entregado = fields.Boolean(string=u'Entregado?')
-    entregadofecha = fields.Date(string=u'Fecha de entrega') 
-    entregadohora = fields.Datetime(string=u'hora de entrega')
+    entregadofecha = fields.Datetime(string=u'Fecha de entrega') 
+    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
     entregado_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     entregadonota = fields.Text(string=u'Nota')
     baja = fields.Boolean(string=u'Artículo dado de baja?')
@@ -729,6 +727,17 @@ class MotgamaCierreTurno(models.TransientModel):
     fecha = fields.Date(string=u'Fecha')
     hora = fields.Datetime(string=u'Hora')
 
+class MotgamaReasignacion(models.Model):
+    _name = 'motgama.reasignacion'
+    _description = 'Reasignacion Habitacion'
+    # _rec_name = 'codigo'
+    habitacion_id = fields.Char(string=u'Habitación')
+    movimiento_id = fields.Many2one(string='Movimiento (Asignación)',comodel_name='motgama.movimiento',ondelete='set null')
+    fechareasigna = fields.Datetime(string='Fecha Reasigna')
+    habitacion_nueva = fields.Char(string=u'Habitación Nueva')
+    descripcion = fields.Char(string=u'Descripción')
+    active = fields.Boolean(string=u'Activo?',default=True)
+
 class MotgamaWizardCambioPrecios(models.TransientModel):
     _name = 'motgama.wizardcambioprecios'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R
     _description = 'Formulario para cambiar masivamente los precios'
@@ -757,5 +766,5 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
 class MotgamaWizardCambiohabitacion(models.TransientModel):
     _name = 'motgama.wizardcambiohabitacion'
     _description = 'Cambio de Habitacion'
-    nuevaHabitacion = fields.Many2one(comodel_name='motgama.flujohabitacion', string='Nueva Habitación')    
+    flujoNuevo = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     observacion = fields.Char(string='Observaciones')

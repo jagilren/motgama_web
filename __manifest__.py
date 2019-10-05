@@ -31,6 +31,8 @@
         'views/motgama_calendario.xml',
         'views/motgama_movimiento.xml',
         'views/motgama_consumo.xml',
+        'views/motgama_reasignacion.xml',
+        'views/motgama_objetosolvidados.xml',
         'views/motgama_placa.xml',
         'views/motgama_cambioprecios.xml',
         # 'views/motgama_pago.xml',
