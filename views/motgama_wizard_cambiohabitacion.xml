@@ -22,7 +22,7 @@
                 </div>
                 <group>
                     <group>
-                        <field name="nuevaHabitacion"/>
+                        <field name="flujoNuevo" string="Nueva Habitacion" required="1" domain="[('estado','in',['D'])]" options="{'no_create':True}"/>
                         <field name="observacion"/>
                     </group>
                 </group>

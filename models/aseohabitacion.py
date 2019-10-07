@@ -12,7 +12,7 @@ class MotgamaFlujoHabitacion(models.Model):
 
         fechaActual = datetime.now()  # coloca la fecha y hora en que se habilita la habitacion
 
-        if movimiento:      # modifica el estado para poner en aseo y poder habilitar nuevamente la habitacion
+        if movimiento:      # modifica el estado para poner en aseo y poder habilitar nuevamente la habitacion  #P7.0.4R
             valores = {'aseofecha':fechaActual,
                         'aseo_uid':self.env.user.id}
             movimiento.write(valores)

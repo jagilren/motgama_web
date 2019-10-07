@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree                                                                                                                                    P7.0.4R -->
+    <record id="tree_view_reasignacion" model="ir.ui.view">
+        <field name="name">Reasignacion</field>
+        <field name="model">motgama.reasignacion</field>
+        <!-- <field name="limit">100</field> -->
+        <field name="arch" type="xml">  
+            <tree string="Reasignacion">
+                <field name="habitacion_id"/>
+                <field name="movimiento_id"/>
+                <field name="fechareasigna"/>
+                <field name="habitacion_nueva"/>
+                <field name="descripcion"/>
+            </tree>
+        </field>
+    </record>  
+</odoo>

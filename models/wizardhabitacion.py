@@ -31,7 +31,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         if not calendario:
             raise Warning('Error: No existe calendario para el día actual')
 
-        # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida
+        # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida               #P7.0.4R
         # Verifica tambien que se este dentro del horario permitido para asignar amanecidas      
         if self.asignatipo == 'OA':
             flagInicioAmanecida = calendario.horainicioamanecida
@@ -57,7 +57,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(self.placa))], limit=1)
         if novedadPlaca:
             self.message_post(novedadPlaca['descripcion'], subject='Atención! Esta placa registra una novedad previa...',subtype='mail.mt_comment')
-        # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro
+        # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro                  #P7.0.4R
         valores = {}
         # Se rellena el diccionario con los valores del registro
         valores.update({'habitacion_id': fullHabitacion.id})
