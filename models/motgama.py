@@ -636,51 +636,6 @@ class MotgamaConsumo(models.Model):
     def _compute_vlrsubtotal(self):
         for record in self:
             record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
-    
-    """ @api.depends('amount')
-    def _compute_iva(self):
-        for record in self:
-            record['impuesto'] = record.amount """
-
-    """ @api.depends('taxes_id')
-    def _compute_iva(self):
-        for record in self:
-            record.impuesto = record.taxes_id """
-    
-    """ @api.depends('vlrUnitario','cantidad')
-    def _compute_vlrsubtotal(self):
-        for record in self:
-            record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
-    
-    @api.depends('vlrSubtotal')
-    def _compute_vlrtotal(self):
-        for record in self:
-            restotal = record.vlrSubtotal * 0.19
-            record['vlrTotal'] = restotal + record.vlrSubtotal
- 
-    @api.depends('producto_id')
-    def _compute_impuesto(self):
-        for record in self:
-            record['impuesto'] = record.producto_id.taxes_id  
-    
-    # hola
-
-    @api.onchange('asignahabitacion')
-    def onchange_habitacion_id(self):
-        qryestado = "SELECT estado FROM motgama_habitacion WHERE codigo = '" + str(self.asignahabitacion) + "';"
-        self.env.cr.execute(qryestado)
-        self.ensure_one()
-        if self.env.cr.rowcount:
-            resestado = self.env.cr.dictfetchone()
-            if resestado['estado'] not in ('OO','OA'):
-                self.asignahabitacion = None
-                if self.asignahabitacion == None:
-                    self.producto_id = None
-                    self.cantidad = None
-                    self.vlrUnitario = None
-                    self.impuestos = None
-                    self.vlrTotal = None
-                raise Warning('No se puede cargar consumos a esta habitación, verifique que este asignada') """
 
 #Añade a la tabla de usuarios el campo de recepción asociada. OJO NO SE HA MODIFICADO EN LA VISTA
 class Users(models.Model):
