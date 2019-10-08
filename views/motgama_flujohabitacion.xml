@@ -59,7 +59,9 @@
             <field name="estado" string="Estado"/>
             <!-- <field name="estado" string="Estado" readonly="1"/> -->
             <field name="active" string="Activar" readonly="1"/>
-            <br/><br/><br/><br/>
+            <br/>
+            <field name="recepcion" string="Recepción" readonly="1"/>
+            <br/><br/><br/>
         </group><br/>
         
         <footer>
