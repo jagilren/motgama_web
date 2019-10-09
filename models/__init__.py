@@ -10,3 +10,4 @@ from . import cambiodeplanhabitacion
 from . import habilitahabitacion
 from . import aseohabitacion
 from . import cambiohabitacion
+from . import consumo

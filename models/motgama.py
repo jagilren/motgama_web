@@ -92,9 +92,70 @@ class MotgamaRecepcion(models.Model):#ok
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     codigo = fields.Char(string=u'Código',) 
-    nombre = fields.Char(string=u'Recepción',required=True,)
+    nombre = fields.Char(string=u'Recepción',required=True)
     active = fields.Boolean(string=u'Activo?',default=True)
     zonas_ids = fields.One2many(string=u'Zonas en esta recepción',comodel_name='motgama.zona',inverse_name='recepcion_id') #LAS ZONAS EN ESTA RECEPCION
+
+    @api.model
+    def create(self,values):
+        record = super().create(values)
+
+        parent = self.env['stock.location'].search([('name','=','MOTGAMA')],limit=1)
+        if not parent:
+            valores = {
+                'name' : 'MOTGAMA',
+                'usage' : 'internal',
+                'permite_consumo' : False
+            }
+            parent = self.env['stock.location'].create(valores)
+            if not parent:
+                raise Warning('No existe ni se pudo crear el lugar de inventario "MOTGAMA", contacte al administrador')
+
+        valoresLugar = {
+            'name' : record.nombre,
+            'recepcion' : record.id,
+            'usage' : 'internal',
+            'location_id' : parent.id,
+            'permite_consumo' : True
+        }
+        nuevoLugar = self.env['stock.location'].create(valoresLugar)
+        if not nuevoLugar:
+            raise Warning('Error al crear recepción: No se pudo crear el lugar de inventario para la nueva recepción')
+
+        return record
+    
+    @api.multi
+    def write(self,values):
+        creado = super(MotgamaRecepcion, self).write(values)
+
+        lugar = self.env['stock.location'].search([('recepcion','=',self.id)],limit=1)
+        if not lugar:
+            parent = self.env['stock.location'].search([('name','=','MOTGAMA')],limit=1)
+            if not parent:
+                valores = {
+                    'name' : 'MOTGAMA',
+                    'usage' : 'internal',
+                    'permite_consumo' : False
+                }
+                parent = self.env['stock.location'].create(valores)
+                if not parent:
+                    raise Warning('No existe ni se pudo crear el lugar de inventario "MOTGAMA", contacte al administrador')
+
+            valoresLugar = {
+                'name' : self.nombre,
+                'recepcion' : self.id,
+                'usage' : 'internal',
+                'location_id' : parent.id,
+                'permite_consumo' : True
+            }
+            lugar = self.env['stock.location'].create(valoresLugar)
+            if not lugar:
+                raise Warning('Error al crear el lugar de inventario para la recepción')
+        else:
+            lugar.write({'name':self.nombre})
+        
+        return creado
+        
 
 class MotgamaLugares(models.Model):#ok OJO
 #    Fields: LUGARES: esta tiene una similitud con el modulo de inventarios de ERP ODOO
@@ -166,7 +227,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     recepcion = fields.Many2one(string=u'Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string=u'Activo?',default=True)
 
-    #Función para abrir la información de la habitación cuando el usuario de de click
+    #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
     def open_record(self):
         return {
@@ -617,7 +678,8 @@ class MotgamaConsumo(models.Model):
     cantidad = fields.Float(string=u'Cantidad',required=True)
     vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario',store=True)                                                                                     #P7.0.4R
     vlrSubtotal = fields.Float(string=u'Subtotal $',compute="_compute_vlrsubtotal",store = True)
-    estado = fields.Char(string=u'estado')    
+    lugar_id = fields.Many2one(string='Bodega de Inventario',comodel_name='stock.location',ondelete='set null',store=True)
+    estado = fields.Char(string=u'estado')
     active = fields.Boolean(string=u'Activo?',default=True)    
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
 
@@ -625,6 +687,15 @@ class MotgamaConsumo(models.Model):
     def _compute_movimiento(self):
         for record in self:
             record.movimiento_id = record['habitacion'].ultmovimiento
+
+    @api.onchange('habitacion')
+    def onchange_habitacion(self):
+        for record in self:
+            if record.habitacion:
+                lugar = self.env['stock.location'].search(['&',('recepcion','=',record.habitacion.recepcion.id),('permite_consumo','=',True)],limit=1)
+                if not lugar:
+                    raise Warning('No existe lugar de inventario para la recepción: ' + record.habitacion.recepcion.nombre)
+                record.lugar_id = lugar.id
 
     @api.depends('habitacion','producto_id')
     def _compute_vlrunitario(self):
@@ -639,51 +710,6 @@ class MotgamaConsumo(models.Model):
     def _compute_vlrsubtotal(self):
         for record in self:
             record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
-    
-    """ @api.depends('amount')
-    def _compute_iva(self):
-        for record in self:
-            record['impuesto'] = record.amount """
-
-    """ @api.depends('taxes_id')
-    def _compute_iva(self):
-        for record in self:
-            record.impuesto = record.taxes_id """
-    
-    """ @api.depends('vlrUnitario','cantidad')
-    def _compute_vlrsubtotal(self):
-        for record in self:
-            record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
-    
-    @api.depends('vlrSubtotal')
-    def _compute_vlrtotal(self):
-        for record in self:
-            restotal = record.vlrSubtotal * 0.19
-            record['vlrTotal'] = restotal + record.vlrSubtotal
- 
-    @api.depends('producto_id')
-    def _compute_impuesto(self):
-        for record in self:
-            record['impuesto'] = record.producto_id.taxes_id  
-    
-    # hola
-
-    @api.onchange('asignahabitacion')
-    def onchange_habitacion_id(self):
-        qryestado = "SELECT estado FROM motgama_habitacion WHERE codigo = '" + str(self.asignahabitacion) + "';"
-        self.env.cr.execute(qryestado)
-        self.ensure_one()
-        if self.env.cr.rowcount:
-            resestado = self.env.cr.dictfetchone()
-            if resestado['estado'] not in ('OO','OA'):
-                self.asignahabitacion = None
-                if self.asignahabitacion == None:
-                    self.producto_id = None
-                    self.cantidad = None
-                    self.vlrUnitario = None
-                    self.impuestos = None
-                    self.vlrTotal = None
-                raise Warning('No se puede cargar consumos a esta habitación, verifique que este asignada') """
 
 #Añade a la tabla de usuarios el campo de recepción asociada. OJO NO SE HA MODIFICADO EN LA VISTA
 class Users(models.Model):
