@@ -7,12 +7,13 @@
     <field name="arch" type="xml">
         <tree string="Parametros">
             <field name="sucursal_id" />
+            <field name="codigo" />
             <field name="nombre" />
             <field name="valor" />
         </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                                  P7.0.4R -->
 <record id="form_view_parametros" model="ir.ui.view">
     <field name="name">Parametros</field>
     <field name="model">motgama.parametros</field>
@@ -21,6 +22,7 @@
     <sheet>
         <group name="group_bottom">
             <field name="sucursal_id" />
+            <field name="codigo" />
             <field name="nombre" />
             <field name="valor" />
             <field name="active" />

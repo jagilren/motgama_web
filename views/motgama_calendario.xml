@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!--Tree-->
+    <!--Tree                                                                                                                P7.0.4R-->
     <record id="tree_view_calendario" model="ir.ui.view">
         <field name="name">Calendario</field>
         <field name="model">motgama.calendario</field>
         <field name="arch" type="xml">
         <tree string="Calendario">
-            <field name="diasemana"/>
             <field name="sucursal_id" />
+            <field name="diasemana"/>
             <field name="listapreciodia"/>
             <field name="listaprecionoche"/>
+            <field name="listaprecioproducto"/>
+            <field name="horainicioamanecida"/>
+            <field name="horafinamanecida"/>
         </tree>
         </field>
     </record>
@@ -22,9 +25,12 @@
             <sheet>
                 <group name="group_bottom">
                     <field name="sucursal_id" placeholder="Sucursal" />
+                    <field name="diasemana"/>
                     <field name="listapreciodia"/><br/>
                     <field name="listaprecionoche"/>
-                    <field name="diasemana"/>
+                    <field name="listaprecioproducto"/>
+                    <field name="horainicioamanecida"/>
+                    <field name="horafinamanecida"/>
                     <field name="active"/>
                 </group>     
             </sheet>    

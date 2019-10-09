@@ -6,17 +6,20 @@
     <field name="model">motgama.sucursal</field>
     <field name="arch" type="xml">
     <tree string="Sucursal">
+        <field name="razonsocial_id" />
+        <field name="codigo" />
         <field name="nombre" />
         <field name="nit" />
-        <field name="codigo" />
+        <field name="email" />
         <field name="telefono" />
         <field name="ciudad" />
-        <field name="razonsocial_id" />
+        <field name="direccion" />
+        <field name="active" />
         
     </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                              P7.0.4R -->
 <record id="form_view_sucursal" model="ir.ui.view">
     <field name="name">Sucursal</field>
     <field name="model">motgama.sucursal</field>

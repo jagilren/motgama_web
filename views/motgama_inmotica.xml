@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--Tree-->
+<!--Tree                                                                                                            P7.0.4R -->
 <record id="tree_view_inmotica" model="ir.ui.view">
     <field name="name">Inmotica</field>
     <field name="model">motgama.inmotica</field>
@@ -24,8 +24,7 @@
         <field name="estado" placeholder="Estado de la habitación" />
         <field name="control_accion" placeholder="Control de acción de la habitación"/>
             <field name="active"/>
-        </group>        
-     
+        </group>
     </sheet>    
     </form>
     </field>

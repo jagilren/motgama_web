@@ -8,10 +8,28 @@
         <tree string="Tipo">
             <field name="codigo" />
             <field name="nombre" />
+            <field name="minibar" />
+            <field name="turco" />
+            <field name="jacuzzi" />
+            <field name="camamov" />
+            <field name="smartv" />
+            <field name="barrasonido" />
+            <field name="hometheater" />
+            <field name="poledance" />
+            <field name="sillatantra" />
+            <field name="columpio" />
+            <field name="aireacond" />
+            <field name="garajecarro" />
+            <field name="garajemoto" />
+            <field name="piscina" />
+            <field name="miniteca" />
+            <field name="sauna" />
+            <field name="balcon" />
+            <field name="active" />
         </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                                  P7.0.4R -->
 <record id="form_view_tipo" model="ir.ui.view">
     <field name="name">Tipo</field>
     <field name="model">motgama.tipo</field>

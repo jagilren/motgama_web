@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <act_window
+        id="action_wizard_fuera_uso"               
+        res_model="motgama.wizardfueradeuso" 
+        name="Fuera de uso"
+        src_model="motgama.flujohabitacion"
+        view_type="form"    
+        view_mode="form"
+        multi="True"
+        target="new"
+    />
+        <!-- Formulario                                                                                                                     P7.0.4R -->
+
+    <record id="wizard_fueradeuso_habitacion" model="ir.ui.view">
+        <field name="name">Habitación fuera de uso</field>
+        <field name="model">motgama.wizardfueradeuso</field>
+        <field name="arch" type="xml">
+            <form>
+                <div style="white-space: pre-line;">
+                    <p><h5>Habitación fuera de uso</h5></p>
+                </div>
+                <group>
+                    <group>
+                        <field name="observacion"/>
+                        <field name="usuario_orden"/>
+                    </group>
+                </group>
+                <footer>
+                    <button type="object" name="button_fuera_uso" string="Fuera de uso" class="oe_highlight"/>
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

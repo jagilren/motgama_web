@@ -7,13 +7,13 @@
     <field name="arch" type="xml">
     <tree string="Recepcion">
         <field name="sucursal_id" />
-        <field name="nombre" />
         <field name="codigo" />
+        <field name="nombre" />
         <field name="active" />
     </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                                          P7.0.4R -->
 <record id="form_view_recepcion" model="ir.ui.view">
     <field name="name">Recepción</field>
     <field name="model">motgama.recepcion</field>

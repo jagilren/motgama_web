@@ -23,19 +23,33 @@ action="accion_motgama_cambioprecios"
 />
 
 <!-- PRINCIPAL -->
+<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
 <!-- Accion -->
-<act_window id="accion_motgama_habitacion"
-name="Habitaciones"
-res_model="motgama.habitacion"
+<act_window id="accion_motgama_flujohabitacion_form"
+name="Flujo Habitaciones"
+res_model="motgama.flujohabitacion"
 view_mode="kanban"
 limit="100"
 />
 <!-- Item de menu -->
-<menuitem id="menu_motgama_habitacion"
+<menuitem id="menu_motgama_flujohabitacion_form"
+name="Flujo Habitaciones"
+parent="menu_motgama"
+action="accion_motgama_flujohabitacion_form"
+/>
+<!-- Accion -->
+<!-- <act_window id="accion_motgama_habitacion"
+name="Habitaciones"
+res_model="motgama.habitacion"
+view_mode="kanban"
+limit="100"
+/> -->
+<!-- Item de menu -->
+<!-- <menuitem id="menu_motgama_habitacion"
 name="Habitaciones"
 parent="menu_motgama"
 action="accion_motgama_habitacion"
-/>
+/> -->
 
 <!-- ARCHIVOS MAESTROS -->
 <!-- Accion -->
@@ -196,6 +210,7 @@ action="accion_motgama_bonos_form"
 />
 
 <!-- PROCESOS -->
+
 <!-- Accion  -->
 <act_window id="accion_motgama_reserva_form"
 name="Reservas"
@@ -210,16 +225,16 @@ action="accion_motgama_reserva_form"
 />
 
 <!-- Accion -->
-<act_window id="accion_motgama_objper_form"
+<act_window id="accion_motgama_objolv_form"
 name="Objetos Olvidados"
-res_model="motgama.objper"
+res_model="motgama.objolv"
 view_mode="tree,form"
 />
 <!-- Item de menu -->
-<menuitem id="menu_motgama_objper_form"
+<menuitem id="menu_motgama_objolv_form"
 name="Objetos Olvidados"
 parent="menu_motgama_processes"
-action="accion_motgama_objper_form"
+action="accion_motgama_objolv_form"
 />
 
 
@@ -251,13 +266,13 @@ action="accion_motgama_consumo_form"
 
 <!-- Accion -->
 <act_window id="accion_motgama_placa_form"
-name="Histórico de Placas"
+name="Placas Registradas"
 res_model="motgama.placa"
 view_mode="tree,form"
 />
 <!-- Item de menu -->
 <menuitem id="menu_motgama_placa_form"
-name="Histórico de Placas"
+name="Placas Registradas"
 parent="menu_motgama_processes"
 action="accion_motgama_placa_form"
 />
@@ -284,11 +299,24 @@ name="Movimiento"
 res_model="motgama.movimiento"
 view_mode="tree,form"
 />
-<!-- Item de menu -->
+<!-- Item de menu                                                                                                       P7.0.4R -->
 <menuitem id="menu_motgama_movimiento_form"
 name="Movimiento"
 parent="menu_motgama_query"
 action="accion_motgama_movimiento_form"
+/>
+
+<!-- Accion -->
+<act_window id="accion_motgama_reasignacion_form"
+name="Reasignaciones"
+res_model="motgama.reasignacion"
+view_mode="tree,form"
+/>
+<!-- Item de menu                                                                                                       P7.0.4R -->
+<menuitem id="menu_motgama_reasignacion_form"
+name="Reasignaciones"
+parent="menu_motgama_query"
+action="accion_motgama_reasignacion_form"
 />
 
 <!-- Accion -->

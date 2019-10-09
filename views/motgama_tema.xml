@@ -8,10 +8,11 @@
     <tree string="Tema">
         <field name="codigo" />
         <field name="nombre" />
+        <field name="descripcion" />
     </tree>
     </field>
 </record>
-<!--Formulario-->
+<!--Formulario                                                                                                                              P7.0.4R -->
 <record id="form_view_tema" model="ir.ui.view">
     <field name="name">Zona</field>
     <field name="model">motgama.tema</field>
@@ -24,7 +25,7 @@
             <field name="nombre"
                 placeholder="Ingrese el nombre del tema" />
             <field name="descripcion"
-                placeholder="Ingrese el nombre del tema" />
+                placeholder="Ingrese descripcion del tema" />
             <field name="fotografia" 
                 widget="image" />
             <field name="active"/>

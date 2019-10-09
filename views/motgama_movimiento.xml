@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--Tree-->
+<!--Tree                                                                                                                                    P7.0.4R -->
     <record id="tree_view_habitacion" model="ir.ui.view">
         <field name="name">Movimiento</field>
         <field name="model">motgama.movimiento</field>
@@ -9,7 +9,7 @@
             <tree string="Movimiento">
                 <field name="habitacion_id"/>
                 <field name="tipovehiculo"/>
-                <field name="asignahora"/>
+                <field name="asignafecha"/>
                 <field name="asignatipo"/>
             </tree>
         </field>
