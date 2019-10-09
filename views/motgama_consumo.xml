@@ -6,7 +6,7 @@
     <field name="model">motgama.consumo</field>
     <field name="limit">100</field>
     <field name="arch" type="xml">   
-      <tree string="Consumo" editable="bottom">
+      <tree string="Consumo" editable="top" default_order='create_date desc'>
                 <field name="habitacion" string="Habitacion" required="1" domain="[('estado','in',['OO','OA','LQ'])]" options="{'no_create':True}"/>
                 <field name="producto_id" string="Producto" required="1"/>
                 <field name="lugar_id" string="Bodega de Inventario" required="1" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
