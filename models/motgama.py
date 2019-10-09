@@ -46,16 +46,17 @@ class MotgamaInmotica(models.Model):#ok
     #Fields:Inmotica: Conexion interna entre base de datos.    
     _name = 'motgama.inmotica'
     _description = u'Inmotica'
-    _rec_name = 'codigo_habitacion'
+#    _rec_name = 'habitacion_id'
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
-    codigo_habitacion = fields.Char(string=u'Codigo de la habitacion',required=True,)    
-    estado = fields.Char(string=u'estado',required=True,)
-    control_accion = fields.Boolean(string=u'Control Accion',required=True,)
+    habitacion = fields.Char(string=u'Habitacion')
+    parametro = fields.Char(string=u'parametro',required=True,)
+    control_accion = fields.Char(string=u'String Control Accion',required=True,)
+    fecha = fields.Datetime ()
+    usuario_uid = fields.Integer(string=u'Usuario',)
     active = fields.Boolean(string=u'Activo?',default=True,)
     
 class MotgamaParametros(models.Model):#ok
 #   Fields: PARAMETROS: se deben de definir todos los parametros que se necesitan por sucursal.
-#   Modification date: Mayo 6 del 2019: se modifica la base de datos ya que este se hace para que los parametros sean creados libremente
     _name = 'motgama.parametros'
     _description = u'parametros'
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
@@ -77,6 +78,8 @@ class MotgamaCalendario(models.Model):#ok
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist',required=True) #Toma listas de odoo
     horainicioamanecida=fields.Char(string='H inic.Amanec.(hh:mm)')
     horafinamanecida=fields.Char(string='H Fin.Amanec.(hh:mm)')
+    tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
+    flagignoretiempo = fields.Boolean(string=u'Ignore Tiempo',default=False,)
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -124,6 +127,7 @@ class MotgamaTipo(models.Model):#ok Tipo de habitaciones
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
     codigo = fields.Char(string=u'Código') 
     nombre = fields.Char(string=u'Nombre',required=True,)
+    tiemponormalocasional = fields.Integer(string=u'Tiempo normal')
     minibar = fields.Boolean(string=u'Minibar',)
     turco = fields.Boolean(string=u'Turco',)
     jacuzzi = fields.Boolean(string=u'Jacuzzi',)
@@ -134,7 +138,7 @@ class MotgamaTipo(models.Model):#ok Tipo de habitaciones
     poledance = fields.Boolean(string=u'Pole Dance',)
     sillatantra = fields.Boolean(string=u'Silla Tantra')
     columpio = fields.Boolean(string=u'Columpio')
-    aireacond = fields.Boolean(string=u'Aire Acondicionado')
+    aireacond = fields.Boolean(string=u'Aire Acond')
     garajecarro = fields.Boolean(string=u'Garaje Carro')
     garajemoto = fields.Boolean(string=u'Garaje Moto')
     piscina = fields.Boolean(string=u'Piscina')
@@ -200,6 +204,7 @@ class MotgamaHabitacion(models.Model):#ok
     inmotica = fields.Boolean(string=u'¿La habitacion es controlada con inmotica?',) 
     #estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
     #ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
+    tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
     active = fields.Boolean(string=u'Activo?',default=True)
     estado_tree = fields.Char(string=u'Estado -',)
     # Enlaza las listas de precios por habitacion

@@ -38,6 +38,8 @@ class MotgamaWizardCambioPrecios(models.TransientModel):
 
                     #   Se graba la información cargada de la lista de precios del tipo en la tabla de lista de precios de habitación
                     self.env['motgama.listapreciohabitacion'].create(infoLista)
+                # actualiza el numero de horas para el hospedaje ocasional
+                habitacion.write({'tiemponormalocasional':tipo.tiemponormalocasional})
         
         #   TODO: Salir de la vista de actualizar precios
         #   raise Warning('Fin del proceso')

@@ -214,3 +214,4 @@ acl_placa_group_motgama_supervisor,permiso_group_motgama_supervisor,model_motgam
 acl_placa_group_motgama_admin_sucursal,permiso_group_motgama_sucursal,model_motgama_placa,group_motgama_admin_sucursal,1,1,1,1
 acl_placa_group_motgama_gerente,permiso_group_motgama_gerente,model_motgama_placa,group_motgama_gerente,1,0,0,0
 acl_placa_group_motgama_propietario,permiso_group_motgama_propietario,model_motgama_placa,group_motgama_propietario,1,0,0,0
+,,,,,,,

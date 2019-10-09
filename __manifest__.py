@@ -34,6 +34,7 @@
         'views/motgama_reasignacion.xml',
         'views/motgama_objetosolvidados.xml',
         'views/motgama_placa.xml',
+        'views/motgama_inmotica.xml',
         'views/motgama_cambioprecios.xml',
         # 'views/motgama_pago.xml',
         'views/motgama_bonos.xml',

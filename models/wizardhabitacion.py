@@ -31,6 +31,16 @@ class MotgamaWizardHabitacion(models.TransientModel):
         if not calendario:
             raise Warning('Error: No existe calendario para el día actual')
 
+        # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro                  #P7.0.4R
+        valores = {}
+
+        # Toma el tiempo de ocupacion normal ocasional de calendario, 
+        # si tiene salvedad lo toma de la habitacion
+        tiemponormal = calendario.tiemponormalocasional
+        if calendario.flagignoretiempo:
+            tiemponormal = fullHabitacion.tiemponormalocasional
+        valores.update({'tiemponormalocasional': tiemponormal})
+            
         # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida               #P7.0.4R
         # Verifica tambien que se este dentro del horario permitido para asignar amanecidas      
         if self.asignatipo == 'OA':
@@ -57,8 +67,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(self.placa))], limit=1)
         if novedadPlaca:
             self.message_post(novedadPlaca['descripcion'], subject='Atención! Esta placa registra una novedad previa...',subtype='mail.mt_comment')
-        # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro                  #P7.0.4R
-        valores = {}
+
         # Se rellena el diccionario con los valores del registro
         valores.update({'habitacion_id': fullHabitacion.id})
         valores.update({'tipovehiculo': self.tipovehiculo})
@@ -78,6 +87,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         inicioNocheTz = datetime.strptime(str(flagInicioNoche['valor']),"%H:%M")
         fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
 
+        valores.update({'listaprecioproducto':calendario['listaprecioproducto'].id})
         valores.update({'listaprecioproducto':calendario['listaprecioproducto'].id})
         if (inicioDiaTz.time() < fechaActualTz.time() < inicioNocheTz.time()):
             Lista = calendario['listapreciodia']
@@ -115,3 +125,4 @@ class MotgamaWizardHabitacion(models.TransientModel):
         #Termina
         return True # Esta instruccion no es estrictamente necesaria pero es una buena práctica.
         # POR REVISSAR
+        # TODO manejo de anticipo y pago de contado en negocios del centro

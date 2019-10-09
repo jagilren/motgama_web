@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--Tree                                                                                                            P7.0.4R -->
-<record id="tree_view_inmotica" model="ir.ui.view">
-    <field name="name">Inmotica</field>
-    <field name="model">motgama.inmotica</field>
-    <field name="arch" type="xml">
-    <tree string="Tema">
-        <field name="codigo_habitacion" />
-        <field name="estado" />
-        <field name="control_accion" />
-    </tree>
-    </field>
-</record>
-<!--Formulario-->
-<record id="form_view_inmotica" model="ir.ui.view">
-    <field name="name">Inmotica</field>
-    <field name="model">motgama.inmotica</field>
-    <field name="arch" type="xml">
-    <form string="Inmotica">
-    <sheet>
-    <group name="group_bottom">
-        <field name="codigo_habitacion" placeholder="Código de la habitación" options="{'no_create_edit': True}" required="1" />
-        <field name="estado" placeholder="Estado de la habitación" />
-        <field name="control_accion" placeholder="Control de acción de la habitación"/>
-            <field name="active"/>
-        </group>
-    </sheet>    
-    </form>
-    </field>
-</record>
+    <!--Tree                                                                                                            P7.0.4R -->
+    <record id="tree_view_inmotica" model="ir.ui.view">
+        <field name="name">inmotica</field>
+        <field name="model">motgama.inmotica</field>
+        <field name="arch" type="xml">
+            <tree string="Inmotica">
+                <field name="habitacion"/>
+                <field name="parametro"/> 
+                <field name="control_accion"/>
+                <field name="fecha"/>
+                <field name="usuario_uid"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+    <!--Formulario-->
+    <record id="form_view_inmotica" model="ir.ui.view">
+        <field name="name">inmotica</field>
+        <field name="model">motgama.inmotica</field>
+        <field name="arch" type="xml">
+        <form string="Inmotica">
+            <sheet>
+                <group name="group_bottom">
+                    <field name="habitacion" />
+                    <field name="parametro" />
+                    <field name="control_accion" />
+                    <!-- <field name="fecha" /> -->
+                    <field name="usuario_uid" />
+                    <field name="active" />
+                </group>
+            </sheet>    
+        </form>
+        </field>
+    </record>
 </odoo>

@@ -1,12 +1,27 @@
 <?xml version='1.0'?>
 <odoo>
 <menuitem id="menu_motgama" name="Motgama" web_icon="motgama,static/description/icon.png" />
-
+<menuitem id="menu_motgama_core" name="Flujo Habitaciones" parent='menu_motgama' />
 <menuitem id="menu_motgama_master" name="Archivos Maestros" parent='menu_motgama' />
 <menuitem id="menu_motgama_processes" name="Procesos" parent='menu_motgama' />
 <menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
 <menuitem id="menu_motgama_utilidades" name="Utilidades" parent='menu_motgama' />
 
+<!-- PRINCIPAL -->
+<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
+<!-- Accion -->
+<act_window id="accion_motgama_flujohabitacion_form"
+name="Flujo Habitaciones"
+res_model="motgama.flujohabitacion"
+view_mode="kanban"
+limit="100"
+/>
+<!-- Item de menu -->
+<menuitem id="menu_motgama_flujohabitacion_form"
+name="Flujo Habitaciones"
+parent="menu_motgama_core"
+action="accion_motgama_flujohabitacion_form"
+/>
 <!-- UTILIDADES -->
 <!-- Accion -->
 <act_window id="accion_motgama_cambioprecios"
@@ -22,21 +37,6 @@ parent="menu_motgama_utilidades"
 action="accion_motgama_cambioprecios"
 />
 
-<!-- PRINCIPAL -->
-<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
-<!-- Accion -->
-<act_window id="accion_motgama_flujohabitacion_form"
-name="Flujo Habitaciones"
-res_model="motgama.flujohabitacion"
-view_mode="kanban"
-limit="100"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_flujohabitacion_form"
-name="Flujo Habitaciones"
-parent="menu_motgama"
-action="accion_motgama_flujohabitacion_form"
-/>
 <!-- Accion -->
 <!-- <act_window id="accion_motgama_habitacion"
 name="Habitaciones"
@@ -142,19 +142,6 @@ view_mode="tree,form"
 name="Parametros"
 parent="menu_motgama_master"
 action="accion_motgama_parametros_form"
-/>
-
-<!-- Accion -->
-<act_window id="accion_motgama_inmotica_form"
-name="Inmotica"
-res_model="motgama.inmotica"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_inmotica_form"
-name="Inmotica"
-parent="menu_motgama_master"
-action="accion_motgama_inmotica_form"
 />
 
 <!-- Accion -->
@@ -317,6 +304,19 @@ view_mode="tree,form"
 name="Reasignaciones"
 parent="menu_motgama_query"
 action="accion_motgama_reasignacion_form"
+/>
+
+<!-- Accion -->
+<act_window id="accion_motgama_inmotica_form"
+name="Inmotica"
+res_model="motgama.inmotica"
+view_mode="tree,form"
+/>
+<!-- Item de menu -->
+<menuitem id="menu_motgama_inmotica_form"
+name="Inmotica"
+parent="menu_motgama_query"
+action="accion_motgama_inmotica_form"
 />
 
 <!-- Accion -->
