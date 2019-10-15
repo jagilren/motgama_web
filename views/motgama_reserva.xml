@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+<record id="tree_view_reserva" model="ir.ui.view">
+    <field name="name">Reserva Habitaciones</field>
+    <field name="model">motgama.reserva</field>
+    <field name="arch" type="xml">
+    <tree string="Reserva Habitaciones">
+        <field name="habitacion_id"/>
+        <field name="cliente_id"/>
+        <field name="fecha"/>
+        <field name="condecoracion"/>
+        <field name="notadecoracion"/>
+        <field name="anticipo"/>
+        <field name="modificada"/>
+        <field name="modificada_uid"/>
+        <field name="fecha_original"/>
+        <field name="cancelada" />
+        <field name="cancelada_uid"/>
+        <field name="fecha_cancela"/>
+        <field name="active"/>
+    </tree>
+    </field>
+</record>
+<!--Formulario                                                                                                              P7.0.4R -->
+<record id="form_view_reserva" model="ir.ui.view">
+    <field name="name">Reserva Habitaciones</field>
+    <field name="model">motgama.reserva</field>
+    <field name="arch" type="xml">
+        <form string="Reserva Habitaciones">
+            <sheet>
+                <group name="group_bottom">
+                    <field name="habitacion_id"/>
+                    <field name="cliente_id"/>
+                    <field name="fecha"/>
+                    <field name="condecoracion"/>
+                    <field name="notadecoracion"/>
+                    <field name="anticipo"/>
+<!--                     <field name="modificada"/>
+                    <field name="modificada_uid"/>
+                    <field name="fecha_original"/>
+                    <field name="cancelada" />
+                    <field name="cancelada_uid"/>
+                    <field name="fecha_cancela"/>
+                    <field name="active"/> -->
+                </group>             
+                <footer>
+                    <group name="group_top" col="10">
+                        <button name="button_Modificar" type="object" string="Modificar" class="btn btn-success"/>
+                            <!--Falta realizar la funcion-->
+                        <button name="button_Cancelar" type="object" string="Cancelar" class="btn btn-success"/>
+                            <!--Falta realizar la funcion-->
+                        <!-- <button type="action" name="%(action_wizard_entrega_olvidados)d" string="Entregar Objetos" 
+                            class="btn btn-success" /> -->
+                    </group>
+                </footer>
+            </sheet>    
+        </form>
+    </field>
+</record>
+</odoo>

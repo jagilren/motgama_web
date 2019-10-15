@@ -607,6 +607,12 @@ class MotgamaReservas(models.Model):#ok
     notadecoracion = fields.Text(string=u'Nota para la decoración')
     habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
     anticipo = fields.Float(string=u'Anticipo $:')
+    modificada = fields.Boolean(string=u'Reserva Modificada',default=False)
+    modificada_uid = fields.Many2one(comodel_name='res.users',string='Usuario modifica',default=lambda self: self.env.user.id)
+    fecha_original = fields.Datetime(string=u'F.Anterior')
+    cancelada = fields.Boolean(string=u'Reserva Cancelada',default=False)
+    cancelada_uid = fields.Many2one(comodel_name='res.users',string='Usuario cancela',default=lambda self: self.env.user.id)
+    fecha_cancela = fields.Datetime(string=u'F.Cancela')
     active = fields.Boolean(string=u'Activo?',default=True)
 
 class MotgamaObjetosOlvidados(models.Model):
@@ -617,6 +623,7 @@ class MotgamaObjetosOlvidados(models.Model):
     fecha = fields.Datetime(string=u'Fecha')
     descripcion = fields.Text(string=u'Descripción')
     valor = fields.Float(string=u'Valor Estimado')
+    encontradopor = fields.Text(string=u'Encontrado por')
     entregado = fields.Boolean(string=u'Entregado?')
     entregadofecha = fields.Datetime(string=u'Fecha de entrega') 
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
@@ -711,6 +718,21 @@ class MotgamaConsumo(models.Model):
         for record in self:
             record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
 
+class MotgamaComanda(models.Model):
+#    Fields: Comandas
+    _name = 'motgama.comanda'
+    _description = 'Comanda'
+    # 19 jun se cambia por habitacion para despues realizar un autoguardado
+    nrocomanda = fields.Integer('Nro. Comanda')
+    fecha = fields.Datetime ('Fecha')
+    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento',store=True)
+    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
+    cantidad = fields.Float(string=u'Cantidad',required=True)
+    vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario',store=True)                                                                                     #P7.0.4R
+    descripcion = fields.Char(string=u'descripción')
+    active = fields.Boolean(string=u'Activo?',default=True)    
+
 #Añade a la tabla de usuarios el campo de recepción asociada. OJO NO SE HA MODIFICADO EN LA VISTA
 class Users(models.Model):
     _inherit = "res.users"
@@ -799,3 +821,12 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
     _description = 'Cambio de Habitacion'
     flujoNuevo = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     observacion = fields.Char(string='Observaciones')
+
+class MotgamaWizardEntregaolvidados(models.TransientModel):
+    _name = 'motgama.wizardentregaolvidados'
+    _description = 'Entrega Objetos Olvidados'
+    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
+    fecha = fields.Datetime(string=u'fecha entrega')
+    observacion = fields.Char(string='Observaciones')
+    dardebaja = fields.Boolean(string=u'Activo?',default=False)
+

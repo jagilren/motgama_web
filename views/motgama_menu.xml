@@ -224,7 +224,6 @@ parent="menu_motgama_processes"
 action="accion_motgama_objolv_form"
 />
 
-
 <!-- Accion -->
 <act_window id="accion_motgama_prendas_form"
 name="Prendas"
@@ -304,6 +303,19 @@ view_mode="tree,form"
 name="Reasignaciones"
 parent="menu_motgama_query"
 action="accion_motgama_reasignacion_form"
+/>
+
+<!-- Accion -->
+<act_window id="accion_motgama_comanda_form"
+name="Comanda"
+res_model="motgama.comanda"
+view_mode="tree,form"
+/>
+<!-- Item de menu                                                                                                       P7.0.4R -->
+<menuitem id="menu_motgama_comanda_form"
+name="Comanda"
+parent="menu_motgama_query"
+action="accion_motgama_comanda_form"
 />
 
 <!-- Accion -->

@@ -6,7 +6,7 @@
         <field name="model">motgama.reasignacion</field>
         <!-- <field name="limit">100</field> -->
         <field name="arch" type="xml">  
-            <tree string="Reasignacion">
+            <tree string="Reasignacion" create="false" delete="false" default_order='create_date desc'>
                 <field name="habitacion_id"/>
                 <field name="movimiento_id"/>
                 <field name="fechareasigna"/>
