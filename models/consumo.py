@@ -11,6 +11,11 @@ class StockLocation(models.Model):
     recepcion = fields.Many2one(string='Recepción',comodel_name='motgama.recepcion',ondelete='cascade')
     permite_consumo = fields.Boolean(string='¿Permite Consumo?',default=False)
 
+class ProductCategory(models.Model):
+    _inherit = 'product.category'
+
+    llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
+
 class MotgamaConsumo(models.Model):
     _inherit = 'motgama.consumo'
 
@@ -18,6 +23,8 @@ class MotgamaConsumo(models.Model):
     def create(self,values):
         if values['cantidad'] == 0:
             raise Warning('Debe especificar una cantidad mayor a cero')
+        elif values['cantidad'] < 0:
+            raise Warning('No está implementado')
         record = super().create(values)
 
         cliente = self.env['res.partner'].search([('vat','=','1')], limit=1)
@@ -114,4 +121,16 @@ class MotgamaConsumo(models.Model):
                     movimiento.write({'qty_done':movimiento.product_uom_qty})
                 entrega.button_validate()
         
+        if record.llevaComanda:
+            valoresComanda = {
+                'producto' : record.producto_id.name,
+                'cantidad' : record.cantidad,
+                'descripcion' : record.comanda
+            }
+            comanda = self.env['motgama.comanda'].create(valoresComanda)
+            if not comanda:
+                raise Warning('No se pudo crear la comanda')
+            record.comanda = comanda.id
+            # Imprimir comanda
+
         return record

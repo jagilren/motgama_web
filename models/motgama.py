@@ -670,8 +670,11 @@ class MotgamaConsumo(models.Model):
     _name = 'motgama.consumo'
     _description = 'Consumos'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
-    consecutivo =  fields.Float(string=u'Total $',)
-    nrocomanda = fields.Char('Nro. Comanda')
+    recepcion = fields.Many2one(comodel_name='motgama.recepcion',default=lambda self: self.env.user.recepcion_id.id)
+    consecutivo =  fields.Float(string=u'Total $')
+    llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
+    textoComanda = fields.Text(string='Comanda')
+    comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
     habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
@@ -682,6 +685,12 @@ class MotgamaConsumo(models.Model):
     estado = fields.Char(string=u'estado')
     active = fields.Boolean(string=u'Activo?',default=True)    
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+
+    @api.onchange('producto_id')
+    def onchange_producto(self):
+        for record in self:
+            if record.producto_id:
+                record.llevaComanda = record.producto_id.categ_id.llevaComanda
 
     @api.depends('habitacion')
     def _compute_movimiento(self):
@@ -768,6 +777,14 @@ class MotgamaReasignacion(models.Model):
     habitacion_nueva = fields.Char(string=u'Habitación Nueva')
     descripcion = fields.Char(string=u'Descripción')
     active = fields.Boolean(string=u'Activo?',default=True)
+
+class MotgamaComanda(models.Model):
+    _name = 'motgama.comanda'
+    _description = 'Comanda'
+
+    producto = fields.Char(string='Producto',required=True)
+    cantidad = fields.Float(string='Cantidad',required=True)
+    descripcion = fields.Text(string='Comanda',required=True)
 
 class MotgamaWizardCambioPrecios(models.TransientModel):
     _name = 'motgama.wizardcambioprecios'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R

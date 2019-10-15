@@ -40,5 +40,7 @@
         'views/motgama_bonos.xml',
         # 'views/motgama_wizard_recepcion.xml',
         # 'views/motgama_cierreturno.xml',
-        'views/motgama_menu.xml',],
+        'views/motgama_menu.xml',
+        'views/res_users.xml',
+        'views/product_category.xml']
 }
