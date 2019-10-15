@@ -683,7 +683,7 @@ class MotgamaConsumo(models.Model):
     textoComanda = fields.Text(string='Comanda')
     comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
     habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
-    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento',store=True)
+    movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
     cantidad = fields.Float(string=u'Cantidad',required=True)
     vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario',store=True)                                                                                     #P7.0.4R
@@ -717,7 +717,7 @@ class MotgamaConsumo(models.Model):
     def _compute_vlrunitario(self):
         for record in self:
             if record.producto_id:
-                movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id)], limit=1)
+                movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id.id)], limit=1)
                 lista = movimiento.listaprecioproducto
                 precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
                 record['vlrUnitario'] = precioLista.fixed_price
@@ -735,7 +735,7 @@ class MotgamaComanda(models.Model):
     nrocomanda = fields.Integer('Nro. Comanda')
     fecha = fields.Datetime ('Fecha')
     habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
-    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento',store=True)
+    movimiento_id = fields.Integer(string='Movimiento')
     producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
     cantidad = fields.Float(string=u'Cantidad',required=True)
     vlrUnitario = fields.Float(string='Vlr Unitario')                                                                                     #P7.0.4R

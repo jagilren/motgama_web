@@ -32,70 +32,73 @@ class MotgamaConsumo(models.Model):
         if not cliente:
             raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')
 
-        valoresTransferencia = {
-            'location_id' : self.env['stock.location'].search([('id','=',record.lugar_id.id)],limit=1).id,
-            'location_dest_id' : self.env.ref('stock.stock_location_stock').id,
-            'picking_type_id' : self.env['stock.picking.type'].search([('code','=','internal')],limit=1).id,
-            'move_type' : 'direct',
-            'company_id' : self.env.user.company_id.id
-        }
-        transferencia = self.env['stock.picking'].create(valoresTransferencia)
-        if not transferencia:
-            raise Warning('No se pudo crear la transferencia de inventario')
+        if record.producto_id.type == 'product':
+            valoresTransferencia = {
+                'location_id' : self.env['stock.location'].search([('id','=',record.lugar_id.id)],limit=1).id,
+                'location_dest_id' : self.env.ref('stock.stock_location_stock').id,
+                'picking_type_id' : self.env['stock.picking.type'].search([('code','=','internal')],limit=1).id,
+                'move_type' : 'direct',
+                'company_id' : self.env.user.company_id.id
+            }
+            transferencia = self.env['stock.picking'].create(valoresTransferencia)
+            if not transferencia:
+                raise Warning('No se pudo crear la transferencia de inventario')
 
-        valoresLineaTransferencia = {
-            'company_id' : transferencia.company_id.id,
-            'date' : fields.Datetime.now(),
-            'date_expected' : fields.Datetime.now(),
-            'location_dest_id' : transferencia.location_dest_id.id,
-            'location_id' : transferencia.location_id.id,
-            'product_id' : record.producto_id.product_variant_id.id,
-            'product_uom' : record.producto_id.uom_id.id,
-            'product_uom_qty' : record.cantidad,
-            'picking_id' : transferencia.id,
-            'name' : record.producto_id.product_variant_id.name + '/' + transferencia.location_id.name + '/' + transferencia.location_dest_id.name
-        }
-        lineaTransferencia = self.env['stock.move'].create(valoresLineaTransferencia)
-        if not lineaTransferencia:
-            raise Warning('No se pudo crear la transferencia de inventario')
-        transferencia.action_confirm()
-        transferencia.action_assign()
-        if transferencia.state != 'assigned':
-            valoresLineaMovimiento = {
+            valoresLineaTransferencia = {
+                'company_id' : transferencia.company_id.id,
                 'date' : fields.Datetime.now(),
+                'date_expected' : fields.Datetime.now(),
                 'location_dest_id' : transferencia.location_dest_id.id,
                 'location_id' : transferencia.location_id.id,
                 'product_id' : record.producto_id.product_variant_id.id,
-                'product_uom_id' : record.producto_id.uom_id.id,
-                'product_uom_qty' : 0,
+                'product_uom' : record.producto_id.uom_id.id,
+                'product_uom_qty' : record.cantidad,
                 'picking_id' : transferencia.id,
-                'move_id' : lineaTransferencia.id,
-                'qty_done' : record.cantidad
+                'name' : record.producto_id.product_variant_id.name + '/' + transferencia.location_id.name + '/' + transferencia.location_dest_id.name
             }
-            lineaMovimiento = self.env['stock.move.line'].create(valoresLineaMovimiento)
-            if not lineaMovimiento:
-                raise Warning('Error al asentar el movimiento de inventario')
-            transferencia.button_validate()
-            # TODO: Mostrar mensaje de no hay disponibilidad
-        else:
-            reservado = lineaTransferencia.reserved_availability
-            pedido = record.cantidad
-            if reservado < pedido:
-                for linea in lineaTransferencia.move_line_ids:
-                    linea.write({'qty_done':record.cantidad})
+            lineaTransferencia = self.env['stock.move'].create(valoresLineaTransferencia)
+            if not lineaTransferencia:
+                raise Warning('No se pudo crear la transferencia de inventario')
+            transferencia.action_confirm()
+            transferencia.action_assign()
+            if transferencia.state != 'assigned':
+                valoresLineaMovimiento = {
+                    'date' : fields.Datetime.now(),
+                    'location_dest_id' : transferencia.location_dest_id.id,
+                    'location_id' : transferencia.location_id.id,
+                    'product_id' : record.producto_id.product_variant_id.id,
+                    'product_uom_id' : record.producto_id.uom_id.id,
+                    'product_uom_qty' : 0,
+                    'picking_id' : transferencia.id,
+                    'move_id' : lineaTransferencia.id,
+                    'qty_done' : record.cantidad
+                }
+                lineaMovimiento = self.env['stock.move.line'].create(valoresLineaMovimiento)
+                if not lineaMovimiento:
+                    raise Warning('Error al asentar el movimiento de inventario')
                 transferencia.button_validate()
                 # TODO: Mostrar mensaje de no hay disponibilidad
             else:
-                movimientos = transferencia.move_line_ids
-                for movimiento in movimientos:
-                    movimiento.write({'qty_done':movimiento.product_uom_qty})
-                transferencia.button_validate()
+                reservado = lineaTransferencia.reserved_availability
+                pedido = record.cantidad
+                if reservado < pedido:
+                    for linea in lineaTransferencia.move_line_ids:
+                        linea.write({'qty_done':record.cantidad})
+                    transferencia.button_validate()
+                    # TODO: Mostrar mensaje de no hay disponibilidad
+                else:
+                    movimientos = transferencia.move_line_ids
+                    for movimiento in movimientos:
+                        movimiento.write({'qty_done':movimiento.product_uom_qty})
+                    transferencia.button_validate()
+        # elif record.producto_id.type == 'consu':
+            # TODO: Explotar el inventario cuando sea restaurante
 
-        ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id),('state','=','sale')], limit=1)
+        ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
         if not ordenVenta:
             valores = {
                 'partner_id' : cliente.id,
-                'movimiento' : record.movimiento_id
+                'movimiento' : record.movimiento_id.id
             }
             ordenVenta = self.env['sale.order'].create(valores)
             if not ordenVenta:
@@ -126,13 +129,13 @@ class MotgamaConsumo(models.Model):
             valoresComanda = {
                 'producto_id' : record.producto_id.id,
                 'cantidad' : record.cantidad,
-                'descripcion' : record.comanda,
+                'descripcion' : record.textoComanda,
                 'fecha' : fields.Datetime.now(),
                 'habitacion' : record.habitacion.id,
                 'movimiento_id' : record.movimiento_id.id,
                 'vlrUnitario' : record.vlrUnitario
             }
-            comanda = self.env['motgama.comanda'].create(valoresComanda)
+            comanda = self.env['motgama.comanda'].sudo().create(valoresComanda)
             if not comanda:
                 raise Warning('No se pudo crear la comanda')
             comanda.write({'nrocomanda':comanda.id})

@@ -6,15 +6,15 @@
     <field name="model">motgama.comanda</field>
     <field name="limit">100</field>
     <field name="arch" type="xml">   
-      <tree string="Consumo" create="false" delete="false" editable="top" default_order='create_date desc'>
-                <field name="nrocomanda" string="Comanda Nro"/>
-                <field name="fecha" string="Fecha"/>
-                <field name="habitacion" string="Habitacion"/>
-                <field name="producto_id" string="Producto"/>
-                <field name="vlrUnitario" string="Valor Unitario $"/>
-                <field name="cantidad" string="Cantidad"/>
-                <field name="descripcion" string="Descripcion"/>
-                <field name="active" string="Active"/>
+      <tree string="Consumo" default_order="create_date desc">
+        <field name="nrocomanda" string="Comanda Nro"/>
+        <field name="fecha" string="Fecha"/>
+        <field name="habitacion" string="Habitacion"/>
+        <field name="producto_id" string="Producto"/>
+        <field name="vlrUnitario" string="Valor Unitario $"/>
+        <field name="cantidad" string="Cantidad"/>
+        <field name="descripcion" string="Descripcion"/>
+        <field name="active" string="Active"/>
       </tree>
     </field>
   </record>
