@@ -1,4 +1,5 @@
 from odoo import models, fields, api, _
+from datetime import datetime
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
@@ -123,14 +124,19 @@ class MotgamaConsumo(models.Model):
         
         if record.llevaComanda:
             valoresComanda = {
-                'producto' : record.producto_id.name,
+                'producto_id' : record.producto_id.id,
                 'cantidad' : record.cantidad,
-                'descripcion' : record.comanda
+                'descripcion' : record.comanda,
+                'fecha' : fields.Datetime.now(),
+                'habitacion' : record.habitacion.id,
+                'movimiento_id' : record.movimiento_id.id,
+                'vlrUnitario' : record.vlrUnitario
             }
             comanda = self.env['motgama.comanda'].create(valoresComanda)
             if not comanda:
                 raise Warning('No se pudo crear la comanda')
-            record.comanda = comanda.id
+            comanda.write({'nrocomanda':comanda.id})
+            record.write({'comanda':comanda.id})
             # Imprimir comanda
 
         return record

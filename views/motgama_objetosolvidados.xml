@@ -9,6 +9,7 @@
         <field name="habitacion_id"/>
         <field name="fecha"/>
         <field name="descripcion" />
+        <field name="encontradopor"/>
         <field name="valor"/>
         <field name="entregado"/>
         <field name="entregadofecha"/>
@@ -32,14 +33,24 @@
                     <field name="fecha"/>
                     <field name="descripcion" />
                     <field name="valor"/>
-                    <field name="entregado"/>
+                    <field name="encontradopor"/>
+<!--                     <field name="entregado"/>
                     <field name="entregadofecha"/>
                     <field name="cliente_id"/>
                     <field name="entregado_uid"/>
                     <field name="entregadonota"/>
                     <field name="baja"/>
-                    <field name="active"/>
+                    TODO: dar de baja en otro boton,
+                        filtro solo sin entregar ni dado de baja
+                         y botones inferiores en entregar
+                    <field name="active"/> --> 
                 </group>             
+                <footer>
+                    <group name="group_top" col="10">
+                        <button type="action" name="%(action_wizard_entrega_olvidados)d" string="Entregar Objetos" 
+                            class="btn btn-success" />
+                    </group>
+                </footer>
             </sheet>    
         </form>
     </field>

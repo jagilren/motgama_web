@@ -15,3 +15,10 @@ models/__pycache__/fueradeserviciohabitacion.cpython-35.pyc
 models/__pycache__/habilitahabitacion.cpython-35.pyc
 models/__pycache__/motgama.cpython-35.pyc
 models/__pycache__/wizardhabitacion.cpython-35.pyc
+models/__pycache__/__init__.cpython-35.pyc
+models/__pycache__/cambiodeplanhabitacion.cpython-35.pyc
+models/__pycache__/cambioprecios.cpython-35.pyc
+models/__pycache__/consumo.cpython-35.pyc
+models/__pycache__/fueradeserviciohabitacion.cpython-35.pyc
+models/__pycache__/motgama.cpython-35.pyc
+models/__pycache__/wizardhabitacion.cpython-35.pyc
