@@ -1,11 +1,7 @@
 <?xml version='1.0'?>
 <odoo>
 <menuitem id="menu_motgama" name="Motgama" web_icon="motgama,static/description/icon.png" />
-<menuitem id="menu_motgama_core" name="Flujo Habitaciones" parent='menu_motgama' />
-<menuitem id="menu_motgama_master" name="Archivos Maestros" parent='menu_motgama' />
-<menuitem id="menu_motgama_processes" name="Procesos" parent='menu_motgama' />
-<menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
-<menuitem id="menu_motgama_utilidades" name="Utilidades" parent='menu_motgama' />
+<!-- <menuitem id="menu_motgama_core" name="Flujo Habitaciones" parent='menu_motgama' /> -->
 
 <!-- PRINCIPAL -->
 <!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
@@ -19,9 +15,15 @@ limit="100"
 <!-- Item de menu -->
 <menuitem id="menu_motgama_flujohabitacion_form"
 name="Flujo Habitaciones"
-parent="menu_motgama_core"
+parent="menu_motgama"
 action="accion_motgama_flujohabitacion_form"
 />
+
+<menuitem id="menu_motgama_master" name="Archivos Maestros" parent='menu_motgama' />
+<menuitem id="menu_motgama_processes" name="Procesos" parent='menu_motgama' />
+<menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
+<menuitem id="menu_motgama_utilidades" name="Utilidades" parent='menu_motgama' />
+
 <!-- UTILIDADES -->
 <!-- Accion -->
 <act_window id="accion_motgama_cambioprecios"

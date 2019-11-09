@@ -742,7 +742,7 @@ class MotgamaComanda(models.Model):
     descripcion = fields.Text(string=u'descripción')
     active = fields.Boolean(string=u'Activo?',default=True)    
 
-#Añade a la tabla de usuarios el campo de recepción asociada. OJO NO SE HA MODIFICADO EN LA VISTA
+#Añade a la tabla de usuarios el campo de recepción asociada.
 class Users(models.Model):
     _inherit = "res.users"
     recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')

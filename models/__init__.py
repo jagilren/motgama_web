@@ -11,3 +11,4 @@ from . import habilitahabitacion
 from . import aseohabitacion
 from . import cambiohabitacion
 from . import consumo
+from . import permisos

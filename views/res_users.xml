@@ -11,6 +11,9 @@
                         <group>
                             <field name="recepcion_id"/>
                         </group>
+                        <group string="Permisos de la aplicación">
+                            <field name="motgama_consumo_negativo"/>
+                        </group>
                     </page>
                 </xpath>
             </field>
