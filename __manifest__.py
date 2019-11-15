@@ -45,5 +45,7 @@
         # 'views/motgama_cierreturno.xml',
         'views/motgama_menu.xml',
         'views/res_users.xml',
-        'views/product_category.xml']
+        'views/product_category.xml',
+        'views/motgama_reporte_consumo.xml',
+        'reports/reporte_consumos.xml']
 }

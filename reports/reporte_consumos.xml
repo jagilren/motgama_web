@@ -1,0 +1,77 @@
+<odoo>
+    <record model="report.paperformat" id="formato_reporte_consumos">
+        <field name="name">formato.reporte.consumos</field>
+        <field name="default" eval="True"/>
+        <field name="format">A4</field>
+        <field name="page_width">0</field>
+        <field name="page_height">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">30</field>
+        <field name="margin_right">5</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">5</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">20</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <report id="reporte_consumo"
+        model="motgama.wizard.reporteconsumo"
+        string="Reporte de Consumos"
+        report_type="qweb-pdf"
+        name="motgama.reporteconsumos"
+        paperformat="formato_reporte_consumos"
+        menu='False'/>
+
+    <template id="reporteconsumos">
+        <t t-call="web.html_container">
+            <div class="header" style="border-bottom: 2px solid black">
+                <h3 class="text-center">Reporte de Consumos</h3>
+                <h4 class="text-center">
+                    <strong>Habitación</strong>
+                    <t t-esc="habitacion"/>
+                </h4>
+            </div>
+            <div class="article">
+                <table class="table table-condensed table-bordered" style="width: 100%">
+                    <thead>
+                        <th class="text-center" style="width: 34%">Producto</th>
+                        <th class="text-center" style="width: 33%">Cantidad</th>
+                        <th class="text-center" style="width: 33%">Valor Total</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="doc">
+                            <tr>
+                                <td>
+                                    <span t-esc="doc['producto']"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-esc="doc['cantidad']"/>
+                                </td>
+                                <td class="text-center">
+                                    $<span t-esc="doc['vlrTotal']"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+            <div class="footer">
+                <div class="row text-center" style="border-top: 1px solid black;">
+                    <div class="col col-3 offset-9 text-right">
+                        <ul class="list-inline mt-2">
+                            <li class="list-inline-item">Página:</li>
+                            <li class="list-inline-item">
+                                <span class="page"/>
+                            </li>
+                            <li class="list-inline-item">/</li>
+                            <li class="list-inline-item">
+                                <span class="topage"/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>
