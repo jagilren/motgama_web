@@ -18,7 +18,7 @@
     <report id="reporte_consumo"
         model="motgama.wizard.reporteconsumo"
         string="Reporte de Consumos"
-        report_type="qweb-pdf"
+        report_type="qweb-html"
         name="motgama.reporteconsumos"
         paperformat="formato_reporte_consumos"
         menu='False'/>
