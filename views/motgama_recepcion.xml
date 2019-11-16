@@ -1,43 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <!--Tree-->
-<record id="tree_view_recepcion" model="ir.ui.view">
-    <field name="name">Recepción</field>
-    <field name="model">motgama.recepcion</field>
-    <field name="arch" type="xml">
-    <tree string="Recepcion">
-        <field name="sucursal_id" />
-        <field name="codigo" />
-        <field name="nombre" />
-        <field name="active" />
-    </tree>
-    </field>
-</record>
-<!--Formulario                                                                                                                          P7.0.4R -->
-<record id="form_view_recepcion" model="ir.ui.view">
-    <field name="name">Recepción</field>
-    <field name="model">motgama.recepcion</field>
-    <field name="arch" type="xml">
-    <form string="Recepción">
-    <sheet>
-    <group name="group_bottom">
-            <group name="group_left">            
-            <field name="sucursal_id" class="oe_inline"
-                placeholder="Seleccione la sucursal" />
-            <field name="codigo" class="oe_inline"
-                placeholder="ingrese el codigo de la recepción" options="{'no_create_edit': True}" required="1" />
-            <field name="nombre" class="oe_inline"
-                placeholder="Ingrese el nombre de la recepción" />
-            <field name="active"/>
-            </group>
-        </group>
-    
-    <group>            
-        <field name="zonas_ids" />                  
-    </group>   
-     
-    </sheet>    
-    </form>
-    </field>
-</record>
+    <record id="tree_view_recepcion" model="ir.ui.view">
+        <field name="name">Recepción</field>
+        <field name="model">motgama.recepcion</field>
+        <field name="arch" type="xml">
+            <tree string="Recepcion">
+                <field name="sucursal_id" />
+                <field name="codigo" />
+                <field name="nombre" />
+                <field name="active" />
+            </tree>
+        </field>
+    </record>
+    <!--Formulario                                                                                                                          P7.0.4R -->
+    <record id="form_view_recepcion" model="ir.ui.view">
+        <field name="name">Recepción</field>
+        <field name="model">motgama.recepcion</field>
+        <field name="arch" type="xml">
+            <form string="Recepción">
+                <sheet>
+                    <group name="group_bottom">
+                        <group name="group_left">            
+                        <field name="sucursal_id" class="oe_inline"
+                            placeholder="Seleccione la sucursal" />
+                        <field name="codigo" class="oe_inline"
+                            placeholder="ingrese el codigo de la recepción" options="{'no_create_edit': True}" required="1" />
+                        <field name="nombre" class="oe_inline"
+                            placeholder="Ingrese el nombre de la recepción" />
+                        <field name="active"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="zonas_ids" />                  
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
 </odoo>

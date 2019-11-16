@@ -31,6 +31,16 @@ class MotgamaWizardHabitacion(models.TransientModel):
         if not calendario:
             raise Warning('Error: No existe calendario para el día actual')
 
+        # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro                  #P7.0.4R
+        valores = {}
+
+        # Toma el tiempo de ocupacion normal ocasional de calendario, 
+        # si tiene salvedad lo toma de la habitacion
+        tiemponormal = calendario.tiemponormalocasional
+        if calendario.flagignoretiempo:
+            tiemponormal = fullHabitacion.tiemponormalocasional
+        valores.update({'tiemponormalocasional': tiemponormal})
+            
         # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida               #P7.0.4R
         # Verifica tambien que se este dentro del horario permitido para asignar amanecidas      
         if self.asignatipo == 'OA':
@@ -45,20 +55,28 @@ class MotgamaWizardHabitacion(models.TransientModel):
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
             flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
             flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")
-            # flagInicio = tz.localize(flagInicioTz).astimezone(pytz.utc).time()
-            # flagFin = tz.localize(flagFinTz).astimezone(pytz.utc).time()
-            if flagInicioTz > flagFinTz:
+            """ if flagInicioTz > flagFinTz:
                 if flagFinTz.time() < fechaActualTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             else:
                 if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
-                    raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
+                    raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento') """
+            
+            flagInicio = flagInicioTz + timedelta(hours=5)
+            flagFin = flagFinTz + timedelta(hours=5)
+            horainicioamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagInicio.hour,flagInicio.minute)
+            if flagInicioTz > flagFinTz:
+                horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day + 1,flagFin.hour,flagFin.minute)
+            else:
+                horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute)
+            valores.update({'horainicioamanecida':horainicioamanecida})
+            valores.update({'horafinamanecida':horafinamanecida})
+
         # Ahora busca en las placas para verificar alguna novedad y mostrarla al operador. El mensaje aparece en el chatter
         novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(self.placa))], limit=1)
         if novedadPlaca:
             self.message_post(novedadPlaca['descripcion'], subject='Atención! Esta placa registra una novedad previa...',subtype='mail.mt_comment')
-        # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro                  #P7.0.4R
-        valores = {}
+
         # Se rellena el diccionario con los valores del registro
         valores.update({'habitacion_id': fullHabitacion.id})
         valores.update({'tipovehiculo': self.tipovehiculo})
@@ -78,6 +96,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         inicioNocheTz = datetime.strptime(str(flagInicioNoche['valor']),"%H:%M")
         fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
 
+        valores.update({'listaprecioproducto':calendario['listaprecioproducto'].id})
         valores.update({'listaprecioproducto':calendario['listaprecioproducto'].id})
         if (inicioDiaTz.time() < fechaActualTz.time() < inicioNocheTz.time()):
             Lista = calendario['listapreciodia']
@@ -112,6 +131,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
             flujo.sudo().write({'ultmovimiento':nuevoMovimiento.id})
         else:
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
-        #Termina
-        return True # Esta instruccion no es estrictamente necesaria pero es una buena práctica.
-        # POR REVISSAR
+        
+        # Se regresa a la pantalla de Habitaciones
+        return True
+        # TODO manejo de anticipo y pago de contado en negocios del centro

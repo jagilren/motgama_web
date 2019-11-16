@@ -8,6 +8,7 @@
         <tree string="Tipo">
             <field name="codigo" />
             <field name="nombre" />
+            <field name="tiemponormalocasional" />
             <field name="minibar" />
             <field name="turco" />
             <field name="jacuzzi" />
@@ -41,6 +42,8 @@
                     placeholder="Ingrese el código" options="{'no_create_edit': True}" required="1" />
                 <field name="nombre" class="oe_inline"
                     placeholder="Ingrese el nombre" />
+                <field name="tiemponormalocasional" class="oe_inline"
+                    placeholder="Tiempo normal ocasional en horas" />
                 <field name="active" string="Activar"/>
                 <br/><br/>
             </group> 

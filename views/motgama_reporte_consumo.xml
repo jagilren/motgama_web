@@ -1,0 +1,29 @@
+<odoo>
+    <record model="ir.ui.view" id="motgama_reporte_consumo">
+        <field name="name">Reporte de Consumos</field>
+        <field name="model">motgama.wizard.reporteconsumo</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de Consumos">
+                <group>
+                    <field name="habitacion"/>
+                </group>
+                <footer>
+                    <button name="get_report" string="Generar reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_reporte_consumo_wizard"
+        name="Reporte consumos"
+        res_model="motgama.wizard.reporteconsumo"
+        view_mode="form"
+        target="new"/>
+
+    <menuitem action="action_reporte_consumo_wizard"
+        id="menu_reporte_consumo"
+        parent="menu_motgama_reportes"/>
+</odoo>
+

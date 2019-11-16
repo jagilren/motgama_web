@@ -46,16 +46,17 @@ class MotgamaInmotica(models.Model):#ok
     #Fields:Inmotica: Conexion interna entre base de datos.    
     _name = 'motgama.inmotica'
     _description = u'Inmotica'
-    _rec_name = 'codigo_habitacion'
+#    _rec_name = 'habitacion_id'
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
-    codigo_habitacion = fields.Char(string=u'Codigo de la habitacion',required=True,)    
-    estado = fields.Char(string=u'estado',required=True,)
-    control_accion = fields.Boolean(string=u'Control Accion',required=True,)
+    habitacion = fields.Char(string=u'Habitacion')
+    parametro = fields.Char(string=u'parametro',required=True,)
+    control_accion = fields.Char(string=u'String Control Accion',required=True,)
+    fecha = fields.Datetime ()
+    usuario_uid = fields.Integer(string=u'Usuario',)
     active = fields.Boolean(string=u'Activo?',default=True,)
     
 class MotgamaParametros(models.Model):#ok
 #   Fields: PARAMETROS: se deben de definir todos los parametros que se necesitan por sucursal.
-#   Modification date: Mayo 6 del 2019: se modifica la base de datos ya que este se hace para que los parametros sean creados libremente
     _name = 'motgama.parametros'
     _description = u'parametros'
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
@@ -77,6 +78,8 @@ class MotgamaCalendario(models.Model):#ok
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist',required=True) #Toma listas de odoo
     horainicioamanecida=fields.Char(string='H inic.Amanec.(hh:mm)')
     horafinamanecida=fields.Char(string='H Fin.Amanec.(hh:mm)')
+    tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
+    flagignoretiempo = fields.Boolean(string=u'Ignore Tiempo',default=False,)
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -185,6 +188,7 @@ class MotgamaTipo(models.Model):#ok Tipo de habitaciones
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
     codigo = fields.Char(string=u'Código') 
     nombre = fields.Char(string=u'Nombre',required=True,)
+    tiemponormalocasional = fields.Integer(string=u'Tiempo normal')
     minibar = fields.Boolean(string=u'Minibar',)
     turco = fields.Boolean(string=u'Turco',)
     jacuzzi = fields.Boolean(string=u'Jacuzzi',)
@@ -195,7 +199,7 @@ class MotgamaTipo(models.Model):#ok Tipo de habitaciones
     poledance = fields.Boolean(string=u'Pole Dance',)
     sillatantra = fields.Boolean(string=u'Silla Tantra')
     columpio = fields.Boolean(string=u'Columpio')
-    aireacond = fields.Boolean(string=u'Aire Acondicionado')
+    aireacond = fields.Boolean(string=u'Aire Acond')
     garajecarro = fields.Boolean(string=u'Garaje Carro')
     garajemoto = fields.Boolean(string=u'Garaje Moto')
     piscina = fields.Boolean(string=u'Piscina')
@@ -222,6 +226,9 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     fecha = fields.Datetime 
     recepcion = fields.Many2one(string=u'Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string=u'Activo?',default=True)
+
+    # Cuenta de cobro:
+    orden_venta = fields.Many2one(string='Cuenta de Cobro',comodel_name='sale.order',ondelete='set null')
 
     #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
@@ -261,6 +268,7 @@ class MotgamaHabitacion(models.Model):#ok
     inmotica = fields.Boolean(string=u'¿La habitacion es controlada con inmotica?',) 
     #estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
     #ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
+    tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
     active = fields.Boolean(string=u'Activo?',default=True)
     estado_tree = fields.Char(string=u'Estado -',)
     # Enlaza las listas de precios por habitacion
@@ -533,19 +541,19 @@ class MotgamaMovimiento(models.Model):#ok
     asignatipo = fields.Selection(string=u'Tipo de Asignación',selection=[('OO', 'Ocasional'), ('OA', 'Amanecida')]) # (09/05/2019) 
    # asignafecha = fields.Date(string=u'Asignación de Fecha')
     asignafecha = fields.Datetime(string=u'Fecha de Asignación',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
-    asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
    # liquidafecha = fields.Date(string=u'Liquida Fecha')
     liquidafecha= fields.Datetime(string=u'Fecha y hora Liquidacion')
-    liquida_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    liquida_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
    # recaudafecha = fields.Date(string=u'Fecha de recaudo')
     recaudafecha = fields.Datetime(string=u'Fecha y hora de recaudo')
-    recauda_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    recauda_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
    # aseofecha = fields.Date(string=u'Fecha de aseo')
     aseofecha = fields.Datetime(string=u'Fecha y hora aseo')
-    aseo_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    aseo_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
    # habilitafecha = fields.Date(string=u'Fecha de habilitación')
     habilitafecha = fields.Datetime(string=u'Fecha y hora de habilitación')
-    habilita_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    habilita_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
    # reasignafecha = fields.Date(string=u'Fecha de reasignación')
     # reasignafecha = fields.Datetime(string=u'Fecha y Hora de reasignación')
     # reasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
@@ -554,10 +562,10 @@ class MotgamaMovimiento(models.Model):#ok
     flagreasignada = fields.Boolean(string=u'Reasignada')
    # reservafecha = fields.Date(string=u'Fecha de la reserva')
     reservafecha = fields.Datetime(string=u'Fecha y Hora de la reserva')
-    reserva_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    reserva_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
    # desasignafecha = fields.Date(string=u'Fecha de la desasigna')
     desasignafecha = fields.Datetime(string=u'Fecha y Hora de la desasigna')
-    desasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    desasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
     incluyedecora = fields.Boolean(string=u'Incluye decoración')    
     tarifaocasional = fields.Float(string=u'Tarifa ocasional')
     tarifamanecida = fields.Float(string=u'Tarifa amanecida')
@@ -572,14 +580,16 @@ class MotgamaMovimiento(models.Model):#ok
     nrofactura = fields.Char(string=u'Nro de factura') # Se añade 11 de Julio
     # Proceso de Fuera de servicio
     fueradeserviciohora = fields.Datetime(string='Fecha fuera de servicio')
-    fueradeservicio_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    fueradeservicio_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
     # Proceso de Fuera de uso
     fueradeusohora = fields.Datetime(string='Fecha fuera de uso')
-    fueradeuso_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    fueradeuso_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable')
     fueradeuso_usuarioorden = fields.Char(string='Persona que dio la orden')
     # Se agrega lista de precios traida del calendario según el día de la semana
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist')
     observacion = fields.Char(string='Observación')
+    horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida')
+    horafinamanecida = fields.Datetime(string='Hora Fin Amanecida')
 
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
@@ -602,6 +612,12 @@ class MotgamaReservas(models.Model):#ok
     notadecoracion = fields.Text(string=u'Nota para la decoración')
     habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
     anticipo = fields.Float(string=u'Anticipo $:')
+    modificada = fields.Boolean(string=u'Reserva Modificada',default=False)
+    modificada_uid = fields.Many2one(comodel_name='res.users',string='Usuario modifica',default=lambda self: self.env.user.id)
+    fecha_original = fields.Datetime(string=u'F.Anterior')
+    cancelada = fields.Boolean(string=u'Reserva Cancelada',default=False)
+    cancelada_uid = fields.Many2one(comodel_name='res.users',string='Usuario cancela',default=lambda self: self.env.user.id)
+    fecha_cancela = fields.Datetime(string=u'F.Cancela')
     active = fields.Boolean(string=u'Activo?',default=True)
 
 class MotgamaObjetosOlvidados(models.Model):
@@ -612,6 +628,7 @@ class MotgamaObjetosOlvidados(models.Model):
     fecha = fields.Datetime(string=u'Fecha')
     descripcion = fields.Text(string=u'Descripción')
     valor = fields.Float(string=u'Valor Estimado')
+    encontradopor = fields.Text(string=u'Encontrado por')
     entregado = fields.Boolean(string=u'Entregado?')
     entregadofecha = fields.Datetime(string=u'Fecha de entrega') 
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
@@ -665,10 +682,13 @@ class MotgamaConsumo(models.Model):
     _name = 'motgama.consumo'
     _description = 'Consumos'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
-    consecutivo =  fields.Float(string=u'Total $',)
-    nrocomanda = fields.Char('Nro. Comanda')
+    recepcion = fields.Many2one(comodel_name='motgama.recepcion',default=lambda self: self.env.user.recepcion_id.id)
+    consecutivo =  fields.Float(string=u'Total $')
+    llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
+    textoComanda = fields.Text(string='Comanda')
+    comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
     habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
-    movimiento_id = fields.Integer(string='Movimiento',compute='_compute_movimiento',store=True)
+    movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
     cantidad = fields.Float(string=u'Cantidad',required=True)
     vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario',store=True)                                                                                     #P7.0.4R
@@ -677,6 +697,12 @@ class MotgamaConsumo(models.Model):
     estado = fields.Char(string=u'estado')
     active = fields.Boolean(string=u'Activo?',default=True)    
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+
+    @api.onchange('producto_id')
+    def onchange_producto(self):
+        for record in self:
+            if record.producto_id:
+                record.llevaComanda = record.producto_id.categ_id.llevaComanda
 
     @api.depends('habitacion')
     def _compute_movimiento(self):
@@ -696,7 +722,7 @@ class MotgamaConsumo(models.Model):
     def _compute_vlrunitario(self):
         for record in self:
             if record.producto_id:
-                movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id)], limit=1)
+                movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id.id)], limit=1)
                 lista = movimiento.listaprecioproducto
                 precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
                 record['vlrUnitario'] = precioLista.fixed_price
@@ -706,7 +732,22 @@ class MotgamaConsumo(models.Model):
         for record in self:
             record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
 
-#Añade a la tabla de usuarios el campo de recepción asociada. OJO NO SE HA MODIFICADO EN LA VISTA
+class MotgamaComanda(models.Model):
+#    Fields: Comandas
+    _name = 'motgama.comanda'
+    _description = 'Comanda'
+    # 19 jun se cambia por habitacion para despues realizar un autoguardado
+    nrocomanda = fields.Integer('Nro. Comanda')
+    fecha = fields.Datetime ('Fecha')
+    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    movimiento_id = fields.Integer(string='Movimiento')
+    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
+    cantidad = fields.Float(string=u'Cantidad',required=True)
+    vlrUnitario = fields.Float(string='Vlr Unitario')                                                                                     #P7.0.4R
+    descripcion = fields.Text(string=u'descripción')
+    active = fields.Boolean(string=u'Activo?',default=True)    
+
+#Añade a la tabla de usuarios el campo de recepción asociada.
 class Users(models.Model):
     _inherit = "res.users"
     recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')
@@ -794,3 +835,12 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
     _description = 'Cambio de Habitacion'
     flujoNuevo = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     observacion = fields.Char(string='Observaciones')
+
+class MotgamaWizardEntregaolvidados(models.TransientModel):
+    _name = 'motgama.wizardentregaolvidados'
+    _description = 'Entrega Objetos Olvidados'
+    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
+    fecha = fields.Datetime(string=u'fecha entrega')
+    observacion = fields.Char(string='Observaciones')
+    dardebaja = fields.Boolean(string=u'Activo?',default=False)
+

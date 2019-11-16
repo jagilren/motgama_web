@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree                                                                                                              P7.0.4R -->
+  <record id="tree_view_comanda" model="ir.ui.view">
+    <field name="name">Comanda</field>
+    <field name="model">motgama.comanda</field>
+    <field name="limit">100</field>
+    <field name="arch" type="xml">   
+      <tree string="Consumo" default_order="create_date desc">
+        <field name="nrocomanda" string="Comanda Nro"/>
+        <field name="fecha" string="Fecha"/>
+        <field name="habitacion" string="Habitacion"/>
+        <field name="producto_id" string="Producto"/>
+        <field name="vlrUnitario" string="Valor Unitario $"/>
+        <field name="cantidad" string="Cantidad"/>
+        <field name="descripcion" string="Descripcion"/>
+        <field name="active" string="Active"/>
+      </tree>
+    </field>
+  </record>
+</odoo>
