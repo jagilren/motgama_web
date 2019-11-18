@@ -805,9 +805,10 @@ class MotgamaReasignacion(models.Model):
     descripcion = fields.Char(string=u'Descripción')
     active = fields.Boolean(string=u'Activo?',default=True)
 
-class MotgamaWizardCambioPrecios(models.TransientModel):
-    _name = 'motgama.wizardcambioprecios'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R
-    _description = 'Formulario para cambiar masivamente los precios'
+class MotgamaUtilidades(models.TransientModel):
+    _name = 'motgama.utilidades'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R
+    _description = 'Menú de utilidades'
+    nueva_recepcion = fields.Many2one(string="Nueva recepción", comodel_name="motgama.recepcion")
 
 class MotgamaWizardFueradeservicio(models.TransientModel):
     _name = 'motgama.wizardfueradeservicio'

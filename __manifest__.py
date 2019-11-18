@@ -38,7 +38,7 @@
         'views/motgama_reserva.xml',
         'views/motgama_placa.xml',
         'views/motgama_inmotica.xml',
-        'views/motgama_cambioprecios.xml',
+        'views/motgama_utilidades.xml',
         # 'views/motgama_pago.xml',
         'views/motgama_bonos.xml',
         # 'views/motgama_wizard_recepcion.xml',
