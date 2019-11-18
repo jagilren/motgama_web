@@ -2,8 +2,18 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError,Warning, ValidationError
 
 #   Se instancia la clase heredada de motgama.py
-class MotgamaWizardCambioPrecios(models.TransientModel):
-    _inherit = 'motgama.wizardcambioprecios'
+class MotgamaUtilidades(models.TransientModel):
+    _inherit = 'motgama.utilidades'
+
+    @api.multi
+    def btn_cambio_recepcion(self):
+        nueva_recepcion = self.nueva_recepcion
+        if not nueva_recepcion:
+            raise Warning('Seleccione una recepción')
+        if self.env.user.recepcion_id.id == nueva_recepcion.id:
+            raise ValidationError('Ya se encuentra en esta recepción')
+        else:
+            self.env.user.write({'recepcion_id': nueva_recepcion.id})
 
     @api.multi
     #   Se define la función del botón de cambio de precios

@@ -1,18 +1,38 @@
 <odoo>
-    <record model="ir.ui.view" id="motgama_reporte_consumo">
-        <field name="name">Reporte de Consumos</field>
+    <record model="ir.ui.view" id="motgama_wizard_reporte_consumo">
+        <field name="name">Wizard reporte de consumos</field>
         <field name="model">motgama.wizard.reporteconsumo</field>
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Reporte de Consumos">
                 <group>
-                    <field name="habitacion"/>
+                    <field name="tipo_reporte" widget="radio"/>
+                    <field name="recepcion"/>
+                    <field name="fecha_inicial" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')]}"/>
+                    <field name="fecha_final" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')]}"/>
                 </group>
                 <footer>
                     <button name="get_report" string="Generar reporte" type="object" class="oe_highlight"/>
                     <button string="Cancelar" special="cancel"/>
                 </footer>
             </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="tree_reporte_consumo">
+        <field name="name">Reporte de consumos</field>
+        <field name="model">motgama.reporteconsumos</field>
+        <field name="arch" type="xml">
+            <tree string="Reporte de consumos" default_order="recepcion asc,fecha asc" create='false'>
+                <field name="recepcion"/>
+                <field name="fecha"/>
+                <field name="habitacion"/>
+                <field name="producto"/>
+                <field name="cantidad"/>
+                <field name="valorUnitario"/>
+                <field name="valorTotal"/>
+                <field name="usuario"/>
+            </tree>
         </field>
     </record>
 
