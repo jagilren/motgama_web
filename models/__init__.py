@@ -14,3 +14,4 @@ from . import consumo
 from . import permisos
 from . import liquidarhabitacion
 from . import reports
+from . import rehabilitarhabitacion

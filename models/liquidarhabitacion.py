@@ -109,7 +109,8 @@ class MotgamaFlujoHabitacion(models.Model):
                 'order_id' : ordenVenta.id,
                 'price_unit' : movimiento.tarifamanecida,
                 'product_uom_qty' : 1,
-                'product_id' : producto.product_variant_id.id
+                'product_id' : producto.product_variant_id.id,
+                'es_hospedaje' : True
             }
             nuevaLinea = self.env['sale.order.line'].create(valoresLineaAmanecida)
             if not nuevaLinea:
@@ -179,7 +180,8 @@ class MotgamaFlujoHabitacion(models.Model):
                 'order_id' : ordenVenta.id,
                 'price_unit' : movimiento.tarifaocasional,
                 'product_uom_qty' : 1,
-                'product_id' : producto.product_variant_id.id
+                'product_id' : producto.product_variant_id.id,
+                'es_hospedaje' : True
             }
             nuevaLinea = self.env['sale.order.line'].create(valoresLineaOcasional)
             if not nuevaLinea:
@@ -201,7 +203,8 @@ class MotgamaFlujoHabitacion(models.Model):
                 'order_id' : ordenVenta.id,
                 'price_unit' : movimiento.tarifahoradicional,
                 'product_uom_qty' : horasAdicionales,
-                'product_id' : producto.product_variant_id.id
+                'product_id' : producto.product_variant_id.id,
+                'es_hospedaje' : True
             }
             nuevaLinea = self.env['sale.order.line'].create(valoresLineaAdicionales)
             if not nuevaLinea:
