@@ -1,0 +1,46 @@
+<odoo>
+    <record model= "ir.ui.view" id="motgama_wizard_hospedaje">
+        <field name="name">Wizard reporte de hospedaje</field>
+        <field name="model">motgama.wizard.reportehospedaje</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de Hospedajes">
+                <group>
+                    <field name="recepcion"/>
+                    <field name="fecha_inicial" />
+                    <field name="fecha_final" />
+                </group>
+                <footer>
+                    <button name="get_report" string="Generar Reporte" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="tree_reporte_hospedaje">
+        <field name="name">Reporte de Hospedajes</field>
+        <field name="model">motgama.reportehospedaje</field>
+        <field name="arch" type="xml">
+            <tree string="Reporte de hospedajes" default_order="recepcion asc, fecha asc" create='false'>
+                <field name="recepcion"/>
+                <field name="fecha"/>
+                <field name="habitacion"/>
+                <field name="tipoHospedaje"/>
+                <field name="valor"/>
+                <field name="usuario"/>
+            </tree>
+        </field>
+    </record>
+
+    <act_window id="action_reporte_hospedaje_wizard"
+        name= "Reporte hospedaje"
+        res_model="motgama.wizard.reportehospedaje"
+        view_mode="form"
+        target="new"/>
+
+    <menuitem action="action_reporte_hospedaje_wizard"
+        id="menu_reporte_hospedaje"
+        parent="menu_motgama_reportes"/>
+</odoo>
+
