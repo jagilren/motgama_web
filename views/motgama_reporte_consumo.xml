@@ -37,7 +37,7 @@
     </record>
 
     <act_window id="action_reporte_consumo_wizard"
-        name="Reporte consumos"
+        name="Reporte de consumos"
         res_model="motgama.wizard.reporteconsumo"
         view_mode="form"
         target="new"/>
