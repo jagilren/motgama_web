@@ -20,17 +20,17 @@ action="accion_motgama_flujohabitacion_form"/>
 
 <menuitem id="menu_motgama_processes" name="Procesos" parent='menu_motgama'/>
 
-<menuitem id="menu_motgama_utilidades"
-name="Utilidades"
-parent="menu_motgama"
-action="accion_motgama_utilidades"
-/>
-
 <act_window id="accion_motgama_utilidades"
 name="Utilidades"
 res_model="motgama.utilidades"
 view_mode="form"
 limit="100"
+/>
+
+<menuitem id="menu_motgama_utilidades"
+name="Utilidades"
+parent="menu_motgama"
+action="accion_motgama_utilidades"
 />
 
 <menuitem id="menu_motgama_reportes" name="Reportes" parent='menu_motgama'/>

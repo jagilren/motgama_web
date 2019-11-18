@@ -48,5 +48,6 @@
         'views/res_users.xml',
         'views/product_category.xml',
         'views/motgama_reporte_consumo.xml',
-        'reports/reporte_consumos.xml']
+        'reports/reporte_consumos.xml',
+        'views/motgama_reporte_hospedaje.xml',]
 }

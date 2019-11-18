@@ -22,3 +22,16 @@ models/__pycache__/consumo.cpython-35.pyc
 models/__pycache__/fueradeserviciohabitacion.cpython-35.pyc
 models/__pycache__/motgama.cpython-35.pyc
 models/__pycache__/wizardhabitacion.cpython-35.pyc
+models/__pycache__/__init__.cpython-35.pyc
+models/__pycache__/__init__.cpython-35.pyc
+models/__pycache__/cambiodeplanhabitacion.cpython-35.pyc
+models/__pycache__/fueradeserviciohabitacion.cpython-35.pyc
+models/__pycache__/fueradeusohabitacion.cpython-35.pyc
+models/__pycache__/liquidarhabitacion.cpython-35.pyc
+models/__pycache__/motgama.cpython-35.pyc
+models/__pycache__/permisos.cpython-35.pyc
+models/__pycache__/utilidades.cpython-35.pyc
+models/__pycache__/wizardhabitacion.cpython-35.pyc
+models/reports/__pycache__/__init__.cpython-35.pyc
+models/reports/__pycache__/wizard_reporte_consumos.cpython-35.pyc
+models/reports/__pycache__/wizard_reporte_hospedaje.cpython-35.pyc
