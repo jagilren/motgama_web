@@ -100,7 +100,7 @@
                                 class="btn btn"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"
                                 confirm="¿Está seguro que desea liquidar esta habitación?"/>
                                 
-                            <button name="button_recaudar" string="Recaudar" type="object"
+                            <button type="action" name="%(motgama.action_wizard_recaudo)d" string="Recaudar"
                                 class="btn btn"  attrs="{'invisible': [('estado','not in',['LQ'])]}"/>
                                 
                             <button name="button_continuar" string="Rehabilitar" type="object"
@@ -155,7 +155,6 @@
                                 <strong style="font-size:16px; text-align: center;">
                                     <field name="codigo"/>
                                 </strong>
-                                <span><br/><br/><field name="estado"/></span> 
                             </button>
                         </div>
                     </t>

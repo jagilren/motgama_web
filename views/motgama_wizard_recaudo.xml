@@ -1,0 +1,62 @@
+<odoo>
+    <record model="ir.ui.view" id="motgama_wizard_recaudo">
+        <field name="name">Wizard recaudo</field>
+        <field name="model">motgama.wizardrecaudo</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Recaudar habitación">
+                <group name="info">
+                    <group>
+                        <field name="habitacion" readonly="True" style="font-size:20px;"/>
+                    </group>
+                    <group>
+                    </group>
+                    <group>
+                        <field name="deuda" readonly="True" style="font-size:20px;" widget="monetary"/>
+                    </group>
+                    <group>
+                        <field name="total" readonly="True" style="font-size:20px;" widget="monetary"/>
+                    </group>
+                </group>
+                <group name="data">
+                    <field name="cliente"/>
+                    <field name="pagos" widget='one2many_list' mode="tree">
+                        <tree string="Registro de pagos" editable="bottom">
+                            <control>
+                                <create string="Agregar pago"/>
+                            </control>
+                            <field name="mediopago"/>
+                            <field name="valor" widget="monetary"/>
+                            <field name="descripcion"/>
+                        </tree>
+                    </field>
+                    <field name="pago_prenda" readonly="True" invisible="1"/>
+                </group>
+                <group name="prendas_cliente" attrs="{'invisible': [('pago_prenda','=', False)]}">
+                    <h3>Información de prendas previas del cliente</h3>
+                    <field name="prendas_pendientes"/>
+                    <field name="prendas_pagadas" readonly="True"/>
+                </group>
+                <group name="prenda_nueva" attrs="{'invisible': [('pago_prenda','=', False)]}">
+                    <h3>Rellene los campos de la prenda a registrar</h3>
+                    <group>
+                        <field name="prenda_descripcion"/>
+                    </group>
+                    <group>
+                        <field name="prenda_valor" widget="monetary"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="recaudar" string="Recaudar" type="object" class="oe_highlight"/>
+                    <button string="Cancelar" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window id="action_wizard_recaudo"
+        name="Recaudar habitación"
+        res_model="motgama.wizardrecaudo"
+        view_mode="form"
+        target="new"/>
+</odoo>

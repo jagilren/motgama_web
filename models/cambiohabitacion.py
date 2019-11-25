@@ -126,3 +126,7 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         nuevaReasignacion = Reasignacion.create(valoresReasigna)
         if not nuevaReasignacion:
             raise Warning('Error: No se pudo actualizar el registro de la reasignacion')
+
+        self.refresh_views()
+        
+        return True

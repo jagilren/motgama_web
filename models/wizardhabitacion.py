@@ -55,12 +55,12 @@ class MotgamaWizardHabitacion(models.TransientModel):
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
             flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
             flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")
-            """ if flagInicioTz > flagFinTz:
+            if flagInicioTz > flagFinTz:
                 if flagFinTz.time() < fechaActualTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             else:
                 if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
-                    raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento') """
+                    raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             
             flagInicio = flagInicioTz + timedelta(hours=5)
             flagFin = flagFinTz + timedelta(hours=5)
@@ -132,6 +132,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         else:
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
         
-        # Se regresa a la pantalla de Habitaciones
+        self.refresh_views()
+        
         return True
         # TODO manejo de anticipo y pago de contado en negocios del centro

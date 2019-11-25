@@ -1,0 +1,14 @@
+<odoo>
+    <record id="tree_view_prenda" model="ir.ui.view">
+        <field name="name">Prendas</field>
+        <field name="model">motgama.prendas</field>
+        <field name="arch" type="xml">
+            <tree string="Objetos Olvidados">
+                <field name="fecha"/>
+                <field name="descripcion"/>
+                <field name="valorprenda"/>
+                <field name="valordeuda"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

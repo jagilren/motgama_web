@@ -37,3 +37,7 @@ class MotgamaWizardDesasigna(models.TransientModel):
             # TODO: Enviar correo de movimiento
         else:
             raise Warning('No se pudo cambiar el estado para desasignar la habitación')
+
+        self.refresh_views()
+        
+        return True

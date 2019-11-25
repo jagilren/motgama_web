@@ -50,4 +50,8 @@ class MotgamaFlujoHabitacion(models.Model):
 
         estado = movimiento.asignatipo
         self.write({'estado': estado})
+
+        self.refresh_views()
+        
+        return True
         

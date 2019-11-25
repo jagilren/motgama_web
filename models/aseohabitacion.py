@@ -19,3 +19,7 @@ class MotgamaFlujoHabitacion(models.Model):
             self.sudo().write({'estado':'RC'}) # pone en estado disponible
         else:
             raise Warning('No se pudo cambiar el estado para asear la habitación')
+    
+        self.refresh_views()
+        
+        return True

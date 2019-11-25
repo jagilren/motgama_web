@@ -54,6 +54,9 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
 
         else:   # Va a pasar de amanecida a ocasional
             flujo.sudo().write({'estado':'OO'}) # pone en estado de ocupada ocasional
+        
+        self.refresh_views()
+        
         return True
 
         

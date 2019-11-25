@@ -16,7 +16,7 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
             'habitacion_id':habitacion_id,
             'fueradeserviciohora':fields.Datetime.now(),
             'fueradeservicio_uid':self.env.user.id,
-            'fueradeservicioobservacion':self.observacion
+            'observacion':self.observacion
         }
         nuevoMovimiento = self.env['motgama.movimiento'].create(infomovimiento)
 
@@ -26,3 +26,7 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
 
         else:
             raise Warning('No se pudo cambiar el estado de la habitación')
+
+        self.refresh_views()
+        
+        return True

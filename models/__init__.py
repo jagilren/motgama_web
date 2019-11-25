@@ -15,3 +15,4 @@ from . import permisos
 from . import liquidarhabitacion
 from . import reports
 from . import rehabilitarhabitacion
+from . import wizardrecaudos
