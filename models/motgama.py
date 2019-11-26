@@ -223,9 +223,10 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     codigo = fields.Char(string=u'Código')
     estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Camarera'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
-    fecha = fields.Datetime 
     recepcion = fields.Many2one(string=u'Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string=u'Activo?',default=True)
+    tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',compute='_compute_habitacion',store=True)
+    tema = fields.Many2one(string='Tema',comodel_name='motgama.tema',compute='_compute_habitacion',store=True)
 
     # Cuenta de cobro:
     orden_venta = fields.Many2one(string='Cuenta de Cobro',comodel_name='sale.order',ondelete='set null')
@@ -254,6 +255,15 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
         record = super(MotgamaFlujoHabitacion, self).create(values)
         self.refresh_views()
         return record
+    
+    @api.depends('codigo')
+    def _compute_habitacion(self):
+        for record in self:
+            if not record.codigo:
+                break
+            habitacion = self.env['motgama.habitacion'].search([('codigo','=',record.codigo)], limit=1)
+            record.tipo = habitacion.tipo_id.id
+            record.tema = habitacion.tema_id.id
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'
@@ -334,174 +344,6 @@ class MotgamaWizardHabitacion(models.TransientModel):
         self.ensure_one()
         # Sacar el id que trae por debajo el contexto del Wizard
         habitacion = self.env.context['active_id']
-
-    '''
-    @api.multi # 14 junio
-    def button_asignar_wizard(self):
-        self.ensure_one()
-        # Sacar el id que trae por debajo el contexto del Wizard
-        habitacion = self.env.context['active_id']
-        # Me trea el tipo de habitacion en motgama_habitacion
-        """ reghabitacion = self.env['motgama.habitacion'].search([('id','=',habitacion)], limit = 1)
-        tipohabitacion = str(reghabitacion['tipo_id']) """
-        #reghabitacion = self.env['motgama.habitacion'].search([('tipo_id','=',habitacion)], limit = 1)
-        #tipohabitacion = reghabitacion['tipo_id']
-        qrytipohab = "SELECT tipo_id FROM motgama_habitacion WHERE id = '" + str(habitacion) + "';"
-        self.env.cr.execute(qrytipohab)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            restipohab = self.env.cr.dictfetchone()
-            tipohab = restipohab['tipo_id']
-        #raise Warning(tipohab)
-        # Dia y hora actual
-        dia = datetime.now().strftime('%A')
-        hora = datetime.now().strftime('%H')
-        # Consulta el hora con el valor del parametro
-        qryhid = "SELECT valor FROM motgama_parametros WHERE nombre = 'Hora Inicio Diurno';"
-        self.env.cr.execute(qryhid)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reshid = self.env.cr.dictfetchone()
-            hid = reshid['valor']
-        qryhfd = "SELECT valor FROM motgama_parametros WHERE nombre = 'Hora Fin Diurno';"
-        self.env.cr.execute(qryhfd)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reshfd = self.env.cr.dictfetchone()
-            hfd = reshfd['valor']
-        qrytno = "SELECT valor FROM motgama_parametros WHERE nombre = 'Tiempo Normal';" #Tiempo Normal Ocasional
-        self.env.cr.execute(qrytno)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            restno = self.env.cr.dictfetchone()
-            tno = restno['valor']
-        qryhia = "SELECT valor FROM motgama_parametros WHERE nombre = 'Hora Inicio Amanecida';"
-        self.env.cr.execute(qryhia)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reshia = self.env.cr.dictfetchone()
-            hia = reshia['valor']
-        qryhfa = "SELECT valor FROM motgama_parametros WHERE nombre = 'Hora Fin Amanecida';"
-        self.env.cr.execute(qryhfa)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reshfa = self.env.cr.dictfetchone()
-            hfa = reshfa['valor']
-        qryhcoa = "SELECT valor FROM motgama_parametros WHERE nombre = 'Hora CO Amanecida';"
-        self.env.cr.execute(qryhcoa)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reshcoa = self.env.cr.dictfetchone()
-            hcoa = reshcoa['valor'] 
-        qrypa = "SELECT valor FROM motgama_parametros WHERE nombre = 'Permite Amanecida?';"
-        self.env.cr.execute(qrypa)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            respe = self.env.cr.dictfetchone()
-            pa = respe['valor'] # falta hacer la funcion
-        qrydes = "SELECT valor FROM motgama_parametros WHERE nombre = 'Descuentos %';"
-        self.env.cr.execute(qrydes)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            resdes = self.env.cr.dictfetchone()
-            des = resdes['valor'] # falta hacer la funcion 
-        qrycfh = "SELECT valor FROM motgama_parametros WHERE nombre = 'Cobra fracción hora?';"
-        self.env.cr.execute(qrycfh)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            rescfh = self.env.cr.dictfetchone()
-            cfh = rescfh['valor'] # falta hacer la funcion 
-        qrytdgf = "SELECT valor FROM motgama_parametros WHERE nombre = 'Tiempo de gracia fracción';"
-        self.env.cr.execute(qrytdgf)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            restdgf = self.env.cr.dictfetchone()
-            tdgf = restdgf['valor'] # falta hacer la funcion
-        qrytdgd = "SELECT valor FROM motgama_parametros WHERE nombre = 'Tiempo de gracia desasignación';"
-        self.env.cr.execute(qrytdgd)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            restdgd = self.env.cr.dictfetchone()
-            tdgd = restdgd['valor'] # falta hacer la funcion
-        # La parte de los codigos es para que cuando se carge los estados de cuenta o la factura se pueda ditinguir que servicio tomo el cliente 
-        qrycodnor = "SELECT valor FROM motgama_parametros WHERE nombre = 'Código Normal';"
-        self.env.cr.execute(qrycodnor)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            rescodnor = self.env.cr.dictfetchone()
-            codnor = rescodnor['valor'] # falta hacer la funcion
-        qrycodoca = "SELECT valor FROM motgama_parametros WHERE nombre = 'Código Ocasional';"
-        self.env.cr.execute(qrycodoca)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            rescodoca = self.env.cr.dictfetchone()
-            codoca = rescodoca['valor'] # falta hacer la funcion
-        qrycodbono = "SELECT valor FROM motgama_parametros WHERE nombre = 'Código bonos';"
-        self.env.cr.execute(qrycodbono)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            rescodbono = self.env.cr.dictfetchone()
-            codbono = rescodbono['valor'] # falta hacer la funcion  
-        qrycodbono = "SELECT valor FROM motgama_parametros WHERE nombre = 'Código bonos';"
-        self.env.cr.execute(qrycodbono)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            rescodbono = self.env.cr.dictfetchone()
-            codbono = rescodbono['valor'] # falta hacer la funcion   
-        # ------Consulta si la hora es mayor a la hora de salida a la que esta en el parametro ----
-        if hid < hora and hora < hfd:
-            qrylista = "SELECT listapreciodia FROM motgama_calendario WHERE diasemana = '" + dia + "';"
-            self.env.cr.execute(qrylista)
-            if self.env.cr.rowcount:
-                self.ensure_one()
-                reslista = self.env.cr.dictfetchone()
-                lista = reslista['listapreciodia']
-            else:
-                raise Warning('No existe tarifa?')
-        else:
-            qrylista = "SELECT listaprecionoche FROM motgama_calendario WHERE diasemana = '" + dia + "';"
-            self.env.cr.execute(qrylista)
-            if self.env.cr.rowcount:
-                self.ensure_one()
-                reslista = self.env.cr.dictfetchone()
-                lista = reslista['listaprecionoche']
-            else:
-                raise Warning('No existe tarifa?')
-        #raise Warning(lista)
-        listaprecionormal = "SELECT codigo,tarifaocasional,tarifamanecida,tarifahoradicional,tipo_id FROM motgama_lisprec WHERE codigo = '" + lista + "' AND tipo_id = '" + str(tipohab) + "';"
-        self.env.cr.execute(listaprecionormal)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reslistaprecio = self.env.cr.dictfetchone()                  
-        #raise Warning(str(reslistaprecio['tarifaocasional']) + " " + str(reslistaprecio['tarifamanecida']))
-        listaprecio1 = 0
-        listapreciohabitacion = "SELECT listaprecio, tarifaocasional, tarifamanecida, tarifahoradicional  FROM motgama_habitacion_listaprecio WHERE listaprecio = '" + lista + "' AND habitacion_id = '" + str(habitacion) + "';"
-        self.env.cr.execute(listapreciohabitacion)
-        if self.env.cr.rowcount:
-            self.ensure_one()
-            reslistapreciohabitacion = self.env.cr.dictfetchone()
-            listaprecio1 = reslistapreciohabitacion['listaprecio']               
-        if not listaprecio1:
-            qryinsertamovimiento = "INSERT INTO motgama_movimiento (active, habitacion_id,tipovehiculo, placa_vehiculo, asignafecha, asignahora,\
-            asigna_uid, asignatipo, tarifaocasional, tarifamanecida, tarifahoradicional, tiemponormalocasional) VALUES \
-                (True," + str(habitacion) + ", '" + self.tipovehiculo + "','" + self.placa + "', current_date, NOW()::timestamp," + str(self.env.uid) + ", \
-                    '" + self.asignatipo + "'," + str(reslistaprecio['tarifaocasional']) + "," + str(reslistaprecio['tarifamanecida']) + ", \
-                        " + str(reslistaprecio['tarifahoradicional']) + "," + str(tno) + ");"
-            self.env.cr.execute(qryinsertamovimiento)
-            qryactualizaestadohabitacion = "UPDATE motgama_habitacion SET estado = '" + self.asignatipo + "' WHERE id = " + str(habitacion) + ";"
-            self.env.cr.execute(qryactualizaestadohabitacion)
-            return True
-        else:
-            qryinsertamovimiento1 = "INSERT INTO motgama_movimiento (active, habitacion_id,tipovehiculo, placa_vehiculo, asignafecha, asignahora,\
-            asigna_uid, asignatipo, tarifaocasional, tarifamanecida, tarifahoradicional, tiemponormalocasional) VALUES \
-                (True," + str(habitacion) + ", '" + self.tipovehiculo + "','" + self.placa + "', current_date, NOW()::timestamp," + str(self.env.uid) + ", \
-                    '" + self.asignatipo + "'," + str(reslistapreciohabitacion['tarifaocasional']) + "," + str(reslistapreciohabitacion['tarifamanecida']) + ", \
-                        " + str(reslistapreciohabitacion['tarifahoradicional']) + "," + str(tno) + ");"
-            self.env.cr.execute(qryinsertamovimiento1)
-            qryactualizaestadohabitacion1 = "UPDATE motgama_habitacion SET estado = '" + self.asignatipo + "' WHERE id = " + str(habitacion) + ";"
-            self.env.cr.execute(qryactualizaestadohabitacion1)
-            return True
-        '''
 
 # Se añade el historico de Placas para que tener registro si esta tuvo algun problema o tiene un acceso prioritario
 class MotgamaPlaca(models.Model):#10 julio

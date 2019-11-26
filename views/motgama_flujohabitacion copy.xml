@@ -56,12 +56,12 @@
                         </group>
                     </group>
                     <group name="group_top">
-                        <field name="estado" string="Estado" readonly="1"/>
+                        <field name="estado" string="Estado"/>
+                        <!-- <field name="estado" string="Estado" readonly="1"/> -->
+                        <field name="active" string="Activar" readonly="1"/>
                         <br/>
                         <field name="recepcion" string="Recepción" readonly="1"/>
-                        <field name="tipo" string="Tipo de Habitación" readonly="1"/>
-                        <field name="tema" string="Tema" readonly="1"/>
-                        <br/><br/>
+                        <br/><br/><br/>
                     </group><br/>
                     
                     <notebook>
@@ -118,62 +118,44 @@
         <field name="model">motgama.flujohabitacion</field>
         <field name="type">kanban</field>
         <field name="arch" type="xml">
-            <kanban quick_create="false" create="false" class='o_modules_kanban'>
+            <kanban quick_create="false" create="false" delete="false">
                 <field name="codigo"/>
                 <field name="estado"/>
-                <field name="tipo"/>
-                <field name="tema"/>
-                <templates>
+                <templates id="template" xml:space="preserve">
                     <t t-name="kanban-box">
-                        <div class="oe_module_vignette">
-                            <div class="o_dropdown_kanban dropdown" tabindex="-1">
-                                <a class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" data-display="static" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
-                                    <span class="fa fa-ellipsis-v"/>
-                                </a>
-                                <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                    <h4>Tema de Habitación</h4>
-                                    <p><field name="tema"/></p>
-                                </div>
-                            </div>
-
-                            <a type='object' name='open_record'>
-                            <t t-if="record.estado.raw_value === 'D'">
-                                <img t-attf-src="/motgama/static/src/img/estado_verde.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Disponible"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'OO'">
-                                <img t-attf-src="/motgama/static/src/img/estado_rojo.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Ocupada Ocasional"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'OA'">
-                                <img t-attf-src="/motgama/static/src/img/estado_naranjado.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Ocupada Amanecida"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'LQ'">
-                                <img t-attf-src="/motgama/static/src/img/estado_fucsia.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Liquidada"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'RC'">
-                                <img t-attf-src="/motgama/static/src/img/estado_azul.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Aseo"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'R'">
-                                <img t-attf-src="/motgama/static/src/img/estado_amarillo.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Reservada"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'FS'">
-                                <img t-attf-src="/motgama/static/src/img/estado_azulclaro.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Fuera de Servicio"/>
-                            </t>
-                            <t t-if="record.estado.raw_value === 'FU'">
-                                <img t-attf-src="/motgama/static/src/img/estado_cafe.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Fuera de Uso"/>
-                            </t>
-                            </a>
-
-                            <div class="oe_module_desc" t-att-title="Title">
-                                <h2>
+                        <div t-attf-class="oe_kanban_color_{{kanban_getcolor(record.estado.raw_value)}}"  class="o_kanban_record" style="pointer-events: none; position: relative; width: 50px; height: 90px;"> 
+                            <button style="pointer-events:auto; position: relative; width:100%; height:100%; background:none; border:none;" title="open" type="object" name="open_record">
+                                <t t-if="record.estado.raw_value === 'D'">
+                                    <img alt="Disponible" t-att-src="_s + &quot;/motgama/static/src/img/estado_verde.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'OO'">
+                                    <img alt="Ocupado Ocasional" t-att-src="_s + &quot;/motgama/static/src/img/estado_rojo.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'OA'">
+                                    <img alt="Ocupado Amanecida" t-att-src="_s + &quot;/motgama/static/src/img/estado_naranjado.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'LQ'">
+                                    <img alt="Liquidada" t-att-src="_s + &quot;/motgama/static/src/img/estado_fucsia.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'RC'">
+                                    <img alt="Recaudada" t-att-src="_s + &quot;/motgama/static/src/img/estado_azul.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'R'">
+                                    <img alt="Reservada" t-att-src="_s + &quot;/motgama/static/src/img/estado_amarillo.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'FS'">
+                                    <img alt="Fuera de Servicio" t-att-src="_s + &quot;/motgama/static/src/img/estado_azulclaro.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>
+                                <t t-if="record.estado.raw_value === 'FU'">
+                                    <img alt="Fuera de Uso" t-att-src="_s + &quot;/motgama/static/src/img/estado_cafe.png&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>    
+                                <t t-if="record.estado.raw_value === 'HB'">
+                                    <img alt="Habilitar habitacón" t-att-src="_s + &quot;&quot;" class="o_kanban_image oe_kanban_avatar_smallbox"/>
+                                </t>    
+                                <strong style="font-size:16px; text-align: center;">
                                     <field name="codigo"/>
-                                </h2>
-                                <p class="oe_module_name">
-                                    <field name="tipo"/>
-                                </p>
-                                <div class="oe_module_action">
-                                    <a type="object" class="btn btn-sm btn-secondary float-right" name="open_record">Seleccionar habitación</a>
-                                </div>
-                            </div>
+                                </strong>
+                            </button>
                         </div>
                     </t>
                 </templates>
