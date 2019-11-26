@@ -131,48 +131,49 @@
                                     <span class="fa fa-ellipsis-v"/>
                                 </a>
                                 <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                    <h4>Tema de Habitación</h4>
-                                    <p><field name="tema"/></p>
+                                    <h4>Comodidades</h4>
                                 </div>
                             </div>
 
                             <a type='object' name='open_record'>
                             <t t-if="record.estado.raw_value === 'D'">
-                                <img t-attf-src="/motgama/static/src/img/estado_verde.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Disponible"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_verde.png" class="oe_module_icon" alt="Disponible"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'OO'">
-                                <img t-attf-src="/motgama/static/src/img/estado_rojo.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Ocupada Ocasional"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_rojo.png" class="oe_module_icon" alt="Ocupada Ocasional"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'OA'">
-                                <img t-attf-src="/motgama/static/src/img/estado_naranjado.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Ocupada Amanecida"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_naranjado.png" class="oe_module_icon" alt="Ocupada Amanecida"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'LQ'">
-                                <img t-attf-src="/motgama/static/src/img/estado_fucsia.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Liquidada"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_fucsia.png" class="oe_module_icon" alt="Liquidada"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'RC'">
-                                <img t-attf-src="/motgama/static/src/img/estado_azul.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Aseo"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_azul.png" class="oe_module_icon" alt="Aseo"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'R'">
-                                <img t-attf-src="/motgama/static/src/img/estado_amarillo.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Reservada"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_amarillo.png" class="oe_module_icon" alt="Reservada"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'FS'">
-                                <img t-attf-src="/motgama/static/src/img/estado_azulclaro.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Fuera de Servicio"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_azulclaro.png" class="oe_module_icon" alt="Fuera de Servicio"/>
                             </t>
                             <t t-if="record.estado.raw_value === 'FU'">
-                                <img t-attf-src="/motgama/static/src/img/estado_cafe.png" class="o_kanban_image oe_kanban_avatar_smallbox" alt="Fuera de Uso"/>
+                                <img t-attf-src="/motgama/static/src/img/estado_cafe.png" class="oe_module_icon" alt="Fuera de Uso"/>
                             </t>
                             </a>
 
                             <div class="oe_module_desc" t-att-title="Title">
-                                <h2>
-                                    <field name="codigo"/>
-                                </h2>
-                                <p class="oe_module_name">
-                                    <field name="tipo"/>
-                                </p>
-                                <div class="oe_module_action">
-                                    <a type="object" class="btn btn-sm btn-secondary float-right" name="open_record">Seleccionar habitación</a>
-                                </div>
+                                <a type="object" name="open_record">
+                                    <h2 style="text-color: black;">
+                                        &amp;nbsp; <field name="codigo"/>
+                                    </h2>
+                                </a>
+                                <a type="object" name="open_record">
+                                    <p class="oe_module_name">
+                                        <span>&amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
+                                        &amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/></span>
+                                    </p>
+                                </a>
                             </div>
                         </div>
                     </t>
