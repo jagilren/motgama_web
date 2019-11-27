@@ -17,9 +17,9 @@ class WizardReporteConsumos(models.TransientModel):
             recepcion = self.recepcion
             ids = []
             if not recepcion:
-                consumos = self.env['motgama.consumo'].search([])
+                consumos = self.env['motgama.consumo'].search([('active','=',True)])
             else:
-                consumos = self.env['motgama.consumo'].search([('recepcion','=',recepcion.id)])
+                consumos = self.env['motgama.consumo'].search([('recepcion','=',recepcion.id),('active','=',True)])
             if not consumos:
                 raise Warning('No hay consumos qué mostrar')
             for consumo in consumos:
@@ -35,13 +35,19 @@ class WizardReporteConsumos(models.TransientModel):
             recepcion = self.recepcion
             ids = []
             if not recepcion:
-                consumos = self.env['motgama.consumo'].search([])
+                consumos1 = self.env['motgama.consumo'].search([])
+                consumos2 = self.env['motgama.consumo'].search([('active','=',False)])
             else:
-                consumos = self.env['motgama.consumo'].search([('recepcion','=',recepcion.id)])
-            if not consumos:
+                consumos1 = self.env['motgama.consumo'].search([('recepcion','=',recepcion.id)])
+                consumos2 = self.env['motgama.consumo'].search([('active','=',False),('recepcion','=',recepcion.id)])
+            if not consumos1 and not consumos2:
                 raise Warning('No hay consumos qué mostrar')
 
-            for consumo in consumos:
+            for consumo in consumos1:
+                if fecha_inicial < consumo.create_date < fecha_final:
+                    ids.append(consumo)
+            
+            for consumo in consumos2:
                 if fecha_inicial < consumo.create_date < fecha_final:
                     ids.append(consumo)
 

@@ -211,7 +211,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de horas adicionales a la orden de venta')
         
         self.write({'estado':'LQ','orden_venta':ordenVenta.id})
-        movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id})
+        movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
 
         # TODO: Crear tarea programada que cambie el estado si no se recauda la habitación en cierto tiempo
 

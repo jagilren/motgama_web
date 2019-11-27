@@ -33,6 +33,11 @@ class MotgamaConsumo(models.Model):
             if not self.env.user.motgama_consumo_negativo:
                raise Warning('No tiene permisos para agregar consumos negativos')
             record = super().create(values)
+            if record.vlrUnitario == 0:
+                if record.valorUnitario == 0:
+                    raise Warning('No se permiten consumos de valor $0.0')
+                else:
+                    record.write({'vlrUnitario':record.valorUnitario})
             if record.producto_id.type == 'consu':
                 raise Warning('No se puede cancelar orden de restaurante')
             ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
@@ -111,6 +116,11 @@ class MotgamaConsumo(models.Model):
                 transferencia.button_validate()
         else:
             record = super().create(values)
+            if record.vlrUnitario == 0:
+                if record.valorUnitario == 0:
+                    raise Warning('No se permiten consumos de valor $0.0')
+                else:
+                    record.write({'vlrUnitario':record.valorUnitario})
             if record.producto_id.type == 'product':
                 valoresTransferencia = {
                     'location_id' : self.env['stock.location'].search([('id','=',record.lugar_id.id)],limit=1).id,

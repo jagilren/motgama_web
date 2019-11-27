@@ -73,14 +73,16 @@ class MotgamaWizardHabitacion(models.TransientModel):
             valores.update({'horafinamanecida':horafinamanecida})
 
         # Ahora busca en las placas para verificar alguna novedad y mostrarla al operador. El mensaje aparece en el chatter
-        novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(self.placa))], limit=1)
-        if novedadPlaca:
-            self.message_post(novedadPlaca['descripcion'], subject='Atención! Esta placa registra una novedad previa...',subtype='mail.mt_comment')
-
+        if self.placa:
+            placa = self.placa.upper()
+            novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(placa))], limit=1)
+            if novedadPlaca:
+                self.message_post(novedadPlaca['descripcion'], subject='Atención! Esta placa registra una novedad previa...',subtype='mail.mt_comment')
+            valores.update({'placa_vehiculo': placa})
+            
         # Se rellena el diccionario con los valores del registro
         valores.update({'habitacion_id': fullHabitacion.id})
         valores.update({'tipovehiculo': self.tipovehiculo})
-        valores.update({'placa_vehiculo': self.placa.upper()})
         valores.update({'asignatipo': self.asignatipo})
         valores.update({'asignafecha': fechaActual})
         valores.update({'asigna_uid': self.env.user.id})

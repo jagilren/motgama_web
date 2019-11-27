@@ -69,6 +69,7 @@
                 </group>
                 <group name="cambioplan" string="Cambio de Plan">
                     <group>
+                        <field name="hubocambioplan"/>
                     </group>
                     <group>
                     </group>

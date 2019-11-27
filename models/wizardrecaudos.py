@@ -109,7 +109,6 @@ class MotgamaWizardRecaudo(models.TransientModel):
             }
             valoresPagos.append(valores)
 
-        # TODO: Crear y confirmar factura
         ordenVenta = self.env['sale.order'].search([('movimiento','=',self.movimiento.id),('state','=','sale')],limit=1)
         if not ordenVenta:
             raise Warning('Error al recaudar: La habitación no fue recaudada correctamente')
@@ -175,6 +174,10 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'recauda_uid':self.env.user.id,
             'factura': factura.id
             })
+        
+        consumos = self.env['motgama.consumo'].search([('movimiento_id','=',self.movimiento.id)])
+        for consumo in consumos:
+            consumo.write({'active': False})
 
         return {
             'type': 'ir.actions.act_window',

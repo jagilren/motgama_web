@@ -525,6 +525,7 @@ class MotgamaMovimiento(models.Model):#ok
     observacion = fields.Char(string='Observación')
     horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida')
     horafinamanecida = fields.Datetime(string='Hora Fin Amanecida')
+    hubocambioplan = fields.Boolean(string='¿Hubo cambio de plan en el movmiento?',default=False)
 
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
@@ -624,12 +625,14 @@ class MotgamaConsumo(models.Model):
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
     cantidad = fields.Float(string=u'Cantidad',required=True)
-    vlrUnitario = fields.Float(string='Vlr Unitario',compute='_compute_vlrunitario',store=True)                                                                                     #P7.0.4R
+    valorUnitario = fields.Float(string='Valor Unitario',compute='_compute_valorUnitario')                                                                                   #P7.0.4R
+    vlrUnitario = fields.Float(string='Valor Unitario')
     vlrSubtotal = fields.Float(string=u'Subtotal $',compute="_compute_vlrsubtotal",store = True)
     lugar_id = fields.Many2one(string='Bodega de Inventario',comodel_name='stock.location',ondelete='set null',store=True)
     estado = fields.Char(string=u'estado')
     active = fields.Boolean(string=u'Activo?',default=True)    
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    permitecambiarvalor = fields.Boolean(string='Permite cambiar valor',default=False,compute="_compute_valorUnitario",store=True)
 
     @api.onchange('producto_id')
     def onchange_producto(self):
@@ -651,19 +654,34 @@ class MotgamaConsumo(models.Model):
                     raise Warning('No existe lugar de inventario para la recepción: ' + record.habitacion.recepcion.nombre)
                 record.lugar_id = lugar.id
 
-    @api.depends('habitacion','producto_id')
-    def _compute_vlrunitario(self):
+    @api.depends('vlrUnitario')
+    def _compute_vlrsubtotal(self):
+        for record in self:
+            record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
+
+    @api.depends('producto_id')
+    def _compute_valorUnitario(self):
         for record in self:
             if record.producto_id:
                 movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id.id)], limit=1)
                 lista = movimiento.listaprecioproducto
                 precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
-                record['vlrUnitario'] = precioLista.fixed_price
-
-    @api.depends('vlrUnitario')
-    def _compute_vlrsubtotal(self):
+                if not precioLista:
+                    precio = record.producto_id.list_price
+                else:
+                    precio = precioLista.fixed_price
+                if precio == 0.0:
+                    record.permitecambiarvalor = True
+                else:
+                    record.permitecambiarvalor = False
+                    record.valorUnitario = precio
+    
+    @api.onchange('valorUnitario')
+    def _onchange_valorUnitario(self):
         for record in self:
-            record['vlrSubtotal'] = record.vlrUnitario * record.cantidad
+            if record.valorUnitario:
+                if record.valorUnitario != 0:
+                    record.vlrUnitario = record.valorUnitario
 
 class MotgamaComanda(models.Model):
 #    Fields: Comandas
