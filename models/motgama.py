@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import pytz
 from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError,Warning, ValidationError
@@ -79,9 +80,42 @@ class MotgamaCalendario(models.Model):#ok
     horainicioamanecida=fields.Char(string='H inic.Amanec.(hh:mm)')
     horafinamanecida=fields.Char(string='H Fin.Amanec.(hh:mm)')
     tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
-    flagignoretiempo = fields.Boolean(string=u'Ignore Tiempo',default=False,)
+    flagignoretiempo = fields.Boolean(string=u'Ignorar tiempo del calendario',help="Se ignorará el tiempo normal ocasional del calendario y se utilizará el definido en cada habitación",default=False,)
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     active = fields.Boolean(string=u'Activo?',default=True)
+
+    @api.model
+    def create(self,values):
+        try:
+            datetime.strptime(str(values['horainicioamanecida']),"%H:%M")
+        except ValueError:
+            raise ValidationError('El campo "Hora Inicio Amanecida" está mal definido, por favor usar el formato HH:MM de 24 horas')
+        try:
+            datetime.strptime(str(values['horafinamanecida']),"%H:%M")
+        except ValueError:
+            raise ValidationError('El campo "Hora Inicio Amanecida" está mal definido, por favor usar el formato HH:MM de 24 horas')
+        return super().create(values)
+    
+    def write(self,values):
+        try:
+            inicioamanecida = values['horainicioamanecida']
+        except KeyError:
+            inicioamanecida = False
+        try:
+            finamanecida = values['horafinamanecida']
+        except KeyError:
+            finamanecida = False
+        if inicioamanecida:
+            try:
+                datetime.strptime(str(values['horainicioamanecida']),"%H:%M")
+            except ValueError:
+                raise ValidationError('El campo "Hora Inicio Amanecida" está mal definido, por favor usar el formato HH:MM de 24 horas')
+        if finamanecida:
+            try:
+                datetime.strptime(str(values['horafinamanecida']),"%H:%M")
+            except ValueError:
+                raise ValidationError('El campo "Hora Fin Amanecida" está mal definido, por favor usar el formato HH:MM de 24 horas')
+        return super().write(values)
 
 class MotgamaRecepcion(models.Model):#ok
 #    Fields: RECEPCION: Aca estaran las diferentes recepciones por lo general sera RECEPCION A y RECEPCION B.
@@ -335,15 +369,74 @@ class MotgamaListaPrecioHabitacion(models.Model): #Lista de precios por habitaci
 class MotgamaWizardHabitacion(models.TransientModel):
     _name = 'motgama.wizardhabitacion'
     _description = 'Asignacion de habitacion'
-    placa = fields.Char(string=u'Ingrese Placa',)
-    tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
-    asignatipo = fields.Selection(string=u'La Asignacion es Amanecida?',selection=[('OO', 'No'), ('OA', 'Si')])
-    codigohabitacion = fields.Char(string=u'Código habitación')
+    placa = fields.Char(string='Ingrese Placa',)
+    tipovehiculo = fields.Selection(string='Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')],default='peaton',required=True)
+    asignatipo = fields.Selection(string='La Asignacion es Amanecida?',selection=[('OO', 'No'), ('OA', 'Si')],required=True,default='OO')
+    
+    valorocasional = fields.Float(string='Valor Hospedaje Ocasional',readonly=True,compute='_compute_valores')
+    valoramanecida = fields.Float(string='Valor Hospedaje Amanecida',readonly=True,compute='_compute_valores')
+    valoradicional = fields.Float(string='Valor Hora Adicional',readonly=True,compute='_compute_valores')
+    horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida',readonly=True,compute='_compute_valores')
+    tiemponormal = fields.Char(string='Tiempo normal ocasional',readonly=True)
 
-    def _compute_codigohab(self):
-        self.ensure_one()
-        # Sacar el id que trae por debajo el contexto del Wizard
-        habitacion = self.env.context['active_id']
+    codigohab = fields.Char(compute='_compute_valores')
+
+    @api.depends('tipovehiculo')
+    def _compute_valores(self):
+        for record in self:
+            flujo_id = self.env.context['active_id']
+            flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
+            Habitacion = flujo['codigo']
+            fullHabitacion = self.env['motgama.habitacion'].search([('codigo','=',Habitacion)], limit=1) # Trae todos los datos de la habitacion actual
+            fechaActual = datetime.now()
+            if not self.env.user.tz:
+                tz = pytz.timezone('America/Bogota')
+            else:
+                tz = pytz.timezone(self.env.user.tz)
+            fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
+            nroDia = fechaActualTz.weekday()
+            calendario = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
+            if not calendario:
+                raise Warning('Error: No existe calendario para el día actual')
+            
+            record.codigohab = Habitacion
+
+            horaInicioAmanecida = datetime.strptime(str(calendario.horainicioamanecida),"%H:%M") + timedelta(hours=5)
+            fechaInicioAmanecida = datetime(year=fechaActualTz.year,month=fechaActualTz.month,day=fechaActualTz.day,hour=horaInicioAmanecida.hour,minute=horaInicioAmanecida.minute)
+            record.horainicioamanecida = fechaInicioAmanecida
+            record.tiemponormal = str(calendario.tiemponormalocasional) + ' horas'
+
+            flagInicioDia = self.env['motgama.parametros'].search([('codigo','=','HINICIODIA')], limit=1)
+            if not flagInicioDia:
+                raise Warning('Error: No se ha definido el parámetro "Hora Inicio Día"')
+            flagInicioNoche = self.env['motgama.parametros'].search([('codigo','=','HINICIONOCHE')], limit=1)
+            if not flagInicioNoche:
+                raise Warning('Error: No se ha definido el parámetro "Hora Inicio Noche"')
+            inicioDiaTz = datetime.strptime(str(flagInicioDia['valor']),"%H:%M")
+            inicioNocheTz = datetime.strptime(str(flagInicioNoche['valor']),"%H:%M")
+            fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
+            if (inicioDiaTz.time() < fechaActualTz.time() < inicioNocheTz.time()):
+                Lista = calendario['listapreciodia']
+            else:
+                Lista = calendario['listaprecionoche']
+            tarifaHabitacion = self.env['motgama.listapreciohabitacion'].search(['&',('habitacion_id','=',fullHabitacion.id),('nombrelista','=',Lista)], limit=1)
+            if tarifaHabitacion:
+                valorocasional = tarifaHabitacion.tarifaocasional
+                valoramanecida = tarifaHabitacion.tarifamanecida
+                valoradicional = tarifaHabitacion.tarifahoradicional
+            else:
+                tarifaTipoHabitacion = self.env['motgama.listapreciotipo'].search(['&',('tipo_id','=',fullHabitacion.tipo_id.id),('nombrelista','=',Lista)], limit=1)
+                if tarifaTipoHabitacion:
+                    valorocasional = tarifaTipoHabitacion.tarifaocasional
+                    valoramanecida = tarifaTipoHabitacion.tarifamanecida
+                    valoradicional = tarifaTipoHabitacion.tarifahoradicional
+                else:
+                    raise Warning('Error: No hay tarifas definidas ni para la habitación ni para el tipo de habitación')
+            
+            record.valorocasional = valorocasional
+            record.valoramanecida = valoramanecida
+            record.valoradicional = valoradicional
+
 
 # Se añade el historico de Placas para que tener registro si esta tuvo algun problema o tiene un acceso prioritario
 class MotgamaPlaca(models.Model):#10 julio
@@ -419,8 +512,7 @@ class MotgamaMovimiento(models.Model):#ok
     anticipo = fields.Float(string=u'Valor anticipo')
     formapagoanticipo = fields.Char(string=u'Forma pago anticipo')
     reciboanticipo = fields.Float(string=u'Nro recibo caja anticipo')
-    nroestadocuenta = fields.Char(string=u'Nro estado de cuenta') # Se añade 11 de Julio
-    nrofactura = fields.Char(string=u'Nro de factura') # Se añade 11 de Julio
+    ordenVenta = fields.Many2one(string=u'Estado de cuenta',comodel_name='sale.order')
     # Proceso de Fuera de servicio
     fueradeserviciohora = fields.Datetime(string='Fecha fuera de servicio')
     fueradeservicio_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cambia de estado a fuera de servicio')
@@ -468,14 +560,14 @@ class MotgamaObjetosOlvidados(models.Model):
     _name = 'motgama.objolv' #Objetos Olvidados
     _description = u'MotgamaObjetosOlvidados'
     habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.habitacion',ondelete='set null')
-    fecha = fields.Datetime(string=u'Fecha')
+    fecha = fields.Datetime(string=u'Fecha',default=lambda self: fields.Datetime().now())
     descripcion = fields.Text(string=u'Descripción')
     valor = fields.Float(string=u'Valor Estimado')
     encontradopor = fields.Text(string=u'Encontrado por')
     entregado = fields.Boolean(string=u'Entregado?')
     entregadofecha = fields.Datetime(string=u'Fecha de entrega') 
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
-    entregado_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    entregado_uid = fields.Many2one(comodel_name='res.users',string='Usuario que entrega',default=lambda self: self.env.user.id)
     entregadonota = fields.Text(string=u'Nota')
     baja = fields.Boolean(string=u'Artículo dado de baja?')
     active = fields.Boolean(string=u'Activo?', default=True)
@@ -698,12 +790,3 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
     _description = 'Cambio de Habitacion'
     flujoNuevo = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     observacion = fields.Char(string='Observaciones')
-
-class MotgamaWizardEntregaolvidados(models.TransientModel):
-    _name = 'motgama.wizardentregaolvidados'
-    _description = 'Entrega Objetos Olvidados'
-    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
-    fecha = fields.Datetime(string=u'fecha entrega')
-    observacion = fields.Char(string='Observaciones')
-    dardebaja = fields.Boolean(string=u'Activo?',default=False)
-

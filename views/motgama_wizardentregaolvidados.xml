@@ -11,23 +11,21 @@
         target="new"
     />
 
-        <!-- Formulario                                                                                                                     P7.0.4R -->
     <record id="wizard_entrega_olvidados" model="ir.ui.view">
         <field name="name">Entrega Objetos Olvidados</field>
         <field name="model">motgama.wizardentregaolvidados</field>
         <field name="arch" type="xml">
-            <form>
-                <div style="white-space: pre-line;">
-                    <p><h5>Entrega Objetos Olvidados</h5></p>
-                </div>
+            <form string="Objetos Olvidados">
                 <group>
-                    <group>
-                        <field name="cliente_id" string="Cliente" required="1"/>
-                        <field name="fecha"/>
-                        <field name="observacion"/>
-                        <field name="dardebaja"/>
-                    </group>
+                    <field name="dardebaja"/>
+                    <field name="cliente_id" attrs="{'invisible': [('dardebaja','=',True)]}"/>
+                    <field name="fecha"/>
+                    <field name="observacion"/>
                 </group>
+                <footer>
+                    <button type="object" name="entregar_objeto" class="btn btn-info" string="Guardar"/>
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                </footer>
             </form>
         </field>
     </record>

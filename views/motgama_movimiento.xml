@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 <!--Tree                                                                                                                                    P7.0.4R -->
-    <record id="tree_view_habitacion" model="ir.ui.view">
-        <field name="name">Movimiento</field>
+    <record id="tree_view_movimiento" model="ir.ui.view">
+        <field name="name">Movimiento Tree</field>
         <field name="model">motgama.movimiento</field>
         <field name="limit">100</field>
         <field name="arch" type="xml">  
@@ -13,5 +13,125 @@
                 <field name="asignatipo"/>
             </tree>
         </field>
-    </record>  
+    </record> 
+
+    <record id="form_view_movimiento" model="ir.ui.view">
+        <field name="name">Movimiento Form</field>
+        <field name="model">motgama.movimiento</field>
+        <field name="arch" type="xml">
+            <form string="Movimiento" create="false" edit="false">
+                <group name="data">
+                    <group>
+                        <field name="habitacion_id"/>
+                    </group>
+                    <group>
+                        <field name="asignafecha"/>
+                    </group>
+                </group>
+                <group name="asignacion" string="Asignación">
+                    <group>
+                        <field name="tipovehiculo"/>
+                        <field name="placa_vehiculo"/>
+                    </group>
+                    <group>
+                        <field name="asignatipo"/>
+                        <field name="asigna_uid"/>
+                    </group>
+                    <group>
+                        <field name="tarifaocasional"/>
+                        <field name="tarifamanecida"/>
+                        <field name="tarifahoradicional"/>
+                    </group>
+                    <group>
+                        <field name="anticipo"/>
+                        <field name="formapagoanticipo"/>
+                        <field name="reciboanticipo"/>
+                    </group>
+                    <group>
+                        <field name="listaprecioproducto"/>
+                        <field name="horainicioamanecida"/>
+                        <field name="horafinamanecida"/>
+                    </group>
+                </group>
+                <group name="desasignacion" string="Desasignación">
+                    <group>
+                        <field name="desasignafecha"/>
+                    </group>
+                    <group>
+                        <field name="desasigna_uid"/>
+                    </group>
+                <group name="reasignacion" string="Reasignación">
+                    <group>
+                        <field name="flagreasignada"/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <group name="cambioplan" string="Cambio de Plan">
+                    <group>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <group name="liquidacion" string="Liquidación">
+                    <group>
+                        <field name="liquidafecha"/>
+                        <field name="liquida_uid"/>
+                    </group>
+                    <group>
+                        <field name="ordenVenta"/>
+                    </group>
+                </group>
+                <group name="recaudo" string="Recaudo"/>
+                    <group>
+                        <field name="recaudafecha"/>
+                        <field name="recauda_uid"/>
+                    </group>
+                    <group>
+                        <field name="factura"/>
+                    </group>
+                </group>
+                <group name="aseo" string="Aseo">
+                    <group>
+                        <field name="aseofecha"/>
+                    </group>
+                    <group>
+                        <field name="aseo_uid"/>
+                    </group>
+                </group>
+                <group name="habilitacion" string="Habilitación">
+                    <group>
+                        <field name="habilitafecha"/>
+                    </group>
+                    <group>
+                        <field name="habilita_uid"/>
+                    </group>
+                </group>
+                <group name="fueradeuso" string="Fuera de Uso">
+                    <group>
+                        <field name="fueradeusohora"/>
+                        <field name="fueradeuso_uid"/>
+                    </group>
+                    <group>
+                        <field name="fueradeuso_usuarioorden"/>
+                    </group>
+                </group>
+                <group name="fueradeservicio" string="Fuera de Servicio">
+                    <group>
+                        <field name="fueradeserviciohora"/>
+                    </group>
+                    <group>
+                        <field name="fueradeservicio_uid"/>
+                    </group>
+                </group>
+                <group name="otros" string="Otra información">
+                    <group>
+                        <field name="observacion"/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+            </form>
+        </field>
+    </record>
 </odoo>

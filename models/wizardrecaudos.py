@@ -18,7 +18,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
     prendas_pagadas = fields.Many2many(string='Prendas pagadas',comodel_name='motgama.prendas',compute='_compute_prendas')
 
     prenda_descripcion = fields.Char(string='Descripción de la prenda')
-    prenda_valor = fields.Float(string='Valor de la prenda')
+    prenda_valor = fields.Float(string='Valor estimado de la prenda')
 
     valores_pagos = []
 

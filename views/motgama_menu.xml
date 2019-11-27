@@ -198,6 +198,19 @@ action="accion_motgama_bonos_form"
 
 <!-- PROCESOS -->
 
+<!-- Accion -->
+<act_window id="accion_motgama_consumo_form"
+name="Consumos"
+res_model="motgama.consumo"
+view_mode="tree"
+/>
+<!-- Item de menu -->
+<menuitem id="menu_motgama_consumo_form"
+name="Consumos"
+parent="menu_motgama_processes"
+action="accion_motgama_consumo_form"
+/>
+
 <!-- Accion  -->
 <act_window id="accion_motgama_reserva_form"
 name="Reservas"
@@ -235,19 +248,6 @@ view_mode="tree,form"
 name="Prendas"
 parent="menu_motgama_processes"
 action="accion_motgama_prendas_form"
-/>
-
-<!-- Accion -->
-<act_window id="accion_motgama_consumo_form"
-name="Consumos"
-res_model="motgama.consumo"
-view_mode="tree"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_consumo_form"
-name="Consumos"
-parent="menu_motgama_processes"
-action="accion_motgama_consumo_form"
 />
 
 <!-- Accion -->

@@ -11,20 +11,26 @@
                         <h1 class="text-center">Menú Utilidades</h1><br/>
                     </group>
 
-                    <group name="cambio_recepcion">
-                        <h3>Cambio de recepción</h3><br/>
-                        <p>Al cambiar de recepción ...</p><br/>
-                        <field name="nueva_recepcion"/>
-                        <button class="btn" type="object" name="btn_cambio_recepcion" string="Cambiar recepción"
-                            confirm="¿Está seguro que desea cambiar de recepción?"/>
-                    </group>
+                    <notebook>
+                        <page name="user" string="Usuario">
+                            <group name="cambio_recepcion">
+                                <h3>Cambio de recepción</h3><br/>
+                                <p>Al cambiar de recepción ...</p><br/>
+                                <field name="nueva_recepcion"/>
+                                <button class="btn" type="object" name="btn_cambio_recepcion" string="Cambiar recepción"
+                                    confirm="¿Está seguro que desea cambiar de recepción?"/>
+                            </group>
+                        </page>
 
-                    <group name="cambio_precios">
-                        <h3>Cambiar precios de habitaciones</h3><br/>
-                        <p>Esta opción cambiará los precios específicos de todas las habitaciones por los precios definidos para los respectivos tipos de habitación</p><br/>
-                        <button class="btn btn-info" type="object" name="btn_cambiar_precios" string="Cambiar precios"
-                            confirm="¿Está seguro que desea cambiar los precios de todas las habitaciones?"/>
-                    </group>
+                        <page name="admin" string="Administración">
+                            <group name="cambio_precios">
+                                <h3>Cambiar precios de habitaciones</h3><br/>
+                                <p>Esta opción cambiará los precios específicos de todas las habitaciones por los precios definidos para los respectivos tipos de habitación</p><br/>
+                                <button class="btn btn-info" type="object" name="btn_cambiar_precios" string="Cambiar precios"
+                                    confirm="¿Está seguro que desea cambiar los precios de todas las habitaciones?"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>    
             </form>
         </field>

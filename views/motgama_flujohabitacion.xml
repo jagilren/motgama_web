@@ -48,7 +48,7 @@
         <field name="name">Habitación</field>
         <field name="model">motgama.flujohabitacion</field>
         <field name="arch" type="xml">
-            <form string="Flujo Habitaciones">
+            <form string="Flujo Habitaciones" create="false" edit="false">
                 <sheet>
                     <group name="group_bottom">
                         <group name="group_left">            
@@ -188,12 +188,23 @@
         <field name="arch" type="xml">
             <form>
                 <div style="white-space: pre-line;">
-                    <p><h5>Asignacion de Habitación</h5></p>
+                    <h5><span>Asignacion de Habitación <field name="codigohab"/></span></h5>
                 </div>
                 <group>
                     <group>
+                        <field name="valorocasional"/>
+                        <field name="tiemponormal"/>
+                        <field name="valoradicional"/>
+                    </group>
+                    <group>
+                        <field name="valoramanecida"/>
+                        <field name="horainicioamanecida"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
                         <field name="tipovehiculo"/>
-                        <field name="placa"/>
+                        <field name="placa" attrs="{'invisible':[('tipovehiculo','not in',['particular','moto','taxi'])],'required':[('tipovehiculo','in',['particular','moto'])]}"/>
                         <field name="asignatipo"/>
                     </group>
                     <group>

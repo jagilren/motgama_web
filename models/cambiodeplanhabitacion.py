@@ -51,9 +51,11 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                     # if not (flagInicio < fechaActual.time() < flagFin): # OJO No incluye los extremos
                     #     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
                     flujo.sudo().write({'estado':'OA'}) # pone en estado de ocupada Amanecida
+                    movimiento.write({'asignatipo':'OA'})
 
         else:   # Va a pasar de amanecida a ocasional
             flujo.sudo().write({'estado':'OO'}) # pone en estado de ocupada ocasional
+            movimiento.write({'asignatipo':'OO'})
         
         self.refresh_views()
         

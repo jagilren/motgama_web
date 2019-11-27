@@ -80,7 +80,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         # Se rellena el diccionario con los valores del registro
         valores.update({'habitacion_id': fullHabitacion.id})
         valores.update({'tipovehiculo': self.tipovehiculo})
-        valores.update({'placa_vehiculo': self.placa})
+        valores.update({'placa_vehiculo': self.placa.upper()})
         valores.update({'asignatipo': self.asignatipo})
         valores.update({'asignafecha': fechaActual})
         valores.update({'asigna_uid': self.env.user.id})
