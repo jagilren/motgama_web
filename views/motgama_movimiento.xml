@@ -62,14 +62,14 @@
                     </group>
                 <group name="reasignacion" string="Reasignación">
                     <group>
-                        <field name="flagreasignada"/>
+                        <field name="reasignaciones" readonly="1"/>
                     </group>
                     <group>
                     </group>
                 </group>
                 <group name="cambioplan" string="Cambio de Plan">
                     <group>
-                        <field name="hubocambioplan"/>
+                        <field name="cambiosplan" readonly="1"/>
                     </group>
                     <group>
                     </group>

@@ -48,7 +48,7 @@
         <field name="name">Habitación</field>
         <field name="model">motgama.flujohabitacion</field>
         <field name="arch" type="xml">
-            <form string="Flujo Habitaciones" create="false" edit="false">
+            <form string="Flujo Habitaciones" create="false">
                 <sheet>
                     <group name="group_bottom">
                         <group name="group_left">            
@@ -56,7 +56,7 @@
                         </group>
                     </group>
                     <group name="group_top">
-                        <field name="estado" string="Estado" readonly="1"/>
+                        <field name="estado" string="Estado"/>
                         <br/>
                         <field name="recepcion" string="Recepción" readonly="1"/>
                         <field name="tipo" string="Tipo de Habitación" readonly="1"/>
@@ -190,6 +190,9 @@
                 <div style="white-space: pre-line;">
                     <h5><span>Asignacion de Habitación <field name="codigohab"/></span></h5>
                 </div>
+                <group>
+                    <field name="fecha"/>
+                </group>
                 <group>
                     <group>
                         <field name="valorocasional"/>

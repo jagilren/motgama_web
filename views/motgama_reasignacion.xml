@@ -7,8 +7,7 @@
         <!-- <field name="limit">100</field> -->
         <field name="arch" type="xml">  
             <tree string="Reasignacion" create="false" delete="false" default_order='create_date desc'>
-                <field name="habitacion_id"/>
-                <field name="movimiento_id"/>
+                <field name="habitacion_anterior"/>
                 <field name="fechareasigna"/>
                 <field name="habitacion_nueva"/>
                 <field name="descripcion"/>

@@ -13,6 +13,7 @@
                         </group>
                         <group string="Permisos de la aplicación">
                             <field name="motgama_consumo_negativo"/>
+                            <field name="motgama_cambio_habitacion"/>
                         </group>
                     </page>
                 </xpath>

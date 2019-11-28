@@ -80,7 +80,7 @@ class MotgamaCalendario(models.Model):#ok
     horainicioamanecida=fields.Char(string='H inic.Amanec.(hh:mm)')
     horafinamanecida=fields.Char(string='H Fin.Amanec.(hh:mm)')
     tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
-    flagignoretiempo = fields.Boolean(string=u'Ignorar tiempo del calendario',help="Se ignorará el tiempo normal ocasional del calendario y se utilizará el definido en cada habitación",default=False,)
+    flagignoretiempo = fields.Boolean(string=u'Ignorar tiempo del calendario y usar el de la habitación',help="Se ignorará el tiempo normal ocasional del calendario y se utilizará el definido en cada habitación",default=False,)
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -378,6 +378,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
     valoradicional = fields.Float(string='Valor Hora Adicional',readonly=True,compute='_compute_valores')
     horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida',readonly=True,compute='_compute_valores')
     tiemponormal = fields.Char(string='Tiempo normal ocasional',readonly=True)
+    fecha = fields.Datetime(string='Fecha y hora del sistema',default=lambda self: fields.Datetime().now(),readonly=True)
 
     codigohab = fields.Char(compute='_compute_valores')
 
@@ -469,7 +470,7 @@ class MotgamaMovimiento(models.Model):#ok
 #        - res.users = Se ingresa codigo para obtener la informacion de usuario logeado y en es cual va a realizar los diferentes movimientos.
 #        - asignatipo = Se selecciona que tipo de asignacion tiene la habitacion.
     _name = 'motgama.movimiento'
-    _description = u'Movimiento'
+    _description = 'Movimiento'
     habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
     tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
     placa_vehiculo = fields.Char(string=u'Placa del Vehiculo')
@@ -495,7 +496,8 @@ class MotgamaMovimiento(models.Model):#ok
     # reasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     # reasignanueva_id = fields.Char(string=u'Reasignacion Nueva') # Este es un Integer Many2One de donde sale *
     # reasignaanterior_uid = fields.Char(string=u'Reasignacion Anterior') # Este es un Integer Many2One de donde sale *
-    flagreasignada = fields.Boolean(string=u'Reasignada')
+    flagreasignada = fields.Boolean(string='Reasignada')
+    reasignaciones = fields.One2many(string='Reasignaciones',comodel_name='motgama.reasignacion',inverse_name='movimiento_id')
    # reservafecha = fields.Date(string=u'Fecha de la reserva')
     reservafecha = fields.Datetime(string=u'Fecha y Hora de la reserva')
     reserva_uid = fields.Many2one(comodel_name='res.users',string='Usuario que reserva')
@@ -526,6 +528,7 @@ class MotgamaMovimiento(models.Model):#ok
     horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida')
     horafinamanecida = fields.Datetime(string='Hora Fin Amanecida')
     hubocambioplan = fields.Boolean(string='¿Hubo cambio de plan en el movmiento?',default=False)
+    cambiosplan = fields.One2many(string="Cambios de plan",comodel_name='motgama.cambioplan',inverse_name='movimiento')
 
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
@@ -754,14 +757,14 @@ class MotgamaCierreTurno(models.TransientModel):
 
 class MotgamaReasignacion(models.Model):
     _name = 'motgama.reasignacion'
-    _description = 'Reasignacion Habitacion'
+    _description = 'Reasignaciones de habitaciones'
     # _rec_name = 'codigo'
-    habitacion_id = fields.Char(string=u'Habitación')
-    movimiento_id = fields.Many2one(string='Movimiento (Asignación)',comodel_name='motgama.movimiento',ondelete='set null')
-    fechareasigna = fields.Datetime(string='Fecha Reasigna')
-    habitacion_nueva = fields.Char(string=u'Habitación Nueva')
-    descripcion = fields.Char(string=u'Descripción')
-    active = fields.Boolean(string=u'Activo?',default=True)
+    habitacion_anterior = fields.Many2one(string='Habitación anterior',comodel_name='motgama.flujohabitacion')
+    movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',ondelete='set null')
+    fechareasigna = fields.Datetime(string='Fecha de reasignación',default=lambda self: fields.Datetime().now())
+    habitacion_nueva = fields.Many2one(string='Habitación nueva',comodel_name='motgama.flujohabitacion')
+    descripcion = fields.Char(string='Observaciones')
+    active = fields.Boolean(string='Activo?',default=True)
 
 class MotgamaUtilidades(models.TransientModel):
     _name = 'motgama.utilidades'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R
@@ -806,5 +809,5 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
 class MotgamaWizardCambiohabitacion(models.TransientModel):
     _name = 'motgama.wizardcambiohabitacion'
     _description = 'Cambio de Habitacion'
-    flujoNuevo = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    flujoNuevo = fields.Many2one(string=u'Nueva habitación',comodel_name='motgama.flujohabitacion',required=True,domain='[("estado","=","D")]')
     observacion = fields.Char(string='Observaciones')

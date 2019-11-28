@@ -5,6 +5,16 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError,Warning, ValidationError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 
+class MotgamaCambioPlan(models.Model):
+    _name = 'motgama.cambioplan'
+    _description = 'Registro de cambio de plan de habitación'
+
+    fecha = fields.Datetime(string='Fecha del cambio',default=lambda self: fields.Datetime().now())
+    movimiento = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',ondelete='set null')
+    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion')
+    plan_anterior = fields.Selection(string='Plan anterior',selection=[('OO','Ocasional'),('OA','Amanecida')])
+    plan_nuevo = fields.Selection(string='Plan nuevo',selection=[('OO','Ocasional'),('OA','Amanecida')])
+
 class MotgamaWizardCambiodeplan(models.TransientModel):
     _inherit = 'motgama.wizardcambiodeplan'
 
@@ -52,16 +62,38 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                     #     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
                     flujo.sudo().write({'estado':'OA'}) # pone en estado de ocupada Amanecida
                     movimiento.write({'asignatipo':'OA','hubocambioplan':True})
+                    valores = {
+                        'movimiento': movimiento.id,
+                        'habitacion': flujo.id,
+                        'plan_anterior': 'OO',
+                        'plan_nuevo': 'OA'
+                    }
             else:
                 if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
                 else:
                     flujo.sudo().write({'estado':'OA'}) # pone en estado de ocupada Amanecida
                     movimiento.write({'asignatipo':'OA','hubocambioplan':True})
+                    valores = {
+                        'movimiento': movimiento.id,
+                        'habitacion': flujo.id,
+                        'plan_anterior': 'OO',
+                        'plan_nuevo': 'OA'
+                    }
 
         else:   # Va a pasar de amanecida a ocasional
             flujo.sudo().write({'estado':'OO'}) # pone en estado de ocupada ocasional
             movimiento.write({'asignatipo':'OO','hubocambioplan':True})
+            valores = {
+                'movimiento': movimiento.id,
+                'habitacion': flujo.id,
+                'plan_anterior': 'OO',
+                'plan_nuevo': 'OA'
+            }
+
+        nuevoRegistro = self.env['motgama.cambioplan'].create(valores)
+        if not nuevoRegistro:
+            raise Warning('No se pudo crear el registro del cambio de plan')
         
         self.refresh_views()
         
