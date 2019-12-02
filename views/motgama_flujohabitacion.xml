@@ -48,7 +48,7 @@
         <field name="name">Habitación</field>
         <field name="model">motgama.flujohabitacion</field>
         <field name="arch" type="xml">
-            <form string="Flujo Habitaciones" create="false">
+            <form string="Flujo Habitaciones" create="false" edit="false">
                 <sheet>
                     <group name="group_bottom">
                         <group name="group_left">            

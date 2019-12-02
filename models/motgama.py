@@ -189,15 +189,6 @@ class MotgamaRecepcion(models.Model):#ok
             lugar.write({'name':self.nombre})
         
         return creado
-        
-
-class MotgamaLugares(models.Model):#ok OJO
-#    Fields: LUGARES: esta tiene una similitud con el modulo de inventarios de ERP ODOO
-#     TODO: ESTA EN ESPERA YA QUE SE PUEDE CONECTAR CON EL MODULO DE INVENTARIOS QUE TRAE ODOO
-    _name = 'motgama.lugares'
-    _description = u'Bodega'
-    sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
-    recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')
 
 class MotgamaZona(models.Model):#ok
 #    Fields: ZONA: Zona equivale a pisos que tiene los moteles.                                                     #P7.0.4R
