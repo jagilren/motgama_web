@@ -42,35 +42,34 @@ class MotgamaWizardHabitacion(models.TransientModel):
         valores.update({'tiemponormalocasional': tiemponormal})
             
         # Verifica el tipo de asignación, si es amanecida verifica que el lugar permita amanecida               #P7.0.4R
-        # Verifica tambien que se este dentro del horario permitido para asignar amanecidas      
+        # Verifica tambien que se este dentro del horario permitido para asignar amanecidas
+        flagInicioAmanecida = calendario.horainicioamanecida
+        flagfinAmanecida = calendario.horafinamanecida
+        if not flagInicioAmanecida:
+            raise Warning('No se ha definido "Hora Inicio Amanecida" en el calendario')
+        if not flagfinAmanecida:
+            raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')   
+        flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
+        flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")  
         if self.asignatipo == 'OA':
-            flagInicioAmanecida = calendario.horainicioamanecida
-            flagfinAmanecida = calendario.horafinamanecida
-            if not flagInicioAmanecida:
-                raise Warning('No se ha definido "Hora Inicio Amanecida" en el calendario')
-            if not flagfinAmanecida:
-                raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')
             if flagInicioAmanecida == '0' and flagfinAmanecida == '0':
                 raise Warning('No se admite amanecida')
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
-            flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
-            flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")
             if flagInicioTz > flagFinTz:
                 if flagFinTz.time() < fechaActualTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             else:
                 if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
-            
-            flagInicio = flagInicioTz + timedelta(hours=5)
-            flagFin = flagFinTz + timedelta(hours=5)
-            horainicioamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagInicio.hour,flagInicio.minute)
-            if flagInicioTz > flagFinTz:
-                horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day + 1,flagFin.hour,flagFin.minute)
-            else:
-                horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute)
-            valores.update({'horainicioamanecida':horainicioamanecida})
-            valores.update({'horafinamanecida':horafinamanecida})
+        flagInicio = flagInicioTz + timedelta(hours=5)
+        flagFin = flagFinTz + timedelta(hours=5)
+        horainicioamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagInicio.hour,flagInicio.minute)
+        if flagInicioTz > flagFinTz:
+            horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day + 1,flagFin.hour,flagFin.minute)
+        else:
+            horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute)
+        valores.update({'horainicioamanecida':horainicioamanecida})
+        valores.update({'horafinamanecida':horafinamanecida})
 
         # Ahora busca en las placas para verificar alguna novedad y mostrarla al operador. El mensaje aparece en el chatter
         if self.placa:

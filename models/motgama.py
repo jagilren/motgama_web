@@ -467,7 +467,7 @@ class MotgamaMovimiento(models.Model):#ok
     placa_vehiculo = fields.Char(string=u'Placa del Vehiculo')
     asignatipo = fields.Selection(string=u'Tipo de Asignación',selection=[('OO', 'Ocasional'), ('OA', 'Amanecida')]) # (09/05/2019) 
    # asignafecha = fields.Date(string=u'Asignación de Fecha')
-    asignafecha = fields.Datetime(string=u'Fecha de Asignación',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
+    asignafecha = fields.Datetime(string=u'Fecha de Movimiento',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario que asigna')
    # liquidafecha = fields.Date(string=u'Liquida Fecha')
     liquidafecha= fields.Datetime(string=u'Fecha y hora Liquidacion')
@@ -515,7 +515,7 @@ class MotgamaMovimiento(models.Model):#ok
     fueradeuso_usuarioorden = fields.Char(string='Persona que dio la orden')
     # Se agrega lista de precios traida del calendario según el día de la semana
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist')
-    observacion = fields.Char(string='Observación')
+    observacion = fields.Text(string='Observación')
     horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida')
     horafinamanecida = fields.Datetime(string='Hora Fin Amanecida')
     hubocambioplan = fields.Boolean(string='¿Hubo cambio de plan en el movmiento?',default=False)
@@ -697,17 +697,6 @@ class Users(models.Model):
     _inherit = "res.users"
     recepcion_id = fields.Many2one(string=u'Recepción',comodel_name='motgama.recepcion',ondelete='set null')
 
-#REVISAR    
-class MotgamaWizardRecepcion(models.TransientModel):
-    _name = 'motgama.wizardrecepcion'
-    _description = 'Recepción'
-    recepcion_id = fields.Many2one(string=u'Con Cual recepcion trabajaras hoy?',comodel_name='motgama.recepcion',ondelete='set null')
-    def button_asignar_wizard(self):
-        for record in self:
-            qryactualizarusers = "UPDATE res_users SET recepcion_id = " + str(record.recepcion_id.id) + " WHERE id = " + str(self.env.uid) + ";"
-            self.env.cr.execute(qryactualizarusers)
-            return True
-
 class MotgamaPagos(models.Model):
     _name = 'motgama.pago'
     _description = 'Pago'
@@ -779,26 +768,26 @@ class MotgamaMedioPago(models.Model):
 class MotgamaWizardFueradeservicio(models.TransientModel):
     _name = 'motgama.wizardfueradeservicio'
     _description = 'Habitación fuera de servicio'
-    observacion = fields.Char(string='Observaciones')
+    observacion = fields.Text(string='Observaciones')
 
 class MotgamaWizardFueradeuso(models.TransientModel):
     _name = 'motgama.wizardfueradeuso'
     _description = 'Habitación fuera de uso'
-    observacion = fields.Char(string='Observaciones')
+    observacion = fields.Text(string='Observaciones')
     usuario_orden = fields.Char(string='Nombre de quien autoriza')
 
 class MotgamaWizardDesasigna(models.TransientModel):
     _name = 'motgama.wizarddesasigna'
     _description = 'Desasigna Habitación'
-    observacion = fields.Char(string='Observaciones')
+    observacion = fields.Text(string='Observaciones')
 
 class MotgamaWizardCambiodeplan(models.TransientModel):
     _name = 'motgama.wizardcambiodeplan'
     _description = 'Cambio de Plan'
-    observacion = fields.Char(string='Observaciones')
+    observacion = fields.Text(string='Observaciones')
 
 class MotgamaWizardCambiohabitacion(models.TransientModel):
     _name = 'motgama.wizardcambiohabitacion'
     _description = 'Cambio de Habitacion'
     flujoNuevo = fields.Many2one(string=u'Nueva habitación',comodel_name='motgama.flujohabitacion',required=True,domain='[("estado","=","D")]')
-    observacion = fields.Char(string='Observaciones')
+    observacion = fields.Text(string='Observaciones')

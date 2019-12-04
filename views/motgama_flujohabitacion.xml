@@ -215,7 +215,7 @@
                 </group>
                 <footer>
                     <button type="object" name="button_asignar_wizard" string="Asignar" class="oe_highlight"/>
-                    <button string="Cancel" class="oe_link" special="cancel"/>
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
                 </footer>
             </form>
         </field>
