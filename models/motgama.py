@@ -214,28 +214,37 @@ class MotgamaTipo(models.Model):#ok Tipo de habitaciones
     codigo = fields.Char(string=u'Código') 
     nombre = fields.Char(string=u'Nombre',required=True,)
     tiemponormalocasional = fields.Integer(string=u'Tiempo normal')
-    minibar = fields.Boolean(string=u'Minibar',)
-    turco = fields.Boolean(string=u'Turco',)
-    jacuzzi = fields.Boolean(string=u'Jacuzzi',)
-    camamov = fields.Boolean(string=u'Cama Movil',)
-    smartv = fields.Boolean(string=u'Smart TV',)
-    barrasonido = fields.Boolean(string=u'Barra Sonido',)
-    hometheater = fields.Boolean(string=u'Home Theater')
-    poledance = fields.Boolean(string=u'Pole Dance',)
-    sillatantra = fields.Boolean(string=u'Silla Tantra')
-    columpio = fields.Boolean(string=u'Columpio')
-    aireacond = fields.Boolean(string=u'Aire Acond')
-    garajecarro = fields.Boolean(string=u'Garaje Carro')
-    garajemoto = fields.Boolean(string=u'Garaje Moto')
-    piscina = fields.Boolean(string=u'Piscina')
-    miniteca = fields.Boolean(string=u'Miniteca')
-    sauna = fields.Boolean(string=u'Sauna')
-    balcon = fields.Boolean(string=u'Balcon')
+    # minibar = fields.Boolean(string=u'Minibar',)
+    # turco = fields.Boolean(string=u'Turco',)
+    # jacuzzi = fields.Boolean(string=u'Jacuzzi',)
+    # camamov = fields.Boolean(string=u'Cama Movil',)
+    # smartv = fields.Boolean(string=u'Smart TV',)
+    # barrasonido = fields.Boolean(string=u'Barra Sonido',)
+    # hometheater = fields.Boolean(string=u'Home Theater')
+    # poledance = fields.Boolean(string=u'Pole Dance',)
+    # sillatantra = fields.Boolean(string=u'Silla Tantra')
+    # columpio = fields.Boolean(string=u'Columpio')
+    # aireacond = fields.Boolean(string=u'Aire Acond')
+    # garajecarro = fields.Boolean(string=u'Garaje Carro')
+    # garajemoto = fields.Boolean(string=u'Garaje Moto')
+    # piscina = fields.Boolean(string=u'Piscina')
+    # miniteca = fields.Boolean(string=u'Miniteca')
+    # sauna = fields.Boolean(string=u'Sauna')
+    # balcon = fields.Boolean(string=u'Balcon')
     active = fields.Boolean(string=u'Activo?',default=True)
+    # Comodidades del tipo de habitación
+    comodidades = fields.Many2many(string='Comodidades',comodel_name='motgama.comodidad')
     # Habitaciones con este tipo 
     habitacion_ids = fields.One2many(string=u'Habitaciones con este tipo',comodel_name='motgama.habitacion',inverse_name='tipo_id')
     # Enlaza las listas de precios por tipo
     listapreciotipo_ids = fields.One2many('motgama.listapreciotipo', 'tipo_id', string='Listas de precios')
+
+class MotgamaComodidad(models.Model):
+    _name = 'motgama.comodidad'
+    _description = 'Comodidades de la habitación'
+    _rec_name = 'nombre'
+
+    nombre = fields.Char(string='Nombre')
 
 class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     _name = 'motgama.flujohabitacion'
@@ -255,6 +264,9 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
 
     # Cuenta de cobro:
     orden_venta = fields.Many2one(string='Cuenta de Cobro',comodel_name='sale.order',ondelete='set null')
+
+    # Comodidades
+    comodidades = fields.Many2many(string='Comodidades',comodel_name='motgama.comodidad',ondelete='set null',compute='_compute_comodidades')
 
     #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
@@ -289,6 +301,16 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             habitacion = self.env['motgama.habitacion'].search([('codigo','=',record.codigo)], limit=1)
             record.tipo = habitacion.tipo_id.id
             record.tema = habitacion.tema_id.id
+
+    @api.depends('tipo')
+    def _compute_comodidades(self):
+        for record in self:
+            if record.tipo:
+                ids = []
+                for comodidad in record.tipo.comodidades:
+                    ids.append(comodidad.id)
+                if len(ids) > 0:
+                    record.comodidades = [(6,0,ids)]
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'
@@ -553,19 +575,26 @@ class MotgamaReservas(models.Model):#ok
 class MotgamaObjetosOlvidados(models.Model):
 #    Fields:Objetos Olvidados: elementos que el cliente olvido en una habitacion.
     _name = 'motgama.objolv' #Objetos Olvidados
-    _description = u'MotgamaObjetosOlvidados'
-    habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.habitacion',ondelete='set null')
-    fecha = fields.Datetime(string=u'Fecha',default=lambda self: fields.Datetime().now())
-    descripcion = fields.Text(string=u'Descripción')
-    valor = fields.Float(string=u'Valor Estimado')
-    encontradopor = fields.Text(string=u'Encontrado por')
-    entregado = fields.Boolean(string=u'Entregado?')
-    entregadofecha = fields.Datetime(string=u'Fecha de entrega') 
+    _description = 'MotgamaObjetosOlvidados'
+    habitacion_id = fields.Many2one(string='Habitacion',comodel_name='motgama.habitacion',ondelete='set null')
+    fecha = fields.Datetime(string='Fecha',default=lambda self: fields.Datetime().now())
+    descripcion = fields.Text(string='Descripción')
+    valor = fields.Float(string='Valor Estimado')
+    encontradopor = fields.Text(string='Encontrado por')
+    entregado = fields.Boolean(string='Entregado?')
+    entregadofecha = fields.Datetime(string='Fecha de entrega') 
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
     entregado_uid = fields.Many2one(comodel_name='res.users',string='Usuario que entrega',default=lambda self: self.env.user.id)
-    entregadonota = fields.Text(string=u'Nota')
-    baja = fields.Boolean(string=u'Artículo dado de baja?')
-    active = fields.Boolean(string=u'Activo?', default=True)
+    entregadonota = fields.Text(string='Nota')
+    baja = fields.Boolean(string='Artículo dado de baja?')
+    active = fields.Boolean(string='Activo?', default=True)
+    esNuevo = fields.Boolean(default=True)
+
+    @api.model
+    def create(self, values):
+        record = super().create(values)
+        record.esNuevo = False
+        return record
 
 class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        

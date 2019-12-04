@@ -102,7 +102,19 @@ view_mode="tree,form"
 name="Temas"
 parent="menu_motgama_master"
 action="accion_motgama_tema_form"
+/>
 
+<!-- Accion -->
+<act_window id="accion_motgama_comodidad_form"
+name="Comodidades"
+res_model="motgama.comodidad"
+view_mode="tree,form"
+/>
+<!-- Item de menu -->
+<menuitem id="menu_motgama_comodidad_form"
+name="Comodidades"
+parent="menu_motgama_master"
+action="accion_motgama_comodidad_form"
 />
 
 <!-- Accion -->

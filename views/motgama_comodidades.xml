@@ -1,0 +1,23 @@
+<odoo>
+    <record id="form_view_comodidad" model="ir.ui.view">
+        <field name="name">Comodidad Form</field>
+        <field name="model">motgama.comodidad</field>
+        <field name="arch" type="xml">
+            <form string="Comodidad">
+                <sheet>
+                    <field name="nombre"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="tree_view_comodidad" model='ir.ui.view'>
+        <field name="name">Comodidad Tree</field>
+        <field name="model">motgama.comodidad</field>
+        <field name="arch" type="xml">
+            <tree string="Comodidades">
+                <field name="nombre"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

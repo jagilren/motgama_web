@@ -27,6 +27,7 @@
     <field name="model">motgama.objolv</field>
     <field name="arch" type="xml">
         <form string="Objetos Olvidados">
+            <field name="esNuevo" invisible="1"/>
             <sheet>
                 <group name="group_bottom">
                     <field name="habitacion_id"/>
@@ -38,7 +39,7 @@
                 <footer>
                     <group name="group_top" col="10">
                         <button type="action" name="%(action_wizard_entrega_olvidados)d" string="Entregar Objetos" 
-                            class="btn btn-success" />
+                            class="btn btn-success" attrs="{'invisible':[('esNuevo','=',True)]}"/>
                     </group>
                 </footer>
             </sheet>    

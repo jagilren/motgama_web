@@ -51,5 +51,6 @@
         'views/motgama_reporte_consumo.xml',
         'reports/reporte_consumos.xml',
         'views/motgama_reporte_hospedaje.xml',
-        'views/motgama_cambioplan.xml']
+        'views/motgama_cambioplan.xml',
+        'views/motgama_comodidades.xml']
 }

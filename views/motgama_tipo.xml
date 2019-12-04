@@ -9,7 +9,7 @@
             <field name="codigo" />
             <field name="nombre" />
             <field name="tiemponormalocasional" />
-            <field name="minibar" />
+            <!-- <field name="minibar" />
             <field name="turco" />
             <field name="jacuzzi" />
             <field name="camamov" />
@@ -25,7 +25,8 @@
             <field name="piscina" />
             <field name="miniteca" />
             <field name="sauna" />
-            <field name="balcon" />
+            <field name="balcon" /> -->
+            <field name="comodidades"/>
             <field name="active" />
         </tree>
     </field>
@@ -48,7 +49,12 @@
                 <br/><br/>
             </group> 
             <group string="Comodidades" name="group_bottom">
-                <group name="group_left">
+                <group name="comodidades">
+                    <field name="comodidades" widget="many2many_checkboxes"/>
+                </group>
+                <group>
+                </group>
+                <!-- <group name="group_left">
                     <field name="minibar" />
                     <field name="turco" />
                     <field name="jacuzzi" />
@@ -68,7 +74,7 @@
                     <field name="miniteca" />
                     <field name="sauna" />
                     <field name="balcon" />
-                </group>
+                </group> -->
             </group>
             <group>
                     <field name="listapreciotipo_ids" />

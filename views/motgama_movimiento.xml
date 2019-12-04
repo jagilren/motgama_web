@@ -31,8 +31,9 @@
                     </group>
                     <group>
                         <notebook>
-                            <page name="asignacion" string="Asignación">
+                            <page name="asignacion" string="Asignación" attrs="{'invisible':[('tipovehiculo','=',False)]}">
                                 <group>
+                                    <field name="asignafecha" string="Fecha de asignación"/>
                                     <field name="tipovehiculo"/>
                                     <field name="placa_vehiculo"/>
                                 </group>
@@ -56,7 +57,7 @@
                                     <field name="horafinamanecida"/>
                                 </group>
                             </page>
-                            <page name="desasignacion" string="Desasignación">
+                            <page name="desasignacion" string="Desasignación" attrs="{'invisible':[('desasignafecha','=',False)]}">
                                 <group>
                                     <field name="desasignafecha"/>
                                 </group>
@@ -78,7 +79,7 @@
                                 <group>
                                 </group>
                             </page>
-                            <page name="liquidacion" string="Liquidación">
+                            <page name="liquidacion" string="Liquidación" attrs="{'invisible':[('liquidafecha','=',False)]}">
                                 <group>
                                     <field name="liquidafecha"/>
                                     <field name="liquida_uid"/>
@@ -87,7 +88,7 @@
                                     <field name="ordenVenta"/>
                                 </group>
                             </page>
-                            <page name="recaudo" string="Recaudo">
+                            <page name="recaudo" string="Recaudo" attrs="{'invisible':[('recaudafecha','=',False)]}">
                                 <group>
                                     <field name="recaudafecha"/>
                                     <field name="recauda_uid"/>
@@ -96,7 +97,7 @@
                                     <field name="factura"/>
                                 </group>
                             </page>
-                            <page name="aseo" string="Aseo">
+                            <page name="aseo" string="Aseo" attrs="{'invisible':[('aseofecha','=',False)]}">
                                 <group>
                                     <field name="aseofecha"/>
                                 </group>
@@ -104,7 +105,7 @@
                                     <field name="aseo_uid"/>
                                 </group>
                             </page>
-                            <page name="habilitacion" string="Habilitación">
+                            <page name="habilitacion" string="Habilitación" attrs="{'invisible':[('habilitafecha','=',False)]}">
                                 <group>
                                     <field name="habilitafecha"/>
                                 </group>
@@ -112,7 +113,7 @@
                                     <field name="habilita_uid"/>
                                 </group>
                             </page>
-                            <page name="fueradeuso" string="Fuera de Uso">
+                            <page name="fueradeuso" string="Fuera de Uso" attrs="{'invisible':[('fueradeusohora','=',False)]}">
                                 <group>
                                     <field name="fueradeusohora"/>
                                     <field name="fueradeuso_uid"/>
@@ -121,7 +122,7 @@
                                     <field name="fueradeuso_usuarioorden"/>
                                 </group>
                             </page>
-                            <page name="fueradeservicio" string="Fuera de Servicio">
+                            <page name="fueradeservicio" string="Fuera de Servicio" attrs="{'invisible':[('fueradeserviciohora','=',False)]}">
                                 <group>
                                     <field name="fueradeserviciohora"/>
                                 </group>
