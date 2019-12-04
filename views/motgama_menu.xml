@@ -211,6 +211,19 @@ parent="menu_motgama_processes"
 action="accion_motgama_consumo_form"
 />
 
+<!-- Accion -->
+<act_window id="accion_motgama_objprestados_form"
+name="Objetos Prestados"
+res_model="motgama.objprestados"
+view_mode="tree,form"
+/>
+<!-- Item de menu -->
+<menuitem id="menu_motgama_objprestados_form"
+name="Objetos Prestados"
+parent="menu_motgama_processes"
+action="accion_motgama_objprestados_form"
+/>
+
 <!-- Accion  -->
 <act_window id="accion_motgama_reserva_form"
 name="Reservas"

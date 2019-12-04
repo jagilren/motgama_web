@@ -567,6 +567,22 @@ class MotgamaObjetosOlvidados(models.Model):
     baja = fields.Boolean(string=u'Artículo dado de baja?')
     active = fields.Boolean(string=u'Activo?', default=True)
 
+class MotgamaObjetosPrestados(models.Model):
+#    Fields:Objetos Prestados: elementos que el cliente solicita prestados en su estadia en una habitacion.
+    _name = 'motgama.objprestados' #Objetos Prestados
+    _description = u'MotgamaObjetosPrestados'
+    habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.habitacion',ondelete='set null')
+    fecha = fields.Datetime(string=u'Fecha',default=lambda self: fields.Datetime().now())
+    descripcion = fields.Text(string=u'Descripción')
+    prestadopor_uid = fields.Many2one(comodel_name='res.users',string='Usuario que presta',default=lambda self: self.env.user.id)
+    devueltook = fields.Boolean(string=u'Devuelto ok?')
+    devueltomal = fields.Boolean(string=u'Devuelto dañado?')
+    nodevuelto = fields.Boolean(string=u'No Devuelto?')
+    devueltofecha = fields.Datetime(string=u'Fecha de devolución') 
+    devuelto_uid = fields.Many2one(comodel_name='res.users',string='Usuario que entrega',default=lambda self: self.env.user.id)
+    entregadonota = fields.Text(string=u'Observaciones')
+    active = fields.Boolean(string=u'Activo?', default=True)
+
 class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        
     _name = 'motgama.prendas'
