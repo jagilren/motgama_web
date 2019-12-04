@@ -26,7 +26,7 @@ class MotgamaConsumo(models.Model):
         cliente = self.env['res.partner'].search([('vat','=','1')], limit=1)
         if not cliente:
             raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')
-
+        esNegativo = False
         if values['cantidad'] == 0:
             raise Warning('Debe especificar una cantidad mayor a cero')
         elif values['cantidad'] < 0:
@@ -37,7 +37,7 @@ class MotgamaConsumo(models.Model):
                 if record.valorUnitario == 0:
                     raise Warning('No se permiten consumos de valor $0.0')
                 else:
-                    record.write({'vlrUnitario':record.valorUnitario})
+                    record.sudo().write({'vlrUnitario':record.valorUnitario})
             if record.producto_id.type == 'consu':
                 raise Warning('No se puede cancelar orden de restaurante')
             ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
@@ -50,19 +50,68 @@ class MotgamaConsumo(models.Model):
             cantidadPositiva = record.cantidad * -1
             if cantidadPositiva > vendidas:
                 raise Warning('No se pueden devolver cantidades mayores a las ya registradas como consumos')
-            # if record.producto_id.type == 'product':
-                # TODO: Devolver cantidades de inventario
+            if record.producto_id.type == 'product':
+                origen = self.env['stock.location'].search([('usage','=','customer')],limit=1)
+                tipo_operacion = self.env['stock.picking.type'].search([('code','=','incoming')],limit=1)
+                valoresTransferencia = {
+                    'company_id': ordenVenta.company_id.id,
+                    'location_dest_id': record.lugar_id.id,
+                    'location_id': origen.id,
+                    'origin': ordenVenta.name,
+                    'move_type': 'direct',
+                    'picking_type_id': tipo_operacion.id,
+                    'product_id': record.producto_id.product_variant_id.id,
+                    'sale_id': ordenVenta.id
+                }
+                transferencia = self.env['stock.picking'].create(valoresTransferencia)
+                if not transferencia:
+                    raise Warning('No se pudo crear la transferencia de inventario')
+                valoresLinea = {
+                    'company_id': transferencia.company_id.id,
+                    'date': fields.Datetime().now(),
+                    'date_expected': fields.Datetime().now(),
+                    'location_dest_id': transferencia.location_dest_id.id,
+                    'location_id': transferencia.location_id.id,
+                    'name': 'Retorno de ' + ordenVenta.name,
+                    'procure_method': 'make_to_stock',
+                    'product_id': record.producto_id.product_variant_id.id,
+                    'product_uom': record.producto_id.product_variant_id.uom_id.id,
+                    'product_uom_qty': cantidadPositiva,
+                    'picking_id': transferencia.id
+                }
+                lineaTransferencia = self.env['stock.move'].create(valoresLinea)
+                if not lineaTransferencia:
+                    raise Warning('No se pudo crear la transferencia de inventario')
+                transferencia.action_confirm()
+                valores_move_line = {
+                    'date': fields.Datetime().now(),
+                    'location_dest_id': transferencia.location_dest_id.id,
+                    'location_id': transferencia.location_id.id,
+                    'product_id': transferencia.product_id.id,
+                    'product_uom_id': record.producto_id.product_variant_id.uom_id.id,
+                    'product_uom_qty': cantidadPositiva,
+                    'picking_id': transferencia.id,
+                    'move_id': lineaTransferencia.id,
+                    'qty_done': cantidadPositiva
+                }
+                move_line = self.env['stock.move.line'].create(valores_move_line)
+                if not move_line:
+                    raise Warning('No se pudo crear la transferencia de inventario')
+                transferencia.button_validate()
+                esNegativo = True
         else:
             record = super().create(values)
             if record.vlrUnitario == 0:
                 if record.valorUnitario == 0:
                     raise Warning('No se permiten consumos de valor $0.0')
                 else:
-                    record.write({'vlrUnitario':record.valorUnitario})
-            # if record.producto_id.type == 'product':
-                # TODO: Revisar cantidades disponibles
-            # elif record.producto_id.type == 'consu':
-                # TODO: Explotar el inventario cuando sea restaurante
+                    record.sudo().write({'vlrUnitario':record.valorUnitario})
+            if record.producto_id.type == 'product':
+                producto = record.producto_id.product_variant_id
+                cantDisponible = producto.with_context({'location': record.lugar_id.id}).qty_available
+                # if cantDisponible < record.cantidad:
+                    # TODO: Mostrar mensaje de no hay disponibilidad
+            # TODO: Explotar el inventario cuando sea restaurante o bar
             ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
             if not ordenVenta:
                 valores = {
@@ -85,6 +134,9 @@ class MotgamaConsumo(models.Model):
         nuevaLinea = self.env['sale.order.line'].create(valoresLinea)
         if not nuevaLinea:
             raise Warning('Error al registrar el consumo: No se pudo agregar el consumo a la orden de venta')
+
+        if esNegativo:
+            move_line.write({'sale_line_id':nuevaLinea.id})
 
         entregas = ordenVenta.picking_ids
         for entrega in entregas:
@@ -126,7 +178,7 @@ class MotgamaConsumo(models.Model):
             if not comanda:
                 raise Warning('No se pudo crear la comanda')
             comanda.write({'nrocomanda':comanda.id})
-            record.write({'comanda':comanda.id})
+            record.sudo().write({'comanda':comanda.id})
             # TODO: Imprimir comanda
 
         return record

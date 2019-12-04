@@ -28,103 +28,106 @@
                         <field name="asignafecha"/>
                     </group>
                 </group>
-                <group name="asignacion" string="Asignación">
-                    <group>
-                        <field name="tipovehiculo"/>
-                        <field name="placa_vehiculo"/>
-                    </group>
-                    <group>
-                        <field name="asignatipo"/>
-                        <field name="asigna_uid"/>
-                    </group>
-                    <group>
-                        <field name="tarifaocasional"/>
-                        <field name="tarifamanecida"/>
-                        <field name="tarifahoradicional"/>
-                    </group>
-                    <group>
-                        <field name="anticipo"/>
-                        <field name="formapagoanticipo"/>
-                        <field name="reciboanticipo"/>
-                    </group>
-                    <group>
-                        <field name="listaprecioproducto"/>
-                        <field name="horainicioamanecida"/>
-                        <field name="horafinamanecida"/>
-                    </group>
-                </group>
-                <group name="desasignacion" string="Desasignación">
-                    <group>
-                        <field name="desasignafecha"/>
-                    </group>
-                    <group>
-                        <field name="desasigna_uid"/>
-                    </group>
-                <group name="reasignacion" string="Reasignación">
-                    <group>
-                        <field name="reasignaciones" readonly="1"/>
-                    </group>
-                    <group>
-                    </group>
-                </group>
-                <group name="cambioplan" string="Cambio de Plan">
-                    <group>
-                        <field name="cambiosplan" readonly="1"/>
-                    </group>
-                    <group>
-                    </group>
-                </group>
-                <group name="liquidacion" string="Liquidación">
-                    <group>
-                        <field name="liquidafecha"/>
-                        <field name="liquida_uid"/>
-                    </group>
-                    <group>
-                        <field name="ordenVenta"/>
-                    </group>
-                </group>
-                <group name="recaudo" string="Recaudo"/>
-                    <group>
-                        <field name="recaudafecha"/>
-                        <field name="recauda_uid"/>
-                    </group>
-                    <group>
-                        <field name="factura"/>
-                    </group>
-                </group>
-                <group name="aseo" string="Aseo">
-                    <group>
-                        <field name="aseofecha"/>
-                    </group>
-                    <group>
-                        <field name="aseo_uid"/>
-                    </group>
-                </group>
-                <group name="habilitacion" string="Habilitación">
-                    <group>
-                        <field name="habilitafecha"/>
-                    </group>
-                    <group>
-                        <field name="habilita_uid"/>
-                    </group>
-                </group>
-                <group name="fueradeuso" string="Fuera de Uso">
-                    <group>
-                        <field name="fueradeusohora"/>
-                        <field name="fueradeuso_uid"/>
-                    </group>
-                    <group>
-                        <field name="fueradeuso_usuarioorden"/>
-                    </group>
-                </group>
-                <group name="fueradeservicio" string="Fuera de Servicio">
-                    <group>
-                        <field name="fueradeserviciohora"/>
-                    </group>
-                    <group>
-                        <field name="fueradeservicio_uid"/>
-                    </group>
-                </group>
+                <notebook>
+                    <page name="asignacion" string="Asignación">
+                        <group>
+                            <field name="tipovehiculo"/>
+                            <field name="placa_vehiculo"/>
+                        </group>
+                        <group>
+                            <field name="asignatipo"/>
+                            <field name="asigna_uid"/>
+                        </group>
+                        <group>
+                            <field name="tarifaocasional"/>
+                            <field name="tarifamanecida"/>
+                            <field name="tarifahoradicional"/>
+                        </group>
+                        <group>
+                            <field name="anticipo"/>
+                            <field name="formapagoanticipo"/>
+                            <field name="reciboanticipo"/>
+                        </group>
+                        <group>
+                            <field name="listaprecioproducto"/>
+                            <field name="horainicioamanecida"/>
+                            <field name="horafinamanecida"/>
+                        </group>
+                    </page>
+                    <page name="desasignacion" string="Desasignación">
+                        <group>
+                            <field name="desasignafecha"/>
+                        </group>
+                        <group>
+                            <field name="desasigna_uid"/>
+                        </group>
+                    </page>
+                    <page name="reasignacion" string="Reasignación">
+                        <group>
+                            <field name="reasignaciones" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </page>
+                    <page name="cambioplan" string="Cambio de Plan">
+                        <group>
+                            <field name="cambiosplan" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </page>
+                    <page name="liquidacion" string="Liquidación">
+                        <group>
+                            <field name="liquidafecha"/>
+                            <field name="liquida_uid"/>
+                        </group>
+                        <group>
+                            <field name="ordenVenta"/>
+                        </group>
+                    </page>
+                    <page name="recaudo" string="Recaudo">
+                        <group>
+                            <field name="recaudafecha"/>
+                            <field name="recauda_uid"/>
+                        </group>
+                        <group>
+                            <field name="factura"/>
+                        </group>
+                    </page>
+                    <page name="aseo" string="Aseo">
+                        <group>
+                            <field name="aseofecha"/>
+                        </group>
+                        <group>
+                            <field name="aseo_uid"/>
+                        </group>
+                    </page>
+                    <page name="habilitacion" string="Habilitación">
+                        <group>
+                            <field name="habilitafecha"/>
+                        </group>
+                        <group>
+                            <field name="habilita_uid"/>
+                        </group>
+                    </page>
+                    <page name="fueradeuso" string="Fuera de Uso">
+                        <group>
+                            <field name="fueradeusohora"/>
+                            <field name="fueradeuso_uid"/>
+                        </group>
+                        <group>
+                            <field name="fueradeuso_usuarioorden"/>
+                        </group>
+                    </page>
+                    <page name="fueradeservicio" string="Fuera de Servicio">
+                        <group>
+                            <field name="fueradeserviciohora"/>
+                        </group>
+                        <group>
+                            <field name="fueradeservicio_uid"/>
+                        </group>
+                    </page>
+                </notebook>
                 <group name="otros" string="Otra información">
                     <group>
                         <field name="observacion"/>

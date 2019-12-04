@@ -177,7 +177,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
         
         consumos = self.env['motgama.consumo'].search([('movimiento_id','=',self.movimiento.id)])
         for consumo in consumos:
-            consumo.write({'active': False})
+            consumo.sudo().write({'active': False})
 
         return {
             'type': 'ir.actions.act_window',
