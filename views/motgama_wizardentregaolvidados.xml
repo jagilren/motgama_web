@@ -17,7 +17,7 @@
         <field name="arch" type="xml">
             <form string="Objetos Olvidados">
                 <group>
-                    <field name="devueltook"/>
+                    <field name="dardebaja"/>
                     <field name="cliente_id" attrs="{'invisible': [('dardebaja','=',True)]}"/>
                     <field name="fecha"/>
                     <field name="observacion"/>
