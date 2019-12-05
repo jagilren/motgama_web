@@ -36,7 +36,9 @@
         'views/motgama_consumo.xml',
         'views/motgama_reasignacion.xml',
         'views/motgama_wizardentregaolvidados.xml',
+        'views/motgama_wizard_entregaprestados.xml',
         'views/motgama_objetosolvidados.xml',
+        'views/motgama_objetosprestados.xml',
         'views/motgama_reserva.xml',
         'views/motgama_placa.xml',
         'views/motgama_inmotica.xml',
@@ -52,5 +54,6 @@
         'reports/reporte_consumos.xml',
         'views/motgama_reporte_hospedaje.xml',
         'views/motgama_cambioplan.xml',
-        'views/motgama_comodidades.xml']
+        'views/motgama_comodidades.xml',
+        'views/motgama_confirm_prestados.xml']
 }

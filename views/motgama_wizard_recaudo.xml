@@ -26,7 +26,7 @@
                                 <create string="Agregar pago"/>
                             </control>
                             <field name="mediopago"/>
-                            <field name="valor" widget="monetary"/>
+                            <field name="valor"/>
                             <field name="descripcion"/>
                         </tree>
                     </field>

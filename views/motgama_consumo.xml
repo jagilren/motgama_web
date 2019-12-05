@@ -6,7 +6,7 @@
     <field name="model">motgama.consumo</field>
     <field name="limit">20</field>
     <field name="arch" type="xml">   
-      <tree string="Consumo" editable="bottom" default_order='create_date desc' edit="false">
+      <tree string="Consumo" editable="bottom" default_order='create_date desc'>
         <field name="recepcion" string="recepcion" invisible="1"/>
         <field name="llevaComanda" invisible="1"/>
         <field name="permitecambiarvalor" invisible="1"/>

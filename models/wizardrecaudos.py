@@ -1,6 +1,34 @@
 from odoo import models, fields, api
 from odoo.exceptions import Warning
 
+class MotgamaFlujoHabitacion(models.Model):
+    _inherit = 'motgama.flujohabitacion'
+
+    @api.multi
+    def button_recaudar(self):
+        if not self.puede_recaudar:
+            prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.id)])
+            if prestados:
+                return {
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'motgama.confirm.prestados',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'view_id': self.env.ref('motgama.form_confirm_prestados').id,
+                    'target': 'new'
+                }
+            else:
+                self.write({'puede_recaudar': True})
+        self.write({'puede_recaudar': False})
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizardrecaudo',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.motgama_wizard_recaudo').id,
+            'target': 'new'
+        }
+
 class MotgamaWizardRecaudo(models.TransientModel):
     _name = 'motgama.wizardrecaudo'
     _description = 'Wizard para recaudo de habitaciones'
@@ -112,7 +140,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
         ordenVenta = self.env['sale.order'].search([('movimiento','=',self.movimiento.id),('state','=','sale')],limit=1)
         if not ordenVenta:
             raise Warning('Error al recaudar: La habitación no fue recaudada correctamente')
-        ordenVenta.action_invoice_create()
+        ordenVenta.write({'partner_id':self.cliente.id})
+        ordenVenta.action_invoice_create(final=True)
         for invoice in ordenVenta.invoice_ids:
             factura = invoice
             break
@@ -178,6 +207,11 @@ class MotgamaWizardRecaudo(models.TransientModel):
         consumos = self.env['motgama.consumo'].search([('movimiento_id','=',self.movimiento.id)])
         for consumo in consumos:
             consumo.sudo().write({'active': False})
+
+        prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.habitacion.id)],limit=1)
+        if prestados
+            for prestado in prestados:
+                prestado.write({'active':False})
 
         return {
             'type': 'ir.actions.act_window',

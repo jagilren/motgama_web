@@ -5,13 +5,10 @@ class MotgamaWizardEntregaprestados(models.TransientModel):
     _description = 'Entrega Objetos Prestados'
     fecha = fields.Datetime(string=u'fecha entrega',default=lambda self: fields.Datetime().now())
     observacion = fields.Char(string='Observaciones',required=True)
-    devueltook = fields.Boolean(string=u'¿Devuelto ok?',default=False)
-    devueltomal = fields.Boolean(string=u'¿Devuelto dañado?',default=False)
-    nodevuelto = fields.Boolean(string=u'¿No Devuelto?',default=False)
     estado_devolucion = fields.Selection(string='Estado devolución',selection=[('ok','Devuelto en buen estado'),('mal','Devuelto en mal estado'),('no','No devuelto')],default='ok')
 
     @api.multi
-    def entregar_objetoprestado(self):
+    def entregar_objeto(self):
         self.ensure_one()
 
         if not self.observacion:
@@ -21,12 +18,10 @@ class MotgamaWizardEntregaprestados(models.TransientModel):
         objeto = self.env['motgama.objprestados'].search([('id','=',idObjeto)],limit=1)
 
         valores = {
-            'devueltook': self.devueltook,
-            'devueltomal': self.devueltomal,
-            'nodevuelto': self.nodevuelto,
             'devueltofecha': self.fecha,
             'devuelto_uid': self.env.user.id,
             'entregadonota': self.observacion,
+            'estado_devolucion': self.estado_devolucion,
             'active': False
         }
 

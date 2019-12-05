@@ -1,0 +1,18 @@
+<odoo>
+    <record id="form_confirm_prestados" model='ir.ui.view'>
+        <field name="name">Confirmación de liquidar o recaudar</field>
+        <field name="model">motgama.confirm.prestados</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="habitacion" invisible="1"/>
+                    <h5><span><field name="texto"/></span></h5>
+                </group>
+                <footer>
+                    <button name="confirmar" type="object" string="Confirmar" class="btn-primary"/>
+                    <button special="cancel" string="Cancelar"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

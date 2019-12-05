@@ -16,6 +16,20 @@ class MotgamaFlujoHabitacion(models.Model):
             tz = pytz.timezone('America/Bogota')
         else:
             tz = pytz.timezone(self.env.user.tz)
+
+        if not self.puede_liquidar:
+            prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.id)])
+            if prestados:
+                return {
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'motgama.confirm.prestados',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'view_id': self.env.ref('motgama.form_confirm_prestados').id,
+                    'target': 'new'
+                }
+            else:
+                self.write({'puede_liquidar': True})
         
         # Se calculan las horas adicionales si es amanecida
         if self.estado == 'OA':
@@ -214,6 +228,8 @@ class MotgamaFlujoHabitacion(models.Model):
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
 
         # TODO: Crear tarea programada que cambie el estado si no se recauda la habitación en cierto tiempo
+
+        self.puede_liquidar = False
 
         return {
             'type': 'ir.actions.act_window',

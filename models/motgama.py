@@ -255,18 +255,20 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     _inherit = 'base'
 
     codigo = fields.Char(string=u'Código')
-    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Camarera'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
+    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Aseo'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     recepcion = fields.Many2one(string=u'Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string=u'Activo?',default=True)
     tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',compute='_compute_habitacion',store=True)
     tema = fields.Many2one(string='Tema',comodel_name='motgama.tema',compute='_compute_habitacion',store=True)
-
-    # Cuenta de cobro:
+    # Liquidación:
     orden_venta = fields.Many2one(string='Cuenta de Cobro',comodel_name='sale.order',ondelete='set null')
-
     # Comodidades
     comodidades = fields.Many2many(string='Comodidades',comodel_name='motgama.comodidad',ondelete='set null',compute='_compute_comodidades')
+    # Objetos prestados
+    prestados = fields.One2many(string='Objetos prestados',comodel_name='motgama.objprestados',inverse_name='habitacion_id')
+    puede_liquidar = fields.Boolean(default=False)
+    puede_recaudar = fields.Boolean(default=False)
 
     #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
@@ -600,17 +602,22 @@ class MotgamaObjetosPrestados(models.Model):
 #    Fields:Objetos Prestados: elementos que el cliente solicita prestados en su estadia en una habitacion.
     _name = 'motgama.objprestados' #Objetos Prestados
     _description = u'MotgamaObjetosPrestados'
-    habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.habitacion',ondelete='set null')
+    habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     fecha = fields.Datetime(string=u'Fecha',default=lambda self: fields.Datetime().now())
     descripcion = fields.Text(string=u'Descripción')
     prestadopor_uid = fields.Many2one(comodel_name='res.users',string='Usuario que presta',default=lambda self: self.env.user.id)
-    devueltook = fields.Boolean(string=u'Devuelto ok?')
-    devueltomal = fields.Boolean(string=u'Devuelto dañado?')
-    nodevuelto = fields.Boolean(string=u'No Devuelto?')
+    estado_devolucion = fields.Selection(string='Estado devolución',selection=[('ok','Devuelto en buen estado'),('mal','Devuelto en mal estado'),('no','No devuelto')])
     devueltofecha = fields.Datetime(string=u'Fecha de devolución') 
     devuelto_uid = fields.Many2one(comodel_name='res.users',string='Usuario que entrega',default=lambda self: self.env.user.id)
     entregadonota = fields.Text(string=u'Observaciones')
     active = fields.Boolean(string=u'Activo?', default=True)
+    esNuevo = fields.Boolean(default=True)
+
+    @api.model
+    def create(self, values):
+        record = super().create(values)
+        record.esNuevo = False
+        return record
 
 class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        

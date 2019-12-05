@@ -10,9 +10,7 @@
         <field name="fecha"/>
         <field name="descripcion" />
         <field name="prestadopor_uid"/>
-        <field name="devueltook"/>
-        <field name="devueltomal"/>
-        <field name="nodevuelto"/>
+        <field name="estado_devolucion"/>
         <field name="devueltofecha"/>
         <field name="devuelto_uid"/>
         <field name="entregadonota"/>
@@ -26,17 +24,18 @@
     <field name="model">motgama.objprestados</field>
     <field name="arch" type="xml">
         <form string="Objetos Prestados">
+            <field name="esNuevo" invisible="1"/>
             <sheet>
                 <group name="group_bottom">
-                    <field name="habitacion_id"/>
-                    <field name="fecha"/>
+                    <field name="habitacion_id" domain="[('estado','in',['OO','OA'])]"/>
+                    <field name="fecha" readonly="1"/>
                     <field name="descripcion" />
-                    <field name="prestadopor_uid"/>
+                    <field name="prestadopor_uid" readonly="1"/>
                 </group>             
                 <footer>
                     <group name="group_top" col="10">
                         <button type="action" name="%(action_wizard_entrega_prestados)d" string="Entregar Objetos Prestados" 
-                            class="btn btn-success" />
+                            class="btn btn-success" attrs="{'invisible':[('esNuevo','=',True)]}"/>
                     </group>
                 </footer>
             </sheet>    
