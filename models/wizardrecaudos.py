@@ -209,7 +209,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             consumo.sudo().write({'active': False})
 
         prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.habitacion.id)],limit=1)
-        if prestados
+        if prestados:
             for prestado in prestados:
                 prestado.write({'active':False})
 
