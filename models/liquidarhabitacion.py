@@ -184,7 +184,7 @@ class MotgamaFlujoHabitacion(models.Model):
 
             codOcasional = self.env['motgama.parametros'].search([('codigo','=','CODHOSOCASIO')])
             if not codOcasional:
-                raise Warning('No existe el parámetro "CODHOSAMANE"')
+                raise Warning('No existe el parámetro "CODHOSOCASIO"')
             producto = self.env['product.template'].search([('default_code','=',codOcasional.valor)])
             if not producto:
                 raise Warning('No existe producto con Referencia interna: ' + codOcasional.valor + ' para Hospedaje Ocasional')
@@ -215,7 +215,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'customer_lead' : 0,
                 'name' : producto.name,
                 'order_id' : ordenVenta.id,
-                'price_unit' : movimiento.tarifahoradicional,
+                'price_unit' : round(movimiento.tarifahoradicional),
                 'product_uom_qty' : horasAdicionales,
                 'product_id' : producto.product_variant_id.id,
                 'es_hospedaje' : True

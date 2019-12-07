@@ -1,0 +1,19 @@
+<odoo>
+    <record id='form_wizard_prenda' model="ir.ui.view">
+        <field name="name">Wizard Prendas</field>
+        <field name="model">motgama.wizardprenda</field>
+        <field name="arch" type="xml">
+            <form string="Recaudar prenda">
+                <group>
+                    <field name="mediopago" domain="[('tipo','!=','prenda')]"/>
+                    <field name="valor"/>
+                    <field name="pagado" widget="radio"/>
+                </group>
+                <footer>
+                    <button name="recaudar" type="object" class="btn btn-primary" string="Recaudar"/>
+                    <button special="cancel" string='Cancelar'/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

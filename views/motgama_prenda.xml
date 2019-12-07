@@ -1,14 +1,56 @@
 <odoo>
     <record id="tree_view_prenda" model="ir.ui.view">
-        <field name="name">Prendas</field>
+        <field name="name">Prendas Tree</field>
         <field name="model">motgama.prendas</field>
         <field name="arch" type="xml">
-            <tree string="Objetos Olvidados">
+            <tree string="Prendas" create="false" edit="false">
                 <field name="fecha"/>
                 <field name="descripcion"/>
+                <field name="cliente_id"/>
                 <field name="valorprenda"/>
                 <field name="valordeuda"/>
+                <field name="creado_uid"/>
+                <field name="pagado"/>
+                <field name="pagadofecha"/>
+                <field name="pagadoforma"/>
+                <field name="pago_uid"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="form_view_prenda" model="ir.ui.view">
+        <field name="name">Prendas Form</field>
+        <field name="model">motgama.prendas</field>
+        <field name="arch" type="xml">
+            <form string="Prenda" create="false" edit="false">
+            <field name="pagado" invisible="1"/>
+                <group>
+                    <group name="left" string="Datos de la asignación">
+                        <field name="fecha"/>
+                        <field name="cliente_id"/>
+                        <field name="tipovehiculo"/>
+                        <field name="placa" attrs="{'invisible':[('tipovehiculo','!=','peaton')]}"/>
+                        <field name="habitacion_id"/>
+                        <field name="factura"/>
+                        <field name="creado_uid"/>
+                    </group>
+                    <group name="right" string="Datos de la prenda">
+                        <group>
+                            <field name="descripcion"/>
+                            <field name="valorprenda"/>
+                            <field name="valordeuda"/>
+                        </group>
+                        <group string="Datos del pago" attrs="{'invisible': [('pagado','=',False)]}">
+                            <field name="pagadofecha"/>
+                            <field name="pagadoforma"/>
+                            <field name="pago_uid"/>
+                        </group>
+                    </group>
+                </group>
+                <footer>
+                    <button name="recaudo_prenda" type="object" string="Recaudar Prenda" class="btn btn-primary" attrs="{'invisible': [('pagado','=',True)]}"/>
+                </footer>
+            </form>
         </field>
     </record>
 </odoo>

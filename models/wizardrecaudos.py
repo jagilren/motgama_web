@@ -6,6 +6,7 @@ class MotgamaFlujoHabitacion(models.Model):
 
     @api.multi
     def button_recaudar(self):
+        self.ensure_one()
         if not self.puede_recaudar:
             prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.id)])
             if prestados:
@@ -26,7 +27,8 @@ class MotgamaFlujoHabitacion(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'view_id': self.env.ref('motgama.motgama_wizard_recaudo').id,
-            'target': 'new'
+            'target': 'new',
+            'context': {'current_id': self.id}
         }
 
 class MotgamaWizardRecaudo(models.TransientModel):
@@ -48,17 +50,15 @@ class MotgamaWizardRecaudo(models.TransientModel):
     prenda_descripcion = fields.Char(string='Descripción de la prenda')
     prenda_valor = fields.Float(string='Valor estimado de la prenda')
 
-    valores_pagos = []
-
     @api.model
     def _compute_habitacion(self):
-        flujo_id = self.env.context['active_id']
+        flujo_id = self.env.context['current_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
         return flujo.id
 
     @api.model
     def _compute_movimiento(self):
-        flujo_id = self.env.context['active_id']
+        flujo_id = self.env.context['current_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
         return flujo.ultmovimiento.id
 
@@ -71,7 +71,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
 
     @api.model
     def _compute_total(self):
-        flujo_id = self.env.context['active_id']
+        flujo_id = self.env.context['current_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
         ordenVenta = self.env['sale.order'].search([('movimiento','=',flujo.ultmovimiento.id),('state','=','sale')],limit=1)
         return ordenVenta.amount_total
@@ -94,7 +94,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             pagadas = []
             pendientes = []
             if recaudo.cliente:
-                prendas = self.env['motgama.prendas'].search([('cliente_id','=',recaudo.cliente.id)])
+                prendas = self.env['motgama.prendas'].search([('cliente_id','=',recaudo.cliente.id),'|',('active','=',True),('active','=',False)])
                 for prenda in prendas:
                     if prenda.pagado:
                         pagadas.append(prenda.id)
@@ -106,7 +106,6 @@ class MotgamaWizardRecaudo(models.TransientModel):
     @api.multi
     def recaudar(self):
         self.ensure_one()
-        
         if self.deuda > 0:
             raise Warning('La cuenta no ha sido saldada')
         elif self.deuda < 0:
@@ -149,8 +148,9 @@ class MotgamaWizardRecaudo(models.TransientModel):
             raise Warning('No se pudo crear la factura')
         factura.action_invoice_open()
         diario = self.env['account.journal'].search([('company_id','=',factura.company_id.id),('type','=','cash')],limit=1)
+        valorPagado = self.total - valorPrenda
         valoresPayment = {
-            'amount': self.total,
+            'amount': valorPagado,
             'currency_id': diario.company_id.currency_id.id,
             'invoice_ids': [(4,factura.id)],
             'journal_id': diario.id,
@@ -221,16 +221,11 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'target': 'current',
             'flags': {'form': {'action_buttons': True}}
         }
-        
-
 
 class MotgamaWizardPago(models.TransientModel):
     _name = 'motgama.wizardpago'
     _description = 'Wizard Pagos'
 
     mediopago = fields.Many2one(string='Medio de Pago',comodel_name='motgama.mediopago',required=True)
-    valor =  fields.Float(string=u'Valor a pagar',required=True)
-    descripcion = fields.Char(string=u'Descripcion')
-
-        
-
+    valor =  fields.Float(string='Valor a pagar',required=True)
+    descripcion = fields.Char(string='Descripcion')

@@ -622,21 +622,22 @@ class MotgamaObjetosPrestados(models.Model):
 class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        
     _name = 'motgama.prendas'
-    _description = u'Registro de prendas'
+    _description = 'Registro de prendas'
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion') # Habitacion del cliente que dejo la prende como pago                                 #P7.0.4R
-    movimiento_id = fields.Integer('Movimiento',)
+    movimiento_id = fields.Integer('Movimiento')
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
-    tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
-    placa = fields.Char(string=u'Placa')
-    fecha = fields.Datetime(string=u'Fecha', default=lambda self: fields.Datetime().now())
+    creado_uid = fields.Many2one(string='Usuario que recibe la prenda',comodel_name='res.users',default=lambda self: self.env.user.id)
+    tipovehiculo = fields.Selection(string='Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
+    placa = fields.Char(string='Placa')
+    fecha = fields.Datetime(string='Fecha', default=lambda self: fields.Datetime().now())
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
-    descripcion = fields.Text(string=u'Descripción')
-    valorprenda = fields.Float(string=u'Valor de la prenda',) # Actualmente no se utiliza
-    valordeuda = fields.Float(string=u'Valor de la deuda',) # Actualmente no se utiliza
-    pagado = fields.Boolean(string=u'pagado',)
-    pagodofecha = fields.Datetime(string=u'fecha del pago')
-    pagadoforma = fields.Char('Medio de pago') # PENDIENTE DE CONECTAR
-    pago_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
+    descripcion = fields.Text(string='Descripción')
+    valorprenda = fields.Float(string='Valor estimado de la prenda') # Actualmente no se utiliza
+    valordeuda = fields.Float(string='Valor de la deuda') # Actualmente no se utiliza
+    pagado = fields.Boolean(string='Pagado')
+    pagadofecha = fields.Datetime(string=u'fecha del pago')
+    pagadoforma = fields.Many2one(string='Medio de pago',comodel_name='motgama.mediopago')
+    pago_uid = fields.Many2one(comodel_name='res.users',string='Usuario que recauda la prenda')
     active = fields.Boolean(string=u'Activo?',default=True)
 
 class MotgamaBonos(models.Model):

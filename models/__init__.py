@@ -19,3 +19,4 @@ from . import wizardrecaudos
 from . import entregaolvidados
 from . import entregaprestados
 from . import wizard_confirm_prestados
+from . import recaudoprenda
