@@ -11,13 +11,21 @@
         multi="True"
         target="new"
     />
+
+    <act_window
+        id="action_menu_asignar"
+        name="Asignar"
+        src_model="motgama.flujohabitacion"
+        res_model="motgama.wizardhabitacion"
+        view_type="form" view_mode="form"
+        key2="client_action_multi" target="new"/>
     
 <!-- Búsqueda                                                                                                       P7.0.4R -->
     <record id="search_view_flujohabitacion" model="ir.ui.view">
         <field name="name">Flujo Habitación</field>
         <field name="model">motgama.flujohabitacion</field>
         <field name="arch" type="xml">
-            <search>
+            <search string="Buscar habitaciones">
                 <field name="codigo"/>
                 <field name="estado"/>
                 <field name="ultmovimiento"/>
@@ -25,25 +33,7 @@
         </field>
     </record>
 
-    <!--Tree-->
-    <!-- <record id="tree_view_habitacion" model="ir.ui.view">
-    <field name="name">Habitacion</field>
-    <field name="model">motgama.habitacion</field>
-    <field name="limit">100</field>
-    <field name="arch" type="xml">
-    
-    <tree string="Habitacion">
-            <field name="codigo"/>
-            <field name="nombre"/>
-            <field name="zona_id"/>
-            <field name="tema_id"/>
-            <field name="tipo_id"/>
-            <field name="inmotica"/>
-            <field name="estado_tree"/>
-    </tree>
-    </field>
-    </record> -->
-    <!--Formulario                                                                                                           P7.0.4R -->
+    <!--Formulario                                                                                                           P7.0.4R --> 
     <record id="form_view_flujohabitacion" model="ir.ui.view">
         <field name="name">Habitación</field>
         <field name="model">motgama.flujohabitacion</field>
@@ -137,6 +127,7 @@
         </field>
     </record>
     
+    <!--Kanban-->
     <record id="class_dashboard" model="ir.ui.view">
         <field name="name">Flujo Habitación kanban</field>
         <field name="model">motgama.flujohabitacion</field>

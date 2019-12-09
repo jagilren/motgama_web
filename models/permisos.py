@@ -43,3 +43,6 @@ class Users(models.Model):
     motgama_informe_recaudos = fields.Boolean(string='Puede generar informe de recaudos',default=False)
     motgama_informe_diariovtas = fields.Boolean(string='Puede generar informe diario de ventas',default=False)
     motgama_informe_movimientos = fields.Boolean(string='Puede generar informe de movimientos',default=False)
+
+    # Administración
+    motgama_cambia_precios = fields.Boolean(string='Puede actualizar precios de habitaciones',default=False)

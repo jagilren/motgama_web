@@ -60,7 +60,8 @@
                                 <field name="motgama_informe_diariovtas"/>
                                 <field name="motgama_informe_movimientos"/>
                             </group>
-                            <group name="two_right">
+                            <group name="two_right" string="Administración">
+                                <field name="motgama_cambia_precios"/>
                             </group>
                         </group>
                     </page>

@@ -1,4 +1,13 @@
 <odoo>
+
+    <act_window
+        id="action_menu_asignar"
+        name="Asignar"
+        src_model="motgama.flujohabitacion"
+        res_model="motgama.wizardhabitacion"
+        view_type="form" view_mode="form"
+        key2="client_action_multi" target="new"/>
+
     <record model="report.paperformat" id="formato_reporte_consumos">
         <field name="name">formato.reporte.consumos</field>
         <field name="default" eval="True"/>

@@ -11,10 +11,8 @@
         <field name="fecha" string="Fecha"/>
         <field name="habitacion" string="Habitacion"/>
         <field name="producto_id" string="Producto"/>
-        <field name="vlrUnitario" string="Valor Unitario $"/>
         <field name="cantidad" string="Cantidad"/>
         <field name="descripcion" string="Descripcion"/>
-        <field name="active" string="Active"/>
       </tree>
     </field>
   </record>

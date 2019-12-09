@@ -313,6 +313,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                     ids.append(comodidad.id)
                 if len(ids) > 0:
                     record.comodidades = [(6,0,ids)]
+    
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'

@@ -5,7 +5,9 @@
         <field name="arch" type="xml">
             <form string="Comodidad">
                 <sheet>
-                    <field name="nombre"/>
+                    <group>
+                        <field name="nombre"/>
+                    </group>
                 </sheet>
             </form>
         </field>
