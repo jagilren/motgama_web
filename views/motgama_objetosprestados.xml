@@ -8,7 +8,8 @@
     <tree string="Objetos Prestados">
         <field name="habitacion_id"/>
         <field name="fecha"/>
-        <field name="descripcion" />
+        <field name="objeto"/>
+        <field name="descripcion"/>
         <field name="prestadopor_uid"/>
         <field name="estado_devolucion"/>
         <field name="devueltofecha"/>
@@ -27,9 +28,10 @@
             <field name="esNuevo" invisible="1"/>
             <sheet>
                 <group name="group_bottom">
-                    <field name="habitacion_id" domain="[('estado','in',['OO','OA'])]"/>
+                    <field name="habitacion_id" domain="[('estado','in',['OO','OA'])]" options="{'no_create':True}"/>
                     <field name="fecha" readonly="1"/>
-                    <field name="descripcion" />
+                    <field name="objeto" required="1"/>
+                    <field name="descripcion" attrs="{'required':[('objeto','=','otro')]}"/>
                     <field name="prestadopor_uid" readonly="1"/>
                 </group>             
                 <footer>

@@ -248,17 +248,17 @@ class MotgamaComodidad(models.Model):
 
 class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     _name = 'motgama.flujohabitacion'
-    _description = u'Flujo Habitación'
+    _description = 'Flujo Habitación'
     _rec_name = 'codigo'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El código habitación ya Existe, Verifique!")]
 
     _inherit = 'base'
 
-    codigo = fields.Char(string=u'Código')
-    estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Aseo'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
+    codigo = fields.Char(string='Código')
+    estado = fields.Selection(string='Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Aseo'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso')],default='D')
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
-    recepcion = fields.Many2one(string=u'Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
-    active = fields.Boolean(string=u'Activo?',default=True)
+    recepcion = fields.Many2one(string='Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
+    active = fields.Boolean(string='Activo?',default=True)
     tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',compute='_compute_habitacion',store=True)
     tema = fields.Many2one(string='Tema',comodel_name='motgama.tema',compute='_compute_habitacion',store=True)
     # Liquidación:
@@ -606,16 +606,17 @@ class MotgamaObjetosOlvidados(models.Model):
 class MotgamaObjetosPrestados(models.Model):
 #    Fields:Objetos Prestados: elementos que el cliente solicita prestados en su estadia en una habitacion.
     _name = 'motgama.objprestados' #Objetos Prestados
-    _description = u'MotgamaObjetosPrestados'
-    habitacion_id = fields.Many2one(string=u'Habitacion',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
-    fecha = fields.Datetime(string=u'Fecha',default=lambda self: fields.Datetime().now())
-    descripcion = fields.Text(string=u'Descripción')
+    _description = 'MotgamaObjetosPrestados'
+    habitacion_id = fields.Many2one(string='Habitacion',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    fecha = fields.Datetime(string='Fecha',default=lambda self: fields.Datetime().now())
+    objeto = fields.Selection(string='Objeto',selection=[('hielera','Hielera (Con pinza)'),('cobija','Cobija'),('toalla','Toalla'),('utensilios','Utensilios de cocina (Vaso, cuchara, tenedor, cuchillo)'),('almohada','Almohada'),('otro','Otro')])
+    descripcion = fields.Text(string='Descripción del objeto')
     prestadopor_uid = fields.Many2one(comodel_name='res.users',string='Usuario que presta',default=lambda self: self.env.user.id)
     estado_devolucion = fields.Selection(string='Estado devolución',selection=[('ok','Devuelto en buen estado'),('mal','Devuelto en mal estado'),('no','No devuelto')])
-    devueltofecha = fields.Datetime(string=u'Fecha de devolución') 
+    devueltofecha = fields.Datetime(string='Fecha de devolución') 
     devuelto_uid = fields.Many2one(comodel_name='res.users',string='Usuario que entrega',default=lambda self: self.env.user.id)
-    entregadonota = fields.Text(string=u'Observaciones')
-    active = fields.Boolean(string=u'Activo?', default=True)
+    entregadonota = fields.Text(string='Observaciones')
+    active = fields.Boolean(string='Activo?', default=True)
     esNuevo = fields.Boolean(default=True)
 
     @api.model
@@ -739,6 +740,7 @@ class MotgamaComanda(models.Model):
 #    Fields: Comandas
     _name = 'motgama.comanda'
     _description = 'Comanda'
+    _inherit  = 'base'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
     nrocomanda = fields.Integer('Nro. Comanda')
     fecha = fields.Datetime ('Fecha')
@@ -748,7 +750,13 @@ class MotgamaComanda(models.Model):
     cantidad = fields.Float(string=u'Cantidad',required=True)
     vlrUnitario = fields.Float(string='Vlr Unitario')                                                                                     #P7.0.4R
     descripcion = fields.Text(string=u'descripción')
-    active = fields.Boolean(string=u'Activo?',default=True)    
+    active = fields.Boolean(string=u'Activo?',default=True)
+
+    @api.model
+    def create(self,values):
+        record = super().create(values)
+        self.refresh_views()
+        return record
 
 #Añade a la tabla de usuarios el campo de recepción asociada.
 class Users(models.Model):

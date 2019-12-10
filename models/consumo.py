@@ -19,7 +19,7 @@ class ProductCategory(models.Model):
     llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
 
 class MotgamaConsumo(models.Model):
-    _inherit = 'motgama.consumo'
+    _inherit = 'motgama.consumo,base'
 
     @api.model
     def create(self,values):
@@ -179,6 +179,7 @@ class MotgamaConsumo(models.Model):
                 raise Warning('No se pudo crear la comanda')
             comanda.write({'nrocomanda':comanda.id})
             record.sudo().write({'comanda':comanda.id})
-            # TODO: Imprimir comanda
+        
+        self.refresh_views()
 
         return record
