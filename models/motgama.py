@@ -551,7 +551,7 @@ class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
 # HISTORICO DE MOVIMIENTO:  Este movimiento tiene la replica exacta de motgama.movimiento y se escoje el año que se quiere trasladar
     _name = 'motgama.hcomov' #Historico Movimiento
-    _description = u'MotgamaHistoricoMovimiento' 
+    _description = 'MotgamaHistoricoMovimiento' 
     _rec_name = 'anio'
     _order = 'anio ASC'
     anio = fields.Char(string=u'Año')
@@ -560,20 +560,24 @@ class MotgamaHistoricoMovimiento(models.Model):#ok
 class MotgamaReservas(models.Model):#ok
 #    Fields: Reserva: se hereda res.partner para ingresar el usuario cuando realiza la reservacion
     _name = 'motgama.reserva'
-    _description = u'Reservas'
-    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
-    fecha = fields.Datetime(string=u'fecha')
-    condecoracion = fields.Boolean(string=u'Con decoración?')
-    notadecoracion = fields.Text(string=u'Nota para la decoración')
-    habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
-    anticipo = fields.Float(string=u'Anticipo $:')
-    modificada = fields.Boolean(string=u'Reserva Modificada',default=False)
-    modificada_uid = fields.Many2one(comodel_name='res.users',string='Usuario modifica',default=lambda self: self.env.user.id)
-    fecha_original = fields.Datetime(string=u'F.Anterior')
-    cancelada = fields.Boolean(string=u'Reserva Cancelada',default=False)
-    cancelada_uid = fields.Many2one(comodel_name='res.users',string='Usuario cancela',default=lambda self: self.env.user.id)
-    fecha_cancela = fields.Datetime(string=u'F.Cancela')
+    _description = 'Reservas'
+    _rec_name = 'cod'
+    cod = fields.Char(string='Código')
+    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',domain=[('customer','=',True)],required=True)
+    fecha = fields.Datetime(string='Fecha de reserva',required=True)
+    condecoracion = fields.Boolean(string='¿Con decoración?')
+    notadecoracion = fields.Text(string='Nota para la decoración')
+    habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='restrict',required=True)
+    mediopago = fields.Many2one(string='Medio de pago',comodel_name='motgama.mediopago',ondelete='restrict')
+    anticipo = fields.Float(string='Anticipo $')
+    modificada = fields.Boolean(string='Reserva Modificada',default=False)
+    modificada_uid = fields.Many2one(comodel_name='res.users',string='Usuario que modifica')
+    fecha_original = fields.Datetime(string='Fecha de reserva anterior')
+    cancelada = fields.Boolean(string='Reserva Cancelada',default=False)
+    cancelada_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cancela')
+    fecha_cancela = fields.Datetime(string='Fecha de cancelación')
     active = fields.Boolean(string=u'Activo?',default=True)
+    esNueva = fields.Boolean(default=True)
 
 class MotgamaObjetosOlvidados(models.Model):
 #    Fields:Objetos Olvidados: elementos que el cliente olvido en una habitacion.

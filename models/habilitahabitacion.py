@@ -17,7 +17,7 @@ class MotgamaFlujoHabitacion(models.Model):
                         'habilita_uid':self.env.user.id,
                         'active':False}
             movimiento.write(valores)
-            self.sudo().write({'estado':'D'}) # pone en estado disponible
+            self.write({'estado':'D'}) # pone en estado disponible
         else:
             raise Warning('No se pudo cambiar el estado para habilitar la habitación')
 

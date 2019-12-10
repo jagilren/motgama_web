@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_invoice_form_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.motgama.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="before">
+                    <field name="es_hospedaje" invisible="1"/>
+                </xpath>
+                <xpath expr="//header" position="attributes">
+                    <attribute name="attrs">{'invisible':[('es_hospedaje','=',True)]}</attribute>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

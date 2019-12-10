@@ -3,6 +3,11 @@ from odoo.exceptions import Warning
 from datetime import datetime, timedelta
 import pytz
 
+class SaleOrder(models.Model):
+    _inherit = 'sale.order'
+
+    es_hospedaje = fields.Boolean(default=False)
+
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
 
@@ -181,6 +186,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 if not ordenVenta:
                     raise Warning('Error al registrar el consumo: No se pudo crear orden de venta')
                 ordenVenta.action_confirm()
+            ordenVenta.write({'es_hospedaje':True})
 
             codOcasional = self.env['motgama.parametros'].search([('codigo','=','CODHOSOCASIO')])
             if not codOcasional:
@@ -200,7 +206,6 @@ class MotgamaFlujoHabitacion(models.Model):
             nuevaLinea = self.env['sale.order.line'].create(valoresLineaOcasional)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje ocasional a la orden de venta')
-
         else:
             raise Warning('Error del sistema, la habitación no está ocupada')
 

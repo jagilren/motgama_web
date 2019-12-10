@@ -1,6 +1,11 @@
 from odoo import models, fields, api
 from odoo.exceptions import Warning
 
+class AccountInvoice(models.Model):
+    _inherit = 'account.invoice'
+
+    es_hospedaje = fields.Boolean(default=False)
+
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
 
@@ -146,6 +151,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             break
         if not factura:
             raise Warning('No se pudo crear la factura')
+        factura.write({'partner_id':self.cliente.id,'es_hospedaje':True})
         factura.action_invoice_open()
         diario = self.env['account.journal'].search([('company_id','=',factura.company_id.id),('type','=','cash')],limit=1)
         valorPagado = self.total - valorPrenda

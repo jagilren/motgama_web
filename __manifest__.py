@@ -56,5 +56,7 @@
         'views/motgama_cambioplan.xml',
         'views/motgama_comodidades.xml',
         'views/motgama_confirm_prestados.xml',
-        'views/motgama_wizard_prenda.xml']
+        'views/motgama_wizard_prenda.xml',
+        'views/sale_order.xml',
+        'views/account_invoice.xml']
 }
