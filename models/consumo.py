@@ -19,7 +19,7 @@ class ProductCategory(models.Model):
     llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
 
 class MotgamaConsumo(models.Model):
-    _inherit = 'motgama.consumo,base'
+    _inherit = 'motgama.consumo'
 
     @api.model
     def create(self,values):

@@ -58,5 +58,6 @@
         'views/motgama_confirm_prestados.xml',
         'views/motgama_wizard_prenda.xml',
         'views/sale_order.xml',
-        'views/account_invoice.xml']
+        'views/account_invoice.xml',
+        'views/motgama_wizard_precuenta.xml']
 }

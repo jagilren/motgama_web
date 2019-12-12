@@ -668,6 +668,7 @@ class MotgamaConsumo(models.Model):
 #    Fields: Consumos del Bar en cualquiera de las recepciones: Creado: Junio 07 del 2019
     _name = 'motgama.consumo'
     _description = 'Consumos'
+    _inherit = 'base'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
     recepcion = fields.Many2one(comodel_name='motgama.recepcion',default=lambda self: self.env.user.recepcion_id.id)
     consecutivo =  fields.Float(string=u'Total $')
@@ -676,11 +677,11 @@ class MotgamaConsumo(models.Model):
     comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
     habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
-    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
+    producto_id = fields.Many2one(string=u'Producto',comodel_name='product.template',ondelete='set null',required=True)
     cantidad = fields.Float(string=u'Cantidad',required=True)
     valorUnitario = fields.Float(string='Valor Unitario',compute='_compute_valorUnitario')                                                                                   #P7.0.4R
     vlrUnitario = fields.Float(string='Valor Unitario')
-    vlrSubtotal = fields.Float(string=u'Subtotal $',compute="_compute_vlrsubtotal",store = True)
+    vlrSubtotal = fields.Float(string='Subtotal $',compute="_compute_vlrsubtotal",store = True)
     lugar_id = fields.Many2one(string='Bodega de Inventario',comodel_name='stock.location',ondelete='set null',store=True)
     estado = fields.Char(string=u'estado')
     active = fields.Boolean(string=u'Activo?',default=True)    
