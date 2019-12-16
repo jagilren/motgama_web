@@ -22,3 +22,4 @@ from . import wizard_confirm_prestados
 from . import recaudoprenda
 from . import reservas
 from . import wizardprecuenta
+from . import consumo_adicional

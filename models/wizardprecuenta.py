@@ -19,7 +19,7 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     _name = 'motgama.wizardprecuenta'
     _description = 'Visualización de Precuenta'
 
-    fecha_asignacion = fields.Datetime(string='Fecha de Asignación')
+    fecha_asignacion = fields.Datetime(string='Fecha de Asignación', default=lambda self: self._get_fecha())
     habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',default=lambda self: self._get_habitacion())
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute="_compute_movimiento")
     consumos = fields.Many2many(string='Consumos',comodel_name='motgama.consumo',default=lambda self: self._get_consumos())
@@ -31,6 +31,12 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     hospedaje_adicional = fields.Float(string='Hospedaje Adicional',compute='_compute_precio')
     valor_total = fields.Float(string='Valor Total',compute='_compute_total')
     movimiento = fields.Boolean()
+
+    @api.model
+    def _get_fecha(self):
+        flujo_id = self.env.context['active_id']
+        flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)],limit=1)
+        return flujo.ultmovimiento.asignafecha
 
     @api.model
     def _get_habitacion(self):
@@ -46,12 +52,7 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     def _get_consumos(self):
         flujo_id = self.env.context['active_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)])
-        consumos = self.env['motgama.consumo'].search([('movimiento_id','=',flujo.ultmovimiento.id)])
-        ids = []
-        for consumo in consumos:
-            ids.append(consumo.id)
-        if len(ids) > 0:
-            return (6,0,ids)
+        return flujo.consumos
 
     @api.depends('habitacion','movimiento')
     def _compute_precio(self):

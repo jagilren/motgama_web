@@ -20,12 +20,12 @@
                             <field name="vlrSubtotal"/>
                         </tree>
                     </field>
-                    <field name="hospedaje_normal" readonly="1"/>
-                    <field name="hospedaje_amanecida" readonly="1"/>
-                    <field name="hospedaje_adicional" readonly="1"/>
+                    <field name="hospedaje_normal" readonly="1" attrs="{'invisible':[('incluye_ocasional','=',False)]}"/>
+                    <field name="hospedaje_amanecida" readonly="1" attrs="{'invisible':[('incluye_amanecida','=',False)]}"/>
+                    <field name="hospedaje_adicional" readonly="1" attrs="{'invisible':[('incluye_adicional','=',False)]}"/>
                 </group>
                 <group>
-                    <h3><span>Valor Total</span>&amp;nbsp;<span><field name="valor_total" readonly="1"/></span></h3>
+                    <h3><span>Valor Total</span>&amp;nbsp;&amp;nbsp;$&amp;nbsp;<span><field name="valor_total" readonly="1"/></span></h3>
                 </group>
                 <footer>
                     <button string="Aceptar" special="cancel" class="btn btn-primary"/>

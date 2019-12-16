@@ -79,6 +79,18 @@
                                 </field>
                             </group>
                         </page>
+                        <page name="consumos" string="Consumos" attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}">
+                            <group>
+                                <field name="consumos" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="producto_id" string="Producto"/>
+                                        <field name="vlrUnitario" string="Valor Unitario $"/>
+                                        <field name="cantidad" string="Cantidad"/>
+                                        <field name="vlrSubtotal" string="Subtotal $"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
                         <page name='cuenta_cobro' string='Cuenta de Cobro' attrs="{'invisible':[('estado','not in','LQ')]}">
                             <button name="button_cuentacobro" string="Ver cuenta de cobro" type="object" class="btn"/>
                         </page>

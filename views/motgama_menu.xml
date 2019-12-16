@@ -276,6 +276,19 @@ action="accion_motgama_prendas_form"
 />
 
 <!-- Accion -->
+<act_window id="accion_motgama_facturaconsumos_form"
+name="Facturar consumos sin habitación"
+res_model="motgama.facturaconsumos"
+view_mode="tree,form"
+/>
+<!-- Item de menu -->
+<menuitem id="menu_motgama_facturaconsumos_form"
+name="Facturar consumos sin habitación"
+parent="menu_motgama_processes"
+action="accion_motgama_facturaconsumos_form"
+/>
+
+<!-- Accion -->
 <act_window id="accion_motgama_placa_form"
 name="Placas Registradas"
 res_model="motgama.placa"

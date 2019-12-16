@@ -59,5 +59,6 @@
         'views/motgama_wizard_prenda.xml',
         'views/sale_order.xml',
         'views/account_invoice.xml',
-        'views/motgama_wizard_precuenta.xml']
+        'views/motgama_wizard_precuenta.xml',
+        'views/motgama_consumo_adicional.xml']
 }

@@ -263,6 +263,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     tema = fields.Many2one(string='Tema',comodel_name='motgama.tema',compute='_compute_habitacion',store=True)
     # Liquidación:
     orden_venta = fields.Many2one(string='Cuenta de Cobro',comodel_name='sale.order',ondelete='set null')
+    # Consumos
+    consumos = fields.One2many(string='Consumos',comodel_name='motgama.consumo',inverse_name='habitacion')
     # Comodidades
     comodidades = fields.Many2many(string='Comodidades',comodel_name='motgama.comodidad',ondelete='set null',compute='_compute_comodidades')
     # Objetos prestados
