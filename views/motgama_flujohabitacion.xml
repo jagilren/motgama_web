@@ -11,16 +11,8 @@
         multi="True"
         target="new"
     />
-
-    <act_window
-        id="action_menu_asignar"
-        name="Asignar"
-        src_model="motgama.flujohabitacion"
-        res_model="motgama.wizardhabitacion"
-        view_type="form" view_mode="form"
-        key2="client_action_multi" target="new"/>
     
-<!-- Búsqueda                                                                                                       P7.0.4R -->
+    <!-- Búsqueda                                                                                                         P7.0.4R -->
     <record id="search_view_flujohabitacion" model="ir.ui.view">
         <field name="name">Flujo Habitación</field>
         <field name="model">motgama.flujohabitacion</field>
@@ -39,6 +31,45 @@
         <field name="model">motgama.flujohabitacion</field>
         <field name="arch" type="xml">
             <form string="Flujo Habitaciones" create="false" edit="false">
+                <header>
+                    <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
+                        class="btn btn-primary" attrs="{'invisible':[('estado','not in',['D'])]}" />
+
+                    <button name="button_liquidar" string="Liquidar" type="object"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"
+                        confirm="¿Está seguro que desea liquidar esta habitación?"/>
+                        
+                    <button type="object" name="button_recaudar" string="Recaudar"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado','not in',['LQ'])]}"/>
+                    
+                    <button name="button_aseo" string="Asear" type="object"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Asear"/>
+
+                    <button name="button_habilita" string="Habilitar habitacion" type="object"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado', 'not in', ['RC'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
+                        
+                    <button type="action" name="%(motgama.action_wizard_desasigna)d" string="Desasignar" confirm="¿Esta seguro de Desasignar la habitacion?"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
+
+                    <button type="action" name="%(motgama.action_wizard_cambio_plan)d" string="Cambio de Plan" confirm="¿Esta seguro de cambiar de plan entre amanecida y ocasional?"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
+
+                    <button type="action" name="%(motgama.action_wizard_cambio_habitacion)d" string="Cambio (Reasigna) habitación"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
+                        
+                    <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
+                        class="btn" attrs="{'invisible':[('estado','not in','D')]}"/>
+                        
+                    <button type="action" name="%(motgama.action_wizard_fuera_uso)d" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
+                        class="btn" attrs="{'invisible':[('estado','not in','D')]}"/>
+
+                    <button name="button_precuenta" string="Ver precuenta" type="object"
+                        class="btn"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"/>
+                        
+                    <button name="button_continuar" string="Rehabilitar" type="object"
+                        class="btn"  attrs="{'invisible': [('estado','not in', 'LQ')]}"
+                        confirm="¿Está seguro que desea rehabilitar la habitación? Al dar clic en 'Aceptar' la habitación volverá al estado ocupada"/>
+                </header>
                 <sheet>
                     <group name="group_bottom">
                         <group name="group_left">            
@@ -73,8 +104,8 @@
                                         <control>
                                             <create string="Prestar objeto"/>
                                         </control>
+                                        <field name="objeto"/>
                                         <field name="descripcion"/>
-                                        <field name="habitacion_id" invisible="1"/>
                                     </tree>
                                 </field>
                             </group>
@@ -95,48 +126,6 @@
                             <button name="button_cuentacobro" string="Ver cuenta de cobro" type="object" class="btn"/>
                         </page>
                     </notebook>
-                    
-                    <footer>
-                        <group name="group_top" col="10">
-                            <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
-                                class="btn btn-success" attrs="{'invisible':[('estado','not in',['D'])]}" />
-                                
-                            <button type="action" name="%(motgama.action_wizard_desasigna)d" string="Desasignar" confirm="¿Esta seguro de Desasignar la habitacion?"
-                                class="btn btn-info" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
-
-                            <button type="action" name="%(motgama.action_wizard_cambio_plan)d" string="Cambio de Plan" confirm="¿Esta seguro de cambiar de plan entre amanecida y ocasional?"
-                                class="btn btn-info" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
-
-                            <button type="action" name="%(motgama.action_wizard_cambio_habitacion)d" string="Cambio (Reasigna) habitación"
-                                class="btn btn-info" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
-                                
-                            <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
-                                class="btn btn-info" attrs="{'invisible':[('estado','not in','D')]}"/>
-                                
-                            <button type="action" name="%(motgama.action_wizard_fuera_uso)d" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
-                                class="btn btn-info" attrs="{'invisible':[('estado','not in','D')]}"/>
-                                
-                            <button name="button_habilita" string="Habilitar habitacion" type="object"
-                                class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['RC'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
-                                
-                            <button name="button_aseo" string="Asear" type="object"
-                                class="btn btn"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Asear"/>
-
-                            <button name="button_precuenta" string="Ver precuenta" type="object"
-                                class="btn btn"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"/>
-
-                            <button name="button_liquidar" string="Liquidar" type="object"
-                                class="btn btn"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"
-                                confirm="¿Está seguro que desea liquidar esta habitación?"/>
-                                
-                            <button type="object" name="button_recaudar" string="Recaudar"
-                                class="btn btn"  attrs="{'invisible': [('estado','not in',['LQ'])]}"/>
-                                
-                            <button name="button_continuar" string="Rehabilitar" type="object"
-                                class="btn btn"  attrs="{'invisible': [('estado','not in', 'LQ')]}"
-                                confirm="¿Está seguro que desea rehabilitar la habitación? Al dar clic en 'Aceptar' la habitación volverá al estado ocupada"/>
-                        </group>
-                    </footer>
                 </sheet>   
             </form>
         </field>
@@ -254,15 +243,4 @@
             </form>
         </field>
     </record>
-            
-    <!--     <record id="motgama_search_view" model="ir.ui.view"> la zona esta en habit y no en flujohab
-            <field name="name">motgama.search.view</field>
-            <field name="model">motgama.habitacion</field>
-            <field name="arch" type="xml">
-                <search string="Habitaciónes en la recepcion">
-                    <filter name="searchrecepcion" icon="terp-personal" string="zona" domain="[('zona_id','in',[0,1])]"/>
-                </search>
-            </field>
-        </record>
-    -->
 </odoo>

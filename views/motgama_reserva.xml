@@ -29,6 +29,10 @@
         <field name="arch" type="xml">
             <form string="Reserva Habitaciones" edit="false">
                 <field name="esNueva" invisible="1"/>
+                <header>
+                    <button name="button_modificar" type="object" string="Modificar reserva" class="btn btn-primary" attrs="{'invisible':[('esNueva','=',True)]}"/>
+                    <button name="button_cancelar" type="object" string="Cancelar reserva" class="btn" attrs="{'invisible':[('esNueva','=',True)]}"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
@@ -57,12 +61,6 @@
                             <field name="fecha_cancela" attrs="{'invisible':[('modificada','=',False)]}"/>
                         </group>
                     </group>
-                    <footer>
-                        <group name="group_top" col="10">
-                            <button name="button_modificar" type="object" string="Modificar reserva" class="btn btn-primary" attrs="{'invisible':[('esNueva','=',True)]}"/>
-                            <button name="button_cancelar" type="object" string="Cancelar reserva" class="btn" attrs="{'invisible':[('esNueva','=',True)]}"/>
-                        </group>
-                    </footer>
                 </sheet>    
             </form>
         </field>

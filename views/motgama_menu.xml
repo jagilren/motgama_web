@@ -1,392 +1,354 @@
 <?xml version='1.0'?>
 <odoo>
-<menuitem id="menu_motgama" name="Motgama" web_icon="motgama,static/description/icon.png" />
-<!-- <menuitem id="menu_motgama_core" name="Flujo Habitaciones" parent='menu_motgama' /> -->
+    <menuitem id="menu_motgama" name="Motgama" web_icon="motgama,static/description/icon.png" />
 
-<!-- PRINCIPAL -->
-<!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
-<!-- Accion -->
-<act_window id="accion_motgama_flujohabitacion_form"
-name="Flujo Habitaciones"
-res_model="motgama.flujohabitacion"
-view_mode="kanban"
-limit="100"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_flujohabitacion_form"
-name="Flujo Habitaciones"
-parent="menu_motgama"
-action="accion_motgama_flujohabitacion_form"/>
+    <!-- PRINCIPAL -->
+    <!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
+    <!-- Accion -->
+    <act_window id="accion_motgama_flujohabitacion_form"
+    name="Flujo Habitaciones"
+    res_model="motgama.flujohabitacion"
+    view_mode="kanban"
+    limit="100"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_flujohabitacion_form"
+    name="Flujo Habitaciones"
+    parent="menu_motgama"
+    action="accion_motgama_flujohabitacion_form"/>
 
-<menuitem id="menu_motgama_processes" name="Procesos" parent='menu_motgama'/>
+    <menuitem id="menu_motgama_processes" name="Procesos" parent='menu_motgama'/>
 
-<act_window id="accion_motgama_utilidades"
-name="Utilidades"
-res_model="motgama.utilidades"
-view_mode="form"
-limit="100"
-/>
+    <act_window id="accion_motgama_utilidades"
+    name="Utilidades"
+    res_model="motgama.utilidades"
+    view_mode="form"
+    limit="100"
+    />
 
-<menuitem id="menu_motgama_utilidades"
-name="Utilidades"
-parent="menu_motgama"
-action="accion_motgama_utilidades"
-/>
+    <menuitem id="menu_motgama_utilidades"
+    name="Utilidades"
+    parent="menu_motgama"
+    action="accion_motgama_utilidades"
+    />
 
-<menuitem id="menu_motgama_reportes" name="Reportes" parent='menu_motgama'/>
-<menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
-<menuitem id="menu_motgama_master" name="Datos Maestros" parent='menu_motgama'/>
+    <menuitem id="menu_motgama_reportes" name="Reportes" parent='menu_motgama'/>
+    <menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
+    <menuitem id="menu_motgama_master" name="Datos Maestros" parent='menu_motgama'/>
 
-<!-- Accion -->
-<!-- <act_window id="accion_motgama_habitacion"
-name="Habitaciones"
-res_model="motgama.habitacion"
-view_mode="kanban"
-limit="100"
-/> -->
-<!-- Item de menu -->
-<!-- <menuitem id="menu_motgama_habitacion"
-name="Habitaciones"
-parent="menu_motgama"
-action="accion_motgama_habitacion"
-/> -->
+    <!-- ARCHIVOS MAESTROS -->
+    <!-- Accion -->
+    <act_window id="accion_motgama_sucursal"
+    name="Sucursales"
+    res_model="motgama.sucursal"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_sucursal"
+    name="Sucursales"
+    parent="menu_motgama_master"
+    action="accion_motgama_sucursal"
+    />
 
-<!-- ARCHIVOS MAESTROS -->
-<!-- Accion -->
-<act_window id="accion_motgama_sucursal"
-name="Sucursales"
-res_model="motgama.sucursal"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_sucursal"
-name="Sucursales"
-parent="menu_motgama_master"
-action="accion_motgama_sucursal"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_recepcion_form"
+    name="Recepciones"
+    res_model="motgama.recepcion"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_recepcion_form"
+    name="Recepciones"
+    parent="menu_motgama_master"
+    action="accion_motgama_recepcion_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_recepcion_form"
-name="Recepciones"
-res_model="motgama.recepcion"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_recepcion_form"
-name="Recepciones"
-parent="menu_motgama_master"
-action="accion_motgama_recepcion_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_zona_form"
+    name="Zonas"
+    res_model="motgama.zona"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_zona_form"
+    name="Zonas"
+    parent="menu_motgama_master"
+    action="accion_motgama_zona_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_zona_form"
-name="Zonas"
-res_model="motgama.zona"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_zona_form"
-name="Zonas"
-parent="menu_motgama_master"
-action="accion_motgama_zona_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_tema_form"
+    name="Temas"
+    res_model="motgama.tema"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_tema_form"
+    name="Temas"
+    parent="menu_motgama_master"
+    action="accion_motgama_tema_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_tema_form"
-name="Temas"
-res_model="motgama.tema"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_tema_form"
-name="Temas"
-parent="menu_motgama_master"
-action="accion_motgama_tema_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_comodidad_form"
+    name="Comodidades"
+    res_model="motgama.comodidad"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_comodidad_form"
+    name="Comodidades"
+    parent="menu_motgama_master"
+    action="accion_motgama_comodidad_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_comodidad_form"
-name="Comodidades"
-res_model="motgama.comodidad"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_comodidad_form"
-name="Comodidades"
-parent="menu_motgama_master"
-action="accion_motgama_comodidad_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_tipo_form"
+    name="Tipos de habitación"
+    res_model="motgama.tipo"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_tipo_form"
+    name="Tipos de habitación"
+    parent="menu_motgama_master"
+    action="accion_motgama_tipo_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_tipo_form"
-name="Tipos de habitación"
-res_model="motgama.tipo"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_tipo_form"
-name="Tipos de habitación"
-parent="menu_motgama_master"
-action="accion_motgama_tipo_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_habitacion_form"
+    name="Habitaciones"
+    res_model="motgama.habitacion"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_habitacion_form"
+    name="Habitaciones"
+    parent="menu_motgama_master"
+    action="accion_motgama_habitacion_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_habitacion_form"
-name="Habitaciones"
-res_model="motgama.habitacion"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_habitacion_form"
-name="Habitaciones"
-parent="menu_motgama_master"
-action="accion_motgama_habitacion_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_parametros_form"
+    name="Parametros"
+    res_model="motgama.parametros"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_parametros_form"
+    name="Parametros"
+    parent="menu_motgama_master"
+    action="accion_motgama_parametros_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_parametros_form"
-name="Parametros"
-res_model="motgama.parametros"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_parametros_form"
-name="Parametros"
-parent="menu_motgama_master"
-action="accion_motgama_parametros_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_calendario_form"
+    name="Calendario"
+    res_model="motgama.calendario"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_calendario_form"
+    name="Calendario"
+    parent="menu_motgama_master"
+    action="accion_motgama_calendario_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_calendario_form"
-name="Calendario"
-res_model="motgama.calendario"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_calendario_form"
-name="Calendario"
-parent="menu_motgama_master"
-action="accion_motgama_calendario_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_listapreciotipo_form"
+    name="Lista de precios por tipo de habitacion"
+    res_model="motgama.listapreciotipo"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_listapreciotipo_form"
+    name="Lista de precios por tipo de habitación"
+    parent="menu_motgama_master"
+    action="accion_motgama_listapreciotipo_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_listapreciotipo_form"
-name="Lista de precios por tipo de habitacion"
-res_model="motgama.listapreciotipo"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_listapreciotipo_form"
-name="Lista de precios por tipo de habitación"
-parent="menu_motgama_master"
-action="accion_motgama_listapreciotipo_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_listapreciohabitacion_form"
+    name="Lista de precios por habitacion"
+    res_model="motgama.listapreciohabitacion"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_listapreciohabitacion_form"
+    name="Lista de precios por habitación"
+    parent="menu_motgama_master"
+    action="accion_motgama_listapreciohabitacion_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_listapreciohabitacion_form"
-name="Lista de precios por habitacion"
-res_model="motgama.listapreciohabitacion"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_listapreciohabitacion_form"
-name="Lista de precios por habitación"
-parent="menu_motgama_master"
-action="accion_motgama_listapreciohabitacion_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_bonos_form"
+    name="Bonos"
+    res_model="motgama.bonos"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_bonos_form"
+    name="Bonos"
+    parent="menu_motgama_master"
+    action="accion_motgama_bonos_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_bonos_form"
-name="Bonos"
-res_model="motgama.bonos"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_bonos_form"
-name="Bonos"
-parent="menu_motgama_master"
-action="accion_motgama_bonos_form"
-/>
+    <!-- PROCESOS -->
 
-<!-- PROCESOS -->
+    <!-- Accion -->
+    <act_window id="accion_motgama_consumo_form"
+    name="Consumos"
+    res_model="motgama.consumo"
+    view_mode="tree"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_consumo_form"
+    name="Consumos"
+    parent="menu_motgama_processes"
+    action="accion_motgama_consumo_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_consumo_form"
-name="Consumos"
-res_model="motgama.consumo"
-view_mode="tree"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_consumo_form"
-name="Consumos"
-parent="menu_motgama_processes"
-action="accion_motgama_consumo_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_objprestados_form"
+    name="Objetos Prestados"
+    res_model="motgama.objprestados"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_objprestados_form"
+    name="Objetos Prestados"
+    parent="menu_motgama_processes"
+    action="accion_motgama_objprestados_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_objprestados_form"
-name="Objetos Prestados"
-res_model="motgama.objprestados"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_objprestados_form"
-name="Objetos Prestados"
-parent="menu_motgama_processes"
-action="accion_motgama_objprestados_form"
-/>
+    <!-- Accion  -->
+    <act_window id="accion_motgama_reserva_form"
+    name="Reservas"
+    res_model="motgama.reserva"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_reserva_form"
+    name="Reservas"
+    parent="menu_motgama_processes"
+    action="accion_motgama_reserva_form"
+    />
 
-<!-- Accion  -->
-<act_window id="accion_motgama_reserva_form"
-name="Reservas"
-res_model="motgama.reserva"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_reserva_form"
-name="Reservas"
-parent="menu_motgama_processes"
-action="accion_motgama_reserva_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_objolv_form"
+    name="Objetos Olvidados"
+    res_model="motgama.objolv"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_objolv_form"
+    name="Objetos Olvidados"
+    parent="menu_motgama_processes"
+    action="accion_motgama_objolv_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_objolv_form"
-name="Objetos Olvidados"
-res_model="motgama.objolv"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_objolv_form"
-name="Objetos Olvidados"
-parent="menu_motgama_processes"
-action="accion_motgama_objolv_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_prendas_form"
+    name="Prendas"
+    res_model="motgama.prendas"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_prendas_form"
+    name="Prendas"
+    parent="menu_motgama_processes"
+    action="accion_motgama_prendas_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_prendas_form"
-name="Prendas"
-res_model="motgama.prendas"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_prendas_form"
-name="Prendas"
-parent="menu_motgama_processes"
-action="accion_motgama_prendas_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_facturaconsumos_form"
+    name="Facturar consumos sin habitación"
+    res_model="motgama.facturaconsumos"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_facturaconsumos_form"
+    name="Facturar consumos sin habitación"
+    parent="menu_motgama_processes"
+    action="accion_motgama_facturaconsumos_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_facturaconsumos_form"
-name="Facturar consumos sin habitación"
-res_model="motgama.facturaconsumos"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_facturaconsumos_form"
-name="Facturar consumos sin habitación"
-parent="menu_motgama_processes"
-action="accion_motgama_facturaconsumos_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_placa_form"
+    name="Placas Registradas"
+    res_model="motgama.placa"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_placa_form"
+    name="Placas Registradas"
+    parent="menu_motgama_processes"
+    action="accion_motgama_placa_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_placa_form"
-name="Placas Registradas"
-res_model="motgama.placa"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_placa_form"
-name="Placas Registradas"
-parent="menu_motgama_processes"
-action="accion_motgama_placa_form"
-/>
+    <!-- CONSULTA -->
+    <!-- Accion -->
+    <act_window id="accion_motgama_movimiento_form"
+    name="Movimiento"
+    res_model="motgama.movimiento"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu                                                                                                       P7.0.4R -->
+    <menuitem id="menu_motgama_movimiento_form"
+    name="Movimiento"
+    parent="menu_motgama_query"
+    action="accion_motgama_movimiento_form"
+    />
 
-<!-- Este se generara todo en Consumos Bar unificado por lo tanto se comenta para dejarlo como 
-historico 8 julio 2019 -->
-<!-- Accion -->
-<!-- <act_window id="accion_motgama_consumores_form"
-name="Consumosres"
-res_model="motgama.consumores"
-view_mode="tree"
-/> -->
-<!-- Item de menu -->
-<!-- <menuitem id="menu_motgama_consumores_form"
-name="Consumores"
-parent="menu_motgama_processes"
-action="accion_motgama_consumores_form"
-/> -->
+    <!-- Accion -->
+    <act_window id="accion_motgama_reasignacion_form"
+    name="Reasignaciones"
+    res_model="motgama.reasignacion"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu                                                                                                       P7.0.4R -->
+    <menuitem id="menu_motgama_reasignacion_form"
+    name="Reasignaciones"
+    parent="menu_motgama_query"
+    action="accion_motgama_reasignacion_form"
+    />
 
-<!-- CONSULTA -->
-<!-- Accion -->
-<act_window id="accion_motgama_movimiento_form"
-name="Movimiento"
-res_model="motgama.movimiento"
-view_mode="tree,form"
-/>
-<!-- Item de menu                                                                                                       P7.0.4R -->
-<menuitem id="menu_motgama_movimiento_form"
-name="Movimiento"
-parent="menu_motgama_query"
-action="accion_motgama_movimiento_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_comanda_form"
+    name="Comanda"
+    res_model="motgama.comanda"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu                                                                                                       P7.0.4R -->
+    <menuitem id="menu_motgama_comanda_form"
+    name="Comanda"
+    parent="menu_motgama_query"
+    action="accion_motgama_comanda_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_reasignacion_form"
-name="Reasignaciones"
-res_model="motgama.reasignacion"
-view_mode="tree,form"
-/>
-<!-- Item de menu                                                                                                       P7.0.4R -->
-<menuitem id="menu_motgama_reasignacion_form"
-name="Reasignaciones"
-parent="menu_motgama_query"
-action="accion_motgama_reasignacion_form"
-/>
+    <!-- Accion -->
+    <act_window id="accion_motgama_inmotica_form"
+    name="Inmotica"
+    res_model="motgama.inmotica"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_inmotica_form"
+    name="Inmotica"
+    parent="menu_motgama_query"
+    action="accion_motgama_inmotica_form"
+    />
 
-<!-- Accion -->
-<act_window id="accion_motgama_comanda_form"
-name="Comanda"
-res_model="motgama.comanda"
-view_mode="tree,form"
-/>
-<!-- Item de menu                                                                                                       P7.0.4R -->
-<menuitem id="menu_motgama_comanda_form"
-name="Comanda"
-parent="menu_motgama_query"
-action="accion_motgama_comanda_form"
-/>
-
-<!-- Accion -->
-<act_window id="accion_motgama_inmotica_form"
-name="Inmotica"
-res_model="motgama.inmotica"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_inmotica_form"
-name="Inmotica"
-parent="menu_motgama_query"
-action="accion_motgama_inmotica_form"
-/>
-
-<!-- Accion -->
-<act_window id="accion_motgama_historico_form"
-name="Historico de Movimiento"
-res_model="motgama.hcomov"
-view_mode="tree,form"
-/>
-<!-- Item de menu -->
-<menuitem id="menu_motgama_historico_form"
-name="Historico de Movimiento"
-parent="menu_motgama_query"
-action="accion_motgama_historico_form"
-/>
-<!-- REVISASR ESTA ACCION -->
-<!-- <act_window id="action_wizard_habitacion"    
-    name=""
-    src_model="motgama.habitacion"    
-    res_model="motgama.habitacion.wizard"    
-    view_type="form"    
-    view_mode="form"    
-/>  -->
+    <!-- Accion -->
+    <act_window id="accion_motgama_historico_form"
+    name="Historico de Movimiento"
+    res_model="motgama.hcomov"
+    view_mode="tree,form"
+    />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_historico_form"
+    name="Historico de Movimiento"
+    parent="menu_motgama_query"
+    action="accion_motgama_historico_form"
+    />
 </odoo>

@@ -298,7 +298,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             if not nuevoPago:
                 raise Warning('No se pudo guardar la información del pago')
         
-        self.factura_id.write({'factura_id':factura.id})
+        self.factura_id.write({'factura_id':factura.id,'active':False})
 
         return {
             'type': 'ir.actions.act_window',

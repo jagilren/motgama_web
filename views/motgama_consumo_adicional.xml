@@ -20,6 +20,9 @@
         <field name="model">motgama.facturaconsumos</field>
         <field name="arch" type="xml"> 
             <form>
+                <header>
+                    <button name="btn_facturar" type="object" class="btn btn-primary" string="Facturar y recaudar" attrs="{'invisible':[('factura_id','!=',False)]}"/>
+                </header>
                 <sheet>
                     <group>
                         <h2><span><field name="nombre"/></span></h2>
@@ -46,9 +49,6 @@
                     <group>
                         <field name="factura_id" readonly="1" attrs="{'invisible':[('factura_id','=',False)]}"/>
                     </group>
-                    <footer>
-                        <button name="btn_facturar" type="object" class="btn btn-primary" string="Facturar y recaudar" attrs="{'invisible':[('factura_id','!=',False)]}"/>
-                    </footer>
                 </sheet>
             </form>
         </field>

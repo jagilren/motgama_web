@@ -1,49 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--Tree-->
-<record id="tree_view_objolv" model="ir.ui.view">
-    <field name="name">Objetos Olvidados</field>
-    <field name="model">motgama.objolv</field>
-    <field name="arch" type="xml">
-    <tree string="Objetos Olvidados">
-        <field name="habitacion_id"/>
-        <field name="fecha"/>
-        <field name="descripcion" />
-        <field name="encontradopor"/>
-        <field name="valor"/>
-        <field name="entregado"/>
-        <field name="entregadofecha"/>
-        <field name="cliente_id"/>
-        <field name="entregado_uid"/>
-        <field name="entregadonota"/>
-        <field name="baja"/>
-        <field name="active"/>
-    </tree>
-    </field>
-</record>
-<!--Formulario                                                                                                              P7.0.4R -->
-<record id="form_view_objolv" model="ir.ui.view">
-    <field name="name">Objetos Olvidados</field>
-    <field name="model">motgama.objolv</field>
-    <field name="arch" type="xml">
-        <form string="Objetos Olvidados">
-            <field name="esNuevo" invisible="1"/>
-            <sheet>
-                <group name="group_bottom">
-                    <field name="habitacion_id"/>
-                    <field name="fecha"/>
-                    <field name="descripcion" />
-                    <field name="valor"/>
-                    <field name="encontradopor"/>
-                </group>             
-                <footer>
-                    <group name="group_top" col="10">
-                        <button type="action" name="%(action_wizard_entrega_olvidados)d" string="Entregar Objetos" 
-                            class="btn btn-success" attrs="{'invisible':[('esNuevo','=',True)]}"/>
+    <!--Tree-->
+    <record id="tree_view_objolv" model="ir.ui.view">
+        <field name="name">Objetos Olvidados</field>
+        <field name="model">motgama.objolv</field>
+        <field name="arch" type="xml">
+        <tree string="Objetos Olvidados">
+            <field name="habitacion_id"/>
+            <field name="fecha"/>
+            <field name="descripcion" />
+            <field name="encontradopor"/>
+            <field name="valor"/>
+            <field name="entregado"/>
+            <field name="entregadofecha"/>
+            <field name="cliente_id"/>
+            <field name="entregado_uid"/>
+            <field name="entregadonota"/>
+            <field name="baja"/>
+            <field name="active"/>
+        </tree>
+        </field>
+    </record>
+    <!--Formulario                                                                                                              P7.0.4R -->
+    <record id="form_view_objolv" model="ir.ui.view">
+        <field name="name">Objetos Olvidados</field>
+        <field name="model">motgama.objolv</field>
+        <field name="arch" type="xml">
+            <form string="Objetos Olvidados">
+                <field name="esNuevo" invisible="1"/>
+                <field name="active" invisible="1"/>
+                <field name="entregado" invisible="1"/>
+                <header>
+                    <button type="action" name="%(action_wizard_entrega_olvidados)d" string="Entregar Objetos"
+                            class="btn btn-primary" attrs="{'invisible':['|',('esNuevo','=',True),('active','=',False)]}"/>
+                </header>
+                <sheet>
+                    <group name="group_top" string="Objeto Olvidado">
+                        <field name="habitacion_id"/>
+                        <field name="fecha"/>
+                        <field name="descripcion" />
+                        <field name="valor"/>
+                        <field name="encontradopor"/>
                     </group>
-                </footer>
-            </sheet>    
-        </form>
-    </field>
-</record>
+                    <group name="group_bottom" string="Devolución" attrs="{'invisible':[('active','=',True)]}">
+                        <field name="cliente_id" readonly="1" attrs="{'invisible':[('entregado','=',False)]}"/>
+                        <field name="baja" string="Dado de baja" readonly="1" attrs="{'invisible':[('entregado','=',True)]}"/>
+                        <field name="entregadofecha" readonly="1"/>
+                        <field name="entregado_uid" readonly="1"/>
+                        <field name="entregadonota" readonly="1"/>
+                    </group>
+                </sheet>    
+            </form>
+        </field>
+    </record>
 </odoo>

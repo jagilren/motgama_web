@@ -590,7 +590,7 @@ class MotgamaObjetosOlvidados(models.Model):
     descripcion = fields.Text(string='Descripción')
     valor = fields.Float(string='Valor Estimado')
     encontradopor = fields.Text(string='Encontrado por')
-    entregado = fields.Boolean(string='Entregado?')
+    entregado = fields.Boolean(string='Entregado')
     entregadofecha = fields.Datetime(string='Fecha de entrega') 
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
     entregado_uid = fields.Many2one(comodel_name='res.users',string='Usuario que entrega',default=lambda self: self.env.user.id)

@@ -19,7 +19,7 @@
                 <group>
                     <field name="estado_devolucion" widget="radio"/>
                     <field name="fecha" invisible="1"/>
-                    <field name="observacion"/>
+                    <field name="observacion" attrs="{'required':[('estado_devolucion','!=','ok')],'invisible':[('estado_devolucion','=','ok')]}"/>
                 </group>
                 <footer>
                     <button type="object" name="entregar_objeto" class="btn btn-info" string="Guardar"/>
