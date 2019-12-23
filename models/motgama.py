@@ -792,7 +792,8 @@ class MotgamaRecaudo(models.Model):
     total_pagado = fields.Float(string='Total pagado')
     pagos = fields.One2many(string='Pagos',comodel_name='motgama.pago',inverse_name='recaudo')
     prenda = fields.Many2one(string='Prenda asociada',comodel_name='motgama.prendas')
-    usuario_uid = fields.Many2one(string='Usuario responsable',comodel_name='res.users', default=lambda self: self.env.user.id)
+    valor_pagado = fields.Float(string='Deuda',default=0.0)
+    usuario_uid = fields.Many2one(string='Usuario que recauda',comodel_name='res.users', default=lambda self: self.env.user.id)
 
 class MotgamaCierreTurno(models.TransientModel):
     _name = 'motgama.cierreturno'

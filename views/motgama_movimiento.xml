@@ -20,6 +20,8 @@
         <field name="model">motgama.movimiento</field>
         <field name="arch" type="xml">
             <form string="Movimiento" create="false" edit="false">
+                <field name="flagreasignada" invisible="1"/>
+                <field name="hubocambioplan" invisible="1"/>
                 <sheet>
                     <group name="data">
                         <group>
@@ -65,14 +67,14 @@
                                     <field name="desasigna_uid"/>
                                 </group>
                             </page>
-                            <page name="reasignacion" string="Reasignación">
+                            <page name="reasignacion" string="Reasignación" attrs="{'invisible':[('flagreasignada','=',False)]}">
                                 <group>
                                     <field name="reasignaciones" readonly="1"/>
                                 </group>
                                 <group>
                                 </group>
                             </page>
-                            <page name="cambioplan" string="Cambio de Plan">
+                            <page name="cambioplan" string="Cambio de Plan" attrs="{'invisible':[('hubocambioplan','=',False)]}">
                                 <group>
                                     <field name="cambiosplan" readonly="1"/>
                                 </group>

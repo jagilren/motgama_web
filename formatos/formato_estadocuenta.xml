@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="formato_estadocuenta">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <h2 class="text-center">Estado de cuenta</h2>
+                        <h5 class="text-center"><span t-field="doc.name"/></h5>
+                        <p>Habitación: <span t-field="doc.movimiento.habitacion_id.codigo"/></p>
+                        <p>
+                            Ingreso: <span t-field="doc.asignafecha"/>
+                            <br/>
+                            Salida: <span t-field="doc.liquidafecha"/>
+                        </p>
+                        <div style="width: 100%">
+                        <table class="table table-sm o_main_table" style="width: 100%">
+                            <thead>
+                                <th class="text-left">Precio</th>
+                                <th class="text-center">Cant</th>
+                                <th class="text-right">Total</th>
+                            </thead>
+                            <tbody class="sale_tbody">
+                                <t t-foreach="doc.order_line" t-as="line">
+                                    <tr>
+                                        <td>
+                                            <span t-field="line.product_id.name"/>
+                                            <br/>
+                                            $&amp;nbsp;<span t-field="line.price_unit"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="line.product_uom_qty"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="line.price_total"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                <tr>
+                                    <td><strong>TOTAL:</strong></td>
+                                    <td></td>
+                                    <td class="text-right">
+                                        <strong t-field="doc.amount_total"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <p>Su propina es voluntaria</p>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <report string="Estado de cuenta (80mm)"
+            id="reporte_estadocuenta_80"
+            model="sale.order"
+            report_type="qweb-pdf"
+            name="motgama.formato_estadocuenta"
+            file="motgama.formato_estadocuenta"
+            print_report_name="'Estado de cuenta - %s' % (object.name)"
+            paperformat="motgama.formato_tirilla_80"/>
+
+        <report string="Estado de cuenta (53mm)"
+            id="reporte_estadocuenta_53"
+            model="sale.order"
+            report_type="qweb-html"
+            name="motgama.formato_estadocuenta"
+            file="motgama.formato_estadocuenta"
+            print_report_name="'Estado de cuenta - %s' % (object.name)"
+            paperformat="motgama.formato_tirilla_53"/>
+    </data>
+</odoo>

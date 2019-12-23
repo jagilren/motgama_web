@@ -12,6 +12,12 @@
                 <xpath expr="//header" position="attributes">
                     <attribute name="attrs">{'invisible':[('es_hospedaje','=',True)]}</attribute>
                 </xpath>
+                <xpath expr="//notebook" position="before">
+                    <group>
+                        <field name="asignafecha" readonly="1" attrs="{'invisible':[('es_hospedaje','=',False)]}"/>
+                        <field name="liquidafecha" readonly="1" attrs="{'invisible':[('es_hospedaje','=',False)]}"/>
+                    </group>
+                </xpath>
             </field>
         </record>
     </data>

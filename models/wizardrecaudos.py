@@ -5,6 +5,8 @@ class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
     es_hospedaje = fields.Boolean(default=False)
+    habitacion_id = fields.Many2one(string='Habitación',comodel_name="motgama.flujohabitacion")
+    recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo')
 
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
@@ -151,7 +153,13 @@ class MotgamaWizardRecaudo(models.TransientModel):
             break
         if not factura:
             raise Warning('No se pudo crear la factura')
-        factura.write({'partner_id':self.cliente.id,'es_hospedaje':True})
+        valoresFactura = {
+            'partner_id':self.cliente.id,
+            'es_hospedaje':True,
+            'habitacion_id':self.habitacion.id,
+            'company_id':ordenVenta.company_id.id
+        }
+        factura.write(valoresFactura)
         factura.action_invoice_open()
         diario = self.env['account.journal'].search([('company_id','=',factura.company_id.id),('type','=','cash')],limit=1)
         valorPagado = self.total - valorPrenda
@@ -175,7 +183,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'habitacion': self.habitacion.id,
             'cliente': self.cliente.id,
             'factura': factura.id,
-            'total_pagado': self.total
+            'total_pagado': self.total,
+            'valor_pagado': self.total - valorPrenda
         }
         if self.pago_prenda:
             valoresPrenda = {
@@ -196,6 +205,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('No se pudo registrar el recaudo')
+        factura.write({'recaudo':nuevoRecaudo.id})
 
         for valores in valoresPagos:
             valores.update({'recaudo':nuevoRecaudo.id})

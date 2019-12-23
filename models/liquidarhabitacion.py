@@ -7,6 +7,14 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     es_hospedaje = fields.Boolean(default=False)
+    asignafecha = fields.Datetime(string="Ingreso",compute="_compute_asignafecha",store=True)
+    liquidafecha = fields.Datetime(string="Salida")
+
+    @api.depends('movimiento')
+    def _compute_asignafecha(self):
+        for record in self:
+            if record.movimiento:
+                record.asignafecha = record.movimiento.asignafecha
 
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
@@ -231,6 +239,7 @@ class MotgamaFlujoHabitacion(models.Model):
         
         self.write({'estado':'LQ','orden_venta':ordenVenta.id})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
+        ordenVenta.write({'liquidafecha':fechaActual})
 
         # TODO: Crear tarea programada que cambie el estado si no se recauda la habitación en cierto tiempo
 
