@@ -172,7 +172,8 @@ class MotgamaConsumo(models.Model):
                 'fecha' : fields.Datetime.now(),
                 'habitacion' : record.habitacion.id,
                 'movimiento_id' : record.movimiento_id.id,
-                'vlrUnitario' : record.vlrUnitario
+                'recepcion_id' : record.habitacion.recepcion.id,
+                'usuario_id' : self.env.user.id
             }
             comanda = self.env['motgama.comanda'].sudo().create(valoresComanda)
             if not comanda:

@@ -743,17 +743,19 @@ class MotgamaComanda(models.Model):
 #    Fields: Comandas
     _name = 'motgama.comanda'
     _description = 'Comanda'
+    _rec_name = 'nrocomanda'
     _inherit  = 'base'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
-    nrocomanda = fields.Integer('Nro. Comanda')
-    fecha = fields.Datetime ('Fecha')
-    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    nrocomanda = fields.Integer(string='Nro. Comanda')
+    fecha = fields.Datetime(string='Fecha')
+    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     movimiento_id = fields.Integer(string='Movimiento')
-    producto_id = fields.Many2one(string=u'producto_id',comodel_name='product.template',ondelete='set null',required=True)   
-    cantidad = fields.Float(string=u'Cantidad',required=True)
-    vlrUnitario = fields.Float(string='Vlr Unitario')                                                                                     #P7.0.4R
-    descripcion = fields.Text(string=u'descripción')
-    active = fields.Boolean(string=u'Activo?',default=True)
+    producto_id = fields.Many2one(string='Producto',comodel_name='product.template',ondelete='set null',required=True)   
+    cantidad = fields.Float(string='Cantidad',required=True)                                                                                   #P7.0.4R
+    descripcion = fields.Text(string='Descripción')
+    usuario_id = fields.Many2one(string='Usuario',comodel_name='res.users',default=lambda self: self.env.user.id)
+    recepcion_id = fields.Many2one(string='Recepción',comodel_name='motgama.recepcion')
+    active = fields.Boolean(string='Activo?',default=True)
 
     @api.model
     def create(self,values):

@@ -7,6 +7,8 @@ class AccountInvoice(models.Model):
     es_hospedaje = fields.Boolean(default=False)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name="motgama.flujohabitacion")
     recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo')
+    asignafecha = fields.Datetime(string="Ingreso")
+    liquidafecha = fields.Datetime(string="Salida")
 
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
@@ -157,7 +159,9 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'partner_id':self.cliente.id,
             'es_hospedaje':True,
             'habitacion_id':self.habitacion.id,
-            'company_id':ordenVenta.company_id.id
+            'company_id':ordenVenta.company_id.id,
+            'asignafecha':ordenVenta.asignafecha,
+            'liquidafecha':ordenVenta.liquidafecha
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()

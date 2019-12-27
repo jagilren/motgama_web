@@ -27,7 +27,6 @@
                             </control>
                             <field name="mediopago"/>
                             <field name="valor"/>
-                            <field name="descripcion"/>
                         </tree>
                     </field>
                     <field name="pago_prenda" readonly="True" invisible="1"/>
