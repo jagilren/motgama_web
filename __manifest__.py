@@ -61,7 +61,9 @@
         'views/account_invoice.xml',
         'views/motgama_wizard_precuenta.xml',
         'views/motgama_consumo_adicional.xml',
+        'views/motgama_wizard_modificareservas.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
-        'formatos/formato_factura.xml']
+        'formatos/formato_factura.xml',
+        'automatizacion/accion_reservas.xml']
 }

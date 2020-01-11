@@ -44,7 +44,8 @@
                     <group>
                         <group name="group_left" string="Reserva">
                             <field name="cliente_id"/>
-                            <field name="habitacion_id"/>
+                            <field name="tipohabitacion_id"/>
+                            <field name="habitacion_id" attrs="{'readonly':[('tipohabitacion_id','=',False)]}" domain="[('tipo','=',tipohabitacion_id),('estado','not in',['FS','FU'])]"/>
                             <field name="fecha"/>
                             <field name="condecoracion"/>
                             <field name="notadecoracion" attrs="{'invisible':[('condecoracion','=',False)],'required':[('condecoracion','=',True)]}"/>

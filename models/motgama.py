@@ -565,10 +565,11 @@ class MotgamaReservas(models.Model):#ok
     _description = 'Reservas'
     _rec_name = 'cod'
     cod = fields.Char(string='Código')
-    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',domain=[('customer','=',True)],required=True)
+    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',domain=[('customer','=',True),('vat','!=','1')],required=True)
     fecha = fields.Datetime(string='Fecha de reserva',required=True)
     condecoracion = fields.Boolean(string='¿Con decoración?')
     notadecoracion = fields.Text(string='Nota para la decoración')
+    tipohabitacion_id = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',ondelete='set null',required=True)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='restrict',required=True)
     mediopago = fields.Many2one(string='Medio de pago',comodel_name='motgama.mediopago',ondelete='restrict')
     anticipo = fields.Float(string='Anticipo $')
@@ -578,7 +579,7 @@ class MotgamaReservas(models.Model):#ok
     cancelada = fields.Boolean(string='Reserva Cancelada',default=False)
     cancelada_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cancela')
     fecha_cancela = fields.Datetime(string='Fecha de cancelación')
-    active = fields.Boolean(string=u'Activo?',default=True)
+    active = fields.Boolean(string='Activo?',default=True)
     esNueva = fields.Boolean(default=True)
 
 class MotgamaObjetosOlvidados(models.Model):
