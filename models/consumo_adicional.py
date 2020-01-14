@@ -252,7 +252,11 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             break
         if not factura:
             raise Warning('No se pudo crear la factura')
-        factura.write({'es_hospedaje':True})
+        valoresFactura = {
+            'es_hospedaje':True,
+            'fecha':fields.Datetime().now()
+        }
+        factura.write(valoresFactura)
         factura.action_invoice_open()
         diario = self.env['account.journal'].search([('company_id','=',factura.company_id.id),('type','=','cash')],limit=1)
         valorPagado = self.total

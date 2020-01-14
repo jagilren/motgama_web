@@ -14,6 +14,16 @@ class MotgamaUtilidades(models.TransientModel):
             raise ValidationError('Ya se encuentra en esta recepción')
         else:
             self.env.user.write({'recepcion_id': nueva_recepcion.id})
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.flujohabitacion',
+            'name': 'Habitaciones ' + self.env.user.recepcion_id.nombre,
+            'view_mode': 'kanban',
+            'limit': 100,
+            'domain': [('recepcion','=',self.env.user.recepcion_id.id)],
+            'target': 'main'
+        }
 
     @api.multi
     #   Se define la función del botón de cambio de precios

@@ -96,6 +96,7 @@ class MotgamaCalendario(models.Model):#ok
             raise ValidationError('El campo "Hora Inicio Amanecida" está mal definido, por favor usar el formato HH:MM de 24 horas')
         return super().create(values)
     
+    @api.multi
     def write(self,values):
         try:
             inicioamanecida = values['horainicioamanecida']
@@ -126,7 +127,7 @@ class MotgamaRecepcion(models.Model):#ok
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
     sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null',)
     codigo = fields.Char(string=u'Código',) 
-    nombre = fields.Char(string=u'Recepción',required=True)
+    nombre = fields.Char(string=u'Nombre de recepción',required=True)
     active = fields.Boolean(string=u'Activo?',default=True)
     zonas_ids = fields.One2many(string=u'Zonas en esta recepción',comodel_name='motgama.zona',inverse_name='recepcion_id') #LAS ZONAS EN ESTA RECEPCION
 
@@ -261,8 +262,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     active = fields.Boolean(string='Activo?',default=True)
     tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',compute='_compute_habitacion',store=True)
     tema = fields.Many2one(string='Tema',comodel_name='motgama.tema',compute='_compute_habitacion',store=True)
-    # Liquidación:
-    orden_venta = fields.Many2one(string='Cuenta de Cobro',comodel_name='sale.order',ondelete='set null')
+    # Liquidación
+    orden_venta = fields.Many2one(string='Estado de cuenta',comodel_name='sale.order',ondelete='set null')
     # Consumos
     consumos = fields.One2many(string='Consumos',comodel_name='motgama.consumo',inverse_name='habitacion')
     # Comodidades
@@ -760,7 +761,7 @@ class MotgamaComanda(models.Model):
 
     @api.model
     def create(self,values):
-        record = super().create(values)
+        record = super(MotgamaComanda, self).create(values)
         self.refresh_views()
         return record
 
@@ -837,6 +838,73 @@ class MotgamaMedioPago(models.Model):
     def _compute_prenda(self):
         for record in self:
             record.lleva_prenda = record.tipo == 'prenda'
+
+class Company(models.Model):
+    _inherit = 'res.company'
+
+    resol_nro = fields.Char(string='Nro. Resolución')
+    resol_fecha = fields.Date(string='Fecha de resolución')
+    resol_fin = fields.Date(string='Fecha de fin de vigencia')
+    resol_prefijo = fields.Char(string='Prefijo')
+    resol_inicial = fields.Char(string='Factura inical')
+    resol_final = fields.Char(string='Factura final')
+    resol_texto = fields.Text(string='Vista previa',compute='_compute_texto',store=True)
+
+    @api.depends('resol_nro','resol_fecha','resol_fin','resol_prefijo','resol_inicial','resol_final')
+    def _compute_texto(self):
+        for record in self:
+            texto = 'RES DIAN No. '
+            if record.resol_nro:
+                texto += str(record.resol_nro)
+            texto += ' de '
+            if record.resol_fecha:
+                texto += str(record.resol_fecha)
+            texto += '\nVIGENTE HASTA '
+            if record.resol_fin:
+                texto += str(record.resol_fin)
+            texto += '\nHABILITA DESDE '
+            if record.resol_prefijo:
+                texto += str(record.resol_prefijo)
+            texto += ' '
+            if record.resol_inicial:
+                texto += str(record.resol_inicial)
+            texto += ' HASTA '
+            if record.resol_prefijo:
+                texto += str(record.resol_prefijo)
+            texto += ' '
+            if record.resol_final:
+                texto += str(record.resol_final)
+            record.resol_texto = texto
+
+    @api.multi
+    def write(self,values):
+        for record in self:
+            idDiario = (self.env['account.invoice'].with_context(company_id=record.id).default_get(['journal_id'])['journal_id'])
+            diario = self.env['account.journal'].search([('id','=',idDiario)],limit=1)
+            if not diario:
+                raise UserError('No hay un diario seleccionado para las facturas de venta')
+            try:
+                prefijo = values['resol_prefijo']
+            except KeyError:
+                prefijo = False
+            try:
+                inicial = values['resol_inicial']
+            except KeyError:
+                inicial = False
+            
+            if prefijo:
+                valores = {
+                    'use_date_range': False,
+                    'padding': 0,
+                    'number_increment': 1
+                }
+                if inicial:
+                    valores.update({'number_next_actual': inicial})
+                else:
+                    valores.update({'number_next_actual': record.resol_inicial})
+                valores.update({'prefix': prefijo + ' '})
+                diario.sequence_id.sudo().write(valores)
+        return super().write(values)
 
 class MotgamaWizardFueradeservicio(models.TransientModel):
     _name = 'motgama.wizardfueradeservicio'

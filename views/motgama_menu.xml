@@ -5,12 +5,31 @@
     <!-- PRINCIPAL -->
     <!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
     <!-- Accion -->
-    <act_window id="accion_motgama_flujohabitacion_form"
-    name="Flujo Habitaciones"
-    res_model="motgama.flujohabitacion"
-    view_mode="kanban"
-    limit="100"
-    />
+    <record id="accion_motgama_flujohabitacion_form" model="ir.actions.server">
+        <field name="name">Acción Flujo Habitación</field>
+        <field name="model_id" ref="motgama.model_motgama_flujohabitacion"/>
+        <field name="state">code</field>
+        <field name="code">
+        if True:
+            if not env.user.recepcion_id:
+                action = {
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'motgama.utilidades',
+                    'name': 'Utilidades',
+                    'view_type': 'form',
+                    'view_mode': 'form'
+                }
+            else:
+                action = {
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'motgama.flujohabitacion',
+                    'name': 'Habitaciones ' + env.user.recepcion_id.nombre,
+                    'view_mode': 'kanban',
+                    'limit': 100,
+                    'domain': [('recepcion','=',env.user.recepcion_id.id)]
+                }
+        </field>
+    </record>
     <!-- Item de menu -->
     <menuitem id="menu_motgama_flujohabitacion_form"
     name="Flujo Habitaciones"
@@ -23,7 +42,6 @@
     name="Utilidades"
     res_model="motgama.utilidades"
     view_mode="form"
-    limit="100"
     />
 
     <menuitem id="menu_motgama_utilidades"

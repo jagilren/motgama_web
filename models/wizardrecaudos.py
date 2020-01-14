@@ -4,6 +4,7 @@ from odoo.exceptions import Warning
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
+    fecha = fields.Datetime(string='Fecha y hora')
     es_hospedaje = fields.Boolean(default=False)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name="motgama.flujohabitacion")
     recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo')
@@ -129,7 +130,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if pago.mediopago.tipo == 'prenda':
                 valorPrenda = pago.valor
                 if self.cliente.vat == '1':
-                    raise Warning('Si se paga con prenda el cliente debe ser registrado con sus datos personales, no se admite "Cliente genérico"')
+                    raise Warning('Si se paga con prenda el cliente debe ser registrado con sus datos personales, no se admite el cliente genérico')
                 nroPrendas += 1
                 if nroPrendas > 1:
                     raise Warning('Solo se permite registrar un pago con prenda')
@@ -161,7 +162,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'habitacion_id':self.habitacion.id,
             'company_id':ordenVenta.company_id.id,
             'asignafecha':ordenVenta.asignafecha,
-            'liquidafecha':ordenVenta.liquidafecha
+            'liquidafecha':ordenVenta.liquidafecha,
+            'fecha':fields.Datetime().now()
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()
