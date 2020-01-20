@@ -63,6 +63,7 @@
         'views/motgama_wizard_precuenta.xml',
         'views/motgama_consumo_adicional.xml',
         'views/motgama_wizard_modificareservas.xml',
+        'views/motgama_mediopago.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',

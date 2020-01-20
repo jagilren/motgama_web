@@ -1,0 +1,34 @@
+<odoo>
+    <data>
+        <record id="view_mediopago_tree" model="ir.ui.view">
+            <field name="name">Tree View Medio Pago</field>
+            <field name="model">motgama.mediopago</field>
+            <field name="limit">100</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="nombre"/>
+                    <field name="tipo"/>
+                    <field name="diario_id"/>
+                </tree>
+            </field>
+        </record>
+        
+        <record id="view_mediopago_form" model="ir.ui.view">
+            <field name="name">Form View Medio Pago</field>
+            <field name="model">motgama.mediopago</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="lleva_prenda" invisible="1"/>
+                            <field name="nombre"/>
+                            <field name="tipo"/>
+                            <field name="diario_id" attrs="{'invisible':[('lleva_prenda','=',True)]}" domain="[('type','in',['bank', 'cash'])]"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

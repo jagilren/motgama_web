@@ -53,9 +53,9 @@ class MotgamaWizardPrenda(models.TransientModel):
         valorPagado = self.valor
         valoresPayment = {
             'amount': valorPagado,
-            'currency_id': diario.company_id.currency_id.id,
+            'currency_id': self.mediopago.diario_id.company_id.currency_id.id,
             'invoice_ids': [(4,self.factura.id)],
-            'journal_id': diario.id,
+            'journal_id': self.mediopago.diario_id.id,
             'payment_date': fields.Datetime().now(),
             'payment_type': 'inbound',
             'payment_method_id': 1,
@@ -65,6 +65,19 @@ class MotgamaWizardPrenda(models.TransientModel):
         if not payment:
             raise Warning('No fue posible sentar el registro del pago')
         payment.post()
+
+        valoresPago = {
+            'cliente_id': self.prenda.cliente_id.id,
+            'mediopago': self.mediopago.id,
+            'valor': self.valor,
+            'recaudo': self.factura.recaudo.id
+        }
+        pago = self.env['motgama.pago'].create(valoresPago)
+        if not pago:
+            raise Warning('Error al asentar el pago de la prenda')
+
+        pagado = self.factura.recaudo.valor_pagado + self.valor
+        self.factura.recaudo.write({'valor_pagado': pagado})
 
         valoresPrenda = {
             'pagado': True,

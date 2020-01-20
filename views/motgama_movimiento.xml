@@ -5,7 +5,7 @@
         <field name="name">Movimiento Tree</field>
         <field name="model">motgama.movimiento</field>
         <field name="limit">100</field>
-        <field name="arch" type="xml">  
+        <field name="arch" type="xml">
             <tree string="Movimiento" create="false" delete="false" default_order='create_date desc'>
                 <field name="habitacion_id"/>
                 <field name="tipovehiculo"/>

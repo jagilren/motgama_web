@@ -5,7 +5,7 @@
         <field name="arch" type="xml">
             <form string="Recaudar prenda">
                 <group>
-                    <field name="mediopago" domain="[('tipo','!=','prenda')]"/>
+                    <field name="mediopago" domain="[('tipo','not in',['prenda','bono'])]" options="{'no_create':true,'no_open':true}"/>
                     <field name="valor"/>
                     <field name="pagado" widget="radio"/>
                 </group>

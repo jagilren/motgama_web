@@ -241,8 +241,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             valores = {
                 'cliente_id': self.cliente.id,
                 'mediopago': pago.mediopago.id,
-                'valor': pago.valor,
-                'descripcion': pago.descripcion
+                'valor': pago.valor
             }
             valoresPagos.append(valores)
 
@@ -258,22 +257,23 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()
-        diario = self.env['account.journal'].search([('company_id','=',factura.company_id.id),('type','=','cash')],limit=1)
-        valorPagado = self.total
-        valoresPayment = {
-            'amount': valorPagado,
-            'currency_id': diario.company_id.currency_id.id,
-            'invoice_ids': [(4,factura.id)],
-            'journal_id': diario.id,
-            'payment_date': fields.Datetime().now(),
-            'payment_type': 'inbound',
-            'payment_method_id': 1,
-            'partner_type': 'customer'
-        }
-        payment = self.env['account.payment'].create(valoresPayment)
-        if not payment:
-            raise Warning('No fue posible sentar el registro del pago')
-        payment.post()
+        for pago in self.pagos:
+            if pago.mediopago.tipo == 'prenda':
+                continue
+            valoresPayment = {
+                'amount': pago.valor,
+                'currency_id': pago.mediopago.diario_id.company_id.currency_id.id,
+                'invoice_ids': [(4,factura.id)],
+                'journal_id': pago.mediopago.diario_id.id,
+                'payment_date': fields.Datetime().now(),
+                'payment_type': 'inbound',
+                'payment_method_id': 1,
+                'partner_type': 'customer'
+            }
+            payment = self.env['account.payment'].create(valoresPayment)
+            if not payment:
+                raise Warning('No fue posible sentar el registro del pago')
+            payment.post()
 
         valoresRecaudo = {
             'cliente': self.cliente.id,

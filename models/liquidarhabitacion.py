@@ -250,8 +250,7 @@ class MotgamaFlujoHabitacion(models.Model):
             'res_model': 'sale.order',
             'view_mode': 'form',
             'res_id': ordenVenta.id,
-            'target': 'current',
-            'flags': {'form': {'action_buttons': True}}
+            'target': 'current'
         }
 
     @api.multi
@@ -262,6 +261,5 @@ class MotgamaFlujoHabitacion(models.Model):
             'res_model': 'sale.order',
             'view_mode': 'form',
             'res_id': self.orden_venta.id,
-            'target': 'current',
-            'flags': {'form': {'action_buttons': True}}
+            'target': 'current'
         }
