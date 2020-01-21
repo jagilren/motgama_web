@@ -5,9 +5,23 @@
         <field name="arch" type="xml">
             <form string="Recaudar prenda">
                 <group>
-                    <field name="mediopago" domain="[('tipo','not in',['prenda','bono'])]" options="{'no_create':true,'no_open':true}"/>
-                    <field name="valor"/>
-                    <field name="pagado" widget="radio"/>
+                    <group>
+                        <field name="deuda"/>
+                    </group>
+                    <group>
+                        <field name="valor"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="pagos" widget='one2many_list' mode="tree">
+                        <tree editable="bottom">
+                            <control>
+                                <create string="Agregar pago"/>
+                            </control>
+                            <field name="mediopago" options="{'no_create':true}" domain="[('tipo','in',['electro','efectivo'])]"/>
+                            <field name="valor"/>
+                        </tree>
+                    </field>
                 </group>
                 <footer>
                     <button name="recaudar" type="object" class="btn btn-primary" string="Recaudar"/>

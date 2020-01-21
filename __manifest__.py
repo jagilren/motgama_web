@@ -67,5 +67,7 @@
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',
-        'automatizacion/accion_reservas.xml']
+        'formatos/formato_prenda_pagare.xml',
+        'automatizacion/accion_reservas.xml',
+        'registros/secuencia_prenda.xml']
 }

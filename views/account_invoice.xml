@@ -17,6 +17,10 @@
                         <field name="asignafecha" readonly="1" attrs="{'invisible':[('es_hospedaje','=',False)]}"/>
                         <field name="liquidafecha" readonly="1" attrs="{'invisible':[('es_hospedaje','=',False)]}"/>
                     </group>
+                    <group attrs="{'invisible':[('lleva_prenda','=',False)]}">
+                        <field name="lleva_prenda" invisible="1"/>
+                        <field name="prenda_id"/>
+                    </group>
                 </xpath>
             </field>
         </record>

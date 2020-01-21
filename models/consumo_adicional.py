@@ -286,12 +286,14 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
                 'cliente_id': self.cliente.id,
                 'descripcion': self.prenda_descripcion,
                 'valorprenda': self.prenda_valor,
-                'valordeuda': valorPrenda
+                'valordeuda': valorPrenda,
+                'nroprenda': 'Nuevo'
             }
             nuevaPrenda = self.env['motgama.prendas'].create(valoresPrenda)
             if not nuevaPrenda:
                 raise Warning('No se pudo registrar la prenda')
             valoresRecaudo.update({'prenda': nuevaPrenda.id})
+            factura.update({'lleva_prenda':True,'prenda_id':nuevaPrenda.id})
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('No se pudo registrar el recaudo')

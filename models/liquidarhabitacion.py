@@ -245,13 +245,7 @@ class MotgamaFlujoHabitacion(models.Model):
 
         self.puede_liquidar = False
 
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'sale.order',
-            'view_mode': 'form',
-            'res_id': ordenVenta.id,
-            'target': 'current'
-        }
+        return True
 
     @api.multi
     def button_cuentacobro(self):

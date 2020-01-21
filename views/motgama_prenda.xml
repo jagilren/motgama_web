@@ -4,6 +4,7 @@
         <field name="model">motgama.prendas</field>
         <field name="arch" type="xml">
             <tree string="Prendas" create="false" edit="false">
+                <field name="nroprenda"/>
                 <field name="fecha"/>
                 <field name="descripcion"/>
                 <field name="cliente_id"/>
@@ -12,7 +13,6 @@
                 <field name="creado_uid"/>
                 <field name="pagado"/>
                 <field name="pagadofecha"/>
-                <field name="pagadoforma"/>
                 <field name="pago_uid"/>
             </tree>
         </field>
@@ -30,6 +30,9 @@
                 </header>
                 <sheet>
                     <group>
+                        <h1><span><field name="nroprenda"/></span></h1>
+                    </group>
+                    <group>
                         <group name="left" string="Datos de la asignación">
                             <field name="fecha"/>
                             <field name="cliente_id" widget="res_partner_many2one" context="{'search_default_customer':1, 'show_address': 1, 'show_vat': True}" options="{&quot;always_reload&quot;: True}"/>
@@ -41,14 +44,15 @@
                         </group>
                         <group name="right" string="Datos de la prenda">
                             <group>
-                                <field name="descripcion"/>
-                                <field name="valorprenda"/>
-                                <field name="valordeuda"/>
-                            </group>
-                            <group string="Datos del pago" attrs="{'invisible': [('pagado','=',False)]}">
-                                <field name="pagadofecha"/>
-                                <field name="pagadoforma"/>
-                                <field name="pago_uid"/>
+                                <group>
+                                    <field name="descripcion"/>
+                                    <field name="valorprenda"/>
+                                    <field name="valordeuda"/>
+                                </group>
+                                <group string="Datos del pago" attrs="{'invisible': [('pagado','=',False)]}">
+                                    <field name="pagadofecha"/>
+                                    <field name="pago_uid"/>
+                                </group>
                             </group>
                         </group>
                     </group>

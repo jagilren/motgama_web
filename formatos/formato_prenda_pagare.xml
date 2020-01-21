@@ -1,0 +1,96 @@
+<odoo>
+    <data>
+        <template id="formato_pagare">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <h2><span t-field="doc.factura.company_id.name"/></h2>
+                        <h3><span t-field="doc.factura.company_id.vat"/></h3>
+                        <h3>RECIBO DE COMPRA VENTA</h3>
+                        <p><span t-field="doc.nroprenda"/></p>
+                        <h3>FECHA: <span t-field="doc.fecha"/></h3>
+                        <br/>
+                        <p>
+                            Yo, <span t-field="doc.cliente_id.name"/> (EL VENDEDOR) mayor de edad, Vecino de 
+                            <span t-field="doc.cliente_id.city"/> con C.C. # <span t-field="doc.cliente_id.vat"/>, 
+                            entrego en calidad de venta con pacto de retroventa en favor del señor 
+                            <span t-field="doc.factura.company_id.name"/> (EL COMPRADOR). El comprador 
+                            <span t-field="doc.factura.company_id.name"/> con NIT 
+                            <span t-field="doc.factura.company_id.vat"/> expresa que acepta la compraventa en los 
+                            términos anotados, pero se obliga a enajenar el mismo bien, dentro del término de quince 
+                            (15) días contados a partir de la fecha de este documento, al vendedor en el mismo valor 
+                            de adquisición. Es entendido que si al vencimiento de este término no se ha hecho uso de 
+                            la facultad de retroventa, se considera en favor del comprador el derecho del dominio del 
+                            bien(es) ya relacionado(s).<br/>
+                            Para constancia se firma en la ciudad de <span t-field="doc.factura.company_id.city"/> el 
+                            día <span t-field="doc.factura.date_invoice"/> y por ante testigos hábiles.
+                        </p>
+                        <br/>
+                        <h3>OBJETO(S) ENTREGADO(S)</h3>
+                        <table style="width: 100%;">
+                            <thead>
+                                <th>Descripción</th>
+                                <th>Valor</th>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span t-field="doc.descripcion"/>
+                                    </td>
+                                    <td>
+                                        $<span t-field="doc.valorprenda"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h4>
+                            <br/>
+                            <br/>
+                            _____________________________________<br/>
+                            EL VENDEDOR
+                        </h4>
+                        <p>
+                            <br/>
+                            <br/>
+                            _____________________________________<br/>
+                            Documento de identidad de EL VENDEDOR
+                        </p>
+                        <h4>
+                            <br/>
+                            <br/>
+                            _____________________________________<br/>
+                            EL COMPRADOR
+                        </h4>
+                        <p>
+                            <br/>
+                            <br/>
+                            _____________________________________<br/>
+                            Documento de identidad de EL COMPRADOR
+                        </p>
+                        <h4>
+                            <br/>
+                            <br/>
+                            _____________________________________<br/>
+                            TESTIGO
+                        </h4>
+                        <p>
+                            <br/>
+                            <br/>
+                            _____________________________________<br/>
+                            Documento de identidad de EL TESTIGO
+                        </p>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <report string="Pagaré"
+            id="reporte_pagare_80"
+            model="motgama.prendas"
+            report_type="qweb-html"
+            name="motgama.formato_pagare"
+            file="motgama.formato_pagare"
+            print_report_name="'Pagare - %s' % (object.nroprenda)"
+            paperformat="motgama.formato_tirilla_80"/>
+    </data>
+</odoo>

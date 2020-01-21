@@ -10,6 +10,8 @@ class AccountInvoice(models.Model):
     recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo')
     asignafecha = fields.Datetime(string="Ingreso")
     liquidafecha = fields.Datetime(string="Salida")
+    lleva_prenda = fields.Boolean(string='Lleva prenda',default=False)
+    prenda_id = fields.Many2one(string='Prenda',comodel_name='motgama.prendas')
 
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
@@ -39,6 +41,18 @@ class MotgamaFlujoHabitacion(models.Model):
             'view_id': self.env.ref('motgama.motgama_wizard_recaudo').id,
             'target': 'new',
             'context': {'current_id': self.id}
+        }
+    
+    @api.multi
+    def button_factura(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'account.invoice',
+            'view_mode': 'form',
+            'view_id': self.env.ref('account.invoice_form').id,
+            'res_id': self.factura.id,
+            'target': 'current'
         }
 
 class MotgamaWizardRecaudo(models.TransientModel):
@@ -202,12 +216,14 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 'cliente_id': self.cliente.id,
                 'descripcion': self.prenda_descripcion,
                 'valorprenda': self.prenda_valor,
-                'valordeuda': valorPrenda
+                'valordeuda': valorPrenda,
+                'nroprenda': 'Nuevo'
             }
             nuevaPrenda = self.env['motgama.prendas'].create(valoresPrenda)
             if not nuevaPrenda:
                 raise Warning('No se pudo registrar la prenda')
             valoresRecaudo.update({'prenda': nuevaPrenda.id})
+            factura.update({'lleva_prenda':True,'prenda_id':nuevaPrenda.id})
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('No se pudo registrar el recaudo')
@@ -219,7 +235,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if not nuevoPago:
                 raise Warning('No se pudo guardar la información del pago')
         
-        self.habitacion.write({'estado':'RC'})
+        self.habitacion.write({'estado':'RC','factura':factura.id})
         self.movimiento.write({
             'recaudafecha':fields.Datetime().now(),
             'recauda_uid':self.env.user.id,
@@ -235,14 +251,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             for prestado in prestados:
                 prestado.write({'active':False})
 
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'account.invoice',
-            'view_mode': 'form',
-            'res_id': factura.id,
-            'target': 'current',
-            'flags': {'form': {'action_buttons': True}}
-        }
+        return True
 
 class MotgamaWizardPago(models.TransientModel):
     _name = 'motgama.wizardpago'

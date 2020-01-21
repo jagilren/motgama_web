@@ -270,6 +270,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     comodidades = fields.Many2many(string='Comodidades',comodel_name='motgama.comodidad',ondelete='set null',compute='_compute_comodidades')
     # Objetos prestados
     prestados = fields.One2many(string='Objetos prestados',comodel_name='motgama.objprestados',inverse_name='habitacion_id')
+    # Recaudo
+    factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
     puede_liquidar = fields.Boolean(default=False)
     puede_recaudar = fields.Boolean(default=False)
 
@@ -633,6 +635,9 @@ class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        
     _name = 'motgama.prendas'
     _description = 'Registro de prendas'
+    _rec_name = 'nroprenda'
+
+    nroprenda = fields.Char(string='Nro.', readonly=True,required=True,copy=False,default='Nuevo')
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion') # Habitacion del cliente que dejo la prende como pago                                 #P7.0.4R
     movimiento_id = fields.Integer('Movimiento')
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
@@ -642,11 +647,10 @@ class MotgamaPrendas(models.Model):
     fecha = fields.Datetime(string='Fecha', default=lambda self: fields.Datetime().now())
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente')
     descripcion = fields.Text(string='Descripción')
-    valorprenda = fields.Float(string='Valor estimado de la prenda') # Actualmente no se utiliza
-    valordeuda = fields.Float(string='Valor de la deuda') # Actualmente no se utiliza
+    valorprenda = fields.Float(string='Valor estimado de la prenda')
+    valordeuda = fields.Float(string='Valor de la deuda')
     pagado = fields.Boolean(string='Pagado')
-    pagadofecha = fields.Datetime(string=u'fecha del pago')
-    pagadoforma = fields.Many2one(string='Medio de pago',comodel_name='motgama.mediopago')
+    pagadofecha = fields.Datetime(string='Fecha del pago')
     pago_uid = fields.Many2one(comodel_name='res.users',string='Usuario que recauda la prenda')
     active = fields.Boolean(string=u'Activo?',default=True)
 
@@ -877,36 +881,6 @@ class Company(models.Model):
             if record.resol_final:
                 texto += str(record.resol_final)
             record.resol_texto = texto
-
-    @api.multi
-    def write(self,values):
-        for record in self:
-            idDiario = (self.env['account.invoice'].with_context(company_id=record.id).default_get(['journal_id'])['journal_id'])
-            diario = self.env['account.journal'].search([('id','=',idDiario)],limit=1)
-            if not diario:
-                raise UserError('No hay un diario seleccionado para las facturas de venta')
-            try:
-                prefijo = values['resol_prefijo']
-            except KeyError:
-                prefijo = False
-            try:
-                inicial = values['resol_inicial']
-            except KeyError:
-                inicial = False
-            
-            if prefijo:
-                valores = {
-                    'use_date_range': False,
-                    'padding': 0,
-                    'number_increment': 1
-                }
-                if inicial:
-                    valores.update({'number_next_actual': inicial})
-                else:
-                    valores.update({'number_next_actual': record.resol_inicial})
-                valores.update({'prefix': prefijo + ' '})
-                diario.sequence_id.sudo().write(valores)
-        return super().write(values)
 
 class MotgamaWizardFueradeservicio(models.TransientModel):
     _name = 'motgama.wizardfueradeservicio'
