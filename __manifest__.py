@@ -64,10 +64,13 @@
         'views/motgama_consumo_adicional.xml',
         'views/motgama_wizard_modificareservas.xml',
         'views/motgama_mediopago.xml',
+        'views/motgama_recaudo.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',
         'formatos/formato_prenda_pagare.xml',
+        'formatos/formato_recaudo.xml',
         'automatizacion/accion_reservas.xml',
-        'registros/secuencia_prenda.xml']
+        'registros/secuencia_prenda.xml',
+        'registros/secuencia_recaudo.xml']
 }

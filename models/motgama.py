@@ -29,15 +29,16 @@ class MotgamaSucursal(models.Model):#ok
     _rec_name = 'nombre'
     _order = 'nombre ASC'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
-    codigo = fields.Char(string=u'Código',)
-    nombre = fields.Char(string=u'Nombre Sucursal',required=True,)
-    telefono = fields.Char(string=u'Teléfono',)
-    direccion = fields.Text(string=u'Dirección',)
-    ciudad = fields.Char(string=u'Ciudad',)
-    email = fields.Char(string=u'Correo Electronico')
-    razonsocial_id = fields.Many2one(string=u'Razón Social',comodel_name='res.company',ondelete='set null')
-    nit = fields.Char(string=u'Nit')# 11 julio 2019
-    active = fields.Boolean(string=u'Activo?', default=True)
+
+    codigo = fields.Char(string='Código')
+    nombre = fields.Char(string='Nombre Sucursal',required=True)
+    telefono = fields.Char(string='Teléfono')
+    direccion = fields.Text(string='Dirección')
+    ciudad = fields.Char(string='Ciudad')
+    email = fields.Char(string='Correo Electronico')
+    razonsocial_id = fields.Many2one(string='Razón Social',comodel_name='res.company',ondelete='set null')
+    nit = fields.Char(string='Nit')# 11 julio 2019
+    active = fields.Boolean(string='Activo?', default=True)
     #RECEPCIONES EN ESTA SUCURSAL
     recepcion_ids = fields.One2many(string=u'Recepciones en esta sucursal',comodel_name='motgama.recepcion', inverse_name='sucursal_id')
  
@@ -46,15 +47,30 @@ class MotgamaSucursal(models.Model):#ok
 class MotgamaInmotica(models.Model):#ok
     #Fields:Inmotica: Conexion interna entre base de datos.    
     _name = 'motgama.inmotica'
-    _description = u'Inmotica'
-#    _rec_name = 'habitacion_id'
-    sucursal_id = fields.Many2one(string=u'Sucursal',comodel_name='motgama.sucursal',ondelete='set null')
-    habitacion = fields.Char(string=u'Habitacion')
-    parametro = fields.Char(string=u'parametro',required=True,)
-    control_accion = fields.Char(string=u'String Control Accion',required=True,)
-    fecha = fields.Datetime ()
-    usuario_uid = fields.Integer(string=u'Usuario',)
-    active = fields.Boolean(string=u'Activo?',default=True,)
+    _description = 'Inmotica'
+
+    habitacion = fields.Char(string='Habitación',required=True)
+    parametro = fields.Char(string='Parámetro',required=True)
+    evento = fields.Char(string="Evento",required=True)
+    fecha = fields.Datetime(string='Fecha',default=lambda self: fields.Datetime().now())
+    usuario_id = fields.Many2one(string='Usuario',comodel_name='res.users',default=lambda self: self.env.user.id)
+    mensaje = fields.Selection(string='Tipo de mensaje',selection=[('entrada','Entrada'),('salida','Salida'),('evento','Evento')])
+
+    @api.model
+    def create(self,values):
+        if values['mensaje'] == 'entrada':
+            cod = 'STRINMENT'
+        elif values['mensaje'] == 'salida':
+            cod = 'STRINMSAL'
+        elif values['mensaje'] == 'evento':
+            cod = 'STRINMEVEN'
+        else:
+            raise Warning('Error, el parámetro "' + cod + '" está mal definido, contacte al administrador')
+        param = self.env['motgama.parametros'].search([('codigo','=',cod)],limit=1)
+        if not param:
+            raise Warning('No existe el parámetro con código: "' + cod + '", contacte al administrador')
+        values['parametro'] = param.valor
+        return super().create(values)
     
 class MotgamaParametros(models.Model):#ok
 #   Fields: PARAMETROS: se deben de definir todos los parametros que se necesitan por sucursal.
@@ -318,7 +334,18 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                     ids.append(comodidad.id)
                 if len(ids) > 0:
                     record.comodidades = [(6,0,ids)]
-    
+
+    @api.multi
+    def button_inmotica(self):
+        self.ensure_one()
+        valoresInmotica = {
+            'habitacion': self.codigo,
+            'mensaje': 'evento',
+            'evento': 'Botón de inmótica presionado'
+        }
+        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+        if not mensajeInmotica:
+            raise Warning('Error al registrar inmótica')
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'
@@ -550,7 +577,7 @@ class MotgamaMovimiento(models.Model):#ok
     horafinamanecida = fields.Datetime(string='Hora Fin Amanecida')
     hubocambioplan = fields.Boolean(string='¿Hubo cambio de plan en el movmiento?',default=False)
     cambiosplan = fields.One2many(string="Cambios de plan",comodel_name='motgama.cambioplan',inverse_name='movimiento')
-
+    prestados = fields.One2many(string="Objetos Prestados",comodel_name='motgama.objprestados',inverse_name='movimiento_id')
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
@@ -614,6 +641,7 @@ class MotgamaObjetosPrestados(models.Model):
     _name = 'motgama.objprestados' #Objetos Prestados
     _description = 'MotgamaObjetosPrestados'
     habitacion_id = fields.Many2one(string='Habitacion',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',ondelete='restrict')
     fecha = fields.Datetime(string='Fecha',default=lambda self: fields.Datetime().now())
     objeto = fields.Selection(string='Objeto',selection=[('hielera','Hielera (Con pinza)'),('cobija','Cobija'),('toalla','Toalla'),('utensilios','Utensilios de cocina (Vaso, cuchara, tenedor, cuchillo)'),('almohada','Almohada'),('otro','Otro')])
     descripcion = fields.Text(string='Descripción del objeto')
@@ -630,6 +658,11 @@ class MotgamaObjetosPrestados(models.Model):
         record = super().create(values)
         record.esNuevo = False
         return record
+    
+    @api.onchange('habitacion_id')
+    def _onchange_habitacion(self):
+        if self.habitacion_id:
+            self.movimiento_id = self.habitacion_id.ultmovimiento
 
 class MotgamaPrendas(models.Model):
 #    Fields: Prenda: el cliente deja elementos en forma de pago Creado: Mayo 10 del 2019                                        
@@ -652,6 +685,7 @@ class MotgamaPrendas(models.Model):
     pagado = fields.Boolean(string='Pagado')
     pagadofecha = fields.Datetime(string='Fecha del pago')
     pago_uid = fields.Many2one(comodel_name='res.users',string='Usuario que recauda la prenda')
+    recaudo = fields.Many2one(comodel_name='motgama.recaudo',readonly=True,string='Recaudo')
     active = fields.Boolean(string=u'Activo?',default=True)
 
 class MotgamaBonos(models.Model):
@@ -791,17 +825,24 @@ class MotgamaPagos(models.Model):
 class MotgamaRecaudo(models.Model):
     _name = 'motgama.recaudo'
     _description = 'Recaudo de hospedaje'
-    _rec_name = 'create_date'
+    _rec_name = 'nrorecaudo'
 
+    nrorecaudo = fields.Char(string='Recaudo nro.',required=True,default='Nuevo')
     movimiento_id = fields.Integer(string='Nro. Movimiento')
     habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion')
     cliente = fields.Many2one(string='Cliente',comodel_name='res.partner')
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
-    total_pagado = fields.Float(string='Total pagado')
+    total_pagado = fields.Float(string='Valor total')
     pagos = fields.One2many(string='Pagos',comodel_name='motgama.pago',inverse_name='recaudo')
     prenda = fields.Many2one(string='Prenda asociada',comodel_name='motgama.prendas')
-    valor_pagado = fields.Float(string='Deuda',default=0.0)
+    valor_pagado = fields.Float(string='Valor pagado',default=0.0)
     usuario_uid = fields.Many2one(string='Usuario que recauda',comodel_name='res.users', default=lambda self: self.env.user.id)
+
+    @api.model
+    def create(self,values):
+        if values.get('nrorecaudo','Nuevo') == 'Nuevo':
+            values['nrorecaudo'] = self.env['ir.sequence'].next_by_code('motgama.recaudo') or 'Nuevo'
+        return super().create(values)
 
 class MotgamaCierreTurno(models.TransientModel):
     _name = 'motgama.cierreturno'
@@ -882,6 +923,28 @@ class Company(models.Model):
                 texto += str(record.resol_final)
             record.resol_texto = texto
 
+class MotgamaLog(models.Model):
+    _name = 'motgama.log'
+    _description = 'Log de aplicación Motgama'
+
+    fecha = fields.Datetime(string='Fecha y hora',default=lambda self: fields.Datetime().now())
+    modelo = fields.Char(string='Modelo',required=True)
+    tipo_evento = fields.Selection(string="Tipo",selection=[('registro','Registro'),('correo','Correo'),('notificacion','Notificación')],required=True)
+    asunto = fields.Char(string="Asunto",required=True)
+    descripcion = fields.Text(string="Descripción del evento",required=True)
+    notificacion_uids = fields.Many2many(string="Usuarios a notificar",comodel_name='res.users')
+
+    @api.model
+    def create(self,values):
+        record = super().create(values)
+        if record.tipo_evento == 'correo':
+            pass
+            # Enviar correo
+        elif record.tipo_evento == 'notificacion':
+            pass
+            # Mostrar notificación a los notificacion_uids
+        return record
+
 class MotgamaWizardFueradeservicio(models.TransientModel):
     _name = 'motgama.wizardfueradeservicio'
     _description = 'Habitación fuera de servicio'
@@ -906,5 +969,5 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
 class MotgamaWizardCambiohabitacion(models.TransientModel):
     _name = 'motgama.wizardcambiohabitacion'
     _description = 'Cambio de Habitacion'
-    flujoNuevo = fields.Many2one(string=u'Nueva habitación',comodel_name='motgama.flujohabitacion',required=True,domain='[("estado","=","D")]')
+    flujoNuevo = fields.Many2one(string='Nueva habitación',comodel_name='motgama.flujohabitacion',required=True,domain='[("estado","=","D")]')
     observacion = fields.Text(string='Observaciones')

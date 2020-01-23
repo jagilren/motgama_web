@@ -181,6 +181,17 @@ class MotgamaConsumo(models.Model):
             comanda.write({'nrocomanda':comanda.id})
             record.sudo().write({'comanda':comanda.id})
         
+        cod_adic = self.env['motgama.parametros'].search([('codigo','=','PERSADIC')],limit=1)
+        if record.producto_id.default_code == cod_adic.valor:
+            valoresInmotica = {
+                'habitacion': self.codigo,
+                'mensaje': 'evento',
+                'evento': 'Ingresa persona adicional'
+            }
+            mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+            if not mensajeInmotica:
+                raise Warning('Error al registrar inmótica')
+        
         self.refresh_views()
 
         return record

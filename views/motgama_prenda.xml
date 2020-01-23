@@ -52,6 +52,7 @@
                                 <group string="Datos del pago" attrs="{'invisible': [('pagado','=',False)]}">
                                     <field name="pagadofecha"/>
                                     <field name="pago_uid"/>
+                                    <field name="recaudo"/>
                                 </group>
                             </group>
                         </group>

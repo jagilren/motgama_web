@@ -22,6 +22,14 @@
                         <field name="prenda_id"/>
                     </group>
                 </xpath>
+                <xpath expr="//field[@name='team_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//notebook" position="after">
+                    <group>
+                        <field name="recaudo" readonly="1" string="Recibo de pago"/>
+                    </group>
+                </xpath>
             </field>
         </record>
     </data>

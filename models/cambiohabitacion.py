@@ -101,6 +101,24 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         if not nuevaReasignacion:
             raise Warning('No se pudo crear el registro de reasignación')
 
+        valoresInmotica1 = {
+            'habitacion': flujoViejo.codigo,
+            'mensaje': 'salida',
+            'evento': 'Cambio de habitación a la ' + flujoNuevo.codigo
+        }
+        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica1)
+        if not mensajeInmotica:
+            raise Warning('Error al registrar inmótica')
+
+        valoresInmotica2 = {
+            'habitacion': flujoNuevo.codigo,
+            'mensaje': 'entrada',
+            'evento': 'Cambio de habitación de la ' + flujoViejo.codigo
+        }
+        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica2)
+        if not mensajeInmotica:
+            raise Warning('Error al registrar inmótica')
+
         self.refresh_views()
         
         return True

@@ -65,6 +65,19 @@ class MotgamaWizardPrenda(models.TransientModel):
         self.ensure_one()
         if abs(self.deuda) >= 0.01:
             raise Warning('La deuda no ha sido saldada')
+
+        valoresRecaudo = {
+            'movimiento_id': self.factura.recaudo.movimiento_id,
+            'habitacion': self.factura.habitacion_id.id,
+            'cliente': self.prenda.cliente_id.id,
+            'factura': self.factura.id,
+            'total_pagado': self.valor,
+            'valor_pagado': self.valor
+        }
+        recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
+        if not recaudo:
+            raise Warning('No fue posible guardar el recaudo')
+
         for pago in self.pagos:
             valoresPayment = {
                 'amount': pago.valor,
@@ -85,19 +98,17 @@ class MotgamaWizardPrenda(models.TransientModel):
                 'cliente_id': self.prenda.cliente_id.id,
                 'mediopago': pago.mediopago.id,
                 'valor': pago.valor,
-                'recaudo': self.factura.recaudo.id
+                'recaudo': recaudo.id
             }
             pago = self.env['motgama.pago'].create(valoresPago)
             if not pago:
                 raise Warning('Error al asentar el pago de la prenda')
 
-        pagado = self.factura.recaudo.valor_pagado + self.valor
-        self.factura.recaudo.sudo().write({'valor_pagado': pagado})
-
         valoresPrenda = {
             'pagado': True,
             'pagadofecha': fields.Datetime().now(),
             'pago_uid': self.env.user.id,
+            'recaudo': recaudo.id,
             'active': False
         }
         guardado = self.prenda.write(valoresPrenda)

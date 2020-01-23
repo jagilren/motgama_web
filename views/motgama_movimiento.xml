@@ -58,6 +58,17 @@
                                     <field name="horainicioamanecida"/>
                                     <field name="horafinamanecida"/>
                                 </group>
+                                <group>
+                                    <field name="prestados" domain="['|',('active','=',True),('active','=',False)]">
+                                        <tree>
+                                            <field name="habitacion_id"/>
+                                            <field name="fecha"/>
+                                            <field name="objeto"/>
+                                            <field name="estado_devolucion"/>
+                                            <field name="devueltofecha"/>
+                                        </tree>
+                                    </field>
+                                </group>
                             </page>
                             <page name="desasignacion" string="Desasignación" attrs="{'invisible':[('desasignafecha','=',False)]}">
                                 <group>

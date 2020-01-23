@@ -69,6 +69,11 @@
                     <button name="button_continuar" string="Rehabilitar" type="object"
                         class="btn"  attrs="{'invisible': [('estado','not in', 'LQ')]}"
                         confirm="¿Está seguro que desea rehabilitar la habitación? Al dar clic en 'Aceptar' la habitación volverá al estado ocupada"/>
+                    
+                    <button name="button_inmotica" string="Desbloquear puerta" type="object"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}"
+                        confirm="Va a desbloquear la puerta de la habitación, recuerde que debe tener los permisos suficientes para realizarlo, ¿Está seguro que desea continuar?"/>
+                        
                 </header>
                 <sheet>
                     <group name="group_bottom">

@@ -5,13 +5,13 @@
         <field name="name">inmotica</field>
         <field name="model">motgama.inmotica</field>
         <field name="arch" type="xml">
-            <tree string="Inmotica">
+            <tree string="Inmotica" create="false" delete="false">
                 <field name="habitacion"/>
                 <field name="parametro"/> 
-                <field name="control_accion"/>
+                <field name="evento"/>
                 <field name="fecha"/>
-                <field name="usuario_uid"/>
-                <field name="active"/>
+                <field name="usuario_id"/>
+                <field name="mensaje"/>
             </tree>
         </field>
     </record>
@@ -20,15 +20,15 @@
         <field name="name">inmotica</field>
         <field name="model">motgama.inmotica</field>
         <field name="arch" type="xml">
-        <form string="Inmotica">
+        <form string="Inmotica" create="false" edit="false" delete="false">
             <sheet>
                 <group name="group_bottom">
-                    <field name="habitacion" />
-                    <field name="parametro" />
-                    <field name="control_accion" />
-                    <!-- <field name="fecha" /> -->
-                    <field name="usuario_uid" />
-                    <field name="active" />
+                    <field name="habitacion"/>
+                    <field name="parametro"/> 
+                    <field name="evento"/>
+                    <field name="fecha"/>
+                    <field name="usuario_id"/>
+                    <field name="mensaje"/>
                 </group>
             </sheet>    
         </form>

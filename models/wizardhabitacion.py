@@ -133,6 +133,15 @@ class MotgamaWizardHabitacion(models.TransientModel):
         else:
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
         
+        valoresInmotica = {
+            'habitacion': flujo.codigo,
+            'mensaje': 'entrada',
+            'evento': 'Habitación asignada'
+        }
+        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+        if not mensajeInmotica:
+            raise Warning('Error al registrar inmótica')
+
         self.refresh_views()
         
         return True

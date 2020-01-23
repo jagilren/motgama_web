@@ -250,6 +250,15 @@ class MotgamaWizardRecaudo(models.TransientModel):
         if prestados:
             for prestado in prestados:
                 prestado.write({'active':False})
+        
+        valoresInmotica = {
+            'habitacion': self.habitacion.codigo,
+            'mensaje': 'salida',
+            'evento': 'Habitación recaudada'
+        }
+        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+        if not mensajeInmotica:
+            raise Warning('Error al registrar inmótica')
 
         return True
 
