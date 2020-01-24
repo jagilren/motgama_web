@@ -8,6 +8,11 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_aseo(self):
         self.ensure_one()
+
+        habitacion = self.env['motgama.habitacion'].search([('codigo','=',self.codigo)],limit=1)
+        if habitacion.zona_id.estado == 'FU':
+            raise Warning('Toda la zona se encuentra fuera de uso, debe habilitar la zona completa')
+        
         movimiento = self.ultmovimiento
 
         fechaActual = datetime.now()  # coloca la fecha y hora en que se habilita la habitacion
