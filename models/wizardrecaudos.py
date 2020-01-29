@@ -235,7 +235,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if not nuevoPago:
                 raise Warning('No se pudo guardar la información del pago')
         
-        self.habitacion.write({'estado':'RC','factura':factura.id})
+        self.habitacion.write({'estado':'RC','factura':factura.id,'notificar':True})
         self.movimiento.write({
             'recaudafecha':fields.Datetime().now(),
             'recauda_uid':self.env.user.id,
@@ -251,14 +251,18 @@ class MotgamaWizardRecaudo(models.TransientModel):
             for prestado in prestados:
                 prestado.write({'active':False})
         
-        valoresInmotica = {
-            'habitacion': self.habitacion.codigo,
-            'mensaje': 'salida',
-            'evento': 'Habitación recaudada'
-        }
-        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
-        if not mensajeInmotica:
-            raise Warning('Error al registrar inmótica')
+        hab = self.env['motgama.habitacion'].search([('codigo','=',self.habitacion.codigo)],limit=1)
+        if not hab:
+            raise Warning('Error al cargar la habitación')
+        if hab.inmotica:
+            valoresInmotica = {
+                'habitacion': self.habitacion.codigo,
+                'mensaje': 'salida',
+                'evento': 'Habitación recaudada'
+            }
+            mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+            if not mensajeInmotica:
+                raise Warning('Error al registrar inmótica')
 
         return True
 

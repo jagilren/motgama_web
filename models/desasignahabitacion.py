@@ -16,7 +16,9 @@ class MotgamaWizardDesasigna(models.TransientModel):
         fecha_asigna = movimiento.asignafecha
         tiempo = fechaActual - fecha_asigna
         tiempoMinutos = tiempo.total_seconds() / 60
-        flagDesasigna = self.env['motgama.parametros'].search([('codigo','=','TIEMPODESASIG')], limit=1)
+        flagDesasigna = self.env['motgama.parametros'].search([('codigo','=','TIEMPODESASIG')],limit=1)
+        if not flagDesasigna:
+            raise Warning('El parámetro "TIEMPODESASIG" no se ha definido')
         tiempoDesasigna = int(flagDesasigna.valor)
         if not tiempoDesasigna:
             raise Warning('Error en parámetro de Tiempo para Desasignar')
@@ -33,7 +35,7 @@ class MotgamaWizardDesasigna(models.TransientModel):
                         'desasigna_uid':self.env.user.id,
                         'observacion':self.observacion}
             movimiento.write(valores)
-            flujo.sudo().write({'estado':'RC'}) # pone en estado de aseo
+            flujo.sudo().write({'estado':'RC','notificar':True}) # pone en estado de aseo
             # TODO: Enviar correo de movimiento
         else:
             raise Warning('No se pudo cambiar el estado para desasignar la habitación')

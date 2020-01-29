@@ -237,7 +237,7 @@ class MotgamaFlujoHabitacion(models.Model):
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de horas adicionales a la orden de venta')
         
-        self.write({'estado':'LQ','orden_venta':ordenVenta.id})
+        self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
         ordenVenta.write({'liquidafecha':fechaActual})
 

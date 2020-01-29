@@ -70,8 +70,13 @@
                         class="btn"  attrs="{'invisible': [('estado','not in', 'LQ')]}"
                         confirm="¿Está seguro que desea rehabilitar la habitación? Al dar clic en 'Aceptar' la habitación volverá al estado ocupada"/>
                     
+                    <button name="button_asigna_reserva" string='Asignar habitación reservada' type="object"
+                        class="btn-primary" attrs="{'invisible':[('estado','not in','R')]}"
+                        confirm="Va a asignar la reserva de esta habitación, ¿Está seguro que el cliente es realmente la persona que reservó?"/>
+                    
+                    <field name="inmotica" invisible="1"/>
                     <button name="button_inmotica" string="Desbloquear puerta" type="object"
-                        class="btn" attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO','OA','LQ']),('inmotica','=',False)]}"
                         confirm="Va a desbloquear la puerta de la habitación, recuerde que debe tener los permisos suficientes para realizarlo, ¿Está seguro que desea continuar?"/>
                         
                 </header>
@@ -106,6 +111,14 @@
                             </group>
                             <group>
                                 <field name="comodidades"/>
+                            </group>
+                        </page>
+                        <page name='reservas' string='Reservas'>
+                            <group attrs="{'invisible':[('prox_reserva','=',False)]}">
+                                <field name="prox_reserva" string="Esta reserva"/>
+                            </group>
+                            <group>
+                                <field name="reserva_ids"/>
                             </group>
                         </page>
                         <page name='prestados' string='Objetos Prestados' attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}">

@@ -41,6 +41,7 @@
                                 </group>
                                 <group>
                                     <field name="asignatipo"/>
+                                    <field name="tiemponormalocasional"/>
                                     <field name="asigna_uid"/>
                                 </group>
                                 <group>

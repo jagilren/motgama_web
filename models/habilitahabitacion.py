@@ -13,11 +13,13 @@ class MotgamaFlujoHabitacion(models.Model):
         fechaActual = datetime.now()  # coloca la fecha y hora en que se habilita la habitacion
         
         if movimiento:      # modifica el estado para poner en aseo y poder habilitar nuevamente la habitacion      #P7.0.4R
-            valores = {'habilitafecha':fechaActual,
-                        'habilita_uid':self.env.user.id,
-                        'active':False}
+            valores = {
+                'habilitafecha':fechaActual,
+                'habilita_uid':self.env.user.id,
+                'active':False
+                }
             movimiento.write(valores)
-            self.write({'estado':'D'}) # pone en estado disponible
+            self.write({'estado':'D','notificar':False}) # pone en estado disponible
         else:
             raise Warning('No se pudo cambiar el estado para habilitar la habitación')
 

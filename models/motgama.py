@@ -278,8 +278,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     recepcion = fields.Many2one(string='Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string='Activo?',default=True)
-    tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',compute='_compute_habitacion',store=True)
-    tema = fields.Many2one(string='Tema',comodel_name='motgama.tema',compute='_compute_habitacion',store=True)
+    tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo')
+    tema = fields.Many2one(string='Tema',comodel_name='motgama.tema')
     # Liquidación
     orden_venta = fields.Many2one(string='Estado de cuenta',comodel_name='sale.order',ondelete='set null')
     # Consumos
@@ -290,8 +290,14 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     prestados = fields.One2many(string='Objetos prestados',comodel_name='motgama.objprestados',inverse_name='habitacion_id')
     # Recaudo
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
+    # Reservas
+    reserva_ids = fields.One2many(string='Reservas',comodel_name='motgama.reserva',inverse_name='habitacion_id',readonly=True)
+    prox_reserva = fields.Many2one(string='Próxima reserva',comodel_name='motgama.reserva')
     puede_liquidar = fields.Boolean(default=False)
     puede_recaudar = fields.Boolean(default=False)
+    notificar = fields.Boolean(default=False)
+    lq = fields.Boolean(default=False)
+    inmotica = fields.Boolean(default=False)
 
     #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
@@ -317,15 +323,6 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
         record = super(MotgamaFlujoHabitacion, self).create(values)
         self.refresh_views()
         return record
-    
-    @api.depends('codigo')
-    def _compute_habitacion(self):
-        for record in self:
-            if not record.codigo:
-                break
-            habitacion = self.env['motgama.habitacion'].search([('codigo','=',record.codigo)], limit=1)
-            record.tipo = habitacion.tipo_id.id
-            record.tema = habitacion.tema_id.id
 
     @api.depends('tipo')
     def _compute_comodidades(self):
@@ -340,31 +337,32 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     @api.multi
     def button_inmotica(self):
         self.ensure_one()
-        valoresInmotica = {
-            'habitacion': self.codigo,
-            'mensaje': 'evento',
-            'evento': 'Botón de inmótica presionado'
-        }
-        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
-        if not mensajeInmotica:
-            raise Warning('Error al registrar inmótica')
+        if self.inmotica:
+            valoresInmotica = {
+                'habitacion': self.codigo,
+                'mensaje': 'evento',
+                'evento': 'Botón de inmótica presionado'
+            }
+            mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+            if not mensajeInmotica:
+                raise Warning('Error al registrar inmótica')
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'
-    _description = u'Habitación'
+    _description = 'Habitación'
     _rec_name = 'codigo'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
-    codigo = fields.Char(string=u'Código')
-    nombre = fields.Char(string=u'Nombre') 
-    zona_id = fields.Many2one(string=u'Zona',comodel_name='motgama.zona',ondelete='set null')
-    tipo_id = fields.Many2one(string=u'Tipo de Habitación',comodel_name='motgama.tipo',ondelete='set null') #Tipo de Habitación
-    tema_id = fields.Many2one(string=u'Tema',comodel_name='motgama.tema',ondelete='set null')
-    inmotica = fields.Boolean(string=u'¿La habitacion es controlada con inmotica?',) 
+    codigo = fields.Char(string='Código')
+    nombre = fields.Char(string='Nombre') 
+    zona_id = fields.Many2one(string='Zona',comodel_name='motgama.zona',ondelete='set null')
+    tipo_id = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',ondelete='set null') #Tipo de Habitación
+    tema_id = fields.Many2one(string='Tema',comodel_name='motgama.tema',ondelete='set null')
+    inmotica = fields.Boolean(string='¿La habitación es controlada con inmótica?')
     #estado = fields.Selection(string=u'Estado',selection=[('D', 'Disponible'), ('OO', 'Ocupado Ocasional'), ('OA', 'Ocupado Amanecida'), ('LQ', 'Liquidada'),  ('RC', 'Recaudada'), ('LM', 'Limpieza'), ('R', 'Reservada'), ('FS', 'Fuera de Servicio'), ('FU', 'Fuera de Uso'), ('HB', 'Habilitar')],default='D')
     #ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
-    tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
-    active = fields.Boolean(string=u'Activo?',default=True)
-    estado_tree = fields.Char(string=u'Estado -',)
+    tiemponormalocasional = fields.Integer(string='Tiempo ocasional normal')
+    active = fields.Boolean(string='Activo?',default=True)
+    estado_tree = fields.Char(string='Estado')
     # Enlaza las listas de precios por habitacion
     listapreciohabitacion_ids = fields.One2many('motgama.listapreciohabitacion', 'habitacion_id', string='Listas de precios')
     
@@ -375,7 +373,11 @@ class MotgamaHabitacion(models.Model):#ok
         flujo = {
             'codigo' : record.codigo,
             'estado' : 'D',
-            'recepcion' : recepcion.id
+            'recepcion' : recepcion.id,
+            'tipo' : record.tipo_id,
+            'tema' : record.tema_id,
+            'inmotica' : record.inmotica,
+            'active' : record.active
         }
         self.env['motgama.flujohabitacion'].create(flujo)
         return record
@@ -383,6 +385,10 @@ class MotgamaHabitacion(models.Model):#ok
     @api.multi
     def write(self,values):
         flujo = self.env['motgama.flujohabitacion'].search([('codigo','=',self.codigo)])
+        if 'tipo_id' in values:
+            values['tipo'] = values['tipo_id']
+        if 'tema_id' in values:
+            values['tema'] = values['tema_id']
         super().write(values)
         flujo.write(values)
         return True
@@ -559,7 +565,7 @@ class MotgamaMovimiento(models.Model):#ok
     tarifamanecida = fields.Float(string=u'Tarifa amanecida')
     tarifahoradicional = fields.Float(string=u'Tarifa hora adicional')    
     # tarifapersonadicional = fields.Float(string=u'Tarifa persona adicional') # REVISAR YA NO VA PORQUE ES UN PRODUCTO MAS
-    tiemponormalocasional = fields.Integer(string=u'Tiempo ocasional normal')
+    tiemponormalocasional = fields.Integer(string='Tiempo ocasional normal')
     active = fields.Boolean(string=u'Activo?',default=True)
     anticipo = fields.Float(string=u'Valor anticipo')
     formapagoanticipo = fields.Char(string=u'Forma pago anticipo')
@@ -601,7 +607,7 @@ class MotgamaReservas(models.Model):#ok
     fecha = fields.Datetime(string='Fecha de reserva',required=True)
     condecoracion = fields.Boolean(string='¿Con decoración?')
     notadecoracion = fields.Text(string='Nota para la decoración')
-    tipohabitacion_id = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',ondelete='set null',required=True)
+    tipohabitacion_id = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',ondelete='restrict',required=True)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='restrict',required=True)
     mediopago = fields.Many2one(string='Medio de pago',comodel_name='motgama.mediopago',ondelete='restrict')
     anticipo = fields.Float(string='Anticipo $')
@@ -931,7 +937,7 @@ class MotgamaLog(models.Model):
 
     fecha = fields.Datetime(string='Fecha y hora',default=lambda self: fields.Datetime().now())
     modelo = fields.Char(string='Modelo',required=True)
-    tipo_evento = fields.Selection(string="Tipo",selection=[('registro','Registro'),('correo','Correo'),('notificacion','Notificación')],required=True)
+    tipo_evento = fields.Selection(string="Tipo",selection=[('registro','Registro'),('correo','Correo'),('notificacion','Notificación'),('chat','Chat')],required=True)
     asunto = fields.Char(string="Asunto",required=True)
     descripcion = fields.Text(string="Descripción del evento",required=True)
     notificacion_uids = fields.Many2many(string="Usuarios a notificar",comodel_name='res.users')
@@ -945,6 +951,9 @@ class MotgamaLog(models.Model):
         elif record.tipo_evento == 'notificacion':
             pass
             # Mostrar notificación a los notificacion_uids
+        elif record.tipo_evento == 'chat':
+            pass
+            # Enviar notificación al chat de los notificacion_uids
         return record
 
 class MotgamaWizardFueradeservicio(models.TransientModel):

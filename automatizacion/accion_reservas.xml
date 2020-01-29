@@ -3,6 +3,7 @@
         <record id="ir_cron_proceso_reservas" model="ir.cron">
             <field name="name">Flujo Habitaciones: reserva y cancelación de reservas</field>
             <field name="user_id" ref="base.user_root"/>
+            <field name="state">code</field>
             <field name="interval_number">15</field>
             <field name="interval_type">minutes</field>
             <field name="numbercall">-1</field>

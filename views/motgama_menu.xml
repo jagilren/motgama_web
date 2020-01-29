@@ -54,7 +54,10 @@
     <menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
     <menuitem id="menu_motgama_master" name="Datos Maestros" parent='menu_motgama'/>
 
-    <!-- ARCHIVOS MAESTROS -->
+    <!-- DATOS MAESTROS -->
+    <menuitem id="menu_motgama_maestros_motel"
+        name="Gestión del motel"
+        parent="menu_motgama_master"/>
     <!-- Accion -->
     <act_window id="accion_motgama_sucursal"
     name="Sucursales"
@@ -64,7 +67,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_sucursal"
     name="Sucursales"
-    parent="menu_motgama_master"
+    parent="menu_motgama_maestros_motel"
     action="accion_motgama_sucursal"
     />
 
@@ -77,7 +80,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_recepcion_form"
     name="Recepciones"
-    parent="menu_motgama_master"
+    parent="menu_motgama_maestros_motel"
     action="accion_motgama_recepcion_form"
     />
 
@@ -90,7 +93,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_zona_form"
     name="Zonas"
-    parent="menu_motgama_master"
+    parent="menu_motgama_maestros_motel"
     action="accion_motgama_zona_form"
     />
 
@@ -103,7 +106,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_tema_form"
     name="Temas"
-    parent="menu_motgama_master"
+    parent="menu_motgama_maestros_motel"
     action="accion_motgama_tema_form"
     />
 
@@ -116,7 +119,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_comodidad_form"
     name="Comodidades"
-    parent="menu_motgama_master"
+    parent="menu_motgama_maestros_motel"
     action="accion_motgama_comodidad_form"
     />
 
@@ -129,7 +132,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_tipo_form"
     name="Tipos de habitación"
-    parent="menu_motgama_master"
+    parent="menu_motgama_maestros_motel"
     action="accion_motgama_tipo_form"
     />
 
@@ -141,9 +144,9 @@
         />
     <!-- Item de menu -->
     <menuitem id="menu_motgama_habitacion_form"
-    name="Habitaciones"
-    parent="menu_motgama_master"
-    action="accion_motgama_habitacion_form"
+        name="Habitaciones"
+        parent="menu_motgama_maestros_motel"
+        action="accion_motgama_habitacion_form"
     />
 
     <!-- Accion -->
@@ -155,7 +158,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_parametros_form"
         name="Parametros"
-        parent="menu_motgama_master"
+        parent="menu_motgama_maestros_motel"
         action="accion_motgama_parametros_form"
         />
 
@@ -168,7 +171,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_calendario_form"
         name="Calendario"
-        parent="menu_motgama_master"
+        parent="menu_motgama_maestros_motel"
         action="accion_motgama_calendario_form"
         />
 
@@ -181,7 +184,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_listapreciotipo_form"
         name="Lista de precios por tipo de habitación"
-        parent="menu_motgama_master"
+        parent="menu_motgama_maestros_motel"
         action="accion_motgama_listapreciotipo_form"
         />
 
@@ -194,7 +197,7 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_listapreciohabitacion_form"
         name="Lista de precios por habitación"
-        parent="menu_motgama_master"
+        parent="menu_motgama_maestros_motel"
         action="accion_motgama_listapreciohabitacion_form"
         />
 
@@ -207,8 +210,25 @@
     <!-- Item de menu -->
     <menuitem id="menu_motgama_bonos_form"
         name="Bonos"
-        parent="menu_motgama_master"
+        parent="menu_motgama_maestros_motel"
         action="accion_motgama_bonos_form"
+        />
+    
+    <menuitem id="menu_motgama_maestros_facturacion"
+        name="Facturación"
+        parent="menu_motgama_master"/>
+    
+    <!-- Accion -->
+    <act_window id="accion_motgama_mediopago"
+        name="Medios de pago"
+        res_model="motgama.mediopago"
+        view_mode="tree,form"
+        />
+    <!-- Item de menu -->
+    <menuitem id="menu_motgama_mediopago"
+        name="Medios de pago"
+        parent="menu_motgama_maestros_facturacion"
+        action="accion_motgama_mediopago"
         />
 
     <!-- PROCESOS -->
@@ -356,30 +376,17 @@
         parent="menu_motgama_query"
         action="accion_motgama_inmotica_form"
         />
-
+    
     <!-- Accion -->
-    <act_window id="accion_motgama_historico_form"
-        name="Historico de Movimiento"
-        res_model="motgama.hcomov"
+    <act_window id="accion_motgama_log"
+        name="Log"
+        res_model="motgama.log"
         view_mode="tree,form"
         />
     <!-- Item de menu -->
-    <menuitem id="menu_motgama_historico_form"
-        name="Historico de Movimiento"
+    <menuitem id="menu_motgama_log"
+        name="Log"
         parent="menu_motgama_query"
-        action="accion_motgama_historico_form"
-        />
-
-    <menuitem id='menu_motgama_config' name='Configuración' parent="menu_motgama"/>
-
-    <act_window id="accion_motgama_mediopago"
-        name="Medios de pago"
-        res_model="motgama.mediopago"
-        view_mode="tree,form"
-        />
-    <menuitem id="menu_motgama_mediopago"
-        name="Medios de pago"
-        parent="menu_motgama_config"
-        action="accion_motgama_mediopago"
+        action="accion_motgama_log"
         />
 </odoo>

@@ -11,12 +11,25 @@ class MotgamaReservas(models.Model):
         record.esNueva = False
         record.cod = 'Reserva Nro. ' + str(record.id)
 
-        reservas = self.env['motgama.reserva'].search([('habitacion_id','=',record.habitacion_id)])
+        reservas = self.env['motgama.reserva'].search([('habitacion_id','=',record.habitacion_id.id),('id','!=',record.id)])
         for reserva in reservas:
             fechaAntes = reserva.fecha - timedelta(days=1)
             fechaDespues = reserva.fecha + timedelta(days=1)
             if fechaAntes < record.fecha < fechaDespues:
                 raise Warning('Esta habitación ya se encuentra reservada para esa fecha')
+        
+        paramRes = self.env['motgama.parametros'].search([('codigo','=','TIEMPOBLOQRES')],limit=1)
+        if not paramRes:
+            # TODO: Notificar en vez de raise
+            pass
+        try:
+            tiempoReserva = int(paramRes.valor)
+        except ValueError:
+            # TODO: Notificar en vez de raise
+            pass
+
+        if record.fecha < fields.Datetime().now() + timedelta(hours=tiempoReserva):
+            raise Warning('No se puede reservar en menos de ' + str(tiempoReserva) + ' horas')
 
         return record
     
@@ -70,15 +83,15 @@ class MotgamaReservas(models.Model):
 
         for reserva in reservas:
             intervaloReservar = reserva.fecha - fields.Datetime().now()
-            if intervaloReservar <= timedelta(hours=tiempoReserva):
-                if reserva.habitacion_id.estado in ['D','RC']:
-                    reserva.habitacion_id.write({'estado':'R'})
+            if fields.Datetime().now() > reserva.fecha and intervaloReservar <= timedelta(hours=tiempoReserva):
+                if reserva.habitacion_id.estado == 'D':
+                    reserva.habitacion_id.write({'estado':'R','prox_reserva':reserva.id,'notificar':True})
                 # else:
                     # Notificar que la habitación se encuentra reservada
             fechaCancelar = reserva.fecha + timedelta(minutes=tiempoCancelaReserva)
             if fechaCancelar >= fields.Datetime().now():
                 if reserva.habitacion_id.estado == 'R':
-                    reserva.habitacion_id.write({'estado':'D'})
+                    reserva.habitacion_id.write({'estado':'D','prox_reserva':False,'notificar':False})
                 reserva.button_cancelar()
 
 class MotgamaWizardModificaReserva(models.TransientModel):
@@ -149,3 +162,20 @@ class MotgamaWizardModificaReserva(models.TransientModel):
             
             reserva.write(valores)
             return True
+
+class MotgamaFlujohabitacion(models.Model):
+    _inherit = 'motgama.flujohabitacion'
+    
+    @api.multi
+    def button_asigna_reserva(self):
+        return {
+            'type':'ir.actions.act_window',
+            'res_model':"motgama.wizardhabitacion",
+            'name':"Flujo Habitacion",
+            'src_model':"motgama.flujohabitacion",
+            'view_type':"form",
+            'view_mode':"form",
+            'multi':"True",
+            'target':"new"
+        }
+        

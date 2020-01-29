@@ -180,11 +180,17 @@ class MotgamaConsumo(models.Model):
                 raise Warning('No se pudo crear la comanda')
             comanda.write({'nrocomanda':comanda.id})
             record.sudo().write({'comanda':comanda.id})
+
+        hab = self.env['motgama.habitacion'].search([('codigo','=',self.habitacion.codigo)],limit=1)
+        if not hab:
+            raise Warning('Error al consultar la habitación')
         
         cod_adic = self.env['motgama.parametros'].search([('codigo','=','PERSADIC')],limit=1)
-        if record.producto_id.default_code == cod_adic.valor:
+        if not cod_adic:
+            raise Warning('Error: no se ha definido el parámetro "PERSADIC"')
+        if record.producto_id.default_code == cod_adic.valor and hab.inmotica:
             valoresInmotica = {
-                'habitacion': self.codigo,
+                'habitacion': self.habitacion.codigo,
                 'mensaje': 'evento',
                 'evento': 'Ingresa persona adicional'
             }

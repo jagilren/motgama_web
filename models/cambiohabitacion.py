@@ -101,23 +101,32 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         if not nuevaReasignacion:
             raise Warning('No se pudo crear el registro de reasignación')
 
-        valoresInmotica1 = {
-            'habitacion': flujoViejo.codigo,
-            'mensaje': 'salida',
-            'evento': 'Cambio de habitación a la ' + flujoNuevo.codigo
-        }
-        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica1)
-        if not mensajeInmotica:
-            raise Warning('Error al registrar inmótica')
+        hab1 = self.env['motgama.habitacion'].search([('codigo','=',flujoViejo.codigo)],limit=1)
+        if not hab1:
+            raise Warning('Error al cargar la habitación anterior')
+        hab2 = self.env['motgama.habitacion'].search([('codigo','=',flujoNuevo.codigo)],limit=1)
+        if not hab2:
+            raise Warning('Error al cargar la nueva habitación')
 
-        valoresInmotica2 = {
-            'habitacion': flujoNuevo.codigo,
-            'mensaje': 'entrada',
-            'evento': 'Cambio de habitación de la ' + flujoViejo.codigo
-        }
-        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica2)
-        if not mensajeInmotica:
-            raise Warning('Error al registrar inmótica')
+        if hab1.inmotica:
+            valoresInmotica1 = {
+                'habitacion': flujoViejo.codigo,
+                'mensaje': 'salida',
+                'evento': 'Cambio de habitación a la ' + flujoNuevo.codigo
+            }
+            mensajeInmotica1 = self.env['motgama.inmotica'].create(valoresInmotica1)
+            if not mensajeInmotica1:
+                raise Warning('Error al registrar inmótica')
+
+        if hab2.inmotica:
+            valoresInmotica2 = {
+                'habitacion': flujoNuevo.codigo,
+                'mensaje': 'entrada',
+                'evento': 'Cambio de habitación de la ' + flujoViejo.codigo
+            }
+            mensajeInmotica2 = self.env['motgama.inmotica'].create(valoresInmotica2)
+            if not mensajeInmotica2:
+                raise Warning('Error al registrar inmótica')
 
         self.refresh_views()
         

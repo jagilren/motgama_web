@@ -128,19 +128,24 @@ class MotgamaWizardHabitacion(models.TransientModel):
         nuevoMovimiento = Movimiento.create(valores)
         # Si fue exitosa la creación del registro entonces se cambia el estado de la habitación
         if nuevoMovimiento:
-            flujo.sudo().write({'estado':self.asignatipo})
-            flujo.sudo().write({'ultmovimiento':nuevoMovimiento.id})
+            flujo.sudo().write({
+                'estado':self.asignatipo,
+                'ultmovimiento':nuevoMovimiento.id,
+                'prox_reserva':False,
+                'notificar': True
+            })
         else:
             raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
         
-        valoresInmotica = {
-            'habitacion': flujo.codigo,
-            'mensaje': 'entrada',
-            'evento': 'Habitación asignada'
-        }
-        mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
-        if not mensajeInmotica:
-            raise Warning('Error al registrar inmótica')
+        if fullHabitacion.inmotica:
+            valoresInmotica = {
+                'habitacion': flujo.codigo,
+                'mensaje': 'entrada',
+                'evento': 'Habitación asignada'
+            }
+            mensajeInmotica = self.env['motgama.inmotica'].create(valoresInmotica)
+            if not mensajeInmotica:
+                raise Warning('Error al registrar inmótica')
 
         self.refresh_views()
         
