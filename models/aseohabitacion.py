@@ -19,9 +19,9 @@ class MotgamaFlujoHabitacion(models.Model):
 
         if movimiento:      # modifica el estado para poner en aseo y poder habilitar nuevamente la habitacion  #P7.0.4R
             valores = {'aseofecha':fechaActual,
-                        'aseo_uid':self.env.user.id}
+                'aseo_uid':self.env.user.id}
             movimiento.write(valores)
-            self.sudo().write({'estado':'RC'}) # pone en estado disponible
+            self.sudo().write({'estado':'RC','notificar':True}) # pone en estado disponible
         else:
             raise Warning('No se pudo cambiar el estado para asear la habitación')
     

@@ -85,7 +85,8 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
             raise Warning('No se pudo asignar la nueva habitación')
 
         valoresViejo = {
-            'estado': 'RC'
+            'estado': 'RC',
+            'notificar':True
         }
         viejoguardado = flujoViejo.write(valoresViejo)
         if not viejoguardado:
