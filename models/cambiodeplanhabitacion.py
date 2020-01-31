@@ -80,6 +80,14 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                         'plan_anterior': 'OO',
                         'plan_nuevo': 'OA'
                     }
+            
+            valoresNotifica = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.wizardcambiodeplan',
+                'tipo_evento': 'registro',
+                'asunto': 'La habitación ' + flujo.codigo + ' ha cambiado de plan a Amanecida',
+                'descripcion': 'El usuario ' + self.env.user.name + ' ha cambiado el plan de la habitación ' + flujo.codigo + ' a Amanecida'
+            }
 
         else:   # Va a pasar de amanecida a ocasional
             flujo.sudo().write({'estado':'OO'}) # pone en estado de ocupada ocasional
@@ -87,13 +95,23 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
             valores = {
                 'movimiento': movimiento.id,
                 'habitacion': flujo.id,
-                'plan_anterior': 'OO',
-                'plan_nuevo': 'OA'
+                'plan_anterior': 'OA',
+                'plan_nuevo': 'OO'
+            }
+
+            valoresNotifica = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.wizardcambiodeplan',
+                'tipo_evento': 'registro',
+                'asunto': 'La habitación ' + flujo.codigo + ' ha cambiado de plan a Ocasional',
+                'descripcion': 'El usuario ' + self.env.user.name + ' ha cambiado el plan de la habitación ' + flujo.codigo + ' a Ocasional'
             }
 
         nuevoRegistro = self.env['motgama.cambioplan'].create(valores)
         if not nuevoRegistro:
             raise Warning('No se pudo crear el registro del cambio de plan')
+
+        self.env['motgama.log'].create(valoresNotifica)
         
         self.refresh_views()
         

@@ -9,7 +9,7 @@
     'website':'https://www.sistemasgod.com',
     'author':'Asesorias en Sistemas GOD S.A.S.',
     'images':['static/src/img/estado_amarillo.png','static/src/img/estado_azul.png','static/src/img/estado_azulclaro.png','static/src/img/estado_fucsia.png','static/src/img/img/estado_naranjado.png','static/src/img/estado_rojo.png','static/src/img/estado_verde.png','static/src/img/estado_cafe.png'],
-    'depends':['base','sale_management','stock','muk_web_client_refresh','contacts'],
+    'depends':['base','sale_management','stock','muk_web_client_refresh','contacts','mail','web_notify'],
     'installable':True,
     'application': True,
     'data':['security/groups.xml',

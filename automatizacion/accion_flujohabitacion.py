@@ -104,7 +104,24 @@ class MotgamaFlujohabitacion(models.Model):
                         notificar = True
             
             elif flujo.estado == 'RC':
-                if fechaActual - flujo.ultmovimiento.recaudafecha >= timedelta(minutes=tiempoAse):
+                if flujo.ultmovimiento.recaudafecha:
+                    fechaAseo = flujo.ultmovimiento.recaudafecha
+                elif flujo.ultmovimiento.desasignafecha:
+                    fechaAseo = flujo.ultmovimiento.desasignafecha
+                elif flujo.ultmovimiento.aseofecha:
+                    fechaAseo = flujo.ultmovimiento.aseofecha
+                elif len(flujo.ultmovimiento.reasignaciones) > 0:
+                    for reasignacion in flujo.ultmovimiento.reasignaciones:
+                        if reasignacion.habitacion_anterior.id == flujo.id:
+                            fechaAseo = reasignacion.fechareasigna
+                            break
+                        else:
+                            fechaAseo = False
+                    if not fechaAseo:
+                        continue
+                else:
+                    continue
+                if fechaActual - fechaAseo >= timedelta(minutes=tiempoAse):
                     valores.update({
                         'asunto': 'Habitación ' + flujo.codigo + ' debe ser habilitada',
                         'descripcion': 'La habitación ' + flujo.codigo + ' lleva ' + str(tiempoAse) + ' minutos en estado Aseo y debe ser habilitada nuevamente'

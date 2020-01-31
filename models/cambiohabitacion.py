@@ -127,6 +127,15 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
             mensajeInmotica2 = self.env['motgama.inmotica'].create(valoresInmotica2)
             if not mensajeInmotica2:
                 raise Warning('Error al registrar inmótica')
+        
+        valores = {
+            'fecha': fields.Datetime().now(),
+            'modelo': 'motgama.wizardcambiohabitacion',
+            'tipo_evento': 'correo',
+            'asunto': 'El hospedaje de la habitación ' + flujoViejo.codigo + ' ha sido trasladado a la habitación ' + flujoNuevo.codigo,
+            'descripcion': 'El usuario ' + self.env.user.name + ' ha trasladado el hospedaje de la habitación ' + flujoViejo.codigo + ' a la habitación ' + flujoNuevo.codigo + '. Observaciones: ' + self.observacion
+        }
+        self.env['motgama.log'].create(valores)
 
         self.refresh_views()
         

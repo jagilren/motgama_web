@@ -22,7 +22,14 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
 
         if nuevoMovimiento:
             flujo.sudo().write({'estado':'FS','ultmovimiento':nuevoMovimiento.id})
-            # TODO: Enviar correo de movimiento
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.wizardfueradeservicio',
+                'tipo_evento': 'correo',
+                'asunto': 'La habitación ' + flujo.codigo + ' ha sido puesta Fuera de Servicio',
+                'descripcion': 'El usuario ' + self.env.user.name + ' ha puesto la habitación ' + flujo.codigo + ' en estado Fuera de Servicio. Observaciones: ' + self.observacion
+            }
+            self.env['motgama.log'].create(valores)
 
         else:
             raise Warning('No se pudo cambiar el estado de la habitación')

@@ -146,6 +146,7 @@ class MotgamaRecepcion(models.Model):#ok
     nombre = fields.Char(string=u'Nombre de recepción',required=True)
     active = fields.Boolean(string=u'Activo?',default=True)
     zonas_ids = fields.One2many(string=u'Zonas en esta recepción',comodel_name='motgama.zona',inverse_name='recepcion_id') #LAS ZONAS EN ESTA RECEPCION
+    canal_id = fields.Many2one(string='Canal',comodel_name='mail.channel')
 
     @api.model
     def create(self,values):
@@ -937,23 +938,35 @@ class MotgamaLog(models.Model):
 
     fecha = fields.Datetime(string='Fecha y hora',default=lambda self: fields.Datetime().now())
     modelo = fields.Char(string='Modelo',required=True)
-    tipo_evento = fields.Selection(string="Tipo",selection=[('registro','Registro'),('correo','Correo'),('notificacion','Notificación'),('chat','Chat')],required=True)
+    tipo_evento = fields.Selection(string="Tipo",selection=[('registro','Registro'),('correo','Correo'),('notificacion','Notificación')],required=True)
     asunto = fields.Char(string="Asunto",required=True)
     descripcion = fields.Text(string="Descripción del evento",required=True)
     notificacion_uids = fields.Many2many(string="Usuarios a notificar",comodel_name='res.users')
+    correo = fields.Char(string='Correo enviado a')
 
     @api.model
     def create(self,values):
+        if values['tipo_evento'] == 'correo':
+            paramCorreo = self.env['motgama.parametros'].search([('codigo','=','EMAILSALARMAS')],limit=1)
+            if not paramCorreo:
+                raise Warning('No se ha definido el parámetro "EMAILSALARMAS"')
+            values['asunto'] = self.env['motgama.sucursal'].search([],limit=1).nombre + ': ' + values['asunto']
+            values['descripcion'] = self.env['motgama.sucursal'].search([],limit=1).nombre + ': ' + values['descripcion']
+            values['correo'] = paramCorreo.valor
+            valoresCorreo = {
+                'subject': values['asunto'],
+                'email_from': 'luis.ortiz@sistemasgod.com',
+                'email_to': values['correo'],
+                'body_html': '<h3>' + values['descripcion'] + '</h3>',
+                'author_id': False
+            }
+            correo = self.env['mail.mail'].create(valoresCorreo)
+            if correo:
+                correo.sudo().send()
         record = super().create(values)
-        if record.tipo_evento == 'correo':
-            pass
-            # Enviar correo
-        elif record.tipo_evento == 'notificacion':
-            pass
-            # Mostrar notificación a los notificacion_uids
-        elif record.tipo_evento == 'chat':
-            pass
-            # Enviar notificación al chat de los notificacion_uids
+        if record.tipo_evento == 'notificacion':
+            for usuario in record.notificacion_uids:
+                usuario.sudo().notify_warning(message=record.descripcion,title=record.asunto,sticky=True)
         return record
 
 class MotgamaWizardFueradeservicio(models.TransientModel):

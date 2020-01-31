@@ -63,22 +63,50 @@ class MotgamaReservas(models.Model):
 
         tiempoReservaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOBLOQRES')],limit=1)
         if not tiempoReservaStr:
-            # TODO: Notificar en vez de raise
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.reserva',
+                'tipo_evento': 'registro',
+                'asunto': 'No se ha definido el parámetro "TIEMPOBLOQRES"',
+                'descripcion': 'No se pudo verificar el estado de las reservas porque no se ha definido el parámetro "TIEMPOBLOQRES"'
+            }
+            self.env['motgama.log'].create(valores)
             pass
         try:
             tiempoReserva = int(tiempoReservaStr.valor)
         except ValueError:
-            # TODO: Notificar en vez de raise
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.reserva',
+                'tipo_evento': 'registro',
+                'asunto': 'El parámetro "TIEMPOBLOQRES" está mal definido',
+                'descripcion': 'No se pudo verificar el estado de las reservas porque el parámetro "TIEMPOBLOQRES" está mal definido'
+            }
+            self.env['motgama.log'].create(valores)
             pass
 
         tiempoCancelaReservaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOCANCELRES')],limit=1)
         if not tiempoCancelaReservaStr:
-            # TODO: Notificar en vez de raise
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.reserva',
+                'tipo_evento': 'registro',
+                'asunto': 'No se ha definido el parámetro "TIEMPOCANCELRES"',
+                'descripcion': 'No se pudo verificar el estado de las reservas porque no se ha definido el parámetro "TIEMPOCANCELRES"'
+            }
+            self.env['motgama.log'].create(valores)
             pass
         try:
             tiempoCancelaReserva = int(tiempoReservaStr.valor)
         except ValueError:
-            # TODO: Notificar en vez de raise
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.reserva',
+                'tipo_evento': 'registro',
+                'asunto': 'El parámetro "TIEMPOCANCELRES" está mal definido',
+                'descripcion': 'No se pudo verificar el estado de las reservas porque el parámetro "TIEMPOCANCELRES" está mal definido'
+            }
+            self.env['motgama.log'].create(valores)
             pass
 
         for reserva in reservas:
@@ -86,10 +114,20 @@ class MotgamaReservas(models.Model):
             if fields.Datetime().now() > reserva.fecha and intervaloReservar <= timedelta(hours=tiempoReserva):
                 if reserva.habitacion_id.estado == 'D':
                     reserva.habitacion_id.write({'estado':'R','prox_reserva':reserva.id,'notificar':True})
-                # else:
-                    # Notificar que la habitación se encuentra reservada
+                else:
+                    usuarios = self.env['res.users'].search([('recepcion_id','=',reserva.habitacion_id.recepcion.id)])
+                    uids = [usuario.id for usuario in usuarios]
+                    valores = {
+                        'fecha': fields.Datetime().now(),
+                        'modelo': 'motgama.reserva',
+                        'tipo_evento': 'notificacion',
+                        'asunto': 'Habitación ' + reserva.habitacion_id.codigo + ' está ocupada y tiene una reserva próxima',
+                        'descripcion': 'La habitación ' + reserva.habitacion_id.codigo + ' está reservada para ' + reserva.fecha + ' y en este momento se encuentra ocupada y no pudo ser puesta como Reservada',
+                        'notificacion_uids': [(6,0,uids)]
+                    }
+                    self.env['motgama.log'].create(valores)
             fechaCancelar = reserva.fecha + timedelta(minutes=tiempoCancelaReserva)
-            if fechaCancelar >= fields.Datetime().now():
+            if fields.Datetime().now() >= fechaCancelar:
                 if reserva.habitacion_id.estado == 'R':
                     reserva.habitacion_id.write({'estado':'D','prox_reserva':False,'notificar':False})
                 reserva.button_cancelar()

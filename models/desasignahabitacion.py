@@ -1,6 +1,6 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class MotgamaWizardDesasigna(models.TransientModel):
     _inherit = 'motgama.wizarddesasigna'
@@ -36,7 +36,15 @@ class MotgamaWizardDesasigna(models.TransientModel):
                         'observacion':self.observacion}
             movimiento.write(valores)
             flujo.sudo().write({'estado':'RC','notificar':True}) # pone en estado de aseo
-            # TODO: Enviar correo de movimiento
+
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.wizarddesasigna',
+                'tipo_evento': 'correo',
+                'asunto': 'La habitación ' + flujo.codigo + ' ha sido desasignada',
+                'descripcion': 'El usuario ' + self.env.user.name + ' ha desasignado la habitación ' + flujo.codigo + ', la cual fue asignada hace ' + str(round(tiempoMinutos)) + ' minutos. Observaciones: ' + self.observacion
+            }
+            self.env['motgama.log'].create(valores)
         else:
             raise Warning('No se pudo cambiar el estado para desasignar la habitación')
 

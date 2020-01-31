@@ -65,7 +65,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
         flagFin = flagFinTz + timedelta(hours=5)
         horainicioamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagInicio.hour,flagInicio.minute)
         if flagInicioTz > flagFinTz:
-            horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day + 1,flagFin.hour,flagFin.minute)
+            horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute) + timedelta(days=1)
         else:
             horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute)
         valores.update({'horainicioamanecida':horainicioamanecida})

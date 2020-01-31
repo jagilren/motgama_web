@@ -25,7 +25,8 @@
                         <field name="tipo_evento"/>
                         <field name="asunto"/>
                         <field name="descripcion"/>
-                        <field name="notificacion_uids" widget="many2many_tags"/>
+                        <field name="notificacion_uids" widget="many2many_tags" attrs="{'invisible':[('tipo_evento','not in',['notificacion','chat'])]}"/>
+                        <field name="correo" attrs="{'invisible':[('tipo_evento','not in','correo')]}"/>
                     </group>
                 </sheet>
             </form>
