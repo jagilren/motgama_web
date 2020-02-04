@@ -19,6 +19,9 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_recaudar(self):
         self.ensure_one()
+        if not self.env.user.motgama_recauda_habitacion:
+            raise Warning('No tiene permitido recaudar habitaciones, contacte al administrador')
+
         if not self.puede_recaudar:
             prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.id)])
             if prestados:

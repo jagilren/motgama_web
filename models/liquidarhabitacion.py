@@ -22,6 +22,8 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_liquidar(self):
         self.ensure_one()
+        if not self.env.user.motgama_liquida_habitacion:
+            raise Warning('No tiene permitido liquidar habitaciones, contacte al administrador')
         movimiento = self.ultmovimiento
         fechaActual = fields.Datetime().now()
 
@@ -240,8 +242,6 @@ class MotgamaFlujoHabitacion(models.Model):
         self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
         ordenVenta.write({'liquidafecha':fechaActual})
-
-        # TODO: Crear tarea programada que cambie el estado si no se recauda la habitación en cierto tiempo
 
         self.puede_liquidar = False
 

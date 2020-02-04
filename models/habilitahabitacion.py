@@ -8,6 +8,8 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_habilita(self):
         self.ensure_one()
+        if not self.env.user.motgama_habilita_habitacion:
+            raise Warning('No tiene permitido habilitar habitaciones, contacte al administrador')
         movimiento = self.ultmovimiento
 
         fechaActual = datetime.now()  # coloca la fecha y hora en que se habilita la habitacion
@@ -17,7 +19,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'habilitafecha':fechaActual,
                 'habilita_uid':self.env.user.id,
                 'active':False
-                }
+            }
             movimiento.write(valores)
             self.write({'estado':'D','notificar':False}) # pone en estado disponible
         else:

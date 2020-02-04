@@ -55,12 +55,18 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
 
         if movimiento.asignatipo == 'OO':
             if tarifaocasional < movimiento.tarifaocasional:
-                if not self.env.user.motgama_cambio_habitacion:
+                if not self.env.user.motgama_reasigna_menor:
                     raise Warning('No tiene permisos para cambiar la asignación de una habitación a una de menor precio')
+            else:
+                if not self.env.user.motgama_reasigna_mayor:
+                    raise Warning('No tiene permisos para reasignar una habitación')
         elif movimiento.asignatipo == 'OA':
             if tarifamanecida < movimiento.tarifamanecida:
-                if not self.env.user.motgama_cambio_habitacion:
+                if not self.env.user.motgama_reasigna_menor:
                     raise Warning('No tiene permisos para cambiar la asignación de una habitación a una de menor precio')
+            else:
+                if not self.env.user.motgama_reasigna_mayor:
+                    raise Warning('No tiene permisos para reasignar una habitación')
         else:
             raise Warning('Hay un problema con la asignación de la habitación')
 
@@ -134,7 +140,7 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
             'modelo': 'motgama.wizardcambiohabitacion',
             'tipo_evento': 'correo',
             'asunto': 'El hospedaje de la habitación ' + flujoViejo.codigo + ' ha sido trasladado a la habitación ' + flujoNuevo.codigo,
-            'descripcion': 'El usuario ' + self.env.user.name + ' ha trasladado el hospedaje de la habitación ' + flujoViejo.codigo + ' a la habitación ' + flujoNuevo.codigo + '. Observaciones: ' + self.observacion
+            'descripcion': 'El usuario ' + self.env.user.name + ' ha trasladado el hospedaje de la habitación ' + flujoViejo.codigo + ' a la habitación ' + flujoNuevo.codigo + '. Observaciones: ' + str(self.observacion)
         }
         self.env['motgama.log'].create(valores)
 

@@ -21,7 +21,7 @@ class MotgamaFacturaConsumos(models.Model):
 
     @api.model
     def _get_cliente(self):
-        return self.env['res.partner'].search([('vat','=','1')]).id
+        return self.env['res.partner'].search([('vat','=','1')],limit=1).id
 
     @api.depends('factura_id')
     def _compute_nombre(self):
@@ -44,6 +44,8 @@ class MotgamaFacturaConsumos(models.Model):
         self.ensure_one()
         if len(self.consumo_ids) == 0:
             raise Warning('Ingrese consumos para facturar')
+        if not self.env.user.motgama_factura_extemporanea:
+            raise Warning('No tiene permitido facturar consumos sin hospedaje, contacte al administrador')
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizardfacturaconsumos',

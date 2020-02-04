@@ -7,6 +7,9 @@ class MotgamaWizardFueradeuso(models.TransientModel):
     @api.multi
     def button_fuera_uso(self):
         self.ensure_one()
+        if not self.env.user.motgama_fuera_uso:
+            raise Warning('No tiene permitido poner habitaciones en fuera de uso, contacte al administrador')
+
         flujo_id = self.env.context['active_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)])
         habitacion = self.env['motgama.habitacion'].search([('codigo','=',flujo['codigo'])])

@@ -20,7 +20,7 @@ class Users(models.Model):
 
     # Descuentos y bonos
     motgama_descuento_servicio = fields.Boolean(string='Puede agregar descuentos por mal servicio',default=False)
-    motgama_pase_cortesia = fields.Boolean(string='Puede habilitar habitaciones',default=False)
+    motgama_pase_cortesia = fields.Boolean(string='Puede agregar pases o cortesías como medios de pago',default=False)
 
     # Prendas
     motgama_recauda_prenda = fields.Boolean(string='Puede recaudar prendas',default=False)
@@ -32,7 +32,7 @@ class Users(models.Model):
     motgama_devuelve_prestados = fields.Boolean(string='Puede registrar devolución de objetos prestados',default=False)
 
     # Facturación
-    motgama_factura_extemporanea = fields.Boolean(string='Puede generar estados y facturas no asociadas a hospedaje',default=False)
+    motgama_factura_extemporanea = fields.Boolean(string='Puede generar facturas no asociadas a hospedaje',default=False)
     
     # Objetos olvidados
     motgama_entregar_olvidados = fields.Boolean(string='Puede entregar y dar de baja a objetos olvidados',default=False)

@@ -7,6 +7,9 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
     @api.multi
     def button_fuera_servicio(self):
         self.ensure_one()
+        if not self.env.user.motgama_fuera_servicio:
+            raise Warning('No tiene permitido poner habitaciones en fuera de servicio, contacte al administrador')
+
         flujo_id = self.env.context['active_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)])
         habitacion = self.env['motgama.habitacion'].search([('codigo','=',flujo['codigo'])])
@@ -27,7 +30,7 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
                 'modelo': 'motgama.wizardfueradeservicio',
                 'tipo_evento': 'correo',
                 'asunto': 'La habitación ' + flujo.codigo + ' ha sido puesta Fuera de Servicio',
-                'descripcion': 'El usuario ' + self.env.user.name + ' ha puesto la habitación ' + flujo.codigo + ' en estado Fuera de Servicio. Observaciones: ' + self.observacion
+                'descripcion': 'El usuario ' + self.env.user.name + ' ha puesto la habitación ' + flujo.codigo + ' en estado Fuera de Servicio. Observaciones: ' + str(self.observacion)
             }
             self.env['motgama.log'].create(valores)
 

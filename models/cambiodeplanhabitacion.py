@@ -21,6 +21,9 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
     @api.multi
     def button_cambio_plan(self):
         self.ensure_one()
+        if not self.env.user.motgama_cambio_plan:
+            raise Warning('No tiene permitido cambiar el hospedaje de una habitación, contacte al administrador')
+
         flujo_id = self.env.context['active_id']
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)])
         habitacion = self.env['motgama.habitacion'].search([('codigo','=',flujo['codigo'])])

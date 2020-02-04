@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import Warning
 
 class MotgamaWizardEntregaprestados(models.TransientModel):
     _name = 'motgama.wizard_entregaprestados'
@@ -10,6 +11,8 @@ class MotgamaWizardEntregaprestados(models.TransientModel):
     @api.multi
     def entregar_objeto(self):
         self.ensure_one()
+        if not self.env.user.motgama_devuelve_prestados:
+            raise Warning('No tiene permitido devolver objetos prestados, contacte al administrador')
 
         idObjeto = self.env.context['active_id']
         objeto = self.env['motgama.objprestados'].search([('id','=',idObjeto)],limit=1)

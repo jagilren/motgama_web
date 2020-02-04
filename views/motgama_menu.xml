@@ -52,7 +52,7 @@
 
     <menuitem id="menu_motgama_reportes" name="Reportes" parent='menu_motgama'/>
     <menuitem id="menu_motgama_query" name="Consulta" parent='menu_motgama' />
-    <menuitem id="menu_motgama_master" name="Datos Maestros" parent='menu_motgama'/>
+    <menuitem id="menu_motgama_master" name="Datos Maestros" parent='menu_motgama' groups="motgama.group_motgama_superuser"/>
 
     <!-- DATOS MAESTROS -->
     <menuitem id="menu_motgama_maestros_motel"
