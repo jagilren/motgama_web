@@ -34,7 +34,6 @@
                                 <control>
                                     <create string="Agregar consumo"/>
                                 </control>
-                                <field name="valorUnitario" invisible="1"/>
                                 <field name="permitecambiarvalor" invisible="1"/>
                                 <field name="producto_id"/>
                                 <field name="vlrUnitario" attrs="{'readonly':[('permitecambiarvalor','=',False)]}"/>

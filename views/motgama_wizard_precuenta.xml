@@ -9,9 +9,9 @@
                 <field name="incluye_adicional" invisible="1"/>
                 <group>
                     <h2><span>Habitación</span>&amp;nbsp;<span><field name='habitacion' readonly="1"/></span></h2>
+                    <field name="fecha_asignacion" readonly="1"/>
                 </group>
                 <group>
-                    <field name="fecha_asignacion" readonly="1"/>
                     <field name="consumos" readonly="1">
                         <tree>
                             <field name="producto_id"/>
@@ -25,7 +25,24 @@
                     <field name="hospedaje_adicional" readonly="1" attrs="{'invisible':[('incluye_adicional','=',False)]}"/>
                 </group>
                 <group>
-                    <h3><span>Valor Total</span>&amp;nbsp;&amp;nbsp;$&amp;nbsp;<span><field name="valor_total" readonly="1"/></span></h3>
+                    <field name="abono_ids">
+                        <tree>
+                            <field name="nrorecaudo"/>
+                            <field name="create_date"/>
+                            <field name="valor_pagado"/>
+                        </tree>
+                    </field>
+                </group>
+                <group>
+                    <group>
+                        <field name="valor_total" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="abonado" readonly="1"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="adeudado" readonly="1"/>
                 </group>
                 <footer>
                     <button string="Aceptar" special="cancel" class="btn btn-primary"/>

@@ -67,21 +67,15 @@ class MotgamaLineaFacturaConsumos(models.Model):
     _name = 'motgama.lineafacturaconsumos'
     _description = 'Línea de factura de consumos sin hospedaje'
 
-    currency_id = fields.Many2one(comodel_name='res.currency',default=lambda self: self._get_currency())
     factura_id = fields.Many2one(string='Factura sin hospedaje', comodel_name='motgama.facturaconsumos',required=True)
     producto_id = fields.Many2one(string='Producto',comodel_name='product.template',required=True)
     cantidad = fields.Float(string='Cantidad')
-    valorUnitario = fields.Monetary(string='Valor Unitario',compute="_compute_valor")
-    vlrUnitario = fields.Monetary(string='Valor Unitario')
-    vlrSubtotal = fields.Monetary(string='Subtotal',compute='_compute_subtotal')
+    vlrUnitario = fields.Float(string='Valor Unitario')
+    vlrSubtotal = fields.Float(string='Subtotal',compute='_compute_subtotal')
     permitecambiarvalor = fields.Boolean(string='Permite cambiar valor',default=False,compute="_compute_valor",store=True)
 
-    @api.model
-    def _get_currency(self):
-        return self.env['res.company']._company_default_get('account.invoice').currency_id.id
-
-    @api.depends('producto_id')
-    def _compute_valor(self):
+    @api.onchange('producto_id')
+    def _compute_producto(self):
         for record in self:
             if record.producto_id:
                 precio = record.producto_id.list_price
@@ -89,12 +83,19 @@ class MotgamaLineaFacturaConsumos(models.Model):
                     record.permitecambiarvalor = True
                 else:
                     record.permitecambiarvalor = False
-                    record.valorUnitario = precio
+                    record.vlrUnitario = precio
 
     @api.depends('cantidad','vlrUnitario')
     def _compute_subtotal(self):
         for record in self:
             record.vlrSubtotal = record.vlrUnitario * record.cantidad
+
+    @api.model
+    def create(self,values):
+        prod = values['producto_id']
+        if not 'vlrUnitario' in values:
+            values['vlrUnitario'] = self.env['product.template'].search([('id','=',prod)],limit=1).list_price
+        return super().create(values)
 
 class MotgamaWizardFacturaConsumos(models.TransientModel):
     _name = 'motgama.wizardfacturaconsumos'

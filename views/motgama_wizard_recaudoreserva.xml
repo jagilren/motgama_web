@@ -1,0 +1,36 @@
+<odoo>
+    <record id="wizard_recaudo_reserva" model="ir.ui.view">
+        <field name="name">Wizard Recaudo Reserva Form</field>
+        <field name="model">motgama.wizard.recaudoreserva</field>
+        <field name="arch" type="xml"> 
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="deuda" readonly="True" style="font-size:20px;" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="total" readonly="True" style="font-size:20px;" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="cliente" readonly="1"/>
+                        <field name="pagos" widget='one2many_list' mode="tree">
+                            <tree string="Registro de pagos" editable="bottom">
+                                <control>
+                                    <create string="Agregar pago"/>
+                                </control>
+                                <field name="mediopago" options="{'no_create_edit': true}"/>
+                                <field name="valor"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="recaudar_reserva" type="object" string="Recaudar" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

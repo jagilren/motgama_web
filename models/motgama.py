@@ -556,8 +556,7 @@ class MotgamaMovimiento(models.Model):#ok
     flagreasignada = fields.Boolean(string='Reasignada')
     reasignaciones = fields.One2many(string='Reasignaciones',comodel_name='motgama.reasignacion',inverse_name='movimiento_id')
    # reservafecha = fields.Date(string=u'Fecha de la reserva')
-    reservafecha = fields.Datetime(string=u'Fecha y Hora de la reserva')
-    reserva_uid = fields.Many2one(comodel_name='res.users',string='Usuario que reserva')
+    reserva = fields.Many2one(string="Reserva",comodel_name="motgama.reserva")
    # desasignafecha = fields.Date(string=u'Fecha de la desasigna')
     desasignafecha = fields.Datetime(string=u'Fecha y Hora de la desasigna')
     desasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario que desasigna')
@@ -587,6 +586,7 @@ class MotgamaMovimiento(models.Model):#ok
     hubocambioplan = fields.Boolean(string='¿Hubo cambio de plan en el movmiento?',default=False)
     cambiosplan = fields.One2many(string="Cambios de plan",comodel_name='motgama.cambioplan',inverse_name='movimiento')
     prestados = fields.One2many(string="Objetos Prestados",comodel_name='motgama.objprestados',inverse_name='movimiento_id')
+    recaudo_ids = fields.One2many(string="Recaudos",comodel_name="motgama.recaudo",inverse_name='movimiento_id')
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
@@ -610,8 +610,9 @@ class MotgamaReservas(models.Model):#ok
     notadecoracion = fields.Text(string='Nota para la decoración')
     tipohabitacion_id = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',ondelete='restrict',required=True)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='restrict',required=True)
-    mediopago = fields.Many2one(string='Medio de pago',comodel_name='motgama.mediopago',ondelete='restrict')
-    anticipo = fields.Float(string='Anticipo $')
+    anticipo = fields.Float(string='Anticipo')
+    recaudo_id = fields.Many2one(string="Recaudo",comodel_name="motgama.recaudo",ondelete="restrict")
+    pago_ids = fields.Many2many(string="Pagos",comodel_name="account.payment")
     modificada = fields.Boolean(string='Reserva Modificada',default=False)
     modificada_uid = fields.Many2one(comodel_name='res.users',string='Usuario que modifica')
     fecha_original = fields.Datetime(string='Fecha de reserva anterior')
@@ -722,20 +723,20 @@ class MotgamaConsumo(models.Model):
     _inherit = 'base'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado
     recepcion = fields.Many2one(comodel_name='motgama.recepcion',default=lambda self: self.env.user.recepcion_id.id)
-    consecutivo =  fields.Float(string=u'Total $')
+    consecutivo =  fields.Float(string='Total $')
     llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
     textoComanda = fields.Text(string='Comanda')
     comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
-    habitacion = fields.Many2one(string=u'habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    habitacion = fields.Many2one(string='habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
-    producto_id = fields.Many2one(string=u'Producto',comodel_name='product.template',ondelete='set null',required=True)
-    cantidad = fields.Float(string=u'Cantidad',required=True)
+    producto_id = fields.Many2one(string='Producto',comodel_name='product.template',ondelete='set null',required=True)
+    cantidad = fields.Float(string='Cantidad',required=True)
     valorUnitario = fields.Float(string='Valor Unitario',compute='_compute_valorUnitario')                                                                                   #P7.0.4R
     vlrUnitario = fields.Float(string='Valor Unitario')
     vlrSubtotal = fields.Float(string='Subtotal $',compute="_compute_vlrsubtotal",store = True)
     lugar_id = fields.Many2one(string='Bodega de Inventario',comodel_name='stock.location',ondelete='set null',store=True)
-    estado = fields.Char(string=u'estado')
-    active = fields.Boolean(string=u'Activo?',default=True)    
+    estado = fields.Char(string='estado')
+    active = fields.Boolean(string='Activo?',default=True)    
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     permitecambiarvalor = fields.Boolean(string='Permite cambiar valor',default=False,compute="_compute_valorUnitario",store=True)
 
@@ -822,14 +823,15 @@ class MotgamaPagos(models.Model):
     _description = 'Pago'
     movimiento_id = fields.Integer('Nro. Movimiento')
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',required=True)   
-    fecha = fields.Datetime(string=u'Fecha',default=lambda self: fields.Datetime().now())   
+    fecha = fields.Datetime(string='Fecha',default=lambda self: fields.Datetime().now())   
     mediopago = fields.Many2one(string='Medio de Pago',comodel_name='motgama.mediopago',required=True)
     banco = fields.Char('Banco') # PENDIENTE PARA TRAER DE TABLA DE BANCOS DE ODOO
-    valor =  fields.Float(string=u'Valor a pagar',required=True)
+    valor =  fields.Float(string='Valor a pagar',required=True)
     # Se debe hacer la condicional que si el usuario va a pagar con prenda entonces se debe agregar el contacto que nos aparece desde odoo    
-    descripcion = fields.Text(string=u'Descripcion')
-    usuario_uid = fields.Integer(string=u'responsable',default=lambda self: self.env.user.id)
+    descripcion = fields.Text(string='Descripcion')
+    usuario_uid = fields.Integer(string='responsable',default=lambda self: self.env.user.id)
     recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo',ondelete='restrict')
+    pago_id = fields.Many2one(string='Pago',comodel_name='account.payment')
 
 class MotgamaRecaudo(models.Model):
     _name = 'motgama.recaudo'
@@ -837,7 +839,7 @@ class MotgamaRecaudo(models.Model):
     _rec_name = 'nrorecaudo'
 
     nrorecaudo = fields.Char(string='Recaudo nro.',required=True,default='Nuevo')
-    movimiento_id = fields.Integer(string='Nro. Movimiento')
+    movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento')
     habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion')
     cliente = fields.Many2one(string='Cliente',comodel_name='res.partner')
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
@@ -885,9 +887,9 @@ class MotgamaMedioPago(models.Model):
     _rec_name = 'nombre'
 
     nombre = fields.Char(string='Nombre',required=True)
-    tipo = fields.Selection(string='Tipo de pago',required=True,selection=[('electro','Electrónico'),('efectivo','Efectivo'),('bono','Bono/Descuento'),('prenda','Prenda')])
+    tipo = fields.Selection(string='Tipo de pago',required=True,selection=[('electro','Electrónico'),('efectivo','Efectivo'),('bono','Bono/Descuento'),('prenda','Prenda'),('abono','Abono')])
     lleva_prenda = fields.Boolean(string='¿Lleva Prenda?',compute='_compute_prenda')
-    diario_id = fields.Many2one(string='Diario contable',comodel_name='account.journal')
+    diario_id = fields.Many2one(string='Diario de pago',comodel_name='account.journal')
     active = fields.Boolean(string='Activo',default=True)
 
     @api.depends('tipo')

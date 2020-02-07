@@ -44,7 +44,6 @@
         'views/motgama_inmotica.xml',
         'views/motgama_utilidades.xml',
         'views/motgama_prenda.xml',
-        # 'views/motgama_pago.xml',
         'views/motgama_bonos.xml',
         # 'views/motgama_cierreturno.xml',
         'views/motgama_menu.xml',
@@ -66,6 +65,8 @@
         'views/motgama_mediopago.xml',
         'views/motgama_recaudo.xml',
         'views/motgama_log.xml',
+        'views/motgama_wizard_recaudoreserva.xml',
+        'views/motgama_wizard_abonos.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',
@@ -75,5 +76,6 @@
         'automatizacion/accion_flujohabitacion.xml',
         'registros/secuencia_prenda.xml',
         'registros/secuencia_recaudo.xml',
-        'registros/cliente_contado.xml']
+        'registros/cliente_contado.xml',
+        'registros/medios_pago.xml']
 }

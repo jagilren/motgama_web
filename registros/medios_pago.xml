@@ -1,0 +1,13 @@
+<odoo>
+    <data noupdate="1">
+        <record id="mediopago_abono" model="motgama.mediopago">
+            <field name="nombre">Abonos</field>
+            <field name="tipo">abono</field>
+        </record>
+
+        <record id="mediopago_prenda" model="motgama.mediopago">
+            <field name="nombre">Prenda</field>
+            <field name="tipo">prenda</field>
+        </record>
+    </data>
+</odoo>

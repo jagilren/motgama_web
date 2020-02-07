@@ -33,6 +33,11 @@
                     </group>
                     <group>
                         <notebook>
+                            <page name="reserva" string="Reservas" attrs="{'invisible':[('reserva','=',False)]}">
+                                <group>
+                                    <field name="reserva"/>
+                                </group>
+                            </page>
                             <page name="asignacion" string="Asignación" attrs="{'invisible':[('tipovehiculo','=',False)]}">
                                 <group>
                                     <field name="asignafecha" string="Fecha de asignación"/>
@@ -152,6 +157,9 @@
                         </group>
                         <group>
                         </group>
+                    </group>
+                    <group name="recaudos" string="Recaudos">
+                        <field name="recaudo_ids"/>
                     </group>
                 </sheet>
             </form>

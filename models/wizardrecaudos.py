@@ -69,13 +69,14 @@ class MotgamaWizardRecaudo(models.TransientModel):
     total = fields.Float(string='Saldo total',default=lambda self: self._compute_total())
 
     cliente = fields.Many2one(string='Cliente',comodel_name='res.partner',domain="[('customer','=',True)]",default=lambda self: self._compute_cliente())
-    pagos = fields.Many2many(string='Recaudo',comodel_name='motgama.wizardpago')
+    pagos = fields.Many2many(string='Recaudo',comodel_name='motgama.wizardpago',default=lambda self: self._get_abonos())
     pago_prenda = fields.Boolean(string='Pago con prenda',default=False,compute='_compute_deuda')
     prendas_pendientes = fields.Many2many(string='Prendas pendientes por pagar',comodel_name='motgama.prendas',compute='_compute_prendas')
     prendas_pagadas = fields.Many2many(string='Prendas pagadas',comodel_name='motgama.prendas',compute='_compute_prendas')
 
     prenda_descripcion = fields.Char(string='Descripción de la prenda')
     prenda_valor = fields.Float(string='Valor estimado de la prenda')
+    abonado = fields.Float(string="Valor abonado",compute='_compute_abonado')
 
     @api.model
     def _compute_habitacion(self):
@@ -102,7 +103,34 @@ class MotgamaWizardRecaudo(models.TransientModel):
         flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
         ordenVenta = self.env['sale.order'].search([('movimiento','=',flujo.ultmovimiento.id),('state','=','sale')],limit=1)
         return ordenVenta.amount_total
+    
+    @api.model
+    def _get_abonos(self):
+        flujo_id = self.env.context['current_id']
+        flujo = self.env['motgama.flujohabitacion'].search([('id','=',flujo_id)], limit=1)
+        movimiento = flujo.ultmovimiento
+        mediopago = self.env.ref('motgama.mediopago_abono')
+        totalAbono = 0.0
+        for recaudo in movimiento.recaudo_ids:
+            totalAbono += recaudo.total_pagado
+        if totalAbono > 0:
+            valoresPago = {
+                'mediopago': mediopago.id,
+                'valor': totalAbono
+            }
+            return [(0,0,valoresPago)]
+        return []
 
+    @api.depends('movimiento')
+    def _compute_abonado(self):
+        for record in self:
+            if record.movimiento:
+                totalAbono = 0.0
+                for recaudo in record.movimiento.recaudo_ids:
+                    totalAbono += recaudo.total_pagado
+                record.abonado = totalAbono
+            
+        
     @api.depends('pagos.valor')
     def _compute_deuda(self):
         for recaudo in self:
@@ -141,6 +169,12 @@ class MotgamaWizardRecaudo(models.TransientModel):
         valoresPagos = []
         nroPrendas = 0
         valorPrenda = 0.0
+
+        tiene_recaudo = False
+        if len(self.movimiento.recaudo_ids) > 0:
+            tiene_recaudo = True
+        tiene_abono = False
+        abono = 0.0
         for pago in self.pagos:
             if pago.valor <= 0:
                 raise Warning('No se admiten valores negativos o cero en los pagos')
@@ -151,9 +185,13 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 nroPrendas += 1
                 if nroPrendas > 1:
                     raise Warning('Solo se permite registrar un pago con prenda')
-            if pago.mediopago.tipo == 'bono':
+            elif pago.mediopago.tipo == 'bono':
                 raise Warning('El pago con bonos no está implementado')
                 # TODO: Implementar bonos
+            elif pago.mediopago.tipo == 'abono':
+                tiene_abono = True
+                abono = pago.valor
+                # raise Warning('El pago con abonos no está implementado')
             valores = {
                 'movimiento_id': self.movimiento.id,
                 'cliente_id': self.cliente.id,
@@ -161,6 +199,11 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 'valor': pago.valor
             }
             valoresPagos.append(valores)
+        if tiene_recaudo:
+            if not tiene_abono:
+                raise Warning('No debe eliminar el abono de la sección de pagos')
+            if self.abonado != abono:
+                raise Warning('No debe modificar el valor abonado en la sección de pagos')
 
         ordenVenta = self.env['sale.order'].search([('movimiento','=',self.movimiento.id),('state','=','sale')],limit=1)
         if not ordenVenta:
@@ -184,7 +227,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
         factura.write(valoresFactura)
         factura.action_invoice_open()
         for pago in self.pagos:
-            if pago.mediopago.tipo == 'prenda':
+            if pago.mediopago.tipo in ['prenda','abono']:
                 continue
             valoresPayment = {
                 'amount': pago.valor,
@@ -200,6 +243,9 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if not payment:
                 raise Warning('No fue posible sentar el registro del pago')
             payment.post()
+            for valores in valoresPagos:
+                if valores['mediopago'] == pago.mediopago.id and valores['valor'] == pago.valor:
+                    valores['pago_id'] = payment.id
         
         valoresRecaudo = {
             'movimiento_id': self.movimiento.id,

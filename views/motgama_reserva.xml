@@ -11,7 +11,6 @@
                 <field name="fecha"/>
                 <field name="condecoracion"/>
                 <field name="notadecoracion"/>
-                <field name="mediopago"/>
                 <field name="anticipo"/>
                 <field name="modificada"/>
                 <field name="modificada_uid"/>
@@ -49,9 +48,11 @@
                             <field name="fecha"/>
                             <field name="condecoracion"/>
                             <field name="notadecoracion" attrs="{'invisible':[('condecoracion','=',False)],'required':[('condecoracion','=',True)]}"/>
-                            <br/><h4>Anticipo</h4>
-                            <field name="mediopago"/>
+                            <br/>
                             <field name="anticipo"/>
+                            <button name="recaudo_anticipo" type="object" string="Recaudar anticipo" class="btn btn-primary" attrs="{'invisible':['!',('anticipo','=',0),('recaudo_id','!=',False)]}"/>
+                            <field name="recaudo_id" invisible="1"/>
+                            <field name="recaudo_id" attrs="{'invisible':[('recaudo_id','=',False)]}" readonly="1"/>
                         </group>
                         <group name="group_right" string="Modificaciones" attrs="{'invisible':[('modificada','=',False),('cancelada','=',False)]}">
                             <field name="modificada" invisible="1"/>

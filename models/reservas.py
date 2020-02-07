@@ -131,6 +131,17 @@ class MotgamaReservas(models.Model):
                 if reserva.habitacion_id.estado == 'R':
                     reserva.habitacion_id.write({'estado':'D','prox_reserva':False,'notificar':False})
                 reserva.button_cancelar()
+    @api.multi
+    def recaudo_anticipo(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizard.recaudoreserva',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.wizard_recaudo_reserva').id,
+            'target': 'new'
+        }
 
 class MotgamaWizardModificaReserva(models.TransientModel):
     _name = 'motgama.wizard.modificareserva'
@@ -189,8 +200,8 @@ class MotgamaWizardModificaReserva(models.TransientModel):
                 'fecha': record.fecha,
                 'condecoracion': record.decoracion,
                 'notadecoracion': record.notadecoracion,
-                'tipohabitacion_id': record.tipohabitacion_id,
-                'habitacion_id': record.habitacion_id,
+                'tipohabitacion_id': record.tipohabitacion_id.id,
+                'habitacion_id': record.habitacion_id.id,
                 'modificada': True,
                 'modificada_uid': self.env.user.id
             }
@@ -216,4 +227,89 @@ class MotgamaFlujohabitacion(models.Model):
             'multi':"True",
             'target':"new"
         }
+
+class MotgamaWizardRecaudoReserva(models.TransientModel):
+    _name = 'motgama.wizard.recaudoreserva'
+    _description = 'Recaudo de reserva'
+
+    reserva = fields.Many2one(string='Reserva',comodel_name='motgama.reserva',default=lambda self: self._get_reserva())
+    deuda = fields.Float(string='Saldo restante',compute='_compute_deuda')
+    total = fields.Float(string='Saldo total',default=lambda self: self._get_total())
+
+    cliente = fields.Many2one(string='Cliente',comodel_name='res.partner',domain="[('customer','=',True)]",default=lambda self: self._get_cliente())
+    pagos = fields.Many2many(string='Recaudo',comodel_name='motgama.wizardpago')
+
+    @api.model
+    def _get_reserva(self):
+        return self.env.context['active_id']
+
+    @api.model
+    def _get_total(self):
+        reserva = self.env.context['active_id']
+        return self.env['motgama.reserva'].search([('id','=',reserva)],limit=1).anticipo
+    
+    @api.model
+    def _get_cliente(self):
+        reserva = self.env.context['active_id']
+        return self.env['motgama.reserva'].search([('id','=',reserva)],limit=1).cliente_id.id
+
+    @api.depends('pagos.valor')
+    def _compute_deuda(self):
+        for recaudo in self:
+            deuda = recaudo.total
+            for pago in recaudo.pagos:
+                deuda -= pago.valor
+            recaudo.deuda = deuda
+
+    @api.multi
+    def recaudar_reserva(self):
+        self.ensure_one()
+
+        valoresPagos = []
+        for pago in self.pagos:
+            if pago.valor <= 0:
+                raise Warning('El valor del pago no puede ser menor o igual a cero')
+            valoresPayment = {
+                'payment_type': 'inbound',
+                'partner_type': 'customer',
+                'partner_id': self.cliente.id,
+                'amount': pago.valor,
+                'journal_id': pago.mediopago.diario_id.id,
+                'payment_date': fields.Date().today(),
+                'payment_method_id': 1,
+                'communication': 'Anticipo de ' + self.reserva.cod
+            }
+            payment = self.env['account.payment'].create(valoresPayment)
+            if not payment:
+                raise Warning('No se pudo registrar el pago')
+            payment.post()
+            
+            valores = {
+                'cliente_id': payment.partner_id.id,
+                'fecha': fields.Datetime().now(),
+                'mediopago': pago.mediopago.id,
+                'valor': pago.valor,
+                'usuario_uid': self.env.user.id,
+                'pago_id': payment.id
+            }
+            valoresPagos.append(valores)
         
+        valoresRecaudo = {
+            'cliente': self.cliente.id,
+            'total_pagado': self.total,
+            'valor_pagado': self.total,
+            'usuario_uid': self.env.user.id,
+        }
+        recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
+        if not recaudo:
+            raise Warning('No se pudo registrar el recaudo')
+
+        for valoresPago in valoresPagos:
+            valoresPago.update({'recaudo':recaudo.id})
+            pago = self.env['motgama.pago'].create(valoresPago)
+            if not pago:
+                raise Warning('No se pudo registrar el pago')
+        
+        self.reserva.write({'recaudo_id':recaudo.id})
+        
+        return True

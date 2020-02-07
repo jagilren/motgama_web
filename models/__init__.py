@@ -23,3 +23,4 @@ from . import recaudoprenda
 from . import reservas
 from . import wizardprecuenta
 from . import consumo_adicional
+from . import wizardabonos

@@ -6,13 +6,15 @@ class MotgamaFlujoHabitacion(models.Model):
 
     @api.multi
     def button_precuenta(self):
+        self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizardprecuenta',
             'view_type': 'form',
             'view_mode': 'form',
             'view_id': self.env.ref('motgama.form_wizard_precuenta').id,
-            'target': 'new'
+            'target': 'new',
+            'name': 'Precuenta de la habitación ' + self.codigo
         }
 
 class MotgamaWizardPrecuenta(models.TransientModel):
@@ -29,7 +31,10 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     hospedaje_normal = fields.Float(string='Hospedaje Ocasional',compute='_compute_precio')
     hospedaje_amanecida = fields.Float(string='Hospedaje Amanecida',compute='_compute_precio')
     hospedaje_adicional = fields.Float(string='Hospedaje Adicional',compute='_compute_precio')
-    valor_total = fields.Float(string='Valor Total',compute='_compute_total')
+    valor_total = fields.Float(string='Total hospedaje',compute='_compute_total')
+    abono_ids = fields.Many2many(string="Abonos",comodel_name='motgama.recaudo',compute="_compute_abonos")
+    adeudado = fields.Float(string='Total a pagar',compute="_compute_adeudado")
+    abonado = fields.Float(string="Total abonado",compute="_compute_abonado")
     movimiento = fields.Boolean()
 
     @api.model
@@ -189,3 +194,23 @@ class MotgamaWizardPrecuenta(models.TransientModel):
             for consumo in record.consumos:
                 precio += consumo.vlrSubtotal
             record.valor_total = precio
+
+    @api.depends('movimiento_id')
+    def _compute_abonos(self):
+        for record in self:
+            if record.movimiento_id:
+                ids = [recaudo.id for recaudo in record.movimiento_id.recaudo_ids]
+                record.abono_ids = [(6,0,ids)]
+    
+    @api.depends('abono_ids.valor_pagado')
+    def _compute_abonado(self):
+        for record in self:
+            abonado = 0.0
+            for abono in record.abono_ids:
+                abonado += abono.valor_pagado
+            record.abonado = abonado
+    
+    @api.depends('valor_total','abonado')
+    def _compute_adeudado(self):
+        for record in self:
+            record.adeudado = record.valor_total - record.abonado

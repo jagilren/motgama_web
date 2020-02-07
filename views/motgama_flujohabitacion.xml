@@ -100,7 +100,13 @@
                         <page name='factura' string='Factura' attrs="{'invisible':[('estado','not in','RC')]}">
                             <button name="button_factura" string="Ver factura" type="object" class="btn"/>
                         </page>
-                        <page name='habitacion' string='Esta habitación' attrs="{'invisible':[('estado','in',['OO','OA','LQ'])]}">
+                        <page name="abonos" string="Abonos" attrs="{'invisible':[('estado','not in',['OO','OA'])]}">
+                            <group>
+                                <button name="abonos" string="Ver abonos" type="object" class="btn btn-info"/>
+                                <button name="abonar" string="Abonar a esta asignación" type="object" class="btn btn-primary"/>
+                            </group>
+                        </page>
+                        <page name='habitacion' string='Esta habitación'>
                             <group>
                                 <group>
                                     <field name="tipo" string="Tipo de Habitación" readonly="1"/>

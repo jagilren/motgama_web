@@ -124,21 +124,26 @@ class MotgamaWizardHabitacion(models.TransientModel):
                 # Si tampoco hay tarifas para el tipo de habitacion sale un mensaje
                 # NO LO TENGO DEFINIDO
                 raise Warning('Error: No hay tarifas definidas ni para la habitación ni para el tipo de habitación')
-        # Si todo ha ido bien ya se puede asentar el registro del movimiento
-        # Instancia la clase movimiento
-        Movimiento = self.env['motgama.movimiento']
-        # Crea el registro pasando el diccionario de valores como parámetro
-        nuevoMovimiento = Movimiento.create(valores)
-        # Si fue exitosa la creación del registro entonces se cambia el estado de la habitación
-        if nuevoMovimiento:
-            flujo.sudo().write({
-                'estado':self.asignatipo,
-                'ultmovimiento':nuevoMovimiento.id,
-                'prox_reserva':False,
-                'notificar': True
-            })
+        
+        if flujo.prox_reserva:
+            valores.update({'reserva':flujo.prox_reserva.id})
+            nuevoMovimiento = self.env['motgama.movimiento'].create(valores)
+            if not nuevoMovimiento:
+                raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
+            recaudoAnticipo = flujo.prox_reserva.recaudo_id
+            if recaudoAnticipo:
+                recaudoAnticipo.sudo().write({'movimiento_id':nuevoMovimiento.id})
         else:
-            raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
+            nuevoMovimiento = self.env['motgama.movimiento'].create(valores)
+            if not nuevoMovimiento:
+                raise Warning('Atención! No se pudo asignar la habitación; por favor consulte con el administrador del sistema')
+        # Si fue exitosa la creación del registro entonces se cambia el estado de la habitación
+        flujo.sudo().write({
+            'estado':self.asignatipo,
+            'ultmovimiento':nuevoMovimiento.id,
+            'prox_reserva':False,
+            'notificar': True
+        })
         
         if fullHabitacion.inmotica:
             valoresInmotica = {

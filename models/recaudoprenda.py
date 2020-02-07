@@ -69,7 +69,7 @@ class MotgamaWizardPrenda(models.TransientModel):
             raise Warning('La deuda no ha sido saldada')
 
         valoresRecaudo = {
-            'movimiento_id': self.factura.recaudo.movimiento_id,
+            'movimiento_id': self.factura.recaudo.movimiento_id.id,
             'habitacion': self.factura.habitacion_id.id,
             'cliente': self.prenda.cliente_id.id,
             'factura': self.factura.id,
@@ -100,7 +100,8 @@ class MotgamaWizardPrenda(models.TransientModel):
                 'cliente_id': self.prenda.cliente_id.id,
                 'mediopago': pago.mediopago.id,
                 'valor': pago.valor,
-                'recaudo': recaudo.id
+                'recaudo': recaudo.id,
+                'pago_id': payment.id
             }
             pago = self.env['motgama.pago'].create(valoresPago)
             if not pago:
