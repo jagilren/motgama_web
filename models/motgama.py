@@ -546,7 +546,7 @@ class MotgamaMovimiento(models.Model):#ok
     aseofecha = fields.Datetime(string=u'Fecha y hora aseo')
     aseo_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cambia al estado aseo')
    # habilitafecha = fields.Date(string=u'Fecha de habilitación')
-    habilitafecha = fields.Datetime(string=u'Fecha y hora de habilitación')
+    habilitafecha = fields.Datetime(string=u'Fecha y hora en que se habilita')
     habilita_uid = fields.Many2one(comodel_name='res.users',string='Usuario que habilita la habitación')
    # reasignafecha = fields.Date(string=u'Fecha de reasignación')
     # reasignafecha = fields.Datetime(string=u'Fecha y Hora de reasignación')
@@ -701,20 +701,20 @@ class MotgamaPrendas(models.Model):
 class MotgamaBonos(models.Model):
 #    Fields: Bonos: el cliente tiene una forma de pago por medio de bonos Creado: Mayo 16 del 2019
     _name = 'motgama.bonos'
-    _description = u'MotgamaBonos'
+    _description = 'Bonos'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
-    codigo = fields.Char(string=u'Código: ',)
-    multiple = fields.Boolean(string=u'Multiple ', ) #Lo pueden utilizar muchas personas
-    validodesde = fields.Date(string=u'Valido Desde?',)
-    validohasta = fields.Date(string=u'Valido Hasta?',)
-    descuentavalor = fields.Float(string=u'Descontar valor $',)
-    porcpagoefectivo = fields.Float(string=u'Porc. descto. en efectivo $ ',)
-    porcpagotromedio = fields.Float(string=u'Porc. descto. por otro medio $',)
+    codigo = fields.Char(string='Código')
+    multiple = fields.Boolean(string='Múltiple') #Lo pueden utilizar muchas personas
+    validodesde = fields.Date(string='Válido Desde')
+    validohasta = fields.Date(string='Válido Hasta')
+    descuentavalor = fields.Float(string='Descontar valor')
+    porcpagoefectivo = fields.Float(string='Porc. descto. en efectivo')
+    porcpagotromedio = fields.Float(string='Porc. descto. por otro medio',)
     # El descuento se lo puede aplicar a :
-    aplicahospedaje = fields.Boolean(string=u'Aplicar descuento en hospedaje',default=True)
-    aplicarestaurante = fields.Boolean(string=u'Aplicar descuento en restaurante',)
-    aplicaconsumos = fields.Boolean(string=u'Aplicar descuento en otros productos',)    
-    active = fields.Boolean(string=u'Activo?',default=True)
+    aplicahospedaje = fields.Boolean(string='Aplicar descuento en hospedaje',default=True)
+    aplicarestaurante = fields.Boolean(string='Aplicar descuento en restaurante')
+    aplicaconsumos = fields.Boolean(string='Aplicar descuento en otros productos')    
+    active = fields.Boolean(string='Activo',default=True)
 
 class MotgamaConsumo(models.Model):
 #    Fields: Consumos del Bar en cualquiera de las recepciones: Creado: Junio 07 del 2019
@@ -727,7 +727,7 @@ class MotgamaConsumo(models.Model):
     llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
     textoComanda = fields.Text(string='Comanda')
     comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
-    habitacion = fields.Many2one(string='habitacion_id',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string='Producto',comodel_name='product.template',ondelete='set null',required=True)
     cantidad = fields.Float(string='Cantidad',required=True)
@@ -825,7 +825,6 @@ class MotgamaPagos(models.Model):
     cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',required=True)   
     fecha = fields.Datetime(string='Fecha',default=lambda self: fields.Datetime().now())   
     mediopago = fields.Many2one(string='Medio de Pago',comodel_name='motgama.mediopago',required=True)
-    banco = fields.Char('Banco') # PENDIENTE PARA TRAER DE TABLA DE BANCOS DE ODOO
     valor =  fields.Float(string='Valor a pagar',required=True)
     # Se debe hacer la condicional que si el usuario va a pagar con prenda entonces se debe agregar el contacto que nos aparece desde odoo    
     descripcion = fields.Text(string='Descripcion')
@@ -907,6 +906,8 @@ class Company(models.Model):
     resol_inicial = fields.Char(string='Factura inical')
     resol_final = fields.Char(string='Factura final')
     resol_texto = fields.Text(string='Vista previa',compute='_compute_texto',store=True)
+
+    footer_factura = fields.Text(string='Pie de página en facturas')
 
     @api.depends('resol_nro','resol_fecha','resol_fin','resol_prefijo','resol_inicial','resol_final')
     def _compute_texto(self):

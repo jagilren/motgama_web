@@ -181,7 +181,7 @@ class MotgamaConsumo(models.Model):
             comanda.write({'nrocomanda':comanda.id})
             record.sudo().write({'comanda':comanda.id})
 
-        hab = self.env['motgama.habitacion'].search([('codigo','=',self.habitacion.codigo)],limit=1)
+        hab = self.env['motgama.habitacion'].search([('codigo','=',record.habitacion.codigo)],limit=1)
         if not hab:
             raise Warning('Error al consultar la habitación')
         

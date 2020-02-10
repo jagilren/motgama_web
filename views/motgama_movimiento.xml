@@ -124,7 +124,7 @@
                                     <field name="aseo_uid"/>
                                 </group>
                             </page>
-                            <page name="habilitacion" string="Habilitación" attrs="{'invisible':[('habilitafecha','=',False)]}">
+                            <page name="habilitacion" string="Disponible" attrs="{'invisible':[('habilitafecha','=',False)]}">
                                 <group>
                                     <field name="habilitafecha"/>
                                 </group>

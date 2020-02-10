@@ -40,6 +40,21 @@
                             </tbody>
                         </table>
                         <br/>
+                        <table style="width: 100%;">
+                            <thead>
+                                <th>Impuesto</th>
+                                <th class="text-right">Total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.tax_line_ids" t-as="line">
+                                    <tr>
+                                        <td><span t-field="line.name"/></td>
+                                        <td class="text-right"><span t-field="line.amount_total"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
                         <table style="width: 100%">
                             <tbody>
                                 <tr>
@@ -72,13 +87,10 @@
                             </tbody>
                         </table>
                         <br/>
-                        <strong>Fecha y hora: <span t-field="doc.date_invoice"/></strong>
+                        <strong>Fecha y hora: <span t-field="doc.fecha"/></strong>
                         <br/>
                         Dirección: <span t-field="doc.company_id.street"/><br/>
-                        <br/>
-                        AUTORRENTA<br/>
-                        <br/>
-                        Su propina es voluntaria
+                        <p><span t-field="doc.company_id.footer_factura"/></p>
                     </div>
                 </t>
             </t>

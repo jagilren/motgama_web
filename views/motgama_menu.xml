@@ -217,6 +217,16 @@
     <menuitem id="menu_motgama_maestros_facturacion"
         name="Facturación"
         parent="menu_motgama_master"/>
+
+    <menuitem id="menu_motgama_plancontable"
+        name="Plan contable"
+        parent="menu_motgama_maestros_facturacion"
+        action="account.action_account_form"/>
+    
+    <menuitem id="menu_motgama_diarios"
+        name="Diarios contables"
+        parent="menu_motgama_maestros_facturacion"
+        action="account.action_account_journal_form"/>
     
     <!-- Accion -->
     <act_window id="accion_motgama_mediopago"

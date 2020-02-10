@@ -14,38 +14,59 @@
                             Salida: <span t-field="doc.liquidafecha"/>
                         </p>
                         <div style="width: 100%">
-                        <table class="table table-sm o_main_table" style="width: 100%">
-                            <thead>
-                                <th class="text-left">Precio</th>
-                                <th class="text-center">Cant</th>
-                                <th class="text-right">Total</th>
-                            </thead>
-                            <tbody class="sale_tbody">
-                                <t t-foreach="doc.order_line" t-as="line">
+                            <table class="table table-condensed table-bordered" style="width: 100%">
+                                <thead>
+                                    <th class="text-left">Precio</th>
+                                    <th class="text-center">Cant</th>
+                                    <th class="text-right">Total</th>
+                                </thead>
+                                <tbody class="sale_tbody">
+                                    <t t-foreach="doc.order_line" t-as="line">
+                                        <tr>
+                                            <td>
+                                                <span t-field="line.product_id.name"/>
+                                                <br/>
+                                                $&amp;nbsp;<span t-field="line.price_unit"/>
+                                            </td>
+                                            <td class="text-center">
+                                                <span t-field="line.product_uom_qty"/>
+                                            </td>
+                                            <td class="text-right">
+                                                <span t-field="line.price_total"/>
+                                            </td>
+                                        </tr>
+                                    </t>
                                     <tr>
-                                        <td>
-                                            <span t-field="line.product_id.name"/>
-                                            <br/>
-                                            $&amp;nbsp;<span t-field="line.price_unit"/>
-                                        </td>
-                                        <td class="text-center">
-                                            <span t-field="line.product_uom_qty"/>
-                                        </td>
+                                        <td><strong>TOTAL:</strong></td>
+                                        <td></td>
                                         <td class="text-right">
-                                            <span t-field="line.price_total"/>
+                                            <strong t-field="doc.amount_total"/>
                                         </td>
                                     </tr>
-                                </t>
-                                <tr>
-                                    <td><strong>TOTAL:</strong></td>
-                                    <td></td>
-                                    <td class="text-right">
-                                        <strong t-field="doc.amount_total"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
                         </div>
+                        <t t-if="len(doc.movimiento.reasignaciones) > 0">
+                            <strong>OBSERVACIONES</strong>
+                            <br/>
+                            <p>Reasignaciones</p>
+                            <div style="width: 100%;">
+                                <table style="width: 100%" class="table table-condensed table-bordered">
+                                    <thead>
+                                        <th class="text-left">Hab. anterior</th>
+                                        <th class="text-left">Hab. nueva</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.movimiento.reasignaciones" t-as="reasignacion">
+                                            <tr>
+                                                <td><span t-field="reasignacion.habitacion_anterior.codigo"/></td>
+                                                <td><span t-field="reasignacion.habitacion_nueva.codigo"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
                         <p>Su propina es voluntaria</p>
                     </div>
                 </t>

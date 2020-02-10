@@ -38,7 +38,7 @@
                                 <group string="Prendas">
                                     <field name="motgama_recauda_prenda"/>
                                 </group>
-                                <group string="Anticipos">
+                                <group string="Abonos">
                                     <field name="motgama_ingreso_anticipo"/>
                                 </group>
                                 <group string="Objetos prestados">

@@ -226,6 +226,16 @@ class MotgamaWizardRecaudo(models.TransientModel):
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()
+        for recaudo in self.movimiento.recaudo_ids:
+            for pago in recaudo.pagos:
+                if pago.mediopago.tipo in ['prenda','abono']:
+                    continue
+                if not pago.pago_id.journal_id.update_posted:
+                    pago.pago_id.journal_id.sudo().write({'update_posted':True})
+                pago.pago_id.sudo().cancel()
+                pago.pago_id.sudo().action_draft()
+                pago.pago_id.sudo().write({'invoice_ids': [(4,factura.id)]})
+                pago.pago_id.sudo().post()
         for pago in self.pagos:
             if pago.mediopago.tipo in ['prenda','abono']:
                 continue

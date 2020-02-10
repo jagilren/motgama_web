@@ -146,6 +146,9 @@ class MotgamaFlujoHabitacion(models.Model):
 
     @api.multi
     def abonar(self):
+        self.ensure_one()
+        if not self.env.user.motgama_ingreso_anticipo:
+            raise Warning('No tiene permitido ingresar abonos, contacte al administrador')
         return {
             'type': 'ir.actions.act_window', 
             'res_model': 'motgama.wizard.abonos',

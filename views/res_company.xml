@@ -8,7 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//page" position="after">
                     <page name="facturacion" string='Facturación'>
-                        <group>
+                        <group string="Resolución DIAN">
                             <field name='resol_nro'/>
                             <field name='resol_fecha'/>
                             <field name='resol_fin'/>
@@ -16,6 +16,9 @@
                             <field name='resol_inicial'/>
                             <field name='resol_final'/>
                             <field name='resol_texto'/>
+                        </group>
+                        <group string="Otra información">
+                            <field name="footer_factura"/>
                         </group>
                     </page>
                 </xpath>

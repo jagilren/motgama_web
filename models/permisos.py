@@ -26,7 +26,7 @@ class Users(models.Model):
     motgama_recauda_prenda = fields.Boolean(string='Puede recaudar prendas',default=False)
 
     # Anticipos
-    motgama_ingreso_anticipo = fields.Boolean(string='Puede ingresar anticipos a habitaciones sin liquidar',default=False)
+    motgama_ingreso_anticipo = fields.Boolean(string='Puede ingresar abonos a habitaciones sin liquidar',default=False)
     
     # Objetos prestados
     motgama_devuelve_prestados = fields.Boolean(string='Puede registrar devolución de objetos prestados',default=False)

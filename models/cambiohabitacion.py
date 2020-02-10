@@ -108,6 +108,9 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         if not nuevaReasignacion:
             raise Warning('No se pudo crear el registro de reasignación')
 
+        for consumo in flujoViejo.consumos:
+            consumo.sudo().write({'habitacion':flujoNuevo.id})
+
         hab1 = self.env['motgama.habitacion'].search([('codigo','=',flujoViejo.codigo)],limit=1)
         if not hab1:
             raise Warning('Error al cargar la habitación anterior')
