@@ -375,8 +375,8 @@ class MotgamaHabitacion(models.Model):#ok
             'codigo' : record.codigo,
             'estado' : 'D',
             'recepcion' : recepcion.id,
-            'tipo' : record.tipo_id,
-            'tema' : record.tema_id,
+            'tipo' : record.tipo_id.id,
+            'tema' : record.tema_id.id,
             'inmotica' : record.inmotica,
             'active' : record.active
         }
