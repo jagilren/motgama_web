@@ -35,19 +35,13 @@ class WizardReporteConsumos(models.TransientModel):
             recepcion = self.recepcion
             ids = []
             if not recepcion:
-                consumos1 = self.env['motgama.consumo'].search([])
-                consumos2 = self.env['motgama.consumo'].search([('active','=',False)])
+                consumos = self.env['motgama.consumo'].search(['|',('active','=',False),('active','=',True)])
             else:
-                consumos1 = self.env['motgama.consumo'].search([('recepcion','=',recepcion.id)])
-                consumos2 = self.env['motgama.consumo'].search([('active','=',False),('recepcion','=',recepcion.id)])
-            if not consumos1 and not consumos2:
+                consumos = self.env['motgama.consumo'].search(['&',('recepcion','=',recepcion.id),'|',('active','=',True),('active','=',False)])
+            if not consumos:
                 raise Warning('No hay consumos qué mostrar')
 
-            for consumo in consumos1:
-                if fecha_inicial < consumo.create_date < fecha_final:
-                    ids.append(consumo)
-            
-            for consumo in consumos2:
+            for consumo in consumos:
                 if fecha_inicial < consumo.create_date < fecha_final:
                     ids.append(consumo)
 
@@ -61,41 +55,70 @@ class WizardReporteConsumos(models.TransientModel):
 
         for consumo in ids:
             valores = {
-                'recepcion': consumo.recepcion.id,
+                'recepcion': consumo.lugar_id.recepcion.nombre,
                 'fecha': consumo.create_date,
-                'habitacion': consumo.habitacion.id,
-                'producto': consumo.producto_id.id,
+                'habitacion': consumo.habitacion.codigo,
+                'producto': consumo.producto_id.name,
                 'cantidad': consumo.cantidad,
                 'valorUnitario': consumo.vlrUnitario,
                 'valorTotal': consumo.vlrSubtotal,
-                'usuario': consumo.create_uid.id,
-                'categoria': consumo.producto_id.categ_id.id
+                'usuario': consumo.create_uid.name,
+                'categoria': consumo.producto_id.categ_id.name
             }
             nuevo = self.env['motgama.reporteconsumos'].create(valores)
             if not nuevo:
                 raise Warning('No se pudo crear el reporte')
         
+        if self.tipo_reporte == 'fecha':
+            ids = []
+            lineas = self.env['motgama.lineafacturaconsumos'].search([('create_date','<',fecha_final),('create_date','>',fecha_inicial)])
+            for linea in lineas:
+                if not recepcion:
+                    ids.append(linea)
+                else:
+                    if linea.create_uid.recepcion_id.id == recepcion.id:
+                        ids.append(linea)
+            for consumo in ids:
+                valores = {
+                    'recepcion': consumo.factura_id.recepcion.nombre,
+                    'fecha': consumo.create_date,
+                    'producto': consumo.producto_id.name,
+                    'cantidad': consumo.cantidad,
+                    'valorUnitario': consumo.vlrUnitario,
+                    'valorTotal': consumo.vlrSubtotal,
+                    'usuario': consumo.create_uid.name,
+                    'categoria': consumo.producto_id.categ_id.name
+                }
+                nuevo = self.env['motgama.reporteconsumos'].create(valores)
+                if not nuevo:
+                    raise Warning('No se pudo crear el reporte')
+
         return {
             'name': 'Reporte de consumos',
             'view_mode': 'tree',
             'view_id': self.env.ref('motgama.tree_reporte_consumo').id,
             'res_model': 'motgama.reporteconsumos',
-            'type': 'ir.actions.act_window'
+            'type': 'ir.actions.act_window',
+            'context':{
+                'search_default_groupby_categoria':1,
+                'search_default_groupby_producto':1
+            },
+            'target':'main'
         }
 
 
 class ReporteConsumos(models.TransientModel):
     _name = 'motgama.reporteconsumos'
 
-    recepcion = fields.Many2one(string='Recepción',comodel_name='motgama.recepcion')
+    recepcion = fields.Char(string='Recepción')
     fecha = fields.Datetime(string='Fecha')
-    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion')
-    producto = fields.Many2one(string='Producto',comodel_name='product.template')
+    habitacion = fields.Char(string='Habitación')
+    producto = fields.Char(string='Producto')
     cantidad = fields.Float(string='Cantidad')
     valorUnitario = fields.Float(string='Valor Unitario')
     valorTotal = fields.Float(string='Valor Total')
-    usuario = fields.Many2one(string='Usuario',comodel_name='res.users')
+    usuario = fields.Char(string='Usuario')
 
     # Campos no visibles
-    categoria = fields.Many2one(string='Categoría', comodel_name="product.category")
+    categoria = fields.Char(string='Categoría')
 

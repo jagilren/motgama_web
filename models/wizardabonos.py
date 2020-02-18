@@ -77,11 +77,17 @@ class MotgamaWizardAbonos(models.TransientModel):
             }
             valoresPagos.append(valores)
         
+        hab = self.env['motgama.flujohabitacion'].search([('codigo','=',self.movimiento_id.habitacion_id.codigo)],limit=1)
+        if not hab:
+            raise Warning('Hay un problema con la habitación')
+
         valoresRecaudo = {
             'movimiento_id': self.movimiento_id.id,
+            'habitacion': hab.id,
             'total_pagado': self.abonado,
             'valor_pagado': self.abonado,
             'usuario_uid': self.env.user.id,
+            'tipo_recaudo': 'abonos'
         }
         recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not recaudo:

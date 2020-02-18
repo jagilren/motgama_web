@@ -14,6 +14,7 @@ class MotgamaFacturaConsumos(models.Model):
     factura_id = fields.Many2one(string='Factura', comodel_name='account.invoice')
     orden_venta = fields.Many2one(comodel_name='sale.order')
     active = fields.Boolean(string="Activo",default=True)
+    recepcion = fields.Many2one(string='Recepción',comodel_name='motgama.recepcion')
 
     @api.model
     def _get_currency(self):
@@ -281,7 +282,8 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
         valoresRecaudo = {
             'cliente': self.cliente.id,
             'factura': factura.id,
-            'total_pagado': self.total
+            'total_pagado': self.total,
+            'tipo_recaudo': 'otros'
         }
         if self.pago_prenda:
             valoresPrenda = {
@@ -296,10 +298,11 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             if not nuevaPrenda:
                 raise Warning('No se pudo registrar la prenda')
             valoresRecaudo.update({'prenda': nuevaPrenda.id})
-            factura.update({'lleva_prenda':True,'prenda_id':nuevaPrenda.id})
+            factura.sudo().write({'lleva_prenda':True,'prenda_id':nuevaPrenda.id})
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('No se pudo registrar el recaudo')
+        factura.sudo().write({'recaudo':nuevoRecaudo.id})
 
         for valores in valoresPagos:
             valores.update({'recaudo':nuevoRecaudo.id})
@@ -307,12 +310,13 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             if not nuevoPago:
                 raise Warning('No se pudo guardar la información del pago')
         
-        self.factura_id.write({'factura_id':factura.id,'active':False})
+        self.factura_id.write({'factura_id':factura.id,'active':False,'recepcion':self.env.user.recepcion_id.id})
 
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'account.invoice',
             'view_mode': 'form',
+            'view_id': self.env.ref('account.invoice_form').id,
             'res_id': factura.id,
             'target': 'current'
         }

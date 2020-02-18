@@ -196,6 +196,8 @@ class MotgamaWizardModificaReserva(models.TransientModel):
             idReserva = self.env.context['active_id']
             reserva = self.env['motgama.reserva'].search([('id','=',idReserva)],limit=1)
 
+            #TODO: Revisar fecha
+
             valores = {
                 'fecha': record.fecha,
                 'condecoracion': record.decoracion,
@@ -205,6 +207,9 @@ class MotgamaWizardModificaReserva(models.TransientModel):
                 'modificada': True,
                 'modificada_uid': self.env.user.id
             }
+
+            if reserva.recaudo_id:
+                reserva.recaudo_id.sudo().write({'habitacion':record.habitacion_id.id})
 
             if record.fecha != reserva.fecha:
                 valores.update({'fecha_original': reserva.fecha})
@@ -296,9 +301,11 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
         
         valoresRecaudo = {
             'cliente': self.cliente.id,
+            'habitacion': self.reserva.habitacion_id.id,
             'total_pagado': self.total,
             'valor_pagado': self.total,
             'usuario_uid': self.env.user.id,
+            'tipo_recaudo': 'anticipos'
         }
         recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not recaudo:

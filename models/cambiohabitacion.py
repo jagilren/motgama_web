@@ -108,6 +108,9 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         if not nuevaReasignacion:
             raise Warning('No se pudo crear el registro de reasignación')
 
+        for recaudo in movimiento.recaudo_ids:
+            recaudo.sudo().write({'habitacion':flujoNuevo.id})
+
         for consumo in flujoViejo.consumos:
             consumo.sudo().write({'habitacion':flujoNuevo.id})
 

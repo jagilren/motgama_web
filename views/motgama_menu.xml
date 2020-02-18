@@ -228,6 +228,25 @@
         parent="menu_motgama_maestros_facturacion"
         action="account.action_account_journal_form"/>
     
+    <menuitem id="menu_motgama_impuestos"
+        name="Impuestos"
+        parent="menu_motgama_maestros_facturacion"
+        action="account.action_tax_form"/>
+    
+    <menuitem id="menu_motgama_maestros_otros"
+        name="Otros datos"
+        parent="menu_motgama_master"/>
+
+    <act_window id="accion_productos"
+        name="Productos"
+        res_model="product.template"
+        view_mode="kanban,tree,form"/>
+    
+    <menuitem id="menu_motgama_productos"
+        name="Productos"
+        parent="menu_motgama_maestros_otros"
+        action="accion_productos"/>
+    
     <!-- Accion -->
     <act_window id="accion_motgama_mediopago"
         name="Medios de pago"

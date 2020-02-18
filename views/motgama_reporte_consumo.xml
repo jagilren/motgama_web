@@ -7,9 +7,14 @@
             <form string="Reporte de Consumos">
                 <group>
                     <field name="tipo_reporte" widget="radio"/>
-                    <field name="recepcion"/>
-                    <field name="fecha_inicial" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')]}"/>
-                    <field name="fecha_final" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')]}"/>
+                    <field name="recepcion" options="{'no_create_edit': true}"/>
+                </group>
+                <group>
+                    <field name="fecha_inicial" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')],'required':[('tipo_reporte','=', 'fecha')]}"/>
+                    <field name="fecha_final" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')],'required':[('tipo_reporte','=', 'fecha')]}"/>
+                </group>
+                <group>
+                    <p>Si no selecciona recepción saldrán los consumos de todas las recepciones</p>
                 </group>
                 <footer>
                     <button name="get_report" string="Generar reporte" type="object" class="oe_highlight"/>
@@ -33,6 +38,21 @@
                 <field name="valorTotal"/>
                 <field name="usuario"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="search_reporte_consumos" model="ir.ui.view">
+        <field name="name">Busqueda Reporte de Consumos</field>
+        <field name="model">motgama.reporteconsumos</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Reporte">
+                <field name="producto"/>
+                <field name="categoria"/>
+                <field name="recepcion"/>
+                <filter name="recepcion" string="Recepción" context="{'group_by':'recepcion'}"/>
+                <filter string="Categoría" name="groupby_categoria" context="{'group_by':'categoria'}"/>
+                <filter string="Producto" name="groupby_producto" context="{'group_by':'producto'}"/>
+            </search>
         </field>
     </record>
 

@@ -35,7 +35,7 @@
                 <sheet>
                     <group>
                         <group>
-                            <h1><span><field name="cod" string="Código de reserva" attrs="{'invisible':[('esNueva','=',True)]}"/></span></h1>
+                            <h1><span><field name="cod" string="Código de reserva" readonly="1" attrs="{'invisible':[('esNueva','=',True)]}"/></span></h1>
                         </group>
                         <group>
                         </group>

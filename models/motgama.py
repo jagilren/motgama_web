@@ -847,6 +847,7 @@ class MotgamaRecaudo(models.Model):
     prenda = fields.Many2one(string='Prenda asociada',comodel_name='motgama.prendas')
     valor_pagado = fields.Float(string='Valor pagado',default=0.0)
     usuario_uid = fields.Many2one(string='Usuario que recauda',comodel_name='res.users', default=lambda self: self.env.user.id)
+    tipo_recaudo = fields.Selection(string='Tipo de recaudo',selection=[('habitaciones','Recaudo de habitaciones'),('abonos','Recaudo de abonos'),('prenda','Recaudo de prenda'),('anticipos','Recaudo de anticipos'),('otros','Otros recaudos')])
 
     @api.model
     def create(self,values):

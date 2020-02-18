@@ -74,7 +74,8 @@ class MotgamaWizardPrenda(models.TransientModel):
             'cliente': self.prenda.cliente_id.id,
             'factura': self.factura.id,
             'total_pagado': self.valor,
-            'valor_pagado': self.valor
+            'valor_pagado': self.valor,
+            'tipo_recaudo': 'prenda'
         }
         recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not recaudo:

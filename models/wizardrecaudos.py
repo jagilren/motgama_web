@@ -263,7 +263,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'cliente': self.cliente.id,
             'factura': factura.id,
             'total_pagado': self.total,
-            'valor_pagado': self.total - valorPrenda
+            'valor_pagado': self.total - valorPrenda,
+            'tipo_recaudo': 'habitaciones'
         }
         if self.pago_prenda:
             valoresPrenda = {

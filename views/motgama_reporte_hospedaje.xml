@@ -6,9 +6,14 @@
         <field name="arch" type="xml">
             <form string="Reporte de Hospedajes">
                 <group>
-                    <field name="recepcion"/>
+                    <field name="recepcion" options="{'no_create_edit': true}"/>
+                </group>
+                <group>
                     <field name="fecha_inicial" />
                     <field name="fecha_final" />
+                </group>
+                <group>
+                    <p>Si no se selecciona una recepción se muestran todos los hospedajes de todas las recepciones</p>
                 </group>
                 <footer>
                     <button name="get_report" string="Generar Reporte" type="object" class="oe_highlight"/>
@@ -30,6 +35,22 @@
                 <field name="valor"/>
                 <field name="usuario"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="search_reporte_hospedaje" model="ir.ui.view">
+        <field name="name">Busqueda Reporte de Hospedaje</field>
+        <field name="model">motgama.reportehospedaje</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Reporte">
+                <field name="tipoHospedaje"/>
+                <field name="recepcion"/>
+                <filter name="ocasional" string="Ocasional" domain="[('tipoHospedaje','=','O')]"/>
+                <filter name="amanecida" string="Amanecida" domain="[('tipoHospedaje','=','AM')]"/>
+                <filter name="adicional" string="Adicional" domain="[('tipoHospedaje','=','AD')]"/>
+                <filter name="recepcion" string="Recepción" context="{'group_by':'recepcion'}"/>
+                <filter string="Tipo de Hospedaje" name="groupby_tipo" context="{'group_by':'tipoHospedaje'}"/>
+            </search>
         </field>
     </record>
 
