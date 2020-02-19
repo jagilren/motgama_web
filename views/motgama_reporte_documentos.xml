@@ -1,0 +1,72 @@
+<odoo>
+    <record model= "ir.ui.view" id="motgama_wizard_documentos">
+        <field name="name">Wizard reporte de documentos</field>
+        <field name="model">motgama.wizard.reportedocumentos</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="tipo_reporte" widget="radio"/>
+                    </group>
+                    <group attrs="{'invisible':[('tipo_reporte','!=','fecha')]}">
+                        <field name="fecha_inicial" attrs="{'required':[('tipo_reporte','=','fecha')]}"/>
+                        <field name="fecha_final" attrs="{'required':[('tipo_reporte','=','fecha')]}"/>
+                    </group>
+                    <group attrs="{'invisible':[('tipo_reporte','!=','documento')]}">
+                        <field name="doc_inicial" attrs="{'required':[('tipo_reporte','=','documento')]}"/>
+                        <field name="doc_final" attrs="{'required':[('tipo_reporte','=','documento')]}"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="get_report" string="Generar reporte" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="tree_reporte_documentos">
+        <field name="name">Reporte de Documentos</field>
+        <field name="model">motgama.reportedocumentos</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="fecha"/>
+                <field name="doc"/>
+                <field name="cliente"/>
+                <field name="habitacion"/>
+                <field name="valor"/>
+                <field name="estado"/>
+                <field name="usuario"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="search_reporte_documentos" model="ir.ui.view">
+        <field name="name">Busqueda Reporte de Documentos</field>
+        <field name="model">motgama.reportedocumentos</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Reporte">
+                <field name="cliente"/>
+                <field name="habitacion"/>
+                <field name="estado"/>
+                <field name="usuario"/>
+                <filter name="cancelado" string="Cancelado" domain="[('estado','=','cancelado')]"/>
+                <filter name="facturado" string="Facturado" domain="[('estado','=','facturado')]"/>
+                <filter name="pendiente" string="Pendiente" domain="[('estado','=','pendiente')]"/>
+                <filter name="groupby_estado" string="Estado" context="{'group_by':'estado'}"/>
+                <filter string="Cliente" name="groupby_cliente" context="{'group_by':'cliente'}"/>
+            </search>
+        </field>
+    </record>
+
+    <act_window id="action_reporte_documentos_wizard"
+        name= "Reporte de documentos"
+        res_model="motgama.wizard.reportedocumentos"
+        view_mode="form"
+        target="new"/>
+
+    <menuitem action="action_reporte_documentos_wizard"
+        id="menu_reporte_documentos"
+        parent="menu_motgama_reportes"/>
+</odoo>

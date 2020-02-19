@@ -42,7 +42,7 @@
     name="Utilidades"
     res_model="motgama.utilidades"
     view_mode="form"
-    />
+    target="new"/>
 
     <menuitem id="menu_motgama_utilidades"
     name="Utilidades"

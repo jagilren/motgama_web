@@ -10,7 +10,6 @@
                     <group>
                         <h1 class="text-center">Menú Utilidades</h1><br/>
                     </group>
-
                     <notebook>
                         <page name="user" string="Usuario">
                             <group name="cambio_recepcion">
@@ -31,7 +30,10 @@
                             </group>
                         </page>
                     </notebook>
-                </sheet>    
+                </sheet>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="btn"/>
+                </footer>  
             </form>
         </field>
     </record>

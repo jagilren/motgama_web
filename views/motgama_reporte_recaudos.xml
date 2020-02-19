@@ -75,7 +75,7 @@
     </record>
 
     <act_window id="action_reporte_recaudo_wizard"
-        name= "Reporte de Recaudos"
+        name= "Reporte de recaudos"
         res_model="motgama.wizard.reporterecaudos"
         view_mode="form"
         target="new"/>

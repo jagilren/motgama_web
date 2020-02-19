@@ -55,7 +55,7 @@
     </record>
 
     <act_window id="action_reporte_hospedaje_wizard"
-        name= "Reporte hospedaje"
+        name= "Reporte de hospedaje"
         res_model="motgama.wizard.reportehospedaje"
         view_mode="form"
         target="new"/>
