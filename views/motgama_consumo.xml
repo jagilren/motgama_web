@@ -14,7 +14,7 @@
         <field name="habitacion" string="Habitacion" required="1" domain="[('estado','in',['OO','OA','LQ']),('recepcion','=',recepcion)]" options="{'no_create':True}"/>
         <field name="producto_id" string="Producto" required="1"/>
         <field name="lugar_id" string="Bodega de Inventario" required="1" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
-        <field name="textoComanda" attrs="{'readonly':[('llevaComanda','=',False)],'required':[('llevaComanda','=',True)]}"/>
+        <field name="textoComanda" attrs="{'readonly':[('llevaComanda','=',False)]}"/>
         <field name="vlrUnitario" string="Valor Unitario $" attrs="{'readonly':[('permitecambiarvalor','=',False)]}"/>
         <field name="cantidad" string="Cantidad" required="1"/>
         <field name="vlrSubtotal" string="Subtotal $"/>

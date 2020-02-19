@@ -28,7 +28,7 @@
                     <field name="abono_ids">
                         <tree>
                             <field name="nrorecaudo"/>
-                            <field name="create_date"/>
+                            <field name="create_date" string="Fecha"/>
                             <field name="valor_pagado"/>
                         </tree>
                     </field>

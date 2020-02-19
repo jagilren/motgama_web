@@ -6,7 +6,7 @@ class MotgamaWizardAbonos(models.TransientModel):
     _description = 'Wizard Abonos'
 
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',default=lambda self: self._get_movimiento())
-    saldo = fields.Float(string='Saldo habitación',compute='_compute_saldo')
+    saldo = fields.Float(string='Total abonos realizados',compute='_compute_saldo')
     abonado = fields.Float(string='Nuevo abono',compute='_compute_abonado')
     abonos = fields.Float(string='Abonado anteriormente',readonly=True,default=lambda self: self._get_abonos())
     pagos = fields.Many2many(string='Pagos',comodel_name='motgama.wizardpago')
@@ -108,7 +108,7 @@ class MotgamaAbonos(models.TransientModel):
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',default=lambda self: self._get_habitacion())
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',default=lambda self: self._get_movimiento())
     abono_ids = fields.Many2many(string='Abonos',comodel_name='motgama.recaudo',compute='_compute_abonos')
-    saldo = fields.Float(string='Saldo',compute='_compute_saldo')
+    saldo = fields.Float(string='Total abonos realizados',compute='_compute_saldo')
 
     @api.model
     def _get_habitacion(self):

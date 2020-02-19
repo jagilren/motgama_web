@@ -28,7 +28,7 @@
                     </group>
                 </sheet>
                 <footer>
-                    <button name="recaudar" string="Recaudar" type="object" class="btn btn-primary"/>
+                    <button name="recaudar" string="Aplicar abono" type="object" class="btn btn-primary"/>
                     <button special="cancel" string="Cancelar" class="btn"/>
                 </footer>
             </form>
@@ -48,7 +48,7 @@
                         <field name="abono_ids">
                             <tree>
                                 <field name="nrorecaudo"/>
-                                <field name="create_date"/>
+                                <field name="create_date" string="Fecha"/>
                                 <field name="valor_pagado"/>
                             </tree>
                         </field>
