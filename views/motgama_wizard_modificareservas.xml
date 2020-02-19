@@ -17,8 +17,8 @@
                         <field name="notadecoracion"/>
                     </group>
                     <group>
-                        <field name="tipohabitacion_id"/>
-                        <field name="habitacion_id"/>
+                        <field name="tipohabitacion_id" options="{'no_create': true}"/>
+                        <field name="habitacion_id" options="{'no_create': true}"/>
                     </group>
                 </sheet>
                 <footer>

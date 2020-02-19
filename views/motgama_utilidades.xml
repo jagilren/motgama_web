@@ -15,7 +15,7 @@
                             <group name="cambio_recepcion">
                                 <h3>Cambio de recepción</h3><br/>
                                 <p>Al cambiar de recepción ...</p><br/>
-                                <field name="nueva_recepcion"/>
+                                <field name="nueva_recepcion" options="{'no_create': true}"/>
                                 <button class="btn" type="object" name="btn_cambio_recepcion" string="Cambiar recepción"
                                     confirm="¿Está seguro que desea cambiar de recepción?"/>
                             </group>

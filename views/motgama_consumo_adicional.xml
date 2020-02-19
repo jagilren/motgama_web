@@ -75,7 +75,7 @@
                                 <control>
                                     <create string="Agregar pago"/>
                                 </control>
-                                <field name="mediopago" options="{'no_create_edit': true}"/>
+                                <field name="mediopago" options="{'no_create': true}"/>
                                 <field name="valor"/>
                             </tree>
                         </field>

@@ -14,8 +14,8 @@
                         <field name="fecha_final" attrs="{'required':[('tipo_reporte','=','fecha')]}"/>
                     </group>
                     <group attrs="{'invisible':[('tipo_reporte','!=','documento')]}">
-                        <field name="doc_inicial" attrs="{'required':[('tipo_reporte','=','documento')]}"/>
-                        <field name="doc_final" attrs="{'required':[('tipo_reporte','=','documento')]}"/>
+                        <field name="doc_inicial" attrs="{'required':[('tipo_reporte','=','documento')]}" options="{'no_create': true}"/>
+                        <field name="doc_final" attrs="{'required':[('tipo_reporte','=','documento')]}" options="{'no_create': true}"/>
                     </group>
                 </sheet>
                 <footer>

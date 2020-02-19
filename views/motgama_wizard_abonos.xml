@@ -15,7 +15,7 @@
                                 <control>
                                     <create string="Agregar pago"/>
                                 </control>
-                                <field name="mediopago" options="{'no_create_edit': true}" domain="[('tipo','not in',['abono','prenda'])]"/>
+                                <field name="mediopago" options="{'no_create': true}" domain="[('tipo','not in',['abono','prenda'])]"/>
                                 <field name="valor"/>
                             </tree>
                         </field>

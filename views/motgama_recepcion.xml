@@ -25,7 +25,7 @@
                         <field name="sucursal_id" class="oe_inline"
                             placeholder="Seleccione la sucursal" />
                         <field name="codigo" class="oe_inline"
-                            placeholder="ingrese el codigo de la recepción" options="{'no_create_edit': True}" required="1" />
+                            placeholder="ingrese el codigo de la recepción" options="{'no_create': True}" required="1" />
                         <field name="nombre" class="oe_inline"
                             placeholder="Ingrese el nombre de la recepción" />
                         <field name="active"/>

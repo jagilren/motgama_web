@@ -7,7 +7,7 @@
             <form string="Reporte de Consumos">
                 <group>
                     <field name="tipo_reporte" widget="radio"/>
-                    <field name="recepcion" options="{'no_create_edit': true}"/>
+                    <field name="recepcion" options="{'no_create': true}"/>
                 </group>
                 <group>
                     <field name="fecha_inicial" attrs="{'invisible': [('tipo_reporte','!=', 'fecha')],'required':[('tipo_reporte','=', 'fecha')]}"/>

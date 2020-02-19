@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form string="Reporte de Hospedajes">
                 <group>
-                    <field name="recepcion" options="{'no_create_edit': true}"/>
+                    <field name="recepcion" options="{'no_create': true}"/>
                 </group>
                 <group>
                     <field name="fecha_inicial" />

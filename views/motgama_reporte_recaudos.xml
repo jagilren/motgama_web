@@ -7,7 +7,7 @@
             <form>
                 <sheet>
                     <group>
-                        <field name="recepcion" options="{'no_create_edit': true}"/>
+                        <field name="recepcion" options="{'no_create': true}"/>
                         <field name="fecha_inicial" required="1"/>
                         <field name="fecha_final" required="1"/>
                     </group>
