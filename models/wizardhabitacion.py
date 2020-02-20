@@ -9,6 +9,18 @@ class MotgamaWizardHabitacion(models.TransientModel):
     _inherit = 'motgama.wizardhabitacion'
 
     @api.multi
+    def check_placa(self):
+        self.ensure_one()
+        if self.placa:
+            placa = self.placa.upper()
+            novedadPlaca = self.env['motgama.placa'].search([('placa','=',placa)], limit=1)
+            if novedadPlaca:
+                msg = 'La placa ' + self.placa + ' presenta el siguiente reporte: "' + novedadPlaca.descripcion + '"'
+                raise Warning(msg)
+            else:
+                raise Warning('La placa no presenta reportes')
+
+    @api.multi
     def button_asignar_wizard(self):
         self.ensure_one()
         # Revisa si tiene permisos para asignar
@@ -77,10 +89,15 @@ class MotgamaWizardHabitacion(models.TransientModel):
         # Ahora busca en las placas para verificar alguna novedad y mostrarla al operador. El mensaje aparece en el chatter
         if self.placa:
             placa = self.placa.upper()
-            novedadPlaca = self.env['motgama.placa'].search([('placa','=',str(placa))], limit=1)
+            novedadPlaca = self.env['motgama.placa'].search([('placa','=',placa)], limit=1)
             if novedadPlaca:
-                self.message_post(novedadPlaca['descripcion'], subject='Atención! Esta placa registra una novedad previa...',subtype='mail.mt_comment')
-            valores.update({'placa_vehiculo': placa})
+                msg = 'La placa ' + self.placa + ' presenta el siguiente reporte: "' + novedadPlaca.descripcion + '"'
+                title = 'Reporte de placa ' + self.placa
+                if novedadPlaca.tiporeporte == 'negativo':
+                    self.env.user.sudo().notify_warning(message=msg,title=title,sticky=True)
+                else:
+                    self.env.user.sudo().notify_success(message=msg,title=title,sticky=True)
+            valores.update({'placa_vehiculo':self.placa})
             
         # Se rellena el diccionario con los valores del registro
         valores.update({'habitacion_id': fullHabitacion.id})

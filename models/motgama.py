@@ -499,28 +499,45 @@ class MotgamaWizardHabitacion(models.TransientModel):
 # Se añade el historico de Placas para que tener registro si esta tuvo algun problema o tiene un acceso prioritario
 class MotgamaPlaca(models.Model):#10 julio
     _name = 'motgama.placa'
-    _description = u'Placas'
-    _sql_constraints = [('placa_uniq', 'unique (placa)', "La placa ya Existe, Verifique!")]
-    placa = fields.Char(string=u'Placa del Vehiculo') 
-    descripcion = fields.Text(string=u'Descripción del Evento',) # Descripción del evento
+    _description = 'Placas'
+    _sql_constraints = [('placa_uniq','unique (placa)',"La placa ya Existe, Puede modificar el registro en el menú Procesos -> Placas Registradas")]
+    _rec_name = 'placa'
+    
+    placa = fields.Char(string='Placa del Vehiculo',placeholder='AAA111',required=True) 
+    descripcion = fields.Text(string='Descripción del evento') # Descripción del evento
     # Se agrega nuevos campos al models 11 julio 2019
-    tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])    
-    tipovinculo = fields.Text(string=u'Tipo de vinculo',)
-    descvinculo = fields.Text(string=u'Descripción del vínculo',)    
+    tipovehiculo = fields.Selection(string='Tipo de vehiculo',selection=[('moto','Moto'),('particular','Particular'),('taxi','Taxi')],required=True)    
+    tiporeporte = fields.Selection(string='Tipo de reporte',selection=[('positivo','Positivo'),('negativo','Negativo')],default='positivo',required=True)
+    vinculo = fields.Char(string='Vínculo del vehículo')
+
+    @api.model
+    def create(self,values):
+        values['placa'] = values['placa'].upper()
+        record = super().create(values)
+        if len(record.placa) not in [5,6] or ' ' in record.placa or '-' in record.placa:
+            raise Warning('Formato de placa no válido, escriba la placa sin espacios o guiones, use solo letras y números. Ejemplos: Vehículos particulares y taxis: "ABC123", motos: "ABC12" o "ABC12D"')
+        return record
+    
+    def write(self,values):
+        if 'placa' in values:
+            values['placa'] = values['placa'].upper()
+            if len(values['placa']) not in [5,6] or ' ' in values['placa'] or '-' in values['placa']:
+                raise Warning('Formato de placa no válido, escriba la placa sin espacios o guiones, use solo letras y números. Ejemplos: Vehículos particulares y taxis: "ABC123", motos: "ABC12" o "ABC12D"')
+        return super().write(values)
 
 class MotgamaTema(models.Model):#ok                                                                                 #P7.0.4R
 #   Fields: TEMA: .
     _name = 'motgama.tema'
-    _description = u'Tema'
+    _description = 'Tema'
     _rec_name = 'nombre'
     _order = 'nombre ASC'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
-    codigo = fields.Char(string=u'Código') 
-    nombre = fields.Char(string=u'Nombre',required=True,)
-    descripcion = fields.Text(string=u'Descripción')
-    fotografia = fields.Binary(string=u'Foto')
-    active = fields.Boolean(string=u'Activo?',default=True)
-    habitacion_ids = fields.One2many(string=u'Habitaciones con este tema',comodel_name='motgama.habitacion',inverse_name='tema_id')  #HABITACIONES CON ESTE TEMA
+    codigo = fields.Char(string='Código') 
+    nombre = fields.Char(string='Nombre',required=True,)
+    descripcion = fields.Text(string='Descripción')
+    fotografia = fields.Binary(string='Foto')
+    active = fields.Boolean(string='Activo?',default=True)
+    habitacion_ids = fields.One2many(string='Habitaciones con este tema',comodel_name='motgama.habitacion',inverse_name='tema_id')  #HABITACIONES CON ESTE TEMA
 
 class MotgamaMovimiento(models.Model):#ok
 #    Fields: MOVIMIENTO: .Modification date:  Mayo 9 del 2019: 
@@ -528,25 +545,25 @@ class MotgamaMovimiento(models.Model):#ok
 #        - asignatipo = Se selecciona que tipo de asignacion tiene la habitacion.
     _name = 'motgama.movimiento'
     _description = 'Movimiento'
-    habitacion_id = fields.Many2one(string=u'Habitación',comodel_name='motgama.habitacion',ondelete='set null')
-    tipovehiculo = fields.Selection(string=u'Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
-    placa_vehiculo = fields.Char(string=u'Placa del Vehiculo')
-    asignatipo = fields.Selection(string=u'Tipo de Asignación',selection=[('OO', 'Ocasional'), ('OA', 'Amanecida')]) # (09/05/2019) 
+    habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.habitacion',ondelete='set null')
+    tipovehiculo = fields.Selection(string='Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')])
+    placa_vehiculo = fields.Char(string='Placa del Vehiculo')
+    asignatipo = fields.Selection(string='Tipo de Asignación',selection=[('OO', 'Ocasional'), ('OA', 'Amanecida')]) # (09/05/2019) 
    # asignafecha = fields.Date(string=u'Asignación de Fecha')
-    asignafecha = fields.Datetime(string=u'Fecha de Movimiento',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
+    asignafecha = fields.Datetime(string='Fecha de Movimiento',readonly=True, required=True,index=True,default=(lambda *a: time.strftime(dt)))
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario que asigna')
    # liquidafecha = fields.Date(string=u'Liquida Fecha')
-    liquidafecha= fields.Datetime(string=u'Fecha y hora Liquidacion')
+    liquidafecha= fields.Datetime(string='Fecha y hora Liquidacion')
     liquida_uid = fields.Many2one(comodel_name='res.users',string='Usuario que liquida')
    # recaudafecha = fields.Date(string=u'Fecha de recaudo')
-    recaudafecha = fields.Datetime(string=u'Fecha y hora de recaudo')
+    recaudafecha = fields.Datetime(string='Fecha y hora de recaudo')
     recauda_uid = fields.Many2one(comodel_name='res.users',string='Usuario que recauda')
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
    # aseofecha = fields.Date(string=u'Fecha de aseo')
-    aseofecha = fields.Datetime(string=u'Fecha y hora aseo')
+    aseofecha = fields.Datetime(string='Fecha y hora aseo')
     aseo_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cambia al estado aseo')
    # habilitafecha = fields.Date(string=u'Fecha de habilitación')
-    habilitafecha = fields.Datetime(string=u'Fecha y hora en que se habilita')
+    habilitafecha = fields.Datetime(string='Fecha y hora en que se habilita')
     habilita_uid = fields.Many2one(comodel_name='res.users',string='Usuario que habilita la habitación')
    # reasignafecha = fields.Date(string=u'Fecha de reasignación')
     # reasignafecha = fields.Datetime(string=u'Fecha y Hora de reasignación')
@@ -558,19 +575,19 @@ class MotgamaMovimiento(models.Model):#ok
    # reservafecha = fields.Date(string=u'Fecha de la reserva')
     reserva = fields.Many2one(string="Reserva",comodel_name="motgama.reserva")
    # desasignafecha = fields.Date(string=u'Fecha de la desasigna')
-    desasignafecha = fields.Datetime(string=u'Fecha y Hora de la desasigna')
+    desasignafecha = fields.Datetime(string='Fecha y Hora de la desasigna')
     desasigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario que desasigna')
-    incluyedecora = fields.Boolean(string=u'Incluye decoración')    
-    tarifaocasional = fields.Float(string=u'Tarifa ocasional')
-    tarifamanecida = fields.Float(string=u'Tarifa amanecida')
-    tarifahoradicional = fields.Float(string=u'Tarifa hora adicional')    
+    incluyedecora = fields.Boolean(string='Incluye decoración')    
+    tarifaocasional = fields.Float(string='Tarifa ocasional')
+    tarifamanecida = fields.Float(string='Tarifa amanecida')
+    tarifahoradicional = fields.Float(string='Tarifa hora adicional')    
     # tarifapersonadicional = fields.Float(string=u'Tarifa persona adicional') # REVISAR YA NO VA PORQUE ES UN PRODUCTO MAS
     tiemponormalocasional = fields.Integer(string='Tiempo ocasional normal')
-    active = fields.Boolean(string=u'Activo?',default=True)
-    anticipo = fields.Float(string=u'Valor anticipo')
-    formapagoanticipo = fields.Char(string=u'Forma pago anticipo')
-    reciboanticipo = fields.Float(string=u'Nro recibo caja anticipo')
-    ordenVenta = fields.Many2one(string=u'Estado de cuenta',comodel_name='sale.order')
+    active = fields.Boolean(string='Activo?',default=True)
+    anticipo = fields.Float(string='Valor anticipo')
+    formapagoanticipo = fields.Char(string='Forma pago anticipo')
+    reciboanticipo = fields.Float(string='Nro recibo caja anticipo')
+    ordenVenta = fields.Many2one(string='Estado de cuenta',comodel_name='sale.order')
     # Proceso de Fuera de servicio
     fueradeserviciohora = fields.Datetime(string='Fecha fuera de servicio')
     fueradeservicio_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cambia de estado a fuera de servicio')
@@ -579,7 +596,7 @@ class MotgamaMovimiento(models.Model):#ok
     fueradeuso_uid = fields.Many2one(comodel_name='res.users',string='Usuario que cambia de estado a fuera de uso')
     fueradeuso_usuarioorden = fields.Char(string='Persona que dio la orden')
     # Se agrega lista de precios traida del calendario según el día de la semana
-    listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist')
+    listaprecioproducto = fields.Many2one(string='Lista precio Productos',comodel_name='product.pricelist')
     observacion = fields.Text(string='Observación')
     horainicioamanecida = fields.Datetime(string='Hora Inicio Amanecida')
     horafinamanecida = fields.Datetime(string='Hora Fin Amanecida')
@@ -595,8 +612,8 @@ class MotgamaHistoricoMovimiento(models.Model):#ok
     _description = 'MotgamaHistoricoMovimiento' 
     _rec_name = 'anio'
     _order = 'anio ASC'
-    anio = fields.Char(string=u'Año')
-    active = fields.Boolean(string=u'Activo?',default=True)
+    anio = fields.Char(string='Año')
+    active = fields.Boolean(string='Activo?',default=True)
 
 class MotgamaReservas(models.Model):#ok
 #    Fields: Reserva: se hereda res.partner para ingresar el usuario cuando realiza la reservacion

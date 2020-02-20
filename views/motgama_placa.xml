@@ -8,10 +8,9 @@
         <field name="arch" type="xml">
             <tree string="Placas">
                 <field name="placa"/>
-                <field name="descripcion"/>
                 <field name="tipovehiculo"/>
-                <field name="tipovinculo"/>                
-                <field name="descvinculo"/>
+                <field name="descripcion"/>              
+                <field name="vinculo"/>
             </tree>
         </field>
     </record>
@@ -19,21 +18,42 @@
     <record id="form_view_placa" model="ir.ui.view">
         <field name="name">Historico de Placas</field>
         <field name="model">motgama.placa</field>
-        <field name="limit">100</field>
         <field name="arch" type="xml">
-            <form string="Placa" create="true" delete="true" edit="true">
+            <form string="Placa">
                 <sheet>
-                    <div class="oe_title">
-                    <br/>
+                    <group>
                         <field name="placa"/>
-                        <field name="descripcion"/>
                         <field name="tipovehiculo"/>
-                        <field name="tipovinculo"/>                
-                        <field name="descvinculo"/>
-                    <br/>
-                    </div>
+                        <field name="tiporeporte"/> 
+                        <field name="descripcion"/>               
+                        <field name="vinculo"/>
+                    </group>
                 </sheet>
             </form>
         </field>
-    </record>   
+    </record>
+    <!--Wizard en habitación-->
+    <record id="wizard_placa_form" model="ir.ui.view">
+        <field name="name">Wizard Placa</field>
+        <field name="model">motgama.wizard.placa</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="placa" readonly="1"/>
+                        <field name="tipovehiculo" readonly="1"/>
+                    </group>
+                    <group>
+                        <field name="tiporeporte"/>
+                        <field name="descripcion"/>
+                        <field name="vinculo"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="reportar" string="Reportar placa" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record> 
 </odoo>

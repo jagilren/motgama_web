@@ -78,6 +78,9 @@
                     <button name="button_inmotica" string="Desbloquear puerta" type="object"
                         class="btn" attrs="{'invisible':[('estado','not in',['OO','OA','LQ']),('inmotica','=',False)]}"
                         confirm="Va a desbloquear la puerta de la habitación, recuerde que debe tener los permisos suficientes para realizarlo, ¿Está seguro que desea continuar?"/>
+
+                    <button name="button_reporte_placa" string="Reportar placa" type="object" class="btn"
+                        attrs="{'invisible':[('estado','not in',['OO','OA','LQ','RC'])]}"/>
                         
                 </header>
                 <sheet>
@@ -257,7 +260,18 @@
                 <group>
                     <group>
                         <field name="tipovehiculo"/>
-                        <field name="placa" attrs="{'invisible':[('tipovehiculo','not in',['particular','moto','taxi'])],'required':[('tipovehiculo','in',['particular','moto'])]}"/>
+                    </group>
+                    <group>
+                    </group>
+                    <group attrs="{'invisible':[('tipovehiculo','not in',['particular','moto','taxi'])],'required':[('tipovehiculo','in',['particular','moto'])]}">
+                        <field name="placa"/>
+                    </group>
+                    <group attrs="{'invisible':[('tipovehiculo','not in',['particular','moto','taxi'])],'required':[('tipovehiculo','in',['particular','moto'])]}">
+                        <button name="check_placa" string="Revisar reporte de placa" type="object" class="btn btn-primary"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
                         <field name="asignatipo"/>
                     </group>
                     <group>
