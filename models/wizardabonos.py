@@ -156,6 +156,7 @@ class MotgamaFlujoHabitacion(models.Model):
         if not self.env.user.motgama_ingreso_anticipo:
             raise Warning('No tiene permitido ingresar abonos, contacte al administrador')
         return {
+            'name': 'Abonar',
             'type': 'ir.actions.act_window', 
             'res_model': 'motgama.wizard.abonos',
             'view_type': 'form',

@@ -36,6 +36,7 @@ class MotgamaReservas(models.Model):
     @api.multi
     def button_modificar(self):
         return {
+            'name': 'Modificar reserva',
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizard.modificareserva',
             'view_type': 'form',
@@ -135,6 +136,7 @@ class MotgamaReservas(models.Model):
     def recaudo_anticipo(self):
         self.ensure_one()
         return {
+            'name': 'Recaudar anticipo',
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizard.recaudoreserva',
             'view_type': 'form',
@@ -223,6 +225,7 @@ class MotgamaFlujohabitacion(models.Model):
     @api.multi
     def button_asigna_reserva(self):
         return {
+            'name': 'Asignar reserva',
             'type':'ir.actions.act_window',
             'res_model':"motgama.wizardhabitacion",
             'name':"Flujo Habitacion",

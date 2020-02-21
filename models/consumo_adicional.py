@@ -48,6 +48,7 @@ class MotgamaFacturaConsumos(models.Model):
         if not self.env.user.motgama_factura_extemporanea:
             raise Warning('No tiene permitido facturar consumos sin hospedaje, contacte al administrador')
         return {
+            'name': 'Recaudar factura',
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizardfacturaconsumos',
             'view_type': 'form',

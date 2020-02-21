@@ -26,6 +26,7 @@ class MotgamaFlujoHabitacion(models.Model):
             prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.id)])
             if prestados:
                 return {
+                    'name': 'Hay objetos prestados',
                     'type': 'ir.actions.act_window',
                     'res_model': 'motgama.confirm.prestados',
                     'view_type': 'form',
@@ -37,6 +38,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 self.write({'puede_recaudar': True})
         self.write({'puede_recaudar': False})
         return {
+            'name': 'Recaudar habitación',
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizardrecaudo',
             'view_type': 'form',

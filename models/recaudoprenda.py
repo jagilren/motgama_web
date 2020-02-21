@@ -15,6 +15,7 @@ class MotgamaPrendas(models.Model):
         if not self.env.user.motgama_recauda_prenda:
             raise Warning('No tiene permitido recaudar prendas, contacte al administrador')
         return {
+            'name': 'Recaudar prenda',
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizardprenda',
             'view_mode': 'form',
