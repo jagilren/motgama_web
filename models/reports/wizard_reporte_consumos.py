@@ -122,3 +122,45 @@ class ReporteConsumos(models.TransientModel):
     # Campos no visibles
     categoria = fields.Char(string='Categoría')
 
+class PDFReporteConsumos(models.AbstractModel):
+    _name = 'report.motgama.reporteconsumos'
+
+    @api.model
+    def _get_report_values(self,docids,data=None):
+        docs = self.env['motgama.reporteconsumos'].browse(docids)
+
+        productos = {}
+        categorias = {}
+        totalconsumos = 0
+        for doc in docs:
+            if doc.producto in productos:
+                valores = {
+                    'cantidad': productos[doc.producto]['cantidad'] + doc.cantidad,
+                    'valor': productos[doc.producto]['valor'] + doc.valorTotal
+                }
+            else:
+                valores = {
+                    'cantidad': doc.cantidad,
+                    'valor': doc.valorTotal
+                }
+            productos[doc.producto] = valores
+            
+            if doc.categoria in categorias:
+                total = categorias[doc.categoria] + doc.valorTotal
+            else:
+                total = doc.valorTotal
+            categorias[doc.categoria] = total
+
+            totalconsumos += doc.valorTotal
+        
+        for prod in productos:
+            productos[prod]['valor'] = "{:0,.1f}".format(productos[prod]['valor']).replace(',','¿').replace('.',',').replace('¿','.')
+        for categ in categorias:
+            categorias[categ] = "{:0,.1f}".format(categorias[categ]).replace(',','¿').replace('.',',').replace('¿','.')
+            
+        return {
+            'docs': docs,
+            'productos': productos,
+            'categorias': categorias,
+            'total': "{:0,.1f}".format(totalconsumos).replace(',','¿').replace('.',',').replace('¿','.')
+        }

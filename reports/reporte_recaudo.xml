@@ -1,32 +1,35 @@
 <odoo>
-
-    <report id="reporte_consumo"
-        model="motgama.reporteconsumos"
-        string="Reporte de Consumos"
+    <report id="reporte_recaudos"
+        model="motgama.reporterecaudos"
+        string="Reporte de Recaudos"
         report_type="qweb-pdf"
-        name="motgama.reporteconsumos"
+        name="motgama.reporterecaudos"
         paperformat="motgama.formato_reporte"/>
 
-    <template id="reporteconsumos">
+    <template id="reporterecaudos">
         <t t-call="web.html_container">
             <div class="header" style="border-bottom: 2px solid black">
-                <h3 class="text-center">Reporte de Consumos</h3>
+                <h3 class="text-center">Reporte de Recaudos</h3>
             </div>
             <div class="article">
                 <table class="table table-condensed table-bordered" style="width: 100%">
                     <thead>
-                        <th class="text-center" style="width: 34%">Recepción</th>
-                        <th class="text-center" style="width: 33%">Fecha</th>
-                        <th class="text-center" style="width: 33%">Habitación</th>
-                        <th class="text-center" style="width: 33%">Producto</th>
-                        <th class="text-center" style="width: 33%">Cantidad</th>
-                        <th class="text-center" style="width: 33%">Valor Unitario</th>
-                        <th class="text-center" style="width: 33%">Valor Total</th>
-                        <th class="text-center" style="width: 33%">Usuario</th>
+                        <th class="text-center" style="width: 10%">Nro. Recaudo</th>
+                        <th class="text-center" style="width: 10%">Recepción</th>
+                        <th class="text-center" style="width: 10%">Fecha</th>
+                        <th class="text-center" style="width: 10%">Habitación</th>
+                        <th class="text-center" style="width: 13%">Tipo de Recaudo</th>
+                        <th class="text-center" style="width: 10%">Diario de pagos</th>
+                        <th class="text-center" style="width: 12%">Medio de pago</th>
+                        <th class="text-center" style="width: 15%">Valor</th>
+                        <th class="text-center" style="width: 10%">Usuario</th>
                     </thead>
                     <tbody>
                         <t t-foreach="docs" t-as="doc">
                             <tr>
+                                <td class="text-center">
+                                    <span t-field="doc.nrorecaudo"/>
+                                </td>
                                 <td class="text-center">
                                     <span t-field="doc.recepcion"/>
                                 </td>
@@ -37,16 +40,16 @@
                                     <span t-field="doc.habitacion"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-field="doc.producto"/>
+                                    <span t-field="doc.tipo_recaudo"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-field="doc.cantidad"/>
+                                    <span t-field="doc.diario"/>
                                 </td>
                                 <td class="text-center">
-                                    $ <span t-field="doc.valorUnitario"/>
+                                    <span t-field="doc.medio_pago"/>
                                 </td>
                                 <td class="text-center">
-                                    $ <span t-field="doc.valorTotal"/>
+                                    $ <span t-field="doc.valor"/>
                                 </td>
                                 <td class="text-center">
                                     <span t-field="doc.usuario"/>
@@ -56,51 +59,46 @@
                     </tbody>
                 </table>
                 <br/>
-                <h4>Resumen por Productos</h4>
+                <h4>Resumen por Tipo de Recaudo</h4>
                 <table class="table table-condensed table-bordered" style="width: 100%">
                     <thead>
-                        <th class="text-center" style="width: 34%">Producto</th>
-                        <th class="text-center" style="width: 34%">Cantidad</th>
-                        <th class="text-center" style="width: 34%">Total</th>
+                        <th class="text-center" style="width: 50%">Tipo de Recaudo</th>
+                        <th class="text-center" style="width: 50%">Total</th>
                     </thead>
                     <tbody>
-                        <t t-foreach="productos" t-as="prod">
+                        <t t-foreach="tipos" t-as="tipo">
                             <tr>
                                 <td class="text-center">
-                                    <span t-esc="prod"/>
+                                    <span t-esc="tipo"/>
                                 </td>
                                 <td class="text-center">
-                                    <span t-esc="productos[prod]['cantidad']"/>
-                                </td>
-                                <td class="text-center">
-                                    $ <span t-esc="productos[prod]['valor']"/>
+                                    $ <span t-esc="tipos[tipo]"/>
                                 </td>
                             </tr>
                         </t>
                     </tbody>
                 </table>
+                <p><span class="font-weight-bold">Total habitaciones:</span> <span t-esc="habitaciones"/></p>
                 <br/>
-                <h4>Resumen por Categorías</h4>
+                <h4>Resumen por medio de pago</h4>
                 <table class="table table-condensed table-bordered" style="width: 100%">
                     <thead>
-                        <th class="text-center" style="width: 34%">Categoría</th>
-                        <th class="text-center" style="width: 34%">Total</th>
+                        <th class="text-center" style="width: 50%">Medio de Pago</th>
+                        <th class="text-center" style="width: 50%">Total</th>
                     </thead>
                     <tbody>
-                        <t t-foreach="categorias" t-as="categ">
+                        <t t-foreach="medios" t-as="medio">
                             <tr>
                                 <td class="text-center">
-                                    <span t-esc="categ"/>
+                                    <span t-esc="medio"/>
                                 </td>
                                 <td class="text-center">
-                                    $ <span t-esc="categorias[categ]"/>
+                                    $ <span t-esc="medios[medio]"/>
                                 </td>
                             </tr>
                         </t>
                     </tbody>
                 </table>
-                <br/>
-                <p><span class="font-weight-bold">Total consumos:</span> $ <span t-esc="total"/></p>
             </div>
             <div class="footer">
                 <div class="row text-center" style="border-top: 1px solid black;">

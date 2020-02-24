@@ -50,7 +50,6 @@
         'views/res_users.xml',
         'views/product_category.xml',
         'views/motgama_reporte_consumo.xml',
-        'reports/reporte_consumos.xml',
         'views/motgama_reporte_hospedaje.xml',
         'views/motgama_reporte_recaudos.xml',
         'views/motgama_reporte_documentos.xml',
@@ -79,5 +78,10 @@
         'registros/secuencia_prenda.xml',
         'registros/secuencia_recaudo.xml',
         'registros/cliente_contado.xml',
-        'registros/medios_pago.xml']
+        'registros/medios_pago.xml',
+        'reports/formato_reporte.xml',
+        'reports/reporte_consumos.xml',
+        'reports/reporte_documentos.xml',
+        'reports/reporte_hospedaje.xml',
+        'reports/reporte_recaudo.xml']
 }

@@ -35,7 +35,6 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
                 'fecha': doc.create_date,
                 'doc': doc.name,
                 'cliente': doc.partner_id.name,
-                'valor': doc.amount_total,
                 'usuario': doc.write_uid.name
             }
 
@@ -53,6 +52,11 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
                     valores.update({'estado':'facturado'})
             else:
                 continue
+
+            if valores['estado'] == 'facturado':
+                valores.update({'valor':doc.amount_total})
+            else:
+                valores.update({'valor':0})
             
             nuevo = self.env['motgama.reportedocumentos'].create(valores)
             if not nuevo:
@@ -78,3 +82,21 @@ class MotgamaReporteDocumentos(models.TransientModel):
     valor = fields.Float(string='Valor Total')
     estado = fields.Selection(string='Estado',selection=[('cancelado','Cancelado'),('pendiente','Pendiente'),('facturado','Facturado')])
     usuario = fields.Char(string='Usuario')
+
+class PDFReporteDocumentos(models.AbstractModel):
+    _name = 'report.motgama.reportedocumentos'
+
+    @api.model
+    def _get_report_values(self,docids,data=None):
+        docs = self.env['motgama.reportedocumentos'].browse(docids)
+        count = len(docs)
+
+        total = 0
+        for doc in docs:
+            total += doc.valor
+        
+        return {
+            'docs': docs,
+            'count': count,
+            'total': "{:0,.1f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
+        }

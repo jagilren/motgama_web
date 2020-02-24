@@ -111,3 +111,50 @@ class MotgamaReporteRecaudos(models.TransientModel):
     medio_pago = fields.Char(string='Medio de pago')
     valor = fields.Float(string='Valor')
     usuario = fields.Char(string='Usuario')
+
+class PDFReporteRecaudos(models.AbstractModel):
+    _name = 'report.motgama.reporterecaudos'
+
+    @api.model
+    def _get_report_values(self,docids,data=None):
+        docs = self.env['motgama.reporterecaudos'].browse(docids)
+
+        tiposRecaudo = {}
+        mediosPago = {}
+        habitaciones = []
+        for doc in docs:
+            if doc.tipo_recaudo == 'habitaciones':
+                tipo = 'Recaudo de habitaciones'
+            elif doc.tipo_recaudo == 'abonos':
+                tipo = 'Recaudo de abonos'
+            elif doc.tipo_recaudo == 'prenda':
+                tipo = 'Recaudo de prenda'
+            elif doc.tipo_recaudo == 'anticipos':
+                tipo = 'Recaudo de anticipos'
+            else:
+                tipo = 'Otros recaudos'
+
+            if tipo in tiposRecaudo:
+                tiposRecaudo[tipo] += doc.valor
+            else:
+                tiposRecaudo[tipo] = doc.valor
+
+            if not doc.habitacion in habitaciones:
+                habitaciones.append(doc.habitacion)
+            
+            if doc.medio_pago in mediosPago:
+                mediosPago[doc.medio_pago] += doc.valor
+            else:
+                mediosPago[doc.medio_pago] = doc.valor
+        
+        for tipo in tiposRecaudo:
+            tiposRecaudo[tipo] = "{:0,.1f}".format(tiposRecaudo[tipo]).replace(',','¿').replace('.',',').replace('¿','.')
+        for medio in mediosPago:
+            mediosPago[medio] = "{:0,.1f}".format(mediosPago[medio]).replace(',','¿').replace('.',',').replace('¿','.')
+        
+        return {
+            'docs': docs,
+            'tipos': tiposRecaudo,
+            'medios': mediosPago,
+            'habitaciones': len(habitaciones)
+        }

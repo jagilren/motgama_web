@@ -76,11 +76,32 @@ class WizardReporteHospedaje(models.TransientModel):
 class ReporteHospedaje(models.TransientModel):
     _name = 'motgama.reportehospedaje'
 
-    recepcion = fields.Char(string='Recepcion')
+    recepcion = fields.Char(string='Recepción')
     fecha = fields.Datetime(string='Fecha')
-    habitacion = fields.Char(string='Habitacion')
+    habitacion = fields.Char(string='Habitación')
     tipoHospedaje = fields.Selection(string='Tipo de hospedaje',selection=[('O','Hospedaje Ocasional'),('AM','Hospedaje Amanecida'),('AD','Hospedaje Adicional')])
     valor = fields.Float(string='Valor')
     usuario = fields.Char(string='Usuario')
 
-    
+class PDFReporteHospedaje(models.AbstractModel):
+    _name = 'report.motgama.reportehospedaje'
+
+    @api.model
+    def _get_report_values(self,docids,data=None):
+        docs = self.env['motgama.reportehospedaje'].browse(docids)
+
+        hospedajes = {}
+        total = 0
+        for doc in docs:
+            tipoHospedaje = 'Hospedaje Ocasional' if doc.tipoHospedaje == 'O' else 'Hospedaje Amanecida' if doc.tipoHospedaje == 'AM' else 'Hospedaje Adicional' if doc.tipoHospedaje == 'AD' else ''
+            if tipoHospedaje in hospedajes:
+                hospedajes[tipoHospedaje] += doc.valor
+            else:
+                hospedajes[tipoHospedaje] = doc.valor
+            total += doc.valor
+        
+        return {
+            'docs': docs,
+            'hospedajes': hospedajes,
+            'total': "{:0,.1f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
+        }
