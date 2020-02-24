@@ -80,7 +80,7 @@
                 </table>
                 <p><span class="font-weight-bold">Total habitaciones:</span> <span t-esc="habitaciones"/></p>
                 <br/>
-                <h4>Resumen por medio de pago</h4>
+                <h4>Resumen por Medio de Pago</h4>
                 <table class="table table-condensed table-bordered" style="width: 100%">
                     <thead>
                         <th class="text-center" style="width: 50%">Medio de Pago</th>
