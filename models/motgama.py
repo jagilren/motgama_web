@@ -735,7 +735,7 @@ class MotgamaBonos(models.Model):
 
 class MotgamaConsumo(models.Model):
 #    Fields: Consumos del Bar en cualquiera de las recepciones: Creado: Junio 07 del 2019
-    _name = 'motgama.consumo'
+    _name = 'motgama.consumo' 
     _description = 'Consumos'
     _inherit = 'base'
     # 19 jun se cambia por habitacion para despues realizar un autoguardado

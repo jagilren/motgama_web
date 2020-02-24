@@ -1,0 +1,131 @@
+<odoo>
+    <data noupdate="1">
+        <record id="co_puc_414025" model="account.account">
+            <field name="code">414025</field>
+            <field name="name">BEBIDAS</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_414020" model="account.account">
+            <field name="code">414020</field>
+            <field name="name">COMESTIBLES</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_414005" model="account.account">
+            <field name="code">414005</field>
+            <field name="name">HOSPEDAJE</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_414025" model="account.account">
+            <field name="code">414025</field>
+            <field name="name">COMESTIBLES</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_414015" model="account.account">
+            <field name="code">414015</field>
+            <field name="name">RESTAURANTE</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_414030" model="account.account">
+            <field name="code">414030</field>
+            <field name="name">SUMINISTROS</field>
+            <field name="user_type_id" ref="account.data_account_type_revenue"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_24083001" model="account.account">
+            <field name="code">24083001</field>
+            <field name="name">Impuesto al consumo 8%</field>
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_24080503" model="account.account">
+            <field name="code">24080503</field>
+            <field name="name">Iva Facturado 20%</field>
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_24080504" model="account.account">
+            <field name="code">24080504</field>
+            <field name="name">Iva Otros Facturados</field>
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_529580" model="account.account">
+            <field name="code">529580</field>
+            <field name="name">CORTESIA</field>
+            <field name="user_type_id" ref="account.data_account_type_expenses"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_138035" model="account.account">
+            <field name="code">138035</field>
+            <field name="name">CUENTAS X PAGAR</field>
+            <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_28050501" model="account.account">
+            <field name="code">28050501</field>
+            <field name="name">ABONOS CLIENTES</field>
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_53053501" model="account.account">
+            <field name="code">53053501</field>
+            <field name="name">DESCUENTOS</field>
+            <field name="user_type_id" ref="account.data_account_type_expenses"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_28050502" model="account.account">
+            <field name="code">28050502</field>
+            <field name="name">DEPOSITOS CLIENTES</field>
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_13551501" model="account.account">
+            <field name="code">13551501</field>
+            <field name="name">ReteFuente</field>
+            <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_13551706" model="account.account">
+            <field name="code">13551706</field>
+            <field name="name">ReteIva</field>
+            <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_13551801" model="account.account">
+            <field name="code">13551801</field>
+            <field name="name">Gastos Recibos</field>
+            <field name="user_type_id" ref="account.data_account_type_current_assets"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        <record id="co_puc_24081010" model="account.account">
+            <field name="code">24081010</field>
+            <field name="name">Iva Descontable Recibos</field>
+            <field name="user_type_id" ref="account.data_account_type_current_liabilities"/>
+            <field name="chart_template_id" ref="l10n_co.l10n_co_chart_template_generic"/>
+            <field name="reconcile">FALSE</field>
+        </record>
+        
+    </data>
+</odoo>
