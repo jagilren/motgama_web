@@ -79,7 +79,6 @@
         'registros/secuencia_recaudo.xml',
         'registros/cliente_contado.xml',
         'registros/medios_pago.xml',
-        'registros/puc_ler.xml',
         'reports/formato_reporte.xml',
         'reports/reporte_consumos.xml',
         'reports/reporte_documentos.xml',
