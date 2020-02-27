@@ -1,0 +1,50 @@
+<odoo>
+    <record model="ir.ui.view" id="motgama_wizard_interfaz_contable">
+        <field name="name">Wizard interfaz contable</field>
+        <field name="model">motgama.wizard.interfazcontable</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Interfaz Contable">
+                <group>
+                    <field name="fecha_inicial"/>
+                    <field name="fecha_final"/>
+                </group>
+                <footer>
+                    <button name="get_report" type="object" string="Generar reporte" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="motgama_interfaz_contable">
+        <field name="name">Interfaz contable</field>
+        <field name="model">motgama.interfazcontable</field>
+        <field name="arch" type="xml">
+            <tree create="false">
+                <field name="cod_cuenta"/>
+                <field name="comprobante"/>
+                <field name="fecha"/>
+                <field name="documento"/>
+                <field name="referencia"/>
+                <field name="nit"/>
+                <field name="nom_cuenta"/>
+                <field name="tipo"/>
+                <field name="valor"/>
+                <field name="base"/>
+                <field name="sucursal"/>
+            </tree>
+        </field>
+    </record>
+
+    <act_window id="action_interfaz_contable_wizard"
+        name="Interfaz contable"
+        res_model="motgama.wizard.interfazcontable"
+        view_mode="form"
+        target="new"/>
+
+    <menuitem action="action_interfaz_contable_wizard"
+        id="menu_interfaz_contable"
+        parent="menu_motgama_reportes"
+        groups="group_motgama_superuser"/>
+</odoo>

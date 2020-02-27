@@ -67,6 +67,7 @@
         'views/motgama_log.xml',
         'views/motgama_wizard_recaudoreserva.xml',
         'views/motgama_wizard_abonos.xml',
+        'views/motgama_interfazcontable.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',

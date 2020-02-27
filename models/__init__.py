@@ -25,3 +25,4 @@ from . import wizardprecuenta
 from . import consumo_adicional
 from . import wizardabonos
 from . import wizardplaca
+from . import interfazcontable
