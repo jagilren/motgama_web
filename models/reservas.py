@@ -211,11 +211,11 @@ class MotgamaWizardModificaReserva(models.TransientModel):
             reserva = self.env['motgama.reserva'].search([('cod','=',record.cod)],limit=1)
 
             reservas = self.env['motgama.reserva'].search([('habitacion_id','=',record.habitacion_id.id),('cod','!=',record.cod)])
-                for reserva in reservas:
-                    fechaAntes = reserva.fecha - timedelta(days=1)
-                    fechaDespues = reserva.fecha + timedelta(days=1)
-                    if fechaAntes < record.fecha < fechaDespues:
-                        raise Warning('Esta habitación ya se encuentra reservada para esa fecha')
+            for reserva in reservas:
+                fechaAntes = reserva.fecha - timedelta(days=1)
+                fechaDespues = reserva.fecha + timedelta(days=1)
+                if fechaAntes < record.fecha < fechaDespues:
+                    raise Warning('Esta habitación ya se encuentra reservada para esa fecha')
 
             valores = {
                 'fecha': record.fecha,
