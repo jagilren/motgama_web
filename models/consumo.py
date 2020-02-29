@@ -267,7 +267,8 @@ class MotgamaWizardConsumos(models.TransientModel):
                     'vlrUnitario': valor,
                     'vlrUnitario_save': valor,
                     'cantidad': 1,
-                    'cambiar_valor': permitecambiarvalor
+                    'cambiar_valor': permitecambiarvalor,
+                    'lleva_comanda': record.producto_id.categ_id.llevaComanda
                 }
                 record.linea_ids = [(0,0,valores)]
                 record.producto_id = None
@@ -295,8 +296,8 @@ class MotgamaWizardConsumos(models.TransientModel):
         for linea in self.linea_ids:
             valores = {
                 'recepcion': self.habitacion_id.recepcion.id,
-                'llevaComanda': False,
-                'textoComanda': '',
+                'llevaComanda': linea.lleva_comanda,
+                'textoComanda': linea.comanda,
                 'habitacion': self.habitacion_id.id,
                 'movimiento_id': self.habitacion_id.ultmovimiento.id,
                 'producto_id': linea.producto_id_save.id,
@@ -327,6 +328,8 @@ class MotgamaLineaConsumos(models.TransientModel):
     vlrSubtotal = fields.Float(string='Subtotal',compute='_compute_subtotal',store=True)
     vlrSubtotal_save = fields.Float(string='Subtotal',compute='_vlrSubtotal_save',store=True)
     cambiar_valor = fields.Boolean(string='Puede cambiar valor',default=False)
+    lleva_comanda = fields.Boolean(string='Lleva comanda',default=False)
+    comanda = fields.Text(string='Comanda',default='')
 
     @api.depends('vlrUnitario_save','cantidad')
     def _compute_subtotal(self):

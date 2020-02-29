@@ -45,12 +45,14 @@
                 <field name="linea_ids">
                   <tree editable="bottom" create="false">
                     <field name="cambiar_valor" invisible="1"/>
+                    <field name="lleva_comanda" invisible="1"/>
                     <field name="producto_id" invisible="1"/>
                     <field name="producto_id_save"/>
                     <field name="cantidad"/>
                     <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
                     <field name="vlrUnitario" invisible="1"/>
                     <field name="vlrUnitario_save" attrs="{'readonly':[('cambiar_valor','=',False)]}"/>
+                    <field name="comanda" attrs="{'readonly':[('lleva_comanda','=',False)]}"/>
                     <field name="vlrSubtotal" invisible="1"/>
                     <field name="vlrSubtotal_save"/>
                   </tree>
