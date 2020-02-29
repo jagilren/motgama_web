@@ -743,7 +743,7 @@ class MotgamaConsumo(models.Model):
     consecutivo =  fields.Float(string='Total $')
     llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
     textoComanda = fields.Text(string='Comanda')
-    comanda = fields.Many2one(string='Comanda',comodel_name='motgama.comanda')
+    comanda = fields.Many2one(string='Comanda asociada',comodel_name='motgama.comanda')
     habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string='Producto',comodel_name='product.template',ondelete='set null',required=True)

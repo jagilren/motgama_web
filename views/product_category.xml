@@ -9,6 +9,7 @@
                     <group name="motgama">
                         <group string="Motgama">
                             <field name="llevaComanda"/>
+                            <field name="es_hospedaje"/>
                         </group>
                     </group>
                 </group>

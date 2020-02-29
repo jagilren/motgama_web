@@ -65,6 +65,9 @@
 
                     <button name="button_precuenta" string="Ver precuenta" type="object"
                         class="btn"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"/>
+                    
+                    <button name="button_consumos" string="Agregar consumos" type="object"
+                        class="btn" attrs="{'invisible': [('estado','not in',['OO','OA','LQ'])]}"/>
                         
                     <button name="button_continuar" string="Rehabilitar" type="object"
                         class="btn"  attrs="{'invisible': [('estado','not in', 'LQ')]}"

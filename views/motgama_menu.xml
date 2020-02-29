@@ -246,6 +246,16 @@
         name="Productos"
         parent="menu_motgama_maestros_otros"
         action="accion_productos"/>
+
+    <act_window id="accion_categorias"
+        name="Categorías de producto"
+        res_model="product.category"
+        view_mode="tree,form"/>
+    
+    <menuitem id="menu_motgama_categorias"
+        name="Categorías de producto"
+        parent='menu_motgama_maestros_otros'
+        action="accion_categorias"/>
     
     <!-- Accion -->
     <act_window id="accion_motgama_mediopago"
