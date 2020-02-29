@@ -48,6 +48,8 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                 nuevo = self.env['motgama.interfazcontable'].create(valores)
                 if not nuevo:
                     raise Warning('No se pudo cargar la interfaz contable')
+
+        # TODO: Generar CSV
         
         return {
             'name': 'Interfaz Contable',

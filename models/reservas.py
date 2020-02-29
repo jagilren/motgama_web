@@ -20,13 +20,26 @@ class MotgamaReservas(models.Model):
         
         paramRes = self.env['motgama.parametros'].search([('codigo','=','TIEMPOBLOQRES')],limit=1)
         if not paramRes:
-            # TODO: Notificar en vez de raise
-            pass
-        try:
-            tiempoReserva = int(paramRes.valor)
-        except ValueError:
-            # TODO: Notificar en vez de raise
-            pass
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.reserva',
+                'tipo_evento': 'notificacion',
+                'asunto': 'Problema con parámetro TIEMPOBLOQRES',
+                'descripcion': 'No se ha definido el parámetro TIEMPOBLOQRES, contacte al administrador'
+            }
+            self.env['motgama.log'].create(valores)
+        else:
+            try:
+                tiempoReserva = int(paramRes.valor)
+            except ValueError:
+                valores = {
+                    'fecha': fields.Datetime().now(),
+                    'modelo': 'motgama.reserva',
+                    'tipo_evento': 'notificacion',
+                    'asunto': 'Problema con parámetro TIEMPOBLOQRES',
+                    'descripcion': 'El parámetro TIEMPOBLOQRES está mal definido, contacte al administrador'
+                }
+                self.env['motgama.log'].create(valores)
 
         if record.fecha < fields.Datetime().now() + timedelta(hours=tiempoReserva):
             raise Warning('No se puede reservar en menos de ' + str(tiempoReserva) + ' horas')
@@ -195,10 +208,14 @@ class MotgamaWizardModificaReserva(models.TransientModel):
     @api.multi
     def button_modificar(self):
         for record in self:
-            idReserva = self.env.context['active_id']
-            reserva = self.env['motgama.reserva'].search([('id','=',idReserva)],limit=1)
+            reserva = self.env['motgama.reserva'].search([('cod','=',record.cod)],limit=1)
 
-            #TODO: Revisar fecha
+            reservas = self.env['motgama.reserva'].search([('habitacion_id','=',record.habitacion_id.id),('cod','!=',record.cod)])
+                for reserva in reservas:
+                    fechaAntes = reserva.fecha - timedelta(days=1)
+                    fechaDespues = reserva.fecha + timedelta(days=1)
+                    if fechaAntes < record.fecha < fechaDespues:
+                        raise Warning('Esta habitación ya se encuentra reservada para esa fecha')
 
             valores = {
                 'fecha': record.fecha,

@@ -121,8 +121,9 @@ class MotgamaConsumo(models.Model):
             if record.producto_id.type == 'product':
                 producto = record.producto_id.product_variant_id
                 cantDisponible = producto.with_context({'location': record.lugar_id.id}).qty_available
-                # if cantDisponible < record.cantidad:
-                    # TODO: Mostrar mensaje de no hay disponibilidad
+                if cantDisponible < record.cantidad:
+                    message = 'No se registra cantidad suficiente de ' + record.producto_id.name + '. Va a vender ' + str(int(record.cantidad)) + ' unidades y tiene ' + str(cantDisponible) + ' unidades en ' + record.lugar_id.name
+                    self.env.user.notify_info(message=message,title='No hay suficiente cantidad',sticky=False)
             # TODO: Explotar el inventario cuando sea restaurante o bar
             ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
             if not ordenVenta:
@@ -246,7 +247,6 @@ class MotgamaWizardConsumos(models.TransientModel):
     def _onchange_producto(self):
         for record in self:
             if record.producto_id and record.habitacion_id:
-                # TODO: mirar lo de la comanda
                 movimiento = record.habitacion_id.ultmovimiento
                 lista = movimiento.listaprecioproducto
                 precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)

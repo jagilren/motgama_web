@@ -193,7 +193,6 @@ class MotgamaWizardRecaudo(models.TransientModel):
             elif pago.mediopago.tipo == 'abono':
                 tiene_abono = True
                 abono = pago.valor
-                # raise Warning('El pago con abonos no está implementado')
             valores = {
                 'movimiento_id': self.movimiento.id,
                 'cliente_id': self.cliente.id,

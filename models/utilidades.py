@@ -63,5 +63,18 @@ class MotgamaUtilidades(models.TransientModel):
                 # actualiza el numero de horas para el hospedaje ocasional
                 habitacion.write({'tiemponormalocasional':tipo.tiemponormalocasional})
         
-        #   TODO: Salir de la vista de actualizar precios
-        #   raise Warning('Fin del proceso')
+        view = self.env.ref('sh_message.sh_message_wizard')
+        view_id = view and view.id or False
+        context = dict(self._context or {})
+        context['message'] = 'Procesa de cambiar listas de precio y tiempo normal ocasional finalizado'
+        return {
+            'name': 'Proceso completo',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sh.message.wizard',
+            'views': [(view.id,'form')],
+            'view_id': view.id,
+            'target': 'new',
+            'context': context
+        }

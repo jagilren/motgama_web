@@ -186,8 +186,9 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             if consumo.producto_id.type == 'product':
                 producto = consumo.producto_id.product_variant_id
                 cantDisponible = producto.with_context({'location': lugar.id}).qty_available
-                # if cantDisponible < record.cantidad:
-                    # TODO: Mostrar mensaje de no hay disponibilidad
+                if cantDisponible < consumo.cantidad:
+                    message = 'No se registra cantidad suficiente de ' + consumo.producto_id.name + '. Va a vender ' + str(int(consumo.cantidad)) + ' unidades y tiene ' + str(cantDisponible) + ' unidades en ' + lugar.name
+                    self.env.user.notify_info(message=message,title='No hay suficiente cantidad',sticky=False)
             valoresLinea = {
                 'customer_lead' : 0,
                 'name' : consumo.producto_id.name,

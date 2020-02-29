@@ -26,7 +26,14 @@ class MotgamaWizardFueradeuso(models.TransientModel):
 
         if nuevoMovimiento:
             flujo.sudo().write({'estado':'FU','ultmovimiento':nuevoMovimiento.id})
-            # TODO: Enviar correo de movimiento
+            valores = {
+                'fecha': fields.Datetime().now(),
+                'modelo': 'motgama.wizardfueradeuso',
+                'tipo_evento': 'correo',
+                'asunto': 'La habitación ' + flujo.codigo + ' ha sido puesta Fuera de Servicio',
+                'descripcion': 'El usuario ' + self.env.user.name + ' ha puesto la habitación ' + flujo.codigo + ' en estado Fuera de Uso. Observaciones: ' + str(self.observacion)
+            }
+            self.env['motgama.log'].create(valores)
 
         else:
             raise Warning('No se pudo cambiar el estado de la habitación')
@@ -62,11 +69,18 @@ class MotgamaZona(models.Model):
 
             if nuevoMovimiento:
                 flujo.sudo().write({'estado':'FU','ultmovimiento':nuevoMovimiento.id,'active':False})
-                # TODO: Enviar correo de movimiento
             else:
                 raise Warning('No se pudo cambiar el estado de la habitación')
 
         self.write({'estado':'FU'})
+        valores = {
+            'fecha': fields.Datetime().now(),
+            'modelo': 'motgama.zona',
+            'tipo_evento': 'correo',
+            'asunto': 'La zona ' + self.nombre + ' ha sido puesta Fuera de Uso',
+            'descripcion': 'El usuario ' + self.env.user.name + ' ha puesto la zona ' + self.nombre + ' en estado Fuera de Uso.'
+        }
+        self.env['motgama.log'].create(valores)
     
     @api.multi
     def habilitar(self):

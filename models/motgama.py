@@ -976,7 +976,7 @@ class MotgamaLog(models.Model):
             values['correo'] = paramCorreo.valor
             valoresCorreo = {
                 'subject': values['asunto'],
-                'email_from': 'luis.ortiz@sistemasgod.com',
+                'email_from': 'luis.ortiz@sistemasgod.com', # TODO: Cambiar email por el del servidor
                 'email_to': values['correo'],
                 'body_html': '<h3>' + values['descripcion'] + '</h3>',
                 'author_id': False
