@@ -62,7 +62,7 @@ class MotgamaConsumo(models.Model):
             cantidadPositiva = record.cantidad * -1
             if cantidadPositiva > vendidas:
                 raise Warning('No se pueden devolver cantidades mayores a las ya registradas como consumos')
-            if record.producto_id.type == 'product':
+            if record.producto_id.type == 'product' and len(record.producto_id.bom_ids) == 0:
                 origen = self.env['stock.location'].search([('usage','=','customer')],limit=1)
                 tipo_operacion = self.env['stock.picking.type'].search([('code','=','incoming')],limit=1)
                 valoresTransferencia = {
@@ -118,13 +118,43 @@ class MotgamaConsumo(models.Model):
                     raise Warning('No se permiten consumos de valor $0.0')
                 else:
                     record.sudo().write({'vlrUnitario':record.valorUnitario})
+            if len(record.producto_id.bom_ids) > 0:
+                bom_id = self.env['mrp.bom'].search([('product_tmpl_id','=',record.producto_id.id)],limit=1)
+                if bom_id:
+                    valoresProd = {
+                        'product_id': record.producto_id.product_variant_id.id,
+                        'date_planned_start': fields.Datetime().now(),
+                        'product_qty': record.cantidad,
+                        'product_uom_id': record.producto_id.uom_id.id,
+                        'bom_id': bom_id.id
+                    }
+                    prod = self.env['mrp.production'].create(valoresProd)
+                    if not prod:
+                        raise Warning('No se pudo registrar orden de restaurante')
+                    prod.action_assign()
+                    if prod.state == 'confirmed' and prod.availability not in ['assigned','none']:
+                        message = 'No se registra cantidad suficiente de ingredientes para ' + str(int(record.cantidad)) + ' unidad(es) de ' + record.producto_id.name
+                        self.env.user.notify_info(message=message,title='Problema con ingredientes',sticky=False)
+                    valoresProduce = {
+                        'serial': False,
+                        'production_id': prod.id,
+                        'product_id': record.producto_id.product_variant_id.id,
+                        'product_qty': record.cantidad,
+                        'product_uom_id': record.producto_id.uom_id.id
+                    }
+                    produce = self.env['mrp.product.produce'].create(valoresProduce)
+                    if not produce:
+                        raise Warning('No se pudo registrar orden de restaurante')
+                    produce._onchange_product_qty()
+                    produce.do_produce()
+                    prod.button_mark_done()
+                    record.sudo().write({'lugar_id': prod.location_dest_id.id})
             if record.producto_id.type == 'product':
                 producto = record.producto_id.product_variant_id
                 cantDisponible = producto.with_context({'location': record.lugar_id.id}).qty_available
                 if cantDisponible < record.cantidad:
                     message = 'No se registra cantidad suficiente de ' + record.producto_id.name + '. Va a vender ' + str(int(record.cantidad)) + ' unidades y tiene ' + str(cantDisponible) + ' unidades en ' + record.lugar_id.name
                     self.env.user.notify_info(message=message,title='No hay suficiente cantidad',sticky=False)
-            # TODO: Explotar el inventario cuando sea restaurante o bar
             ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
             if not ordenVenta:
                 valores = {
@@ -159,7 +189,7 @@ class MotgamaConsumo(models.Model):
                     move.write({'location_id':record.lugar_id.id})
                 for line in entrega.move_line_ids:
                     line.write({'location_id':record.lugar_id.id})
-            if entrega.state == 'confirmed':
+            if entrega.state in ['confirmed','assigned']:
                 for move in entrega.move_lines:
                     valoresLineaTransferencia = {
                         'company_id' : entrega.company_id.id,

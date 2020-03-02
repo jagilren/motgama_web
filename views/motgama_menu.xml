@@ -256,6 +256,16 @@
         name="Categorías de producto"
         parent='menu_motgama_maestros_otros'
         action="accion_categorias"/>
+
+    <act_window id="accion_lista_materiales"
+        name="Listas de materiales (Ingredientes)"
+        res_model="mrp.bom"
+        view_mode="tree,kanban,form"/>
+    
+    <menuitem id="menu_lista_materiales"
+        name="Listas de materiales (Ingredientes)"
+        parent="menu_motgama_maestros_otros"
+        action="accion_lista_materiales"/>
     
     <!-- Accion -->
     <act_window id="accion_motgama_mediopago"
