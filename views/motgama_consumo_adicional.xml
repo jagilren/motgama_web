@@ -35,7 +35,7 @@
                                     <create string="Agregar consumo"/>
                                 </control>
                                 <field name="permitecambiarvalor" invisible="1"/>
-                                <field name="producto_id"/>
+                                <field name="producto_id" domain="[('es_hospedaje','=',False),('sale_ok','=',True)]" options="{'no_create':True}"/>
                                 <field name="vlrUnitario" attrs="{'readonly':[('permitecambiarvalor','=',False)]}"/>
                                 <field name="cantidad"/>
                                 <field name="vlrSubtotal"/>
