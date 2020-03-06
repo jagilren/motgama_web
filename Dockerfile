@@ -83,6 +83,11 @@ RUN mkdir -p /mnt/extra-addons \
         && chown -R odoo /mnt/extra-addons
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
 
+# Copiar la carpeta de addons de Motgama
+RUN mkdir -p /home/gama
+COPY ./custom_addons /home/gama/
+RUN chown -R odoo /home/gama/custom_addons
+
 # Expose Odoo services
 EXPOSE 8069 8071
 
