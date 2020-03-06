@@ -15,7 +15,6 @@ services:
       - USER=odoo
       - PASSWORD=odoo
     volumes:
-      - ./custom_addons:/mnt/extra-addons
       - motgama_storage:/var/lib/odoo
     
   motgama_db:
