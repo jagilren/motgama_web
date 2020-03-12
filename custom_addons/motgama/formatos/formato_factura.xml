@@ -31,7 +31,7 @@
                                         <td>
                                             <t t-foreach="line.invoice_line_tax_ids" t-as="tax">
                                                 <span t-field="tax.name"/><br/>
-                                                <t t-set="total_amount" t-value="line.price_total*tax.amount/100"/>
+                                                <t t-set="total_amount" t-value="round(line.price_subtotal*tax.amount/100,2)"/>
                                                 $&amp;nbsp;<span t-esc="total_amount"/><br/>
                                             </t>
                                         </td>
