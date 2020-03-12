@@ -20,6 +20,7 @@ services:
   motgama_db:
     image: postgres:10
     container_name: motgama_db
+    restart: always
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=odoo
