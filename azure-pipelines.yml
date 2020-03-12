@@ -14,7 +14,7 @@ variables:
   imageRepository: 'motgama'
   containerRegistry: 'sistemasgod.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: 'develop'
   
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
