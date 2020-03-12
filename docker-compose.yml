@@ -1,0 +1,34 @@
+version: "2"
+
+services:
+  motgama_odoo:
+    image: odoo:12
+    container_name: motgama_odoo
+    build: .
+    restart: always
+    depends_on:
+      - motgama_db
+    ports:
+      - "8069:8069"
+    environment:
+      - HOST=motgama_db
+      - USER=odoo
+      - PASSWORD=odoo
+    volumes:
+      - motgama_storage:/var/lib/odoo
+    
+  motgama_db:
+    image: postgres:10
+    container_name: motgama_db
+    restart: always
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=odoo
+      - POSTGRES_PASSWORD=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - motgama_pgdata:/var/lib/postgresql/data/pgdata
+
+volumes:
+  motgama_storage:
+  motgama_pgdata:

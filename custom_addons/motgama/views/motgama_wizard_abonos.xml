@@ -1,0 +1,96 @@
+<odoo>
+    <record model="ir.ui.view" id="view_wizard_abono">
+        <field name="name">View Wizard Abonos</field>
+        <field name="model">motgama.wizard.abonos</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Recaudar abono">
+                <sheet>
+                    <group>
+                        <field name="abonos" readonly="True" style="font-size:20px;" widget="monetary"/>
+                    </group>
+                    <group>
+                        <field name="pagos" widget='one2many_list' mode="tree">
+                            <tree string="Registro de pagos" editable="bottom">
+                                <control>
+                                    <create string="Agregar pago"/>
+                                </control>
+                                <field name="mediopago" options="{'no_create': true}" domain="[('tipo','not in',['abono','prenda'])]"/>
+                                <field name="valor"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <field name="abonado" readonly="True" style="font-size:20px;" widget="monetary"/>
+                    </group>
+                    <group>
+                        <field name="saldo" readonly="True" style="font-size:20px;" widget="monetary"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="recaudar" string="Aplicar abono" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_abonos_form" model="ir.ui.view">
+        <field name="name">View Abonos</field>
+        <field name="model">motgama.abonos</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="habitacion_id" readonly="1"/>
+                        <field name="movimiento_id" invisible="1"/>
+                        <field name="abono_ids">
+                            <tree>
+                                <field name="nrorecaudo"/>
+                                <field name="create_date" string="Fecha"/>
+                                <field name="valor_pagado"/>
+                            </tree>
+                        </field>
+                        <field name="saldo"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button special="cancel" string="Cerrar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="wizard_revertir_abonos" model="ir.ui.view">
+        <field name="name">View Revertir Abonos</field>
+        <field name="model">motgama.wizard.revertirabonos</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="habitacion_id"/>
+                        <field name="abono_ids" widget="many2many_list">
+                            <tree editable="top" create="false" delete="false">
+                                <field name="abono_id" readonly="1"/>
+                                <field name="abono_id" invisible="1"/>
+                                <field name="fecha"/>
+                                <field name="valor" readonly="1"/>
+                                <field name="valor" invisible="1"/>
+                                <field name="revertir"/>
+                            </tree>
+                        </field>
+                        <field name="total_abonado"/>
+                        <field name="total_revertir"/>
+                        <field name="total_abonos"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="revertir_abonos" string="Revertir abonos" type="object" class="btn btn-warning"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
