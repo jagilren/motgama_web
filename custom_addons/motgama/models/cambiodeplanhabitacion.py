@@ -46,19 +46,23 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                 raise Warning('Error: no existe calendario para el dia actual ',int(nroDia))
             flagInicioAmanecida = calendario.horainicioamanecida
             flagfinAmanecida = calendario.horafinamanecida
+            flagFinInicioAmanecida = calendario.horafininicioamanecida
             if not flagInicioAmanecida:
-                raise Warning('No se ha definido "Hora Inicio Amanecida" en el calendario')
+                raise Warning('No se ha definido "Hora inicio amanecida" en el calendario')
             if not flagfinAmanecida:
-                raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')
+                raise Warning('No se ha definido "Hora fin amanecida" en el calendario')
+            if not flagFinInicioAmanecida:
+                raise Warning('No se ha definido "Hora fin amanecida" en el calendario')
             if flagInicioAmanecida == '0' and flagfinAmanecida == '0':
                 raise Warning('No se admite amanecida')
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
             flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
             flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")
+            flagFinInicioTz = datetime.strptime(str(flagFinInicioAmanecida),"%H:%M")
             #flagInicio = tz.localize(flagInicioTz).astimezone(pytz.utc).time()
             #flagFin = tz.localize(flagFinTz).astimezone(pytz.utc).time()
-            if flagInicioTz > flagFinTz:
-                if flagFinTz.time() < fechaActualTz.time() < flagInicioTz.time():
+            if flagInicioTz > flagFinInicioTz:
+                if flagFinInicioTz.time() < fechaActualTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
                 else:
                     # if not (flagInicio < fechaActual.time() < flagFin): # OJO No incluye los extremos
@@ -72,7 +76,7 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                         'plan_nuevo': 'OA'
                     }
             else:
-                if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
+                if not (flagInicioTz.time() <= fechaActualTz.time() <= flagFinInicioTz.time()): # OJO No incluye los extremos
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
                 else:
                     flujo.sudo().write({'estado':'OA'}) # pone en estado de ocupada Amanecida

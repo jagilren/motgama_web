@@ -60,21 +60,25 @@ class MotgamaWizardHabitacion(models.TransientModel):
         # Verifica tambien que se este dentro del horario permitido para asignar amanecidas
         flagInicioAmanecida = calendario.horainicioamanecida
         flagfinAmanecida = calendario.horafinamanecida
+        flagFinInicioAmanecida = calendario.horafininicioamanecida
         if not flagInicioAmanecida:
             raise Warning('No se ha definido "Hora Inicio Amanecida" en el calendario')
         if not flagfinAmanecida:
-            raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')   
+            raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')
+        if not flagFinInicioAmanecida:
+            raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario')
         flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
         flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")  
+        flagFinInicioTz = datetime.strptime(str(flagFinInicioAmanecida),"%H:%M")
         if self.asignatipo == 'OA':
             if flagInicioAmanecida == '0' and flagfinAmanecida == '0':
                 raise Warning('No se admite amanecida')
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
-            if flagInicioTz > flagFinTz:
-                if flagFinTz.time() < fechaActualTz.time() < flagInicioTz.time():
+            if flagInicioTz > flagFinInicioTz:
+                if flagFinInicioTz.time() < fechaActualTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             else:
-                if not (flagInicioTz.time() < fechaActualTz.time() < flagFinTz.time()): # OJO No incluye los extremos
+                if not (flagInicioTz.time() <= fechaActualTz.time() <= flagFinInicioTz.time()):
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
         flagInicio = flagInicioTz + timedelta(hours=5)
         flagFin = flagFinTz + timedelta(hours=5)

@@ -13,6 +13,7 @@
             <field name="listaprecioproducto"/>
             <field name="horainicioamanecida"/>
             <field name="horafinamanecida"/>
+            <field name="horafininicioamanecida"/>
             <field name="tiemponormalocasional"/>
             <field name="flagignoretiempo"/>
         </tree>
@@ -33,6 +34,7 @@
                     <field name="listaprecioproducto"/>
                     <field name="horainicioamanecida"/>
                     <field name="horafinamanecida"/>
+                    <field name="horafininicioamanecida"/>
                     <field name="tiemponormalocasional"/>
                     <field name="flagignoretiempo"/>
                     <field name="active"/>
