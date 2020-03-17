@@ -857,6 +857,7 @@ class MotgamaRecaudo(models.Model):
     nrorecaudo = fields.Char(string='Recaudo nro.',required=True,default='Nuevo')
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento')
     habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion')
+    recepcion_id = fields.Many2one(string='Recepción',comodel_name='motgama.recepcion')
     cliente = fields.Many2one(string='Cliente',comodel_name='res.partner')
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
     total_pagado = fields.Float(string='Valor total')

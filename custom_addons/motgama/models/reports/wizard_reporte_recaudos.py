@@ -64,13 +64,13 @@ class WizardReporteRecaudos(models.TransientModel):
                     'usuario': recaudo.usuario_uid.name,
                     'tipo_recaudo': recaudo.tipo_recaudo
                 }
-                if pago.mediopago.tipo in ['abono','prenda']:
+                if pago.mediopago.tipo in ['abono']:
                     continue
                 if pago.mediopago.diario_id:
                     valores.update({'diario':pago.mediopago.diario_id.name})
                 if recaudo.habitacion:
                     valores.update({
-                        'recepcion':recaudo.habitacion.recepcion.nombre,
+                        'recepcion':recaudo.recepcion_id.nombre,
                         'habitacion':recaudo.habitacion.codigo
                     })
                 elif self.recepcion:

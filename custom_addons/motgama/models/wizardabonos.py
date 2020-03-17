@@ -87,7 +87,8 @@ class MotgamaWizardAbonos(models.TransientModel):
             'total_pagado': self.abonado,
             'valor_pagado': self.abonado,
             'usuario_uid': self.env.user.id,
-            'tipo_recaudo': 'abonos'
+            'tipo_recaudo': 'abonos',
+            'recepcion_id': self.env.user.recepcion_id.id
         }
         recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not recaudo:

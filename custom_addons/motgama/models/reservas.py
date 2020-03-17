@@ -325,7 +325,8 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
             'total_pagado': self.total,
             'valor_pagado': self.total,
             'usuario_uid': self.env.user.id,
-            'tipo_recaudo': 'anticipos'
+            'tipo_recaudo': 'anticipos',
+            'recepcion_id': self.env.user.recepcion_id.id
         }
         recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not recaudo:
