@@ -5,7 +5,6 @@ services:
     image: odoo:12
     container_name: motgama_odoo
     build: .
-    restart: always
     depends_on:
       - motgama_db
     ports:

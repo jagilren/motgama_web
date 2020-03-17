@@ -135,6 +135,125 @@ class MotgamaAbonos(models.TransientModel):
             for abono in record.abono_ids:
                 saldo += abono.valor_pagado
             record.saldo = saldo
+
+class MotgamaRevertirAbonos(models.TransientModel):
+    _name = 'motgama.wizard.revertirabonos'
+    _description = 'Wizard Revertir Abonos'
+
+    habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',readonly=True,default=lambda self: self._get_habitacion())
+    abono_ids = fields.Many2many(string='Abonos a revertir',comodel_name='motgama.linearevertirabonos',default=lambda self: self._get_abonos())
+    total_abonado = fields.Float(string='Abonado anteriormente',readonly=True, default=lambda self: self._get_abonado())
+    total_revertir = fields.Float(string='Total a revertir',compute='_compute_revertir')
+    total_abonos = fields.Float(string='Total abonado',compute='_compute_abonos',store=True)
+
+    @api.model
+    def _get_habitacion(self):
+        return self.env.context['active_id']
+    
+    @api.model
+    def _get_abonos(self):
+        habitacion = self.env['motgama.flujohabitacion'].browse(self.env.context['active_id'])
+        array = []
+        for recaudo in habitacion.ultmovimiento.recaudo_ids:
+            valores = {
+                'abono_id': recaudo.id,
+                'fecha': recaudo.create_date,
+                'valor': recaudo.valor_pagado,
+                'revertir': False
+            }
+            array.append(valores)
+        return [(0,0,valores) for valores in array]
+    
+    @api.model
+    def _get_abonado(self):
+        habitacion = self.env['motgama.flujohabitacion'].browse(self.env.context['active_id'])
+        abonado = 0.0
+        for recaudo in habitacion.ultmovimiento.recaudo_ids:
+            abonado += recaudo.valor_pagado
+        return abonado
+    
+    @api.depends('abono_ids.revertir')
+    def _compute_revertir(self):
+        for record in self:
+            suma = 0.0
+            for abono in record.abono_ids:
+                if abono.revertir:
+                    suma += abono.valor
+            record.total_revertir = suma
+    
+    @api.depends('total_revertir','total_abonado')
+    def _compute_abonos(self):
+        for record in self:
+            record.total_abonos = record.total_abonado - record.total_revertir
+
+    @api.multi
+    def revertir_abonos(self):
+        self.ensure_one()
+        if self.total_abonos < 0:
+            raise Warning('No se pueden revertir abonos ya revertidos')
+
+        for abono in self.abono_ids:
+            if abono.revertir:
+                revertir = True
+                valoresPagos = []
+                for pago in abono.abono_id.pagos:
+                    if pago.pago_id:
+                        asientos = []
+                        for apunte in pago.pago_id.move_line_ids:
+                            if apunte.move_id.id not in asientos:
+                                asientos.append(apunte.move_id.id)
+                        self.env['account.move'].browse(asientos).reverse_moves(fields.Date().Today(),asiento.journal_id.id)
+                        valores = {
+                            'movimiento_id': self.habitacion_id.ultmovimiento.id,
+                            'mediopago': pago.mediopago.id,
+                            'valor': pago.valor * -1,
+                            'fecha': fields.Datetime().now(),
+                            'cliente_id': pago.cliente_id.id,
+                            'usuario_uid': self.env.user.id,
+                        }
+                        valoresPagos.append(valores)
+                if len(valoresPagos) > 0:
+                    valores = {
+                        'movimiento_id': self.habitacion_id.ultmovimiento.id,
+                        'habitacion': self.habitacion_id.id,
+                        'cliente': abono.abono_id.cliente.id,
+                        'total_pagado': abono.abono_id.total_pagado * -1,
+                        'valor_pagado': abono.abono_id.valor_pagado * -1,
+                        'usuario_uid': abono.abono_id.usuario_uid.id,
+                        'tipo_recaudo': abono.abono_id.tipo_recaudo
+                    }
+                    recaudo = self.env['motgama.recaudo'].create(valores)
+                    for valores in valoresPagos:
+                        valores.update({'recaudo': recaudo.id})
+                        self.env['motgama.pago'].create(valores)
+            else:
+                revertir = False
+        
+        if revertir:
+            message = 'Se han revertido los abonos seleccionados con abonos negativos correctamente'
+        else:
+            message = 'No se seleccionó un abono para revertir. No se harán cambios'
+        context = dict(self._context or {})
+        context['message'] = message
+        return {
+            'name': 'Proceso completo',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sh.message.wizard',
+            'view_id': self.env.ref('sh_message.sh_message_wizard').id,
+            'target': 'new',
+            'context': context
+        }
+
+class MotgamaLineaRevertirAbonos(models.TransientModel):
+    _name = 'motgama.linearevertirabonos'
+    _description = 'Linea de Revertir Abonos'
+
+    abono_id = fields.Many2one(string='Abono',comodel_name='motgama.recaudo')
+    fecha = fields.Datetime(string='Fecha',readonly=True)
+    valor = fields.Float(string='Valor pagado',readonly=True)
+    revertir = fields.Boolean(string='Revertir abono',default=False)
     
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
@@ -160,6 +279,18 @@ class MotgamaFlujoHabitacion(models.Model):
             'name': 'Abonar',
             'type': 'ir.actions.act_window', 
             'res_model': 'motgama.wizard.abonos',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new'
+        }
+
+    @api.multi
+    def revertir_abono(self):
+        self.ensure_one()
+        return {
+            'name': 'Revertir abonos',
+            'type': 'ir.actions.act_window', 
+            'res_model': 'motgama.wizard.revertirabonos',
             'view_type': 'form',
             'view_mode': 'form',
             'target': 'new'

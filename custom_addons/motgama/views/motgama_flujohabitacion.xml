@@ -111,6 +111,9 @@
                                 <button name="abonos" string="Ver abonos" type="object" class="btn btn-info"/>
                                 <button name="abonar" string="Abonar a esta asignación" type="object" class="btn btn-primary"/>
                             </group>
+                            <group>
+                                <button name="revertir_abono" string="Revertir abonos" type="object" class="btn btn-warning"/>
+                            </group>
                         </page>
                         <page name='habitacion' string='Esta habitación'>
                             <group>
