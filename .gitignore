@@ -35,3 +35,4 @@ models/__pycache__/wizardhabitacion.cpython-35.pyc
 models/reports/__pycache__/__init__.cpython-35.pyc
 models/reports/__pycache__/wizard_reporte_consumos.cpython-35.pyc
 models/reports/__pycache__/wizard_reporte_hospedaje.cpython-35.pyc
+.DS_Store
