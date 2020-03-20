@@ -96,7 +96,7 @@
             </t>
         </template>
 
-        <report string="Factura"
+        <report string="Motgama Factura Tirilla"
             id="reporte_factura_80"
             model="account.invoice"
             report_type="qweb-html"

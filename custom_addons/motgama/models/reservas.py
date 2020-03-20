@@ -136,7 +136,7 @@ class MotgamaReservas(models.Model):
                         'modelo': 'motgama.reserva',
                         'tipo_evento': 'notificacion',
                         'asunto': 'Habitación ' + reserva.habitacion_id.codigo + ' está ocupada y tiene una reserva próxima',
-                        'descripcion': 'La habitación ' + reserva.habitacion_id.codigo + ' está reservada para ' + reserva.fecha + ' y en este momento se encuentra ocupada y no pudo ser puesta como Reservada',
+                        'descripcion': 'La habitación ' + reserva.habitacion_id.codigo + ' está reservada para ' + str(reserva.fecha) + ' y en este momento se encuentra ocupada y no pudo ser puesta como Reservada',
                         'notificacion_uids': [(6,0,uids)]
                     }
                     self.env['motgama.log'].create(valores)

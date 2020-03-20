@@ -237,6 +237,15 @@
         name="Otros datos"
         parent="menu_motgama_master"/>
 
+    <act_window id="accion_secuencias"
+        name="Secuencias (Consecutivos)"
+        res_model="ir.sequence"
+        view_mode="tree,form"/>
+    <menuitem id="menu_motgama_secuencias"
+        name="Secuencias (Consecutivos)"
+        parent="menu_motgama_maestros_otros"
+        action="accion_secuencias"/>
+
     <act_window id="accion_productos"
         name="Productos"
         res_model="product.template"

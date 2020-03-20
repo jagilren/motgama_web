@@ -73,7 +73,7 @@
             </t>
         </template>
 
-        <report string="Estado de cuenta (80mm)"
+        <report string="Motgama Estado de cuenta"
             id="reporte_estadocuenta_80"
             model="sale.order"
             report_type="qweb-pdf"
@@ -81,14 +81,5 @@
             file="motgama.formato_estadocuenta"
             print_report_name="'Estado de cuenta - %s' % (object.name)"
             paperformat="motgama.formato_tirilla_80"/>
-
-        <report string="Estado de cuenta (53mm)"
-            id="reporte_estadocuenta_53"
-            model="sale.order"
-            report_type="qweb-html"
-            name="motgama.formato_estadocuenta"
-            file="motgama.formato_estadocuenta"
-            print_report_name="'Estado de cuenta - %s' % (object.name)"
-            paperformat="motgama.formato_tirilla_53"/>
     </data>
 </odoo>
