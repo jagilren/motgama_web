@@ -31,7 +31,7 @@
                                         <td>
                                             <t t-foreach="line.invoice_line_tax_ids" t-as="tax">
                                                 <span t-field="tax.name"/><br/>
-                                                <t t-set="total_amount" t-value="round(line.price_subtotal*tax.amount/100,2)"/>
+                                                <t t-set="total_amount" t-value="'{:0,.2f}'.format(line.price_subtotal*tax.amount/100).replace(',','¿').replace('.',',').replace('¿','.')"/>
                                                 $&amp;nbsp;<span t-esc="total_amount"/><br/>
                                             </t>
                                         </td>
@@ -71,14 +71,14 @@
                                     <t t-if="not pago.mediopago.lleva_prenda">
                                         <tr>
                                             <td><span t-field="pago.mediopago.nombre"/></td>
-                                            <td class="text-right">$&amp;nbsp;<span t-field="pago.valor"/></td>
+                                            <td class="text-right">$&amp;nbsp;<span t-esc="'{:0,.2f}'.format(pago.valor).replace(',','¿').replace('.',',').replace('¿','.')"/></td>
                                         </tr>
                                     </t>
                                 </t>
                                 <tr></tr>
                                 <tr>
                                     <td>Total pagado</td>
-                                    <td class="text-right">$&amp;nbsp;<span t-field="doc.recaudo.valor_pagado"/></td>
+                                    <td class="text-right">$&amp;nbsp;<span t-esc="'{:0,.2f}'.format(doc.recaudo.valor_pagado).replace(',','¿').replace('.',',').replace('¿','.')"/></td>
                                 </tr>
                                 <tr>
                                     <td>Saldo a pagar</td>

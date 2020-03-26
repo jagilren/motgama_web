@@ -122,7 +122,9 @@ class PDFReporteRecaudos(models.AbstractModel):
         tiposRecaudo = {}
         mediosPago = {}
         habitaciones = []
+        total = 0.0
         for doc in docs:
+            total += doc.valor
             if doc.tipo_recaudo == 'habitaciones':
                 tipo = 'Recaudo de habitaciones'
             elif doc.tipo_recaudo == 'abonos':
@@ -148,13 +150,15 @@ class PDFReporteRecaudos(models.AbstractModel):
                 mediosPago[doc.medio_pago] = doc.valor
         
         for tipo in tiposRecaudo:
-            tiposRecaudo[tipo] = "{:0,.1f}".format(tiposRecaudo[tipo]).replace(',','¿').replace('.',',').replace('¿','.')
+            tiposRecaudo[tipo] = "{:0,.2f}".format(tiposRecaudo[tipo]).replace(',','¿').replace('.',',').replace('¿','.')
         for medio in mediosPago:
-            mediosPago[medio] = "{:0,.1f}".format(mediosPago[medio]).replace(',','¿').replace('.',',').replace('¿','.')
+            mediosPago[medio] = "{:0,.2f}".format(mediosPago[medio]).replace(',','¿').replace('.',',').replace('¿','.')
+        total = "$ " + "{:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
         
         return {
             'docs': docs,
             'tipos': tiposRecaudo,
             'medios': mediosPago,
-            'habitaciones': len(habitaciones)
+            'habitaciones': len(habitaciones),
+            'total': total
         }

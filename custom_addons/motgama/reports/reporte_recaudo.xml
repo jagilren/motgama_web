@@ -99,6 +99,8 @@
                         </t>
                     </tbody>
                 </table>
+                <br/>
+                <h4>Total Recaudos</h4><span class="text-right"><t t-esc="total"/></span>
             </div>
             <div class="footer">
                 <div class="row text-center" style="border-top: 1px solid black;">
