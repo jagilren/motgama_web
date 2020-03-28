@@ -9,6 +9,9 @@
                     <field name="fecha_inicial"/>
                     <field name="fecha_final"/>
                 </group>
+                <group>
+                    <field name="genera_csv"/>
+                </group>
                 <footer>
                     <button name="get_report" type="object" string="Generar reporte" class="btn btn-primary"/>
                     <button special="cancel" string="Cancelar" class="btn"/>

@@ -81,7 +81,9 @@ RUN chown odoo /etc/odoo/odoo.conf
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
 RUN mkdir -p /mnt/extra-addons \
         && chown -R odoo /mnt/extra-addons
-VOLUME ["/var/lib/odoo", "/mnt/extra-addons"]
+RUN mkdir -p /home/usr/files \
+        && chown -R odoo /home/usr/files
+VOLUME ["/var/lib/odoo", "/mnt/extra-addons","/home/usr/files"]
 
 # Copiar la carpeta de addons de Motgama
 RUN mkdir -p /home/gama

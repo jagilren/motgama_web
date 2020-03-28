@@ -980,9 +980,14 @@ class MotgamaLog(models.Model):
             values['asunto'] = self.env['motgama.sucursal'].search([],limit=1).nombre + ': ' + values['asunto']
             values['descripcion'] = self.env['motgama.sucursal'].search([],limit=1).nombre + ': ' + values['descripcion']
             values['correo'] = paramCorreo.valor
+            mailserver = self.env['ir.mail_server'].sudo().search([],limit=1)
+            if not mailserver:
+                email_from = ''
+            else:
+                email_from = mailserver.smtp_user
             valoresCorreo = {
                 'subject': values['asunto'],
-                'email_from': 'luis.ortiz@sistemasgod.com', # TODO: Cambiar email por el del servidor
+                'email_from': email_from,
                 'email_to': values['correo'],
                 'body_html': '<h3>' + values['descripcion'] + '</h3>',
                 'author_id': False

@@ -89,6 +89,7 @@
         'registros/secuencia_recaudo.xml',
         'registros/cliente_contado.xml',
         'registros/medios_pago.xml',
+        'registros/secuencia_docto.xml',
         'reports/formato_reporte.xml',
         'reports/reporte_consumos.xml',
         'reports/reporte_documentos.xml',
