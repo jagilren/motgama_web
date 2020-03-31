@@ -85,6 +85,7 @@
         'formatos/formato_recaudo.xml',
         'automatizacion/accion_reservas.xml',
         'automatizacion/accion_flujohabitacion.xml',
+        'automatizacion/accion_interfazcontable.xml',
         'registros/secuencia_prenda.xml',
         'registros/secuencia_recaudo.xml',
         'registros/cliente_contado.xml',

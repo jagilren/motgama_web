@@ -3,7 +3,7 @@ from odoo.exceptions import Warning
 
 import csv
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class MotgamaWizardInterfazContable(models.TransientModel):
     _name = 'motgama.wizard.interfazcontable'
@@ -97,7 +97,7 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                 for linea in lineas:
                     cod_cuenta = linea.cod_cuenta
                     comprobante = linea.comprobante
-                    fecha = datetime.strftime('%Y%m%d')
+                    fecha = linea.fecha.strftime('%Y%m%d')
                     documento = linea.documento
                     referencia = linea.referencia
                     nit = '' if not linea.nit else str(linea.nit)
@@ -114,14 +114,15 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'name': nom_arch,
                     'type': 'binary',
                     'datas': base64.encodestring(data),
+                    'datas_fname': nom_arch,
                     'res_model': 'motgama.interfazcontable',
                     'mimetype': 'text/csv'
                 }
                 arch = self.env['ir.attachment'].create(valores)
                 
-                paramCorreo = self.env['motgama.parametros'].search([('codigo','=','EMAILSALARMAS')],limit=1)
+                paramCorreo = self.env['motgama.parametros'].search([('codigo','=','EMAILINTERFAZ')],limit=1)
                 if not paramCorreo:
-                    raise Warning('No se ha definido el parámetro "EMAILSALARMAS"')
+                    raise Warning('No se ha definido el parámetro "EMAILINTERFAZ"')
                 sucursal = self.env['motgama.sucursal'].search([],limit=1).nombre
                 subject = sucursal + ': ' + nom_arch
                 html = '<p>Interfaz contable de ' + sucursal + ' adjunta</p>'
@@ -136,12 +137,21 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'email_from': email_from,
                     'email_to': email_to,
                     'body_html': html,
-                    'author_id': False,
                     'attachment_ids': [(6,0,[arch.id])]
                 }
-                correo = self.env['mail.mail'].sudo().create(valoresCorreo)
+                correo = self.env['mail.mail'].create(valoresCorreo)
                 if correo:
                     correo.sudo().send()
+                
+                valoresInterfaz = {
+                    'nombre': doc if doc != '' else str(self.fecha_final),
+                    'fecha_final': self.fecha_final,
+                    'fecha_inicial': self.fecha_inicial,
+                    'correo': correo.id
+                }
+                reg = self.env['motgama.interfazcontable.registro'].create(valoresInterfaz)
+                if not reg:
+                    raise Warning('No fue posible crear la interfaz contable')
         else:
             return {
                 'name': 'Interfaz Contable',
@@ -167,3 +177,48 @@ class MotgamaInterfazContable(models.TransientModel):
     valor = fields.Float(string='Valor')
     base = fields.Float(string='Base')
     sucursal = fields.Char(string='Centro de costo')
+
+class MotgamaInterfazContableRegistro(models.Model):
+    _name = 'motgama.interfazcontable.registro'
+    _description = 'Historial de interfaces contables'
+
+    nombre = fields.Char(string='Documento',readonly=True)
+    correo = fields.Many2one(string='Archivo adjunto',comodel_name='mail.mail',readonly=True)
+    fecha_inicial = fields.Datetime(string='Fecha inicial',readonly=True)
+    fecha_final = fields.Datetime(string='Fecha final',readonly=True,required=True)
+
+    @api.model
+    def check_hora(self):
+        fecha = self.get_hora()
+        if fecha < datetime.datetime.now() < fecha + datetime.timedelta(minutes=5):
+            self.generar_interfaz()
+
+    @api.model
+    def get_hora(self):
+        paramHora = env['motgama.parametros'].search([('codigo','=','HORACIERRE')],limit=1)
+        fecha_actual = datetime.now()
+        if not paramHora:
+            raise Warning('No se ha definido el parámetro "HORACIERRE"')
+        horaTz = datetime.strptime(paramHora.valor,'%H:%M')
+        hora = horaTz + timedelta(hours=5)
+
+        return datetime(fecha_actual.year,fecha_actual.month,fecha_actual.day,hora.hour,hora.minute)
+
+    @api.model
+    def generar_interfaz(self):
+        fecha_final = fields.Datetime().now()
+        interfaces = self.env['motgama.interfazcontable.registro'].search([],order='create_date desc')
+        if not interfaces:
+            fecha_inicial = datetime(2020,1,1)
+        else:
+            fecha_inicial = interfaces[0].fecha_final + timedelta(milliseconds=1)
+        
+        valores = {
+            'fecha_inicial': fecha_inicial,
+            'fecha_final': fecha_final,
+            'genera_csv': True
+        }
+        nuevo = self.env['motgama.wizard.interfazcontable'].create(valores)
+        if not nuevo:
+            raise Warning('No fue posible generar el reporte')
+        nuevo.get_report()
