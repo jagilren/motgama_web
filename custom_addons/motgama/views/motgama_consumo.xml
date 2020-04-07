@@ -29,6 +29,18 @@
       <form>
         <sheet>
           <notebook>
+            <page string="Consumos ya validados">
+              <group>
+                <field name="consumo_ids">
+                  <tree create="false" editable="bottom">
+                    <field name="producto_id" readonly="1"/>
+                    <field name="vlrUnitario" readonly="1"/>
+                    <field name="cantidad" readonly="1"/>
+                    <field name="vlrSubtotal" readonly="1"/>
+                  </tree>
+                </field>
+              </group>
+            </page>
             <page string="Agregar consumos">
               <group>
                 <field name="habitacion_id" readonly="1"/>
@@ -67,22 +79,10 @@
                 </group>
               </group>
             </page>
-            <page string="Consumos validados">
-              <group>
-                <field name="consumo_ids">
-                  <tree create="false" editable="bottom">
-                    <field name="producto_id" readonly="1"/>
-                    <field name="vlrUnitario" readonly="1"/>
-                    <field name="cantidad" readonly="1"/>
-                    <field name="vlrSubtotal" readonly="1"/>
-                  </tree>
-                </field>
-              </group>
-            </page>
           </notebook>
         </sheet>
         <footer>
-          <button name="agregar_consumos" string="Agregar consumos" type="object" class="btn btn-primary"/>
+          <button name="agregar_consumos" string="Finalizar" type="object" class="btn btn-primary"/>
           <button special="cancel" string="Cancelar" class="btn"/>
         </footer>
       </form>

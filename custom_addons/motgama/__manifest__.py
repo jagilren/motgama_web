@@ -22,7 +22,7 @@
     'installable':True,
     'application': True,
     'data':['security/groups.xml',
-        'security/ir.model.access.csv',       
+        'security/ir.model.access.csv',
         'views/motgama_sucursal.xml',        
         'views/motgama_parametros.xml',
         'views/motgama_recepcion.xml',

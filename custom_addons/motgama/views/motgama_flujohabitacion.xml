@@ -84,6 +84,9 @@
 
                     <button name="button_reporte_placa" string="Reportar placa" type="object" class="btn"
                         attrs="{'invisible':[('estado','not in',['OO','OA','LQ','RC'])]}"/>
+
+                    <button name="aplicar_bono" string="Aplicar bono" type="object" class="btn"
+                        attrs="{'invisible':[('estado','not in',['OO','OA'])]}"/>
                         
                 </header>
                 <sheet>

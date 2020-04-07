@@ -154,6 +154,7 @@
                     <group name="otros" string="Otra información">
                         <group>
                             <field name="observacion"/>
+                            <field name="bono_id"/>
                         </group>
                         <group>
                         </group>

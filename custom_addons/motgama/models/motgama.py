@@ -609,6 +609,7 @@ class MotgamaMovimiento(models.Model):#ok
     cambiosplan = fields.One2many(string="Cambios de plan",comodel_name='motgama.cambioplan',inverse_name='movimiento')
     prestados = fields.One2many(string="Objetos Prestados",comodel_name='motgama.objprestados',inverse_name='movimiento_id')
     recaudo_ids = fields.One2many(string="Recaudos",comodel_name="motgama.recaudo",inverse_name='movimiento_id')
+    bono_id = fields.Many2one(string='Bono aplicado',comodel_name='motgama.bonos')
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
@@ -725,18 +726,43 @@ class MotgamaBonos(models.Model):
     _name = 'motgama.bonos'
     _description = 'Bonos'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
-    codigo = fields.Char(string='Código')
-    multiple = fields.Boolean(string='Múltiple') #Lo pueden utilizar muchas personas
-    validodesde = fields.Date(string='Válido Desde')
-    validohasta = fields.Date(string='Válido Hasta')
-    descuentavalor = fields.Float(string='Descontar valor')
-    porcpagoefectivo = fields.Float(string='Porc. descto. en efectivo')
-    porcpagotromedio = fields.Float(string='Porc. descto. por otro medio',)
+    codigo = fields.Char(string='Código',required=True)
+    multiple = fields.Boolean(string='Múltiple',default=False)
+    maximo_uso = fields.Integer(string='Cantidad máxima de usos (0 = ilimitado)', default=1)
+    usos = fields.Integer(string='Usos hasta el momento',default=0)
+    validodesde = fields.Date(string='Válido Desde',default=fields.Date().today())
+    validohasta = fields.Date(string='Válido Hasta',required=True)
+    tipo = fields.Selection(string='Tipo de bono',selection=[('valor','Valor en pesos'),('porcentaje','Valor porcentual')],default='porcentaje')
+    descuentavalor = fields.Float(string='Valor de descuento',default=0.0)
+    porcpagoefectivo = fields.Float(string='Porcentaje descuento',default=0.0)
     # El descuento se lo puede aplicar a :
-    aplicahospedaje = fields.Boolean(string='Aplicar descuento en hospedaje',default=True)
-    aplicarestaurante = fields.Boolean(string='Aplicar descuento en restaurante')
-    aplicaconsumos = fields.Boolean(string='Aplicar descuento en otros productos')    
+    aplicahospedaje = fields.Boolean(string='Aplica en hospedaje',default=True)
+    aplicarestaurante = fields.Boolean(string='Aplica en restaurante',default=False)
+    aplicaconsumos = fields.Boolean(string='Aplica en otros productos',default=False)
+    valor = fields.Float(string='Valor descuento',compute='_compute_valor')
     active = fields.Boolean(string='Activo',default=True)
+
+    @api.onchange('multiple')
+    def _onchange_multiple(self):
+        for record in self:
+            if not record.multiple:
+                record.maximo_uso = 1
+    
+    @api.onchange('tipo')
+    def _onchange_tipo(self):
+        for record in self:
+            if record.tipo == 'valor':
+                record.porcpagoefectivo = 0.0
+            elif record.tipo == 'porcentaje':
+                record.descuentavalor = 0.0
+    
+    @api.depends('tipo','descuentavalor','porcpagoefectivo')
+    def _compute_valor(self):
+        for record in self:
+            if record.tipo == 'valor':
+                record.valor = record.descuentavalor
+            elif record.tipo == 'porcentaje':
+                record.valor = record.porcpagoefectivo
 
 class MotgamaConsumo(models.Model):
 #    Fields: Consumos del Bar en cualquiera de las recepciones: Creado: Junio 07 del 2019

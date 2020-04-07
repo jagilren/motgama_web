@@ -33,9 +33,12 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     hospedaje_adicional = fields.Float(string='Hospedaje Adicional',compute='_compute_precio')
     valor_total = fields.Float(string='Total hospedaje',compute='_compute_total')
     abono_ids = fields.Many2many(string="Abonos",comodel_name='motgama.recaudo',compute="_compute_abonos")
-    adeudado = fields.Float(string='Total a pagar',compute="_compute_adeudado")
+    adeudado = fields.Float(string='Total a pagar (efectivo)',compute="_compute_adeudado")
     abonado = fields.Float(string="Total abonado",compute="_compute_abonado")
     movimiento = fields.Boolean()
+    bono = fields.Many2one(string='Bonos',comodel_name='motgama.bonos',default=lambda self: self._get_bono())
+    bono_ids = fields.Many2many(string='Bono',comodel_name='motgama.bonos',compute='_compute_bono')
+    descbono = fields.Float(string='Descuento por bono, pagando en efectivo',compute='_compute_descbono')
 
     @api.model
     def _get_fecha(self):
@@ -46,6 +49,41 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     @api.model
     def _get_habitacion(self):
         return self.env.context['active_id']
+
+    @api.model
+    def _get_bono(self):
+        flujoId = self.env.context['active_id']
+        flujo = self.env['motgama.flujohabitacion'].browse(flujoId)
+        return flujo.ultmovimiento.bono_id.id
+
+    @api.depends('bono')
+    def _compute_bono(self):
+        for record in self:
+            if record.bono:
+                record.bono_ids = [(6,0,[record.bono.id])]
+
+    @api.depends('bono_ids','consumos','hospedaje_normal','hospedaje_amanecida')
+    def _compute_descbono(self):
+        for record in self:
+            if record.bono:
+                desc_hosp = 0.0
+                desc_cons = 0.0
+                desc_rest = 0.0
+
+                if record.bono.aplicahospedaje:
+                    if record.habitacion.estado == 'OO':
+                        desc_hosp = record.hospedaje_normal * record.bono.porcpagoefectivo / 100
+                    else :
+                        desc_hosp = record.hospedaje_amanecida * record.bono.porcpagoefectivo / 100
+                
+                if record.bono.aplicaconsumos or record.bono.aplicarestaurante:
+                    for consumo in record.consumos:
+                        if consumo.llevaComanda and record.bono.aplicarestaurante:
+                            desc_rest += consumo.vlrSubtotal * record.bono.porcpagoefectivo / 100
+                        elif (not consumo.llevaComanda) and record.bono.aplicaconsumos:
+                            desc_cons += consumo.vlrSubtotal * record.bono.porcpagoefectivo / 100
+                
+                record.descbono = desc_cons + desc_hosp + desc_rest + record.bono.descuentavalor
 
     @api.depends('habitacion')
     def _compute_movimiento(self):
@@ -213,4 +251,5 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     @api.depends('valor_total','abonado')
     def _compute_adeudado(self):
         for record in self:
-            record.adeudado = record.valor_total - record.abonado
+            total = record.valor_total - record.abonado
+            record.adeudado = total - record.descbono

@@ -24,6 +24,15 @@
                     <field name="hospedaje_amanecida" readonly="1" attrs="{'invisible':[('incluye_amanecida','=',False)]}"/>
                     <field name="hospedaje_adicional" readonly="1" attrs="{'invisible':[('incluye_adicional','=',False)]}"/>
                 </group>
+                <group attrs="{'invisible':[('bono','=',False)]}">
+                    <field name="bono" invisible="1"/>
+                    <field name="bono_ids" readonly="1"/>
+                </group>
+                <group attrs="{'invisible':[('bono','=',False)]}">
+                    <group>
+                        <field name="descbono" readonly="1"/>
+                    </group>
+                </group>
                 <group>
                     <field name="abono_ids">
                         <tree>

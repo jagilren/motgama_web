@@ -13,6 +13,8 @@ class MotgamaWizardInterfazContable(models.TransientModel):
     fecha_final = fields.Datetime(string='Fecha final',required=True)
     genera_csv = fields.Boolean(string='Genera CSV',default=False)
 
+    es_manual = fields.Boolean(string='Es manual',default=True)
+
     @api.multi
     def get_report(self):
         self.ensure_one()
@@ -190,12 +192,12 @@ class MotgamaInterfazContableRegistro(models.Model):
     @api.model
     def check_hora(self):
         fecha = self.get_hora()
-        if fecha < datetime.datetime.now() < fecha + datetime.timedelta(minutes=5):
+        if fecha < datetime.now() < fecha + timedelta(minutes=5):
             self.generar_interfaz()
 
     @api.model
     def get_hora(self):
-        paramHora = env['motgama.parametros'].search([('codigo','=','HORACIERRE')],limit=1)
+        paramHora = self.env['motgama.parametros'].search([('codigo','=','HORACIERRE')],limit=1)
         fecha_actual = datetime.now()
         if not paramHora:
             raise Warning('No se ha definido el parámetro "HORACIERRE"')
@@ -216,7 +218,8 @@ class MotgamaInterfazContableRegistro(models.Model):
         valores = {
             'fecha_inicial': fecha_inicial,
             'fecha_final': fecha_final,
-            'genera_csv': True
+            'genera_csv': True,
+            'es_manual': False
         }
         nuevo = self.env['motgama.wizard.interfazcontable'].create(valores)
         if not nuevo:

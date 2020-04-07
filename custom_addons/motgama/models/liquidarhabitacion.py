@@ -47,6 +47,11 @@ class MotgamaFlujoHabitacion(models.Model):
             else:
                 self.write({'puede_liquidar': True})
         
+        if movimiento.bono_id:
+            desc_hosp = 0.0
+            desc_cons = 0.0
+            desc_rest = 0.0
+        
         # Se calculan las horas adicionales si es amanecida
         if self.estado == 'OA':
             if fechaActual < movimiento.horainicioamanecida:
@@ -112,6 +117,9 @@ class MotgamaFlujoHabitacion(models.Model):
                 horasDespues = 0
             
             horasAdicionales = horasAntes + horasDespues
+
+            if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
+                desc_hosp = movimiento.tarifamanecida * movimiento.bono_id.porcpagoefectivo / 100
 
             ordenVenta = self.env['sale.order'].search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
             if not ordenVenta:
@@ -184,6 +192,9 @@ class MotgamaFlujoHabitacion(models.Model):
             else:
                 horasAdicionales = 0
             
+            if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
+                desc_hosp = movimiento.tarifaocasional * movimiento.bono_id.porcpagoefectivo / 100
+            
             ordenVenta = self.env['sale.order'].search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
             if not ordenVenta:
                 cliente = self.env['res.partner'].search([('vat','=','1')], limit=1)
@@ -240,6 +251,33 @@ class MotgamaFlujoHabitacion(models.Model):
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de horas adicionales a la orden de venta')
         
+        if movimiento.bono_id and (movimiento.bono_id.aplicarestaurante or movimiento.bono_id.aplicaconsumos):
+            for consumo in self.consumos:
+                if consumo.llevaComanda and movimiento.bono_id.aplicarestaurante:
+                    desc_rest += consumo.vlrSubtotal * movimiento.bono_id.porcpagoefectivo / 100
+                elif (not consumo.llevaComanda) and movimiento.bono_id.aplicaconsumos:
+                    desc_cons += consumo.vlrSubtotal * movimiento.bono_id.porcpagoefectivo / 100
+
+        if movimiento.bono_id:
+            param_bono = self.env['motgama.parametros'].search([('codigo','=','CODBONOPROM')],limit=1)
+            if not param_bono:
+                raise Warning('No se ha definido el parámetro: "CODBONOPROM"')
+            prod_bono = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+            if not prod_bono:
+                raise Warning('No existe el producto con referencia interna "CODBONOPROM"')
+            valoresLineaBono = {
+                'customer_lead' : 0,
+                'name' : prod_bono.name,
+                'order_id' : ordenVenta.id,
+                'price_unit' : -1 * (desc_cons + desc_hosp + desc_rest),
+                'product_uom_qty' : 1,
+                'product_id' : prod_bono.product_variant_id.id,
+                'es_hospedaje' : False
+            }
+            nuevo = self.env['sale.order.line'].create(valoresLineaBono)
+            if not nuevo:
+                raise Warning('Error al liquidar: No se pudo aplicar el bono al estado de cuenta')
+
         self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
         ordenVenta.write({'liquidafecha':fechaActual})
