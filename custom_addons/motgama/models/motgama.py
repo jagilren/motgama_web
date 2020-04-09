@@ -936,7 +936,7 @@ class MotgamaMedioPago(models.Model):
     _rec_name = 'nombre'
 
     nombre = fields.Char(string='Nombre',required=True)
-    tipo = fields.Selection(string='Tipo de pago',required=True,selection=[('electro','Electrónico'),('efectivo','Efectivo'),('bono','Bono/Descuento'),('prenda','Prenda'),('abono','Abono')])
+    tipo = fields.Selection(string='Tipo de pago',required=True,selection=[('electro','Electrónico'),('efectivo','Efectivo'),('pase','Pase/Cortesía'),('prenda','Prenda'),('abono','Abono')])
     lleva_prenda = fields.Boolean(string='¿Lleva Prenda?',compute='_compute_prenda')
     diario_id = fields.Many2one(string='Diario de pago',comodel_name='account.journal')
     active = fields.Boolean(string='Activo',default=True)

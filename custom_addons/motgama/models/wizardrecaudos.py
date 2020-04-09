@@ -187,9 +187,9 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 nroPrendas += 1
                 if nroPrendas > 1:
                     raise Warning('Solo se permite registrar un pago con prenda')
-            elif pago.mediopago.tipo == 'bono':
-                raise Warning('El pago con bonos no está implementado')
-                # TODO: Implementar bonos
+            elif pago.mediopago.tipo == 'pase':
+                if not self.env.user.motgama_pase_cortesia:
+                    raise Warning('Error: No tiene permiso para registrar pago con Pase/Cortesía')
             elif pago.mediopago.tipo == 'abono':
                 tiene_abono = True
                 abono = pago.valor

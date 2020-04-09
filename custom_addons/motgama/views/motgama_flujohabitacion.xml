@@ -87,6 +87,9 @@
 
                     <button name="aplicar_bono" string="Aplicar bono" type="object" class="btn"
                         attrs="{'invisible':[('estado','not in',['OO','OA'])]}"/>
+                    
+                    <button name='agregar_descuento' string='Agregar descuento' type='object' class='btn'
+                        attrs="{'invisible':[('estado','!=','LQ')]}"/>
                         
                 </header>
                 <sheet>
