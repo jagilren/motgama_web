@@ -79,6 +79,7 @@
         'views/motgama_interfazcontable.xml',
         'views/product_template.xml',
         'views/motgama_wizard_descuento.xml',
+        'views/motgama_reporte_ventas.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',
@@ -96,5 +97,6 @@
         'reports/reporte_consumos.xml',
         'reports/reporte_documentos.xml',
         'reports/reporte_hospedaje.xml',
-        'reports/reporte_recaudo.xml']
+        'reports/reporte_recaudo.xml',
+        'reports/reporte_ventas.xml']
 }
