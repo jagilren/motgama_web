@@ -13,6 +13,8 @@ class WizardReporteVentas(models.TransientModel):
     doc_inicial = fields.Many2one(string='Factura inicial',comodel_name='account.invoice')
     doc_final = fields.Many2one(string='Factura final',comodel_name='account.invoice')
 
+    es_manual = fields.Boolean(string='Es manual',default=True)
+
     @api.multi
     def get_report(self):
         self.ensure_one()
@@ -50,14 +52,17 @@ class WizardReporteVentas(models.TransientModel):
             if not nuevo:
                 raise Warning('No fue posible generar el reporte')
         
-        return {
-            'name': 'Reporte de ventas',
-            'view_mode':'tree',
-            'view_id': self.env.ref('motgama.tree_reporte_ventas').id,
-            'res_model': 'motgama.reporteventas',
-            'type': 'ir.actions.act_window',
-            'target': 'main'
-        }
+        if self.es_manual:
+            return {
+                'name': 'Reporte de ventas',
+                'view_mode':'tree',
+                'view_id': self.env.ref('motgama.tree_reporte_ventas').id,
+                'res_model': 'motgama.reporteventas',
+                'type': 'ir.actions.act_window',
+                'target': 'main'
+            }
+        else:
+            return True
 
 class MotgamaReporteVentas(models.TransientModel):
     _name = 'motgama.reporteventas'

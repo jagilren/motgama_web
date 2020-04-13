@@ -138,22 +138,9 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'subject': subject,
                     'email_from': email_from,
                     'email_to': email_to,
-                    'body_html': html,
-                    'attachment_ids': [(6,0,[arch.id])]
+                    'body_html': html
                 }
-                correo = self.env['mail.mail'].create(valoresCorreo)
-                if correo:
-                    correo.sudo().send()
-                
-                valoresInterfaz = {
-                    'nombre': doc if doc != '' else str(self.fecha_final),
-                    'fecha_final': self.fecha_final,
-                    'fecha_inicial': self.fecha_inicial,
-                    'correo': correo.id
-                }
-                reg = self.env['motgama.interfazcontable.registro'].create(valoresInterfaz)
-                if not reg:
-                    raise Warning('No fue posible crear la interfaz contable')
+                return valoresCorreo, arch, doc
         else:
             return {
                 'name': 'Interfaz Contable',
@@ -224,4 +211,40 @@ class MotgamaInterfazContableRegistro(models.Model):
         nuevo = self.env['motgama.wizard.interfazcontable'].create(valores)
         if not nuevo:
             raise Warning('No fue posible generar el reporte')
-        nuevo.get_report()
+        
+        valores_correo, arch, doc = nuevo.get_report()
+
+        valores_reporte = {
+            'tipo_reporte': 'fecha',
+            'fecha_inicial': fecha_inicial,
+            'fecha_final': fecha_final,
+            'es_manual': False
+        }
+        reporte = self.env['motgama.wizard.reporteventas'].create(valores_reporte)
+        
+        reporte.get_report()
+        reporte_ventas = self.env['motgama.reporteventas'].search([])
+
+        pdf = self.env['report'].sudo().get_pdf(reporte_ventas.ids, 'motgama.reporte_ventas')
+        attachment_report = self.env['ir.attachment'].create({
+            'name': 'Reporte de ventas',
+            'type': 'binary',
+            'datas': base64.encodestring(pdf),
+            'res_model': 'motgama.reporteventas',
+            'mimetype': 'application/x-pdf'
+        })
+
+        valores_correo.update({'attachment_ids': [(6,0,[attachment_report.id, arch.id])]})
+        correo = self.env['mail.mail'].create(valores_correo)
+        if correo:
+            correo.sudo().send()
+        
+        valoresInterfaz = {
+            'nombre': doc if doc != '' else str(fecha_final),
+            'fecha_final': fecha_final,
+            'fecha_inicial': fecha_inicial,
+            'correo': correo.id
+        }
+        reg = self.env['motgama.interfazcontable.registro'].create(valoresInterfaz)
+        if not reg:
+            raise Warning('No fue posible crear la interfaz contable')
