@@ -24,19 +24,38 @@ class MotgamaWizardDesasigna(models.TransientModel):
             raise Warning('El parámetro "TIEMPODESASIG" no se ha definido')
         tiempoDesasigna = int(flagDesasigna.valor)
         if not tiempoDesasigna:
-            raise Warning('Error en parámetro de Tiempo para Desasignar')
+            raise Warning('Error: Parámetro "TIEMPODESASIG" está mal definido')
 
         if tiempoMinutos > tiempoDesasigna:
             raise Warning('Ya superó el tiempo permitido para desasignar. Van ' + str(int(tiempoMinutos)) + ' minutos')  
 
-        consumos = self.env['motgama.consumo'].search([('movimiento_id','=',movimiento.id)], limit=1)
-        if consumos:  # Si tiene consumos no se puede desasignar
-            raise Warning('La habitación tiene consumos registrados, no se desasigna')   
+        consumos = self.env['motgama.consumo'].search([('movimiento_id','=',movimiento.id)])
+        puede_desasignar = True
+        cantidad_productos = {}
+        for consumo in consumos:
+            if consumo.producto_id in cantidad_productos:
+                cantidad_productos[consumo.producto_id] += consumo.cantidad
+            else:
+                cantidad_productos[consumo.producto_id] = consumo.cantidad
+        for producto in cantidad_productos:
+            if cantidad_productos[producto] > 0:
+                puede_desasignar = False
+        if not puede_desasignar:
+            raise Warning('La habitación tiene consumos registrados, no se puede desasignar')   
 
         if movimiento:  # Modifica el estado para poner en aseo y poder habilitar nuevamente la habitacion                #P7.0.4R
-            valores = {'desasignafecha':fechaActual,
-                        'desasigna_uid':self.env.user.id,
-                        'observacion':self.observacion}
+            orden_venta = self.env['sale.order'].search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
+            if orden_venta:
+                for picking in orden_venta.picking_ids:
+                    picking.sudo().write({'sale_id': False})
+                orden_venta.action_cancel()
+                if not orden_venta.state == 'cancel':
+                    raise Warning('No se pudo cancelar la orden de venta')
+            valores = {
+                'desasignafecha':fechaActual,
+                'desasigna_uid':self.env.user.id,
+                'observacion':self.observacion
+            }
             movimiento.write(valores)
             flujo.sudo().write({'estado':'RC','notificar':True}) # pone en estado de aseo
 

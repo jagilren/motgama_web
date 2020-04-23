@@ -174,7 +174,11 @@ class MotgamaWizardRecaudo(models.TransientModel):
 
         tiene_recaudo = False
         if len(self.movimiento.recaudo_ids) > 0:
-            tiene_recaudo = True
+            abonado = 0.0
+            for recaudo in self.movimiento.recaudo_ids:
+                abonado += recaudo.valor_pagado
+            if abonado > 0:
+                tiene_recaudo = True
         tiene_abono = False
         abono = 0.0
         for pago in self.pagos:
@@ -208,7 +212,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
 
         ordenVenta = self.env['sale.order'].search([('movimiento','=',self.movimiento.id),('state','=','sale')],limit=1)
         if not ordenVenta:
-            raise Warning('Error al recaudar: La habitación no fue recaudada correctamente')
+            raise Warning('Error al recaudar: La habitación no fue liquidada correctamente')
         ordenVenta.write({'partner_id':self.cliente.id})
         ordenVenta.action_invoice_create(final=True)
         for invoice in ordenVenta.invoice_ids:

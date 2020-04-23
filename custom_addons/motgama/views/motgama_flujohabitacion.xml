@@ -92,6 +92,8 @@
                         attrs="{'invisible':[('estado','!=','LQ')]}"/>
                         
                 </header>
+                <field name="factura" invisible="1"/>
+                <field name="orden_venta" invisible="1"/>
                 <sheet>
                     <group name="group_bottom">
                         <group name="group_left">            
@@ -106,10 +108,10 @@
                     </group><br/>
                     
                     <notebook>
-                        <page name='cuenta_cobro' string='Estado de Cuenta' attrs="{'invisible':[('estado','not in','LQ')]}">
+                        <page name='cuenta_cobro' string='Estado de Cuenta' attrs="{'invisible':['|',('estado','not in','LQ'),('orden_venta','=',False)]}">
                             <button name="button_cuentacobro" string="Ver estado de cuenta" type="object" class="btn"/>
                         </page>
-                        <page name='factura' string='Factura' attrs="{'invisible':[('estado','not in','RC')]}">
+                        <page name='factura' string='Factura' attrs="{'invisible':['|',('estado','not in','RC'),('factura','=',False)]}">
                             <button name="button_factura" string="Ver factura" type="object" class="btn"/>
                         </page>
                         <page name="abonos" string="Abonos" attrs="{'invisible':[('estado','not in',['OO','OA'])]}">
@@ -118,7 +120,7 @@
                                 <button name="abonar" string="Abonar a esta asignación" type="object" class="btn btn-primary"/>
                             </group>
                             <group>
-                                <button name="revertir_abono" string="Revertir abonos" type="object" class="btn btn-warning"/>
+                                <button name="revertir_abono" string="Devolver abono" type="object" class="btn btn-warning"/>
                             </group>
                         </page>
                         <page name='habitacion' string='Esta habitación'>

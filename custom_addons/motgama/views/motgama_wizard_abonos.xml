@@ -69,20 +69,25 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group>
+                    <group string="Abonos">
                         <field name="habitacion_id"/>
-                        <field name="abono_ids" widget="many2many_list">
+                        <field name="abono_ids" widget="many2many_list" readonly="1">
                             <tree editable="top" create="false" delete="false">
-                                <field name="abono_id" readonly="1"/>
-                                <field name="abono_id" invisible="1"/>
-                                <field name="fecha"/>
-                                <field name="valor" readonly="1"/>
-                                <field name="valor" invisible="1"/>
-                                <field name="revertir"/>
+                                <field name="nrorecaudo"/>
+                                <field name="valor_pagado"/>
                             </tree>
                         </field>
                         <field name="total_abonado"/>
-                        <field name="total_revertir"/>
+                    </group>
+                    <group string="Revertir">
+                        <group>
+                            <field name="total_revertir"/>
+                        </group>
+                        <group>
+                            <field name="mediopago"/>
+                        </group>
+                    </group>
+                    <group>
                         <field name="total_abonos"/>
                     </group>
                 </sheet>
