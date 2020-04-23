@@ -228,6 +228,43 @@ class MotgamaFlujoHabitacion(models.Model):
             nuevaLinea = self.env['sale.order.line'].create(valoresLineaOcasional)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje ocasional a la orden de venta')
+
+            # Descuento poco tiempo
+            horasDelta = segundos / 3600
+            paramTiempoDesc = self.env['motgama.parametros'].search([('codigo','=','TIEMPODESCHOS')],limit=1)
+            if not paramTiempoDesc:
+                raise Warning('No se ha definido el parámetro "TIEMPODESCHOS"')
+            try:
+                tiempoDesc = float(paramTiempoDesc.valor)
+            except ValueError:
+                raise Warning('El parámetro "TIEMPODESCHOS" está mal definido')
+            if horasDelta < tiempoDesc:
+                paramCodDesc = self.env['motgama.parametros'].search([('codigo','=','CODDESCOCUP')],limit=1)
+                if not paramCodDesc:
+                    raise Warning('No se ha definido el parámetro "CODDECOCUP"')
+                prod_desc_ocup = self.env['product.template'].search([('default_code','=',paramCodDesc.valor)],limit=1)
+                if not prod_desc_ocup:
+                    raise Warning('No existe el producto con referencia interna "' + paramCodDesc.codigo + '"')
+                paramDesc = self.env['motgama.parametros'].search([('codigo','=','%DESCPOCOTIEMPO')],limit=1)
+                if not paramDesc:
+                    raise Warning('No se ha definido el parámetro "%DESCPOCOTIEMPO"')
+                try:
+                    desc_tiempo = float(paramDesc.valor)
+                except ValueError:
+                    raise Warning('El parámetro "' + paramDesc.codigo + '" está mal definido')
+                valoresLineaDesc = {
+                    'customer_lead' : 0,
+                    'name' : prod_desc_ocup.name,
+                    'order_id' : ordenVenta.id,
+                    'price_unit' : -1 * movimiento.tarifaocasional * desc_tiempo / 100,
+                    'product_uom_qty' : 1,
+                    'product_id' : prod_desc_ocup.product_variant_id.id,
+                    'es_hospedaje' : False
+                }
+                nuevaLinea = self.env['sale.order.line'].create(valoresLineaDesc)
+                if not nuevaLinea:
+                    raise Warning('Error al liquidar: No se pudo agregar el descuento por poco tiempo')
+
         else:
             raise Warning('Error del sistema, la habitación no está ocupada')
 

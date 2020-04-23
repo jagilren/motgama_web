@@ -221,6 +221,26 @@ class MotgamaWizardPrecuenta(models.TransientModel):
                 else:
                     record.incluye_adicional = False
 
+                if record.habitacion.estado == 'OO':
+                    # Descuento poco tiempo
+                    horasDelta = segundos / 3600
+                    paramTiempoDesc = self.env['motgama.parametros'].search([('codigo','=','TIEMPODESCHOS')],limit=1)
+                    if not paramTiempoDesc:
+                        raise Warning('No se ha definido el parámetro "TIEMPODESCHOS"')
+                    try:
+                        tiempoDesc = float(paramTiempoDesc.valor)
+                    except ValueError:
+                        raise Warning('El parámetro "TIEMPODESCHOS" está mal definido')
+                    if horasDelta < tiempoDesc:
+                        paramDesc = self.env['motgama.parametros'].search([('codigo','=','%DESCPOCOTIEMPO')],limit=1)
+                        if not paramDesc:
+                            raise Warning('No se ha definido el parámetro "%DESCPOCOTIEMPO"')
+                        try:
+                            desc_tiempo = float(paramDesc.valor)
+                        except ValueError:
+                            raise Warning('El parámetro "' + paramDesc.codigo + '" está mal definido')
+                        precioOcasional = precioOcasional - precioOcasional * desc_tiempo / 100
+
                 record.hospedaje_normal = precioOcasional
                 record.hospedaje_amanecida = precioAmanecida
                 record.hospedaje_adicional = precioAdicional
