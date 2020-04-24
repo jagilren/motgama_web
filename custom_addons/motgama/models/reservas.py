@@ -42,7 +42,7 @@ class MotgamaReservas(models.Model):
                 self.env['motgama.log'].create(valores)
 
         if record.fecha < fields.Datetime().now() + timedelta(hours=tiempoReserva):
-            raise Warning('No se puede reservar en menos de ' + str(tiempoReserva) + ' horas')
+            record.reservar_habitacion()
 
         return record
     
@@ -61,6 +61,8 @@ class MotgamaReservas(models.Model):
     @api.multi
     def button_cancelar(self):
         for reserva in self:
+            if reserva.recaudo_id:
+                raise Warning('No se puede cancelar esta reserva, primero debe devolver el anticipo')
             valores = {
                 'cancelada': True,
                 'cancelada_uid':self.env.user.id,
@@ -73,7 +75,7 @@ class MotgamaReservas(models.Model):
     def reservar_cancelar_habitaciones(self):
         reservas = self.env['motgama.reserva'].search([('active','=',True)])
         if not reservas:
-            pass
+            return True
 
         tiempoReservaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOBLOQRES')],limit=1)
         if not tiempoReservaStr:
@@ -85,7 +87,7 @@ class MotgamaReservas(models.Model):
                 'descripcion': 'No se pudo verificar el estado de las reservas porque no se ha definido el parámetro "TIEMPOBLOQRES"'
             }
             self.env['motgama.log'].create(valores)
-            pass
+            return True
         try:
             tiempoReserva = int(tiempoReservaStr.valor)
         except ValueError:
@@ -97,7 +99,7 @@ class MotgamaReservas(models.Model):
                 'descripcion': 'No se pudo verificar el estado de las reservas porque el parámetro "TIEMPOBLOQRES" está mal definido'
             }
             self.env['motgama.log'].create(valores)
-            pass
+            return True
 
         tiempoCancelaReservaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOCANCELRES')],limit=1)
         if not tiempoCancelaReservaStr:
@@ -109,7 +111,7 @@ class MotgamaReservas(models.Model):
                 'descripcion': 'No se pudo verificar el estado de las reservas porque no se ha definido el parámetro "TIEMPOCANCELRES"'
             }
             self.env['motgama.log'].create(valores)
-            pass
+            return True
         try:
             tiempoCancelaReserva = int(tiempoReservaStr.valor)
         except ValueError:
@@ -121,7 +123,7 @@ class MotgamaReservas(models.Model):
                 'descripcion': 'No se pudo verificar el estado de las reservas porque el parámetro "TIEMPOCANCELRES" está mal definido'
             }
             self.env['motgama.log'].create(valores)
-            pass
+            return True
 
         for reserva in reservas:
             intervaloReservar = reserva.fecha - fields.Datetime().now()
@@ -145,6 +147,7 @@ class MotgamaReservas(models.Model):
                 if reserva.habitacion_id.estado == 'R':
                     reserva.habitacion_id.write({'estado':'D','prox_reserva':False,'notificar':False})
                 reserva.button_cancelar()
+    
     @api.multi
     def recaudo_anticipo(self):
         self.ensure_one()
@@ -157,6 +160,49 @@ class MotgamaReservas(models.Model):
             'view_id': self.env.ref('motgama.wizard_recaudo_reserva').id,
             'target': 'new'
         }
+    
+    @api.multi
+    def button_devolver_anticipo(self):
+        return {
+            'name': 'Devolver anticipo',
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizard.devolveranticipo',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.wizard_devolver_anticipo').id,
+            'target': 'new'
+        }
+    
+    @api.multi
+    def reservar_habitacion(self):
+        self.ensure_one()
+        tiempoReservaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOBLOQRES')],limit=1)
+        if not tiempoReservaStr:
+            raise Warning('No se ha definido el parámetro "TIEMPOBLOQRES"')
+        try:
+            tiempoReserva = int(tiempoReservaStr.valor)
+        except ValueError:
+            raise Warning('El parámetro "TIEMPOBLOQRES" está mal definido')
+        tiempoCancelaReservaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOCANCELRES')],limit=1)
+        if not tiempoCancelaReservaStr:
+            raise Warning('No se ha definido el parámetro "TIEMPOCANCELRES"')
+        try:
+            tiempoCancelaReserva = int(tiempoReservaStr.valor)
+        except ValueError:
+            raise Warning('El parámetro "TIEMPOCANCELRES" está mal definido')
+        
+        fecha_inicial = self.fecha - timedelta(hours=tiempoReserva)
+        fecha_final = self.fecha + timedelta(minutes=tiempoCancelaReserva)
+        if fecha_inicial <= fields.Datetime().now() <= fecha_final:
+            if self.habitacion_id.estado == 'D':
+                self.habitacion_id.write({'estado':'R','prox_reserva':self.id,'notificar':True})
+            else:
+                raise Warning('La habitación no se encuentra disponible y no puede cambiarse a Reservada')
+        else:
+            if fields.Datetime().now() < fecha_inicial:
+                raise Warning('La habitación solo se puede reservar desde ' + str(tiempoReserva) + ' horas antes de la reserva')
+            if fields.Datetime().now() > fecha_final:
+                raise Warning('La habitación solo se puede reservar hasta ' + str(tiempoCancelaReserva) + ' minutos después de la reserva, debe modificarla primero')
 
 class MotgamaWizardModificaReserva(models.TransientModel):
     _name = 'motgama.wizard.modificareserva'
@@ -253,6 +299,73 @@ class MotgamaFlujohabitacion(models.Model):
             'target':"new"
         }
 
+class MotgamaWizardDevolverAnticipo(models.TransientModel):
+    _name = 'motgama.wizard.devolveranticipo'
+    _description = 'Wizard devolución de anticipo'
+
+    reserva_id = fields.Many2one(string='Reserva',comodel_name='motgama.reserva',default=lambda self: self._get_reserva())
+    anticipo = fields.Float(string='Anticipo',default=lambda self: self._get_anticipo(),readonly=True)
+    mediopago = fields.Many2one(string='Medio de devolución',comodel_name='motgama.mediopago',required=True)
+
+    @api.model
+    def _get_reserva(self):
+        return self.env.context['active_id']
+
+    @api.model
+    def _get_anticipo(self):
+        idRes = self.env.context['active_id']
+        reserva = self.env['motgama.reserva'].browse(idRes)
+        return reserva.anticipo
+    
+    @api.multi
+    def devolver_anticipo(self):
+        self.ensure_one()
+        valoresPayment = {
+            'payment_type': 'outbound',
+            'partner_type': 'customer',
+            'partner_id': self.reserva_id.cliente_id.id,
+            'amount': self.anticipo,
+            'journal_id': self.mediopago.diario_id.id,
+            'payment_date': fields.Date().today(),
+            'payment_method_id': 1,
+            'communication': 'Revertir anticipo de reserva: ' + self.reserva_id.cod
+        }
+        paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+        if paramAnticipos:
+            ant = self.reserva_id.cliente_id.property_account_receivable_id
+            cuenta = self.env['account.account'].search([('code','=',paramAnticipos.valor)],limit=1)
+            if not cuenta:
+                raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+            self.reserva.cliente_id.write({'property_account_receivable_id': cuenta.id})
+        payment = self.env['account.payment'].create(valoresPayment)
+        payment.post()
+        if paramAnticipos:
+            self.reserva_id.cliente_id.write({'property_account_receivable_id':ant.id})
+        
+        valoresRecaudo = {
+            'cliente': self.reserva_id.cliente_id.id,
+            'habitacion': self.reserva_id.habitacion_id.id,
+            'total_pagado': -1 * self.anticipo,
+            'valor_pagado': -1 * self.anticipo,
+            'usuario_uid': self.env.user.id,
+            'tipo_recaudo': 'anticipos',
+            'recepcion_id': self.env.user.recepcion_id.id
+        }
+        recaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
+        valoresPago = {
+            'cliente_id': payment.partner_id.id,
+            'fecha': fields.Datetime().now(),
+            'mediopago': self.mediopago.id,
+            'valor': -1 * self.anticipo,
+            'usuario_uid': self.env.user.id,
+            'pago_id': payment.id,
+            'recaudo': recaudo.id
+        }
+        pago = self.env['motgama.pago'].create(valoresPago)
+        self.reserva_id.write({'anticipo':0.0,'recaudo_id':False})
+
+        return True
+
 class MotgamaWizardRecaudoReserva(models.TransientModel):
     _name = 'motgama.wizard.recaudoreserva'
     _description = 'Recaudo de reserva'
@@ -304,10 +417,19 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
                 'payment_method_id': 1,
                 'communication': 'Anticipo de ' + self.reserva.cod
             }
+            paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+            if paramAnticipos:
+                ant = self.cliente.property_account_receivable_id
+                cuenta = self.env['account.account'].search([('code','=',paramAnticipos.valor)],limit=1)
+                if not cuenta:
+                    raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+                self.cliente.write({'property_account_receivable_id': cuenta.id})
             payment = self.env['account.payment'].create(valoresPayment)
             if not payment:
                 raise Warning('No se pudo registrar el pago')
             payment.post()
+            if paramAnticipos:
+                self.cliente.write({'property_account_receivable_id':ant.id})
             
             valores = {
                 'cliente_id': payment.partner_id.id,
