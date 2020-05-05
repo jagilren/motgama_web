@@ -8,6 +8,12 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 class MotgamaWizardHabitacion(models.TransientModel):
     _inherit = 'motgama.wizardhabitacion'
 
+    @api.model
+    def _get_observacion(self):
+        idHab = self.env.context['active_id']
+        hab = self.env['motgama.flujohabitacion'].browse(idHab)
+        return hab.observacion
+
     @api.multi
     def check_placa(self):
         self.ensure_one()
@@ -41,11 +47,44 @@ class MotgamaWizardHabitacion(models.TransientModel):
         fechaActualTz = pytz.utc.localize(fechaActual).astimezone(tz)
         
         # Esto me da el numero del día de la semana, python arranca con 0->lunes
-        nroDia = fechaActualTz.weekday()
-        calendario = self.env['motgama.calendario'].search([('diasemana','=',nroDia)], limit=1)
-        if not calendario:
+        nroDiaAyer = (fechaActualTz - timedelta(days=1)).weekday()
+        nroDiaHoy = fechaActualTz.weekday()
+        calendarioAyer = self.env['motgama.calendario'].search([('diasemana','=',nroDiaAyer)], limit=1)
+        calendarioHoy = self.env['motgama.calendario'].search([('diasemana','=',nroDiaHoy)], limit=1)
+        if not calendarioHoy:
             raise Warning('Error: No existe calendario para el día actual')
 
+        if calendarioAyer:
+            flagInicioAmanecida = calendarioAyer.horainicioamanecida
+            flagfinAmanecida = calendarioAyer.horafinamanecida
+            if not flagInicioAmanecida:
+                raise Warning('No se ha definido "Hora Inicio Amanecida" en el calendario del día de ayer')
+            if not flagfinAmanecida:
+                raise Warning('No se ha definido "Hora Fin Amanecida" en el calendario del día de ayer')
+            flagInicioTz = datetime.strptime(str(flagInicioAmanecida),"%H:%M")
+            flagFinTz = datetime.strptime(str(flagfinAmanecida),"%H:%M")
+            flagInicio = flagInicioTz + timedelta(hours=5)
+            flagFin = flagFinTz + timedelta(hours=5)
+            fechaAyer = fechaActual - timedelta(days=1)
+            fechaAyerTz = fechaActualTz - timedelta(days=1)
+            horainicioamanecida = datetime(fechaAyer.year,fechaAyer.month,fechaAyer.day,flagInicio.hour,flagInicio.minute)
+            if flagInicio > flagFin:
+                horafinamanecida = datetime(fechaAyer.year,fechaAyer.month,fechaAyer.day,flagFin.hour,flagFin.minute) + timedelta(days=1)
+            else:
+                horafinamanecida = datetime(fechaAyer.year,fechaAyer.month,fechaAyer.day,flagFin.hour,flagFin.minute)
+            if fechaActual < horafinamanecida:
+                calendario = calendarioAyer
+                fecha = fechaAyer
+                fechaTz = fechaAyerTz
+            else:
+                calendario = calendarioHoy
+                fecha = fechaActual
+                fechaTz = fechaActualTz
+        else:
+            calendario = calendarioHoy
+            fecha = fechaActual
+            fechaTz = fechaActualTz
+                
         # La variable valores contendrá el diccionario de datos que se pasaran al momento de crear el registro                  #P7.0.4R
         valores = {}
 
@@ -75,18 +114,18 @@ class MotgamaWizardHabitacion(models.TransientModel):
                 raise Warning('No se admite amanecida')
             # CONDICION -> Horas en formato 24 horas HORAS:MINUTOS
             if flagInicioTz > flagFinInicioTz:
-                if flagFinInicioTz.time() < fechaActualTz.time() < flagInicioTz.time():
+                if flagFinInicioTz.time() < fechaTz.time() < flagInicioTz.time():
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
             else:
-                if not (flagInicioTz.time() <= fechaActualTz.time() <= flagFinInicioTz.time()):
+                if not (flagInicioTz.time() <= fechaTz.time() <= flagFinInicioTz.time()):
                     raise Warning('Lo sentimos, no está disponible la asignación para amanecida en este momento')
         flagInicio = flagInicioTz + timedelta(hours=5)
         flagFin = flagFinTz + timedelta(hours=5)
-        horainicioamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagInicio.hour,flagInicio.minute)
+        horainicioamanecida = datetime(fecha.year,fecha.month,fecha.day,flagInicio.hour,flagInicio.minute)
         if flagInicioTz > flagFinTz:
-            horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute) + timedelta(days=1)
+            horafinamanecida = datetime(fecha.year,fecha.month,fecha.day,flagFin.hour,flagFin.minute) + timedelta(days=1)
         else:
-            horafinamanecida = datetime(fechaActual.year,fechaActual.month,fechaActual.day,flagFin.hour,flagFin.minute)
+            horafinamanecida = datetime(fecha.year,fecha.month,fecha.day,flagFin.hour,flagFin.minute)
         valores.update({'horainicioamanecida':horainicioamanecida})
         valores.update({'horafinamanecida':horafinamanecida})
 

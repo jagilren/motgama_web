@@ -28,3 +28,4 @@ from . import wizardplaca
 from . import interfazcontable
 from . import bonos
 from . import descuento
+from . import observaciones

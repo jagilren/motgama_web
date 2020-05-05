@@ -338,3 +338,24 @@ class MotgamaWizardPago(models.TransientModel):
 
     mediopago = fields.Many2one(string='Medio de Pago',comodel_name='motgama.mediopago',required=True)
     valor =  fields.Float(string='Valor a pagar',required=True)
+
+class PDFFactura(models.AbstractModel):
+    _name = 'report.motgama.reporte_factura_80'
+
+    @api.model
+    def _get_report_values(self,docids,data=None):
+        docs = self.env['account.invoice'].browse(docids)
+
+        paramImpHab = self.env['motgama.parametros'].search([('codigo','=','IMPHABENFACTURA')], limit=1)
+        if paramImpHab:
+            if paramImpHab.valor == 's' or paramImpHab.valor == 'S':
+                impHab = True
+            else:
+                impHab = False
+        else:
+            impHab = False
+
+        return {
+            'docs': docs,
+            'impHab': impHab
+        }

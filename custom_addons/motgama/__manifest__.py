@@ -80,6 +80,7 @@
         'views/product_template.xml',
         'views/motgama_wizard_descuento.xml',
         'views/motgama_reporte_ventas.xml',
+        'views/motgama_wizard_observacion.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',

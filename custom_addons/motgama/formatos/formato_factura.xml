@@ -9,7 +9,9 @@
                         <p class="text-center"><span t-field="doc.company_id.resol_texto"/></p>
                         <h3>FACTURA DE VENTA: <span t-field="doc.number"/></h3>
                         <h4>
-                            Habitación: <span t-field="doc.habitacion_id.codigo"/><br/>
+                            <t t-if="impHab">
+                                Habitación: <span t-field="doc.habitacion_id.codigo"/><br/>
+                            </t>
                             Cliente: <span t-field="doc.partner_id"/>
                         </h4>
                         <table style="width: 100%;">
@@ -86,6 +88,26 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <br/>
+                        <t t-if="len(doc.habitacion_id.ultmovimiento.cambiosplan) > 0">
+                            <p>Cambios de plan</p>
+                            <div style="width: 100%;">
+                                <table style="width: 100%" class="table table-condensed table-bordered">
+                                    <thead>
+                                        <th class="text-left">Plan anterior</th>
+                                        <th class="text-left">Plan nuevo</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.habitacion_id.ultmovimiento.cambiosplan" t-as="cambioplan">
+                                            <tr>
+                                                <td><span t-field="cambioplan.plan_anterior"/></td>
+                                                <td><span t-field="cambioplan.plan_nuevo"/></td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
                         <br/>
                         <strong>Fecha y hora: <span t-field="doc.fecha"/></strong>
                         <br/>

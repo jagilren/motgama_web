@@ -304,6 +304,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     notificar = fields.Boolean(default=False)
     lq = fields.Boolean(default=False)
     inmotica = fields.Boolean(default=False)
+    observacion = fields.Text(string='Observaciones',default='')
 
     #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
@@ -443,6 +444,8 @@ class MotgamaWizardHabitacion(models.TransientModel):
     fecha = fields.Datetime(string='Fecha y hora del sistema',default=lambda self: fields.Datetime().now(),readonly=True)
 
     codigohab = fields.Char(compute='_compute_valores')
+
+    observacion = fields.Text(string="¡Atención! la habitación tiene las siguientes observaciones",default=lambda self: self._get_observacion())
 
     @api.depends('tipovehiculo')
     def _compute_valores(self):
@@ -784,7 +787,7 @@ class MotgamaConsumo(models.Model):
     vlrSubtotal = fields.Float(string='Subtotal $',compute="_compute_vlrsubtotal",store = True)
     lugar_id = fields.Many2one(string='Bodega de Inventario',comodel_name='stock.location',ondelete='set null',store=True)
     estado = fields.Char(string='estado')
-    active = fields.Boolean(string='Activo?',default=True)    
+    active = fields.Boolean(string='Activo?',default=True)
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     permitecambiarvalor = fields.Boolean(string='Permite cambiar valor',default=False,compute="_compute_valorUnitario",store=True)
 

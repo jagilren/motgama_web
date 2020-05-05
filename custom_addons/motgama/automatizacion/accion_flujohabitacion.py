@@ -86,7 +86,7 @@ class MotgamaFlujohabitacion(models.Model):
                     notificar = True
 
             elif flujo.estado == 'LQ':
-                if flujo.lq:
+                if flujo.lq and tiempoLiq != 0:
                     if fechaActual - flujo.ultmovimiento.liquidafecha >= timedelta(minutes=tiempoRec):
                         valoresFlujo.update({'lq':False})
                         valores.update({
@@ -94,7 +94,7 @@ class MotgamaFlujohabitacion(models.Model):
                             'descripcion': 'La habitación ' + flujo.codigo + ' lleva ' + str(tiempoRec) + ' minutos liquidada y debe ser recaudada inmediatamente'
                         })
                         notificar = True
-                else:
+                elif tiempoLiq != 0:
                     if fechaActual - flujo.ultmovimiento.liquidafecha >= timedelta(minutes=tiempoLiq):
                         valoresFlujo.update({'lq':True,'notificar':True})
                         valores.update({
@@ -102,6 +102,8 @@ class MotgamaFlujohabitacion(models.Model):
                             'descripcion': 'La habitación ' + flujo.codigo + ' lleva ' + str(tiempoLiq) + ' minutos liquidada y debe ser recaudada o rehabilitada'
                         })
                         notificar = True
+                else:
+                    notificar = False
             
             elif flujo.estado == 'RC':
                 if flujo.ultmovimiento.recaudafecha:
