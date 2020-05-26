@@ -326,13 +326,7 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_cuentacobro(self):
         self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'sale.order',
-            'view_mode': 'form',
-            'res_id': self.orden_venta.id,
-            'target': 'current'
-        }
+        return self.env.ref('motgama.reporte_estadocuenta_80').report_action(docids=[self.orden_venta.id])
 
 class PDFEstadoCuenta(models.AbstractModel):
     _name = 'report.motgama.reporte_estadocuenta_80'

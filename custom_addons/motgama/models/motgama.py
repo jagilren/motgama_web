@@ -19,7 +19,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 #       Creation date: Abril 1 del 2019
 #       Author: Asesorias en Sistemas G.O.D S.A.S
 #       Developers: Luis David Ortiz Restrepo
-#       Project Director: Arnaldo Franco, Ing. Marta Restrepo
+#       Project Director: Ing. Marta Restrepo
 ###############################################################################
 
 class MotgamaSucursal(models.Model):#ok
@@ -900,6 +900,7 @@ class MotgamaRecaudo(models.Model):
     valor_pagado = fields.Float(string='Valor pagado',default=0.0)
     usuario_uid = fields.Many2one(string='Usuario que recauda',comodel_name='res.users', default=lambda self: self.env.user.id)
     tipo_recaudo = fields.Selection(string='Tipo de recaudo',selection=[('habitaciones','Recaudo de habitaciones'),('abonos','Recaudo de abonos'),('prenda','Recaudo de prenda'),('anticipos','Recaudo de anticipos'),('otros','Otros recaudos')])
+    active = fields.Boolean(string='Activo',default=True)
 
     @api.model
     def create(self,values):

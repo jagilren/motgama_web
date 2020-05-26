@@ -7,7 +7,7 @@ class AccountInvoice(models.Model):
     fecha = fields.Datetime(string='Fecha y hora')
     es_hospedaje = fields.Boolean(default=False)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name="motgama.flujohabitacion")
-    recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo')
+    recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo',ondelete='set null')
     asignafecha = fields.Datetime(string="Ingreso")
     liquidafecha = fields.Datetime(string="Salida")
     lleva_prenda = fields.Boolean(string='Lleva prenda',default=False)
@@ -51,14 +51,7 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_factura(self):
         self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'account.invoice',
-            'view_mode': 'form',
-            'view_id': self.env.ref('account.invoice_form').id,
-            'res_id': self.factura.id,
-            'target': 'current'
-        }
+        return self.env.ref('motgama.reporte_factura_80').report_action(docids=[self.factura.id])
 
 class MotgamaWizardRecaudo(models.TransientModel):
     _name = 'motgama.wizardrecaudo'
@@ -163,7 +156,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
     @api.multi
     def recaudar(self):
         self.ensure_one()
-        if self.deuda > 0:
+        if self.deuda >= 0.01:
             raise Warning('La cuenta no ha sido saldada')
         elif self.deuda < 0:
             raise Warning('El valor pagado es mayor al valor de la cuenta')
@@ -306,7 +299,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'recaudafecha':fields.Datetime().now(),
             'recauda_uid':self.env.user.id,
             'factura': factura.id
-            })
+        })
         
         consumos = self.env['motgama.consumo'].search([('movimiento_id','=',self.movimiento.id)])
         for consumo in consumos:
