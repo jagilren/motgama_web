@@ -3,14 +3,14 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
 trigger:
-- master
+- develop
 
 resources:
 - repo: self
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'c660042a-2c39-4483-ad3b-88f279d0cfb0'
+  dockerRegistryServiceConnection: 'eaa45851-2bde-4361-a8ac-13ca135d54cc'
   imageRepository: 'motgama'
   containerRegistry: 'sistemasgod.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
