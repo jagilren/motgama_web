@@ -6,7 +6,7 @@ class MotgamaFlujoHabitación(models.Model):
     
     @api.multi
     def agregar_descuento(self):
-        if not self.env.user.motgama_descuento_servicio:
+        if not self.env.ref('motgama.motgama_descuento_servicio') in self.env.user.permisos:
             raise Warning('No tiene permiso para agregar descuentos')
         return {
             'type': 'ir.actions.act_window', 

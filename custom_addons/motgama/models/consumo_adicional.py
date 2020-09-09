@@ -45,7 +45,7 @@ class MotgamaFacturaConsumos(models.Model):
         self.ensure_one()
         if len(self.consumo_ids) == 0:
             raise Warning('Ingrese consumos para facturar')
-        if not self.env.user.motgama_factura_extemporanea:
+        if not self.env.ref('motgama.motgama_factura_extemporanea') in self.env.user.permisos:
             raise Warning('No tiene permitido facturar consumos sin hospedaje, contacte al administrador')
         return {
             'name': 'Recaudar factura',

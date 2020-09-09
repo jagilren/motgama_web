@@ -22,7 +22,7 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_liquidar(self):
         self.ensure_one()
-        if not self.env.user.motgama_liquida_habitacion:
+        if not self.env.ref('motgama.motgama_liquida_habitacion') in self.env.user.permisos:
             raise Warning('No tiene permitido liquidar habitaciones, contacte al administrador')
         movimiento = self.ultmovimiento
         fechaActual = fields.Datetime().now()

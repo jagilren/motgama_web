@@ -12,7 +12,7 @@ class MotgamaWizardEntregaolvidados(models.TransientModel):
     @api.multi
     def entregar_objeto(self):
         self.ensure_one()
-        if not self.env.user.motgama_entregar_olvidados:
+        if not self.env.ref('motgama.motgama_entregar_olvidados') in self.env.user.permisos:
             raise Warning('No tiene permitido entregar objetos olvidados, contacte al administrador')
 
         if not self.observacion:

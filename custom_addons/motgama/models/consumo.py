@@ -42,7 +42,7 @@ class MotgamaConsumo(models.Model):
         if values['cantidad'] == 0:
             raise Warning('Debe especificar una cantidad mayor a cero')
         elif values['cantidad'] < 0:
-            if not self.env.user.motgama_consumo_negativo:
+            if not self.env.ref('motgama.motgama_consumo_negativo') in self.env.user.permisos:
                raise Warning('No tiene permisos para agregar consumos negativos')
             record = super().create(values)
             if record.vlrUnitario == 0:

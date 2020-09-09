@@ -55,17 +55,17 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
 
         if movimiento.asignatipo == 'OO':
             if tarifaocasional < movimiento.tarifaocasional:
-                if not self.env.user.motgama_reasigna_menor:
+                if not self.env.ref('motgama.motgama_reasigna_menor') in self.env.user.permisos:
                     raise Warning('No tiene permisos para cambiar la asignación de una habitación a una de menor precio')
             else:
-                if not self.env.user.motgama_reasigna_mayor:
+                if not self.env.ref('motgama.motgama_reasigna_mayor') in self.env.user.permisos:
                     raise Warning('No tiene permisos para reasignar una habitación')
         elif movimiento.asignatipo == 'OA':
             if tarifamanecida < movimiento.tarifamanecida:
-                if not self.env.user.motgama_reasigna_menor:
+                if not self.env.ref('motgama.motgama_reasigna_menor') in self.env.user.permisos:
                     raise Warning('No tiene permisos para cambiar la asignación de una habitación a una de menor precio')
             else:
-                if not self.env.user.motgama_reasigna_mayor:
+                if not self.env.ref('motgama.motgama_reasigna_mayor') in self.env.user.permisos:
                     raise Warning('No tiene permisos para reasignar una habitación')
         else:
             raise Warning('Hay un problema con la asignación de la habitación')

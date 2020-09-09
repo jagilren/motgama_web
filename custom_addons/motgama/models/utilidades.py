@@ -28,7 +28,7 @@ class MotgamaUtilidades(models.TransientModel):
     @api.multi
     #   Se define la función del botón de cambio de precios
     def btn_cambiar_precios(self):
-        if not self.env.user.motgama_cambia_precios:
+        if not self.env.ref('motgama.motgama_cambia_precios') in self.env.user.permisos:
             raise Warning('No tiene permitido cambiar de forma masiva los precios de las habitaciones, contacte al administrador')
         #   Se cargan las listas de precios configuradas para las habitaciones
         ListasPreciosHabitacion = self.env['motgama.listapreciohabitacion'].search([])

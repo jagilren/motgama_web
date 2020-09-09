@@ -19,7 +19,7 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_recaudar(self):
         self.ensure_one()
-        if not self.env.user.motgama_recauda_habitacion:
+        if not self.env.ref('motgama.motgama_recauda_habitacion') in self.env.user.permisos:
             raise Warning('No tiene permitido recaudar habitaciones, contacte al administrador')
 
         if not self.puede_recaudar:
@@ -188,7 +188,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 if nroPrendas > 1:
                     raise Warning('Solo se permite registrar un pago con prenda')
             elif pago.mediopago.tipo == 'pase':
-                if not self.env.user.motgama_pase_cortesia:
+                if not self.env.ref('motgama.motgama_pase_cortesia') in self.env.user.permisos:
                     raise Warning('Error: No tiene permiso para registrar pago con Pase/Cortesía')
             elif pago.mediopago.tipo == 'abono':
                 tiene_abono = True

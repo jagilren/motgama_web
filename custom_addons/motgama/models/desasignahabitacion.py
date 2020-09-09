@@ -8,7 +8,7 @@ class MotgamaWizardDesasigna(models.TransientModel):
     @api.multi
     def button_desasigna(self):
         self.ensure_one()
-        if not self.env.user.motgama_desasigna:
+        if not self.env.ref('motgama.motgama_desasigna') in self.env.user.permisos:
             raise Warning('No tiene permitido desasignar habitaciones, contacte al administrador')
 
         flujo_id = self.env.context['active_id']
