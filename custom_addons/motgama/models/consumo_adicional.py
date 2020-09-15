@@ -285,6 +285,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             'cliente': self.cliente.id,
             'factura': factura.id,
             'total_pagado': self.total,
+            'valor_pagado': self.total - valorPrenda,
             'tipo_recaudo': 'otros',
             'recepcion_id': self.env.user.recepcion_id.id
         }

@@ -1,0 +1,35 @@
+1.	Vista para Manejo de Notas Crédito y revisión en Interfaz de las mismas:
+    Revisar con mi papa el manejo de las rectificativas 
+
+2.	Auxiliar de inventarios para movimiento de productos con los filtros como  fecha, categoría de producto, producto:
+    Hacer auxiliar de inventarios
+
+3.	Parámetro de establecimiento de horario de inicio y fin de amanecida diferente para fines de semana (Inicia viernes y termina domingo).
+    En el calendario se puede definir por día la hora inicio amanecida y la hora fin, y la hora fin entrada de amanecida
+
+4.	Cambio automático de color (a amarillo) en la vista de habitaciones no está operando cuando fecha de la reserva es modificada manualmente a un horario cercano a la hora actual.
+    Revisar reservas
+
+5.	Fecha de reserva no toma la hora nacional, sino un huso horario que tiene una hora de adelanto.
+    Revisar
+
+6.	Configuración de plan contable para llevar Descuentos x Bonos y Descuento x mal servicio, decoraciones (cuando proviene de reserva) a cuentas diferentes  en la Interfaz.
+    Correo anterior
+
+7.	Los abonos generados desde una reserva los lleva a una cuenta correcta, en cambio los generados desde una habitación ya ocupada no los lleva a la misma cuenta.
+    Revisar
+
+8.	Generación de Bonos Masivos con numeración consecutiva, pero tipo string, para darles una identidad por motel.
+    Correo anterior
+
+9.	Reporte de ventas en rango que involucra generación y cancelación de la misma prenda trae información que genera confusión, pues duplica el total de ventas
+    Revisar
+
+10.	Comprobante diario de ventas con formato muy "abultado" para la impresión en papel.
+    ?
+
+11.	Factura tipo tirilla no debe aparecer con prefijos de ODOO, sino con prefijo de la razón social.
+    Odoo?
+
+12.	Tirilla reducir fuentes para mejor visualización y ahorro de papel
+    Reducir la letra
