@@ -6,14 +6,20 @@
         <field name="arch" type="xml">
             <form string="Interfaz Contable">
                 <group>
-                    <field name="fecha_inicial"/>
-                    <field name="fecha_final"/>
+                    <field name="nueva"/>
+                    <field name="repite" attrs="{'invisible':[('nueva','=',True)]}"/>
                 </group>
                 <group>
-                    <field name="genera_csv"/>
+                    <field name="fecha_inicial" attrs="{'invisible':[('repite','=',True)],'required':[('repite','=',False)]}"/>
+                    <field name="fecha_final" attrs="{'invisible':[('repite','=',True)],'required':[('repite','=',False)]}"/>
+                </group>
+                <group>
+                    <field name="repite_id" attrs="{'invisible':[('repite','=',False)],'required':[('repite','=',True)]}"/>
+                    <field name="genera_csv" attrs="{'invisible':[('repite','=',True)]}"/>
                 </group>
                 <footer>
-                    <button name="get_report" type="object" string="Generar reporte" class="btn btn-primary"/>
+                    <button name="get_report" type="object" string="Generar reporte" class="btn btn-primary" attrs="{'invisible':[('repite','=',True)]}"/>
+                    <button name="repite_interfaz" type="object" string="Repetir reporte" class="btn btn-primary" attrs="{'invisible':[('repite','=',False)]}"/>
                     <button special="cancel" string="Cancelar" class="btn"/>
                 </footer>
             </form>

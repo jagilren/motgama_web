@@ -30,7 +30,7 @@ class MotgamaWizardHabitacion(models.TransientModel):
     def button_asignar_wizard(self):
         self.ensure_one()
         # Revisa si tiene permisos para asignar
-        if not self.env.user.motgama_asigna:
+        if not self.env.ref('motgama.motgama_asigna') in self.env.user.permisos:
             raise Warning('No tiene permitido asignar habitaciones, contacte al administrador')
         # Extrae del contexto el ID de la habitaciòn actual
         flujo_id = self.env.context['active_id']

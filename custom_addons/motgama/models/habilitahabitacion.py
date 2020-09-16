@@ -8,7 +8,7 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_habilita(self):
         self.ensure_one()
-        if not self.env.user.motgama_habilita_habitacion:
+        if not self.env.ref('motgama.motgama_habilita_habitacion') in self.env.user.permisos:
             raise Warning('No tiene permitido habilitar habitaciones, contacte al administrador')
         movimiento = self.ultmovimiento
 

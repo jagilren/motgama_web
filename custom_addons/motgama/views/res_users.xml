@@ -8,61 +8,11 @@
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='access_rights']" position="after">
                     <page string="Motgama">
-                        <group name='up'>
+                        <group name='up' string='Asignación de usuario'>
                             <field name="recepcion_id"/>
                         </group>
-                        <group>
-                            <h2>Permisos de la aplicación</h2>
-                        </group>
-                        <group name='one'>
-                            <group name="one_left" string="Flujo de habitaciones">
-                                <field name="motgama_asigna"/>
-                                <field name="motgama_desasigna"/>
-                                <field name="motgama_reasigna_mayor"/>
-                                <field name="motgama_reasigna_menor"/>
-                                <field name="motgama_liquida_habitacion"/>
-                                <field name="motgama_recauda_habitacion"/>
-                                <field name="motgama_habilita_habitacion"/>
-                                <field name="motgama_fuera_uso"/>
-                                <field name="motgama_fuera_servicio"/>
-                                <field name="motgama_cambio_plan"/>
-                            </group>
-                            <group name="one_right">
-                                <group string="Consumos">
-                                    <field name="motgama_consumo_negativo"/>
-                                </group>
-                                <group string="Descuentos y bonos">
-                                    <field name="motgama_descuento_servicio"/>
-                                    <field name="motgama_pase_cortesia"/>
-                                </group>
-                                <group string="Prendas">
-                                    <field name="motgama_recauda_prenda"/>
-                                </group>
-                                <group string="Abonos">
-                                    <field name="motgama_ingreso_anticipo"/>
-                                </group>
-                                <group string="Objetos prestados">
-                                    <field name="motgama_devuelve_prestados"/>
-                                </group>
-                                <group string="Facturación">
-                                    <field name="motgama_factura_extemporanea"/>
-                                </group>
-                                <group string="Objetos olvidados">
-                                    <field name="motgama_entregar_olvidados"/>
-                                </group>
-                            </group>
-                        </group>
-                        <group name="two">
-                            <group name="two_left" string="Informes">
-                                <field name="motgama_informe_consumos"/>
-                                <field name="motgama_informe_ocupaciones"/>
-                                <field name="motgama_informe_recaudos"/>
-                                <field name="motgama_informe_diariovtas"/>
-                                <field name="motgama_informe_movimientos"/>
-                            </group>
-                            <group name="two_right" string="Administración">
-                                <field name="motgama_cambia_precios"/>
-                            </group>
+                        <group name='permisos' string='Permisos'>
+                            <field name='permisos' widget="many2many_checkboxes"/>
                         </group>
                     </page>
                 </xpath>

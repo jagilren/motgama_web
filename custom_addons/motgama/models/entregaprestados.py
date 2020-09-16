@@ -11,7 +11,7 @@ class MotgamaWizardEntregaprestados(models.TransientModel):
     @api.multi
     def entregar_objeto(self):
         self.ensure_one()
-        if not self.env.user.motgama_devuelve_prestados:
+        if not self.env.ref('motgama.motgama_devuelve_prestados') in self.env.user.permisos:
             raise Warning('No tiene permitido devolver objetos prestados, contacte al administrador')
 
         idObjeto = self.env.context['active_id']

@@ -12,7 +12,7 @@ class MotgamaPrendas(models.Model):
         
     @api.multi
     def recaudo_prenda(self):
-        if not self.env.user.motgama_recauda_prenda:
+        if not self.env.ref('motgama.motgama_recauda_prenda') in self.env.user.permisos:
             raise Warning('No tiene permitido recaudar prendas, contacte al administrador')
         return {
             'name': 'Recaudar prenda',

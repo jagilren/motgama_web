@@ -7,7 +7,7 @@ class MotgamaWizardFueradeservicio(models.TransientModel):
     @api.multi
     def button_fuera_servicio(self):
         self.ensure_one()
-        if not self.env.user.motgama_fuera_servicio:
+        if not self.env.ref('motgama.motgama_fuera_servicio') in self.env.user.permisos:
             raise Warning('No tiene permitido poner habitaciones en fuera de servicio, contacte al administrador')
 
         flujo_id = self.env.context['active_id']

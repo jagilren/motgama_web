@@ -9,11 +9,48 @@ class MotgamaWizardInterfazContable(models.TransientModel):
     _name = 'motgama.wizard.interfazcontable'
     _description = 'Wizard Interfaz Contable'
 
-    fecha_inicial = fields.Datetime(string='Fecha inicial',required=True)
-    fecha_final = fields.Datetime(string='Fecha final',required=True)
+    nueva = fields.Boolean(string='Nueva Interfaz (aumenta consecutivo)',default=False)
+    repite = fields.Boolean(string='Repetir interfaz',default=False)
+
+    fecha_inicial = fields.Datetime(string='Fecha inicial')
+    fecha_final = fields.Datetime(string='Fecha final')
     genera_csv = fields.Boolean(string='Genera CSV',default=False)
 
+    repite_id = fields.Many2one(string='Interfaz a repetir',comodel_name='motgama.interfazcontable.registro')
+
     es_manual = fields.Boolean(string='Es manual',default=True)
+
+    @api.onchange('nueva')
+    def _onchange_nueva(self):
+        for record in self:
+            if record.nueva:
+                record.repite = False
+
+    @api.multi
+    def repite_interfaz(self):
+        self.ensure_one()
+
+        ruta = '/home/usr/files/'
+        nom_arch = str(self.repite_id.fecha_inicial) + '.csv'
+        ruta_arch = ruta + nom_arch
+        with open(ruta_arch,newline='') as f:
+            interfaz = self.env['motgama.interfazcontable'].search([])
+            for reg in interfaz:
+                reg.unlink()
+            reader = csv.DictReader(f,delimiter=';',quotechar='"',fieldnames=['cod_cuenta','comprobante','fecha','documento','referencia','nit','nom_cuenta','tipo','valor','base','sucursal'])
+            for row in reader:
+                nuevo = self.env['motgama.interfazcontable'].create(row)
+                if not nuevo:
+                    raise Warning('No fue posible generar la interfaz')
+            return {
+                'name': 'Interfaz Contable',
+                'view_mode': 'tree',
+                'view_id': self.env.ref('motgama.motgama_interfaz_contable').id,
+                'res_model': 'motgama.interfazcontable',
+                'type': 'ir.actions.act_window',
+                'target':'main'
+            }
+        raise Warning('Error al abrir el archivo, es probable que ya no exista o no fue posible acceder a él')
 
     @api.multi
     def get_report(self):
@@ -67,7 +104,10 @@ class MotgamaWizardInterfazContable(models.TransientModel):
             sucursal = ''
         else:
             sucursal = paramSucursal.valor
-        doc = self.env['ir.sequence'].next_by_code('motgama.interfazcontable.documento') or ''
+        if self.nueva:
+            doc = self.env['ir.sequence'].next_by_code('motgama.interfazcontable.documento') or ''
+        else:
+            doc = ''
 
         lineas = []
         for cuenta in saldos:
@@ -140,7 +180,19 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'email_to': email_to,
                     'body_html': html
                 }
-                return valoresCorreo, arch, doc
+                correo = self.env['mail.mail'].create(valoresCorreo)
+                if correo:
+                    correo.sudo().send()
+                
+                valoresInterfaz = {
+                    'nombre': doc if doc != '' else str(self.fecha_final),
+                    'fecha_final': self.fecha_final,
+                    'fecha_inicial': self.fecha_inicial,
+                    'correo': correo.id
+                }
+                reg = self.env['motgama.interfazcontable.registro'].sudo().create(valoresInterfaz)
+                if not reg:
+                    raise Warning('No fue posible crear la interfaz contable')
         else:
             return {
                 'name': 'Interfaz Contable',
@@ -170,11 +222,20 @@ class MotgamaInterfazContable(models.TransientModel):
 class MotgamaInterfazContableRegistro(models.Model):
     _name = 'motgama.interfazcontable.registro'
     _description = 'Historial de interfaces contables'
+    _order = 'fecha_inicial desc'
 
     nombre = fields.Char(string='Documento',readonly=True)
     correo = fields.Many2one(string='Archivo adjunto',comodel_name='mail.mail',readonly=True)
     fecha_inicial = fields.Datetime(string='Fecha inicial',readonly=True)
     fecha_final = fields.Datetime(string='Fecha final',readonly=True,required=True)
+
+    @api.multi
+    def name_get(self):
+        res = []
+        for rec in self:
+            name = rec.nombre + ', ' + str(rec.fecha_inicial)
+            res.append((rec.id,name))
+        return res
 
     @api.model
     def check_hora(self):
