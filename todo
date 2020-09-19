@@ -8,10 +8,10 @@
     En el calendario se puede definir por día la hora inicio amanecida y la hora fin, y la hora fin entrada de amanecida
 
 4.	Cambio automático de color (a amarillo) en la vista de habitaciones no está operando cuando fecha de la reserva es modificada manualmente a un horario cercano a la hora actual.
-    Revisar reservas
+    Listo
 
 5.	Fecha de reserva no toma la hora nacional, sino un huso horario que tiene una hora de adelanto.
-    Revisar
+    Que explique mejor
 
 6.	Configuración de plan contable para llevar Descuentos x Bonos y Descuento x mal servicio, decoraciones (cuando proviene de reserva) a cuentas diferentes  en la Interfaz.
     Correo anterior

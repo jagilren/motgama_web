@@ -644,6 +644,7 @@ class MotgamaReservas(models.Model):#ok
     fecha_cancela = fields.Datetime(string='Fecha de cancelación')
     active = fields.Boolean(string='Activo?',default=True)
     esNueva = fields.Boolean(default=True)
+    estado = fields.Selection(string='Estado',selection=[('nueva','Nueva'),('modificada','Modificada'),('reservada','Reservada'),('cancelada','Cancelada'),('finalizada','Finalizada')],default='nueva')
 
 class MotgamaObjetosOlvidados(models.Model):
 #    Fields:Objetos Olvidados: elementos que el cliente olvido en una habitacion.

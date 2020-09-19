@@ -21,9 +21,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'active':False
             }
             movimiento.write(valores)
-            self.write({'estado':'D','notificar':False}) # pone en estado disponible
-        else:
-            raise Warning('No se pudo cambiar el estado para habilitar la habitación')
+        self.write({'estado':'D','notificar':False}) # pone en estado disponible
 
         self.refresh_views()
         
