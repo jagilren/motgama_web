@@ -15,18 +15,20 @@
 
 6.	Configuración de plan contable para llevar Descuentos x Bonos y Descuento x mal servicio, decoraciones (cuando proviene de reserva) a cuentas diferentes  en la Interfaz.
     Correo anterior
+    Por producto
 
 7.	Los abonos generados desde una reserva los lleva a una cuenta correcta, en cambio los generados desde una habitación ya ocupada no los lleva a la misma cuenta.
-    Revisar
+    Revisar que deben ir a la misma cuenta
 
 8.	Generación de Bonos Masivos con numeración consecutiva, pero tipo string, para darles una identidad por motel.
     Correo anterior
+    Con consecutivo diferente y prefijo
 
 9.	Reporte de ventas en rango que involucra generación y cancelación de la misma prenda trae información que genera confusión, pues duplica el total de ventas
-    Revisar
+    Revisar que se duplica la info del pago al pagar con prenda y pagar luego esa prenda el mismo día
 
 10.	Comprobante diario de ventas con formato muy "abultado" para la impresión en papel.
-    ?
+    Revisar al imprimir porque las facturas salen
 
 11.	Factura tipo tirilla no debe aparecer con prefijos de ODOO, sino con prefijo de la razón social.
     Odoo?
