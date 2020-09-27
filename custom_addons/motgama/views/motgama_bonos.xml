@@ -24,11 +24,30 @@
         <field name="arch" type="xml">
             <form string="Bonos">
                 <sheet>
+                    <group string="Tipo de bono">
+                        <group>
+                            <field name="tipo_bono"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <group string="Bonos consecutivos" attrs="{'invisible':[('tipo_bono','!=','consecutivo')]}">
+                        <group>
+                            <field name="prefijo" attrs="{'readonly':[('id','!=',False)]}"/>
+                            <field name="cons_desde" attrs="{'required':[('tipo_bono','=','consecutivo')],'readonly':[('id','!=',False)]}"/>
+                            <field name="cantidad" attrs="{'required':[('tipo_bono','=','consecutivo')],'readonly':[('id','!=',False)]}"/>
+                            <field name="digitos" attrs="{'required':[('tipo_bono','=','consecutivo')],'readonly':[('id','!=',False)]}"/>
+                        </group>
+                        <group>
+                            <field name="codigo_inicial"/>
+                            <field name="codigo_final"/>
+                        </group>
+                    </group>
                     <group string="Bono">
                         <group>
-                            <field name="codigo"/>
+                            <field name="codigo" attrs="{'invisible':[('tipo_bono','=','consecutivo')],'required':[('tipo_bono','!=','consecutivo')]}"/>
                             <field name="tipo"/>
-                            <field name="multiple"/>
+                            <field name="multiple" invisible="1"/>
                             <field name="maximo_uso" attrs="{'invisible':[('multiple','=',False)]}"/>
                         </group>
                         <group>

@@ -726,14 +726,22 @@ class MotgamaBonos(models.Model):
 #    Fields: Bonos: el cliente tiene una forma de pago por medio de bonos Creado: Mayo 16 del 2019
     _name = 'motgama.bonos'
     _description = 'Bonos'
+    _rec_name = 'codigo'
     _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
-    codigo = fields.Char(string='Código',required=True)
+    tipo_bono = fields.Selection(string='Tipo de bono',required=True,selection=[('unico','Bono único'),('consecutivo','Bonos consecutivos'),('multiple','Bono múltiple')],default='unico')
+    prefijo = fields.Char(string='Prefijo',default='')
+    cons_desde = fields.Integer(string='Consecutivo desde')
+    cantidad = fields.Integer(string='Cantidad de bonos a generar')
+    digitos = fields.Integer(string='Tamaño del consecutivo',help='Completará el código del bono con ceros a la izquierda para completar esa cantidad de dígitos, un cero significa que no tendrá ceros a la izquierda')
+    codigo_inicial = fields.Char(string='Código inicial',compute='_compute_codigos',store=True)
+    codigo_final = fields.Char(string='Código final',compute='_compute_codigos',store=True)
+    codigo = fields.Char(string='Código')
     multiple = fields.Boolean(string='Múltiple',default=False)
     maximo_uso = fields.Integer(string='Cantidad máxima de usos (0 = ilimitado)', default=1)
     usos = fields.Integer(string='Usos hasta el momento',default=0)
     validodesde = fields.Date(string='Válido Desde',default=fields.Date().today())
     validohasta = fields.Date(string='Válido Hasta',required=True)
-    tipo = fields.Selection(string='Tipo de bono',selection=[('valor','Valor en pesos'),('porcentaje','Valor porcentual')],default='porcentaje')
+    tipo = fields.Selection(string='Tipo de descuento',selection=[('valor','Valor en pesos'),('porcentaje','Valor porcentual')],default='porcentaje',required=True)
     descuentavalor = fields.Float(string='Valor de descuento',default=0.0)
     porcpagoefectivo = fields.Float(string='Porcentaje descuento',default=0.0)
     # El descuento se lo puede aplicar a :
@@ -742,6 +750,14 @@ class MotgamaBonos(models.Model):
     aplicaconsumos = fields.Boolean(string='Aplica en otros productos',default=False)
     valor = fields.Float(string='Valor descuento',compute='_compute_valor')
     active = fields.Boolean(string='Activo',default=True)
+
+    @api.onchange('tipo_bono')
+    def _onchange_tipobono(self):
+        for record in self:
+            if record.tipo_bono in ['unico','consecutivo']:
+                record.multiple = False
+            elif record.tipo_bono == 'multiple':
+                record.multiple = True
 
     @api.onchange('multiple')
     def _onchange_multiple(self):

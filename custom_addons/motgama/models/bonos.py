@@ -1,6 +1,96 @@
 from odoo import models, fields, api
 from odoo.exceptions import Warning
 
+class MotgamaBonos(models.Model):
+    _inherit = 'motgama.bonos'
+
+    @api.depends('prefijo','cons_desde','cantidad','digitos')
+    def _compute_codigos(self):
+        for record in self:
+            if record.tipo_bono == 'consecutivo':
+                if record.digitos <= 0:
+                    cons_desde = str(record.cons_desde)
+                    cons_hasta = str(record.cons_desde + record.cantidad - 1)
+                elif record.digitos >= len(str(record.cons_desde + record.cantidad - 1)):
+                    ceros = record.digitos - len(str(record.cons_desde))
+                    cons_desde = ''
+                    for x in range(ceros):
+                        cons_desde += '0'
+                    cons_desde += str(record.cons_desde)
+                    ceros = record.digitos - len(str(record.cons_desde + record.cantidad - 1))
+                    cons_hasta = ''
+                    for x in range(ceros):
+                        cons_hasta += '0'
+                    cons_hasta += str(record.cons_desde + record.cantidad - 1)
+                else:
+                    raise Warning('No es posible cumplir con la cantidad de bonos requerida y el tamaño de consecutivo especificado')
+                record.codigo_inicial = record.prefijo + cons_desde
+                record.codigo_final = record.prefijo + cons_hasta
+
+    @api.model
+    def create(self,values):
+        if values['cantidad'] <= 0:
+            raise Warning('No es posible crear ' + str(values['cantidad']) + ' bonos')
+        consecutivo = values['tipo_bono'] == 'consecutivo'
+        if consecutivo:
+            if values['digitos'] <= 0:
+                values['codigo'] = values['prefijo'] + str(values['cons_desde'])
+            elif values['digitos'] >= len(str(values['cons_desde'])):
+                ceros = values['digitos'] - len(str(values['cons_desde']))
+                values['codigo'] = values['prefijo']
+                for x in range(ceros):
+                    values['codigo'] += '0'
+                values['codigo'] += str(values['cons_desde'])
+            else:
+                raise Warning('No es posible cumplir con la cantidad de bonos requerida y el tamaño de consecutivo especificado')
+            #values['tipo_bono'] = 'unico'
+
+        record = super().create(values)
+
+        if consecutivo:
+            valores = {
+                'tipo_bono': 'unico',
+                'multiple': False,
+                'maximo_uso': 1,
+                'usos': 0,
+                'validodesde': record.validodesde,
+                'validohasta': record.validohasta,
+                'tipo': record.tipo,
+                'descuentavalor': record.descuentavalor,
+                'porcpagoefectivo': record.porcpagoefectivo,
+                'aplicahospedaje': record.aplicahospedaje,
+                'aplicarestaurante': record.aplicarestaurante,
+                'aplicaconsumos': record.aplicaconsumos,
+                'valor': record.valor,
+                'active': True
+            }
+            for x in range(record.cons_desde + 1,record.cons_desde + record.cantidad):
+                if record.digitos <= 0:
+                    valores['codigo'] = record.prefijo + str(x)
+                    bono = self.env['motgama.bonos'].create(valores)
+                    if not bono:
+                        raise Warning('No se pudo crear el bono ' + valores['codigo'])
+                elif record.digitos >= len(str(x)):
+                    ceros = record.digitos - len(str(x))
+                    codigo = record.prefijo
+                    for y in range(ceros):
+                        codigo += '0'
+                    valores['codigo'] = codigo + str(x)
+                    bono = self.env['motgama.bonos'].create(valores)
+                    if not bono:
+                        raise Warning('No se pudo crear el bono ' + valores['codigo'])
+                else:
+                    raise Warning('No es posible cumplir con la cantidad de bonos requerida y el tamaño de consecutivo especificado')
+
+        return record
+
+        @api.multi
+        def write(self,values):
+            for x in values:
+                if x in ['prefijo','cons_desde','cantidad','digitos']:
+                    raise Warning('No puede modificar los parámetros de los bonos consecutivos')
+            return super().write(values)
+
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
 
@@ -44,10 +134,10 @@ class MotgamaWizardBonos(models.TransientModel):
 
                 if fields.Date().today() < bono.validodesde:
                     record.validar = False
-                    raise Warning('El bono no está disponible todavía, válido desde: ' + str(bono.validodesde))
+                    raise Warning('El bono no está disponible todavía, es válido desde ' + str(bono.validodesde))
                 elif fields.Date().today() > bono.validohasta:
                     record.validar = False
-                    raise Warning('El bono se ha vencido, válido hasta: ' + str(bono.validohasta))
+                    raise Warning('El bono se ha vencido, fue válido hasta ' + str(bono.validohasta))
 
                 if bono.maximo_uso != 0 and bono.usos >= bono.maximo_uso:
                     record.validar = False
