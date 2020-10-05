@@ -6,8 +6,8 @@ class StockReportAuxWizard(models.TransientModel):
     _name = 'stock.aux.report.wizard'
     _description = 'Reporte Auxiliar de Inventario'
 
-    fecha_inicial = fields.Datetime(string='Fecha inicial')
-    fecha_final = fields.Datetime(string='Fecha final')
+    fecha_inicial = fields.Date(string='Fecha inicial')
+    fecha_final = fields.Date(string='Fecha final')
 
     ubicacion_id = fields.Many2one(comodel_name='stock.location',string='Ubicación')
     producto_ids = fields.Many2many(comodel_name='product.product',string='Productos')
