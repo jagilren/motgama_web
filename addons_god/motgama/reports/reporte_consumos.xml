@@ -15,14 +15,14 @@
             <div class="article" style="font-size: 15px;">
                 <table class="table table-condensed table-bordered" style="width: 100%">
                     <thead>
-                        <th class="text-center" style="width: 34%">Recepción</th>
-                        <th class="text-center" style="width: 33%">Fecha</th>
-                        <th class="text-center" style="width: 33%">Habitación</th>
-                        <th class="text-center" style="width: 33%">Producto</th>
-                        <th class="text-center" style="width: 33%">Cantidad</th>
-                        <th class="text-center" style="width: 33%">Valor Unitario</th>
-                        <th class="text-center" style="width: 33%">Valor Total</th>
-                        <th class="text-center" style="width: 33%">Usuario</th>
+                        <th class="text-center" style="width: 13%">Recepción</th>
+                        <th class="text-center" style="width: 12%">Fecha</th>
+                        <th class="text-center" style="width: 13%">Habitación</th>
+                        <th class="text-center" style="width: 12%">Producto</th>
+                        <th class="text-center" style="width: 13%">Cantidad</th>
+                        <th class="text-center" style="width: 12%">Valor Unitario</th>
+                        <th class="text-center" style="width: 13%">Valor Total</th>
+                        <th class="text-center" style="width: 12%">Usuario</th>
                     </thead>
                     <tbody>
                         <t t-foreach="docs" t-as="doc">
