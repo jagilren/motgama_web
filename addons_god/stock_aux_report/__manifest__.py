@@ -5,12 +5,15 @@
     'category': 'Warehouse',
     'website': 'https://sistemasgod.com',
     'author': 'Asesorías en Sistemas GOD S.A.S',
-    'license': 'OPL',
     'depends': [
         'stock',
         'date_range',
         'report_xlsx_helper'
     ],
-    'data': [],
+    'data': [
+        'reports/formato_reporte.xml',
+        'reports/stock_aux_report.xml',
+        'wizard/stock_aux_report_wizard.xml'
+    ],
     'installable': True
 }

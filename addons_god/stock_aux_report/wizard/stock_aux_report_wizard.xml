@@ -11,8 +11,8 @@
                             <field name="fecha_final"/>
                         </group>
                         <group>
-                            <field name="ubicacion_id"/>
-                            <field name="producto_id" widget="many2many_tags"/>
+                            <field name="ubicacion_id" domain="[('usage','=','internal')]"/>
+                            <field name="producto_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                 </sheet>
