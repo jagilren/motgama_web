@@ -6,9 +6,7 @@
     'website': 'https://sistemasgod.com',
     'author': 'Asesorías en Sistemas GOD S.A.S',
     'depends': [
-        'stock',
-        'date_range',
-        'report_xlsx_helper'
+        'stock'
     ],
     'data': [
         'reports/formato_reporte.xml',
