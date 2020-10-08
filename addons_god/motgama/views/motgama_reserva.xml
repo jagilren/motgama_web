@@ -1,0 +1,188 @@
+<<<<<<< HEAD:custom_addons/motgama/views/motgama_reserva.xml
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+    <record id="tree_view_reserva" model="ir.ui.view">
+        <field name="name">Reserva Habitaciones</field>
+        <field name="model">motgama.reserva</field>
+        <field name="arch" type="xml">
+            <tree string="Reserva Habitaciones">
+                <field name="habitacion_id"/>
+                <field name="cliente_id"/>
+                <field name="fecha"/>
+                <field name="condecoracion"/>
+                <field name="notadecoracion"/>
+                <field name="anticipo"/>
+                <field name="modificada"/>
+                <field name="modificada_uid"/>
+                <field name="fecha_original"/>
+                <field name="cancelada" />
+                <field name="cancelada_uid"/>
+                <field name="fecha_cancela"/>
+            </tree>
+        </field>
+    </record>
+<!--Formulario                                                                                                              P7.0.4R -->
+    <record id="form_view_reserva" model="ir.ui.view">
+        <field name="name">Reserva Habitaciones</field>
+        <field name="model">motgama.reserva</field>
+        <field name="arch" type="xml">
+            <form string="Reserva Habitaciones" edit="false">
+                <field name="active" invisible="1"/>
+                <field name="esNueva" invisible="1"/>
+                <header attrs="{'invisible':[('active','=',False)]}">
+                    <button name="button_modificar" type="object" string="Modificar reserva" class="btn btn-primary" attrs="{'invisible':[('esNueva','=',True)]}"/>
+                    <button name="button_cancelar" type="object" string="Cancelar reserva" class="btn" attrs="{'invisible':[('esNueva','=',True)]}"/>
+                    <button name="reservar_habitacion" type="object" string="Reservar habitación" class="btn"
+                        confirm="Va a cambiar de estado la habitación reservada, esta habitación debe estar disponible y la fecha y hora de reserva debe ser cercana a la fecha y hora actual"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <h1><span><field name="cod" string="Código de reserva" readonly="1" attrs="{'invisible':[('esNueva','=',True)]}"/></span></h1>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="group_left" string="Reserva">
+                            <field name="cliente_id"/>
+                            <field name="tipohabitacion_id"/>
+                            <field name="habitacion_id" attrs="{'readonly':[('tipohabitacion_id','=',False)]}" domain="[('tipo','=',tipohabitacion_id),('estado','not in',['FS','FU'])]"/>
+                            <field name="fecha"/>
+                            <field name="condecoracion"/>
+                            <field name="notadecoracion" attrs="{'invisible':[('condecoracion','=',False)],'required':[('condecoracion','=',True)]}"/>
+                            <br/>
+                            <field name="anticipo"/>
+                            <br/>
+                            <h4 attrs="{'invisible':['|',('anticipo','=',0),('recaudo_id','!=',False)]}">Recuerde recaudar el anticipo</h4>
+                            <button name="recaudo_anticipo" type="object" string="Recaudar anticipo" class="btn btn-primary" attrs="{'invisible':['|',('anticipo','=',0),('recaudo_id','!=',False)]}"/>
+                            <field name="recaudo_id" invisible="1"/>
+                            <field name="recaudo_id" attrs="{'invisible':[('recaudo_id','=',False)]}" readonly="1"/>
+                            <button name="button_devolver_anticipo" string="Devolver anticipo" type="object" class="btn" attrs="{'invisible':[('recaudo_id','=',False)]}"/>
+                        </group>
+                        <group name="group_right" string="Modificaciones" attrs="{'invisible':[('modificada','=',False),('cancelada','=',False)]}">
+                            <field name="modificada" invisible="1"/>
+                            <field name="modificada_uid" attrs="{'invisible':[('modificada','=',False)]}"/>
+                            <field name="fecha_original" attrs="{'invisible':[('modificada','=',False)]}"/>
+                            <field name="cancelada" invisible="1"/>
+                            <field name="cancelada_uid" attrs="{'invisible':[('cancelada','=',False)]}"/>
+                            <field name="fecha_cancela" attrs="{'invisible':[('cancelada','=',False)]}"/>
+                        </group>
+                    </group>
+                </sheet>    
+            </form>
+        </field>
+    </record>
+
+    <record id="wizard_devolver_anticipo" model="ir.ui.view">
+        <field name="name">Wizard Devolver Anticipo</field>
+        <field name="model">motgama.wizard.devolveranticipo</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="anticipo"/>
+                        </group>
+                        <group>
+                            <field name="mediopago" options="{'no_create': true}" domain="[('tipo','not in',['abono','prenda'])]"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="devolver_anticipo" string="Devolver anticipo" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+    <record id="tree_view_reserva" model="ir.ui.view">
+        <field name="name">Reserva Habitaciones</field>
+        <field name="model">motgama.reserva</field>
+        <field name="arch" type="xml">
+            <tree string="Reserva Habitaciones">
+                <field name="habitacion_id"/>
+                <field name="cliente_id"/>
+                <field name="fecha"/>
+                <field name="condecoracion"/>
+                <field name="notadecoracion"/>
+                <field name="anticipo"/>
+                <field name="modificada"/>
+                <field name="modificada_uid"/>
+                <field name="fecha_original"/>
+                <field name="cancelada" />
+                <field name="cancelada_uid"/>
+                <field name="fecha_cancela"/>
+            </tree>
+        </field>
+    </record>
+<!--Formulario                                                                                                              P7.0.4R -->
+    <record id="form_view_reserva" model="ir.ui.view">
+        <field name="name">Reserva Habitaciones</field>
+        <field name="model">motgama.reserva</field>
+        <field name="arch" type="xml">
+            <form string="Reserva Habitaciones" edit="false">
+                <field name="esNueva" invisible="1"/>
+                <header>
+                    <button name="button_modificar" type="object" string="Modificar reserva" class="btn btn-primary" attrs="{'invisible':['|',('cancelada','=',True),('esNueva','=',True)]}"/>
+                    <button name="button_cancelar" type="object" string="Cancelar reserva" class="btn" attrs="{'invisible':['|',('cancelada','=',True),('esNueva','=',True)]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <h1><span><field name="cod" string="Código de reserva" readonly="1" attrs="{'invisible':[('esNueva','=',True)]}"/></span></h1>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="group_left" string="Reserva">
+                            <field name="cliente_id"/>
+                            <field name="tipohabitacion_id"/>
+                            <field name="habitacion_id" attrs="{'readonly':[('tipohabitacion_id','=',False)]}" domain="[('tipo','=',tipohabitacion_id),('estado','not in',['FS','FU'])]"/>
+                            <field name="fecha"/>
+                            <field name="condecoracion"/>
+                            <field name="notadecoracion" attrs="{'invisible':[('condecoracion','=',False)],'required':[('condecoracion','=',True)]}"/>
+                            <br/>
+                            <field name="anticipo"/>
+                            <button name="recaudo_anticipo" type="object" string="Recaudar anticipo" class="btn btn-primary" attrs="{'invisible':['|',('anticipo','=',0),('recaudo_id','!=',False)]}"/>
+                            <field name="recaudo_id" invisible="1"/>
+                            <field name="recaudo_id" attrs="{'invisible':[('recaudo_id','=',False)]}" readonly="1"/>
+                        </group>
+                        <group name="group_right" string="Modificaciones" attrs="{'invisible':[('modificada','=',False),('cancelada','=',False)]}">
+                            <field name="modificada" invisible="1"/>
+                            <field name="modificada_uid" attrs="{'invisible':[('modificada','=',False)]}"/>
+                            <field name="fecha_original" attrs="{'invisible':[('modificada','=',False)]}"/>
+                            <field name="cancelada" invisible="1"/>
+                            <field name="cancelada_uid" attrs="{'invisible':[('cancelada','=',False)]}"/>
+                            <field name="fecha_cancela" attrs="{'invisible':[('cancelada','=',False)]}"/>
+                        </group>
+                    </group>
+                </sheet>    
+            </form>
+        </field>
+    </record>
+    <!-- WIzard Cancela Reserva -->
+    <record id="view_wizard_cancela_reserva" model="ir.ui.view">
+        <field name="name">Wizard cancela reserva</field>
+        <field name="model">motgama.wizard.cancelareserva</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <p>¿Está seguro que desea cancelar esta reserva? Si lo hace y la habitación está reservada, ésta pasará a estado "Aseo"</p>
+                </group>
+                <footer>
+                    <button name="cancela_reserva" string="Aceptar" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
+>>>>>>> correo2:addons_god/motgama/views/motgama_reserva.xml

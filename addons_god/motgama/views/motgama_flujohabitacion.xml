@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <act_window
+        id="action_wizard_habitacion"               
+        res_model="motgama.wizardhabitacion" 
+        name="Flujo Habitacion"
+        src_model="motgama.flujohabitacion"
+        view_type="form"    
+        view_mode="form" 
+        multi="True"
+        target="new"
+    />
+    
+    <!-- Búsqueda                                                                                                         P7.0.4R -->
+    <record id="search_view_flujohabitacion" model="ir.ui.view">
+        <field name="name">Flujo Habitación</field>
+        <field name="model">motgama.flujohabitacion</field>
+        <field name="arch" type="xml">
+            <search string="Buscar habitaciones">
+                <field name="codigo"/>
+                <field name="estado"/>
+                <field name="ultmovimiento"/>
+            </search>
+        </field>
+    </record>
+
+    <!--Formulario                                                                                                           P7.0.4R --> 
+    <record id="form_view_flujohabitacion" model="ir.ui.view">
+        <field name="name">Habitación</field>
+        <field name="model">motgama.flujohabitacion</field>
+        <field name="arch" type="xml">
+            <form string="Flujo Habitaciones" create="false" edit="false">
+                <header>
+                    <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
+                        class="btn btn-primary" attrs="{'invisible':[('estado','not in',['D'])]}" />
+
+                    <button name="button_liquidar" string="Liquidar" type="object"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"
+                        confirm="¿Está seguro que desea liquidar esta habitación?"/>
+                        
+                    <button type="object" name="button_recaudar" string="Recaudar"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado','not in',['LQ'])]}"/>
+                    
+                    <button name="button_aseo" string="Asear" type="object"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado', 'not in', ['FS', 'FU'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Asear"/>
+
+                    <button name="button_habilita" string="Habilitar habitacion" type="object"
+                        class="btn btn-primary"  attrs="{'invisible': [('estado', 'not in', ['RC'])]}" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Disponible?"/>
+                        
+                    <button type="action" name="%(motgama.action_wizard_desasigna)d" string="Desasignar" confirm="¿Esta seguro de Desasignar la habitacion?"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
+
+                    <button type="action" name="%(motgama.action_wizard_cambio_plan)d" string="Cambio de Plan" confirm="¿Esta seguro de cambiar de plan entre amanecida y ocasional?"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
+
+                    <button type="action" name="%(motgama.action_wizard_cambio_habitacion)d" string="Cambio (Reasigna) habitación"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO', 'OA'])]}"/>
+                        
+                    <button type="action" name="%(motgama.action_wizard_fuera_servicio)d" string="Fuera de servicio" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Servicio?"
+                        class="btn" attrs="{'invisible':[('estado','not in','D')]}"/>
+                        
+                    <button type="action" name="%(motgama.action_wizard_fuera_uso)d" string="Fuera de uso" confirm="¿Esta seguro de realizar esta acción de cambiar el estado a Fuera de Uso?"
+                        class="btn" attrs="{'invisible':[('estado','not in','D')]}"/>
+
+                    <button name="button_precuenta" string="Ver precuenta" type="object"
+                        class="btn"  attrs="{'invisible': [('estado','not in',['OO', 'OA'])]}"/>
+                    
+                    <button name="button_consumos" string="Agregar consumos" type="object"
+                        class="btn" attrs="{'invisible': [('estado','not in',['OO','OA','LQ'])]}"/>
+                        
+                    <button name="button_continuar" string="Rehabilitar" type="object"
+                        class="btn"  attrs="{'invisible': [('estado','not in', 'LQ')]}"
+                        confirm="¿Está seguro que desea rehabilitar la habitación? Al dar clic en 'Aceptar' la habitación volverá al estado ocupada"/>
+                    
+                    <button name="button_asigna_reserva" string='Asignar habitación reservada' type="object"
+                        class="btn-primary" attrs="{'invisible':[('estado','not in','R')]}"
+                        confirm="Va a asignar la reserva de esta habitación, ¿Está seguro que el cliente es realmente la persona que reservó?"/>
+                    
+                    <field name="inmotica" invisible="1"/>
+                    <button name="button_inmotica" string="Desbloquear puerta" type="object"
+                        class="btn" attrs="{'invisible':[('estado','not in',['OO','OA','LQ']),('inmotica','=',False)]}"
+                        confirm="Va a desbloquear la puerta de la habitación, recuerde que debe tener los permisos suficientes para realizarlo, ¿Está seguro que desea continuar?"/>
+
+                    <button name="button_reporte_placa" string="Reportar placa" type="object" class="btn"
+                        attrs="{'invisible':[('estado','not in',['OO','OA','LQ','RC'])]}"/>
+
+                    <button name="aplicar_bono" string="Aplicar bono" type="object" class="btn"
+                        attrs="{'invisible':[('estado','not in',['OO','OA'])]}"/>
+                    
+                    <button name='agregar_descuento' string='Agregar descuento' type='object' class='btn'
+                        attrs="{'invisible':[('estado','!=','LQ')]}"/>
+                        
+                </header>
+                <field name="factura" invisible="1"/>
+                <field name="orden_venta" invisible="1"/>
+                <sheet>
+                    <group name="group_bottom">
+                        <group name="group_left">            
+                            <field name="codigo" string="Codigo de la habitación" style="width:20%; font-size:20px; font-weight: bold;"/>
+                        </group>
+                    </group>
+                    <group name="group_top">
+                        <field name="estado" string="Estado"/>
+                        <br/>
+                        <field name="recepcion" string="Recepción" readonly="1"/>
+                        <br/><br/>
+                    </group><br/>
+                    
+                    <notebook>
+                        <page name='cuenta_cobro' string='Estado de Cuenta' attrs="{'invisible':['|',('estado','not in','LQ'),('orden_venta','=',False)]}">
+                            <button name="button_cuentacobro" string="Ver estado de cuenta" type="object" class="btn"/>
+                        </page>
+                        <page name='factura' string='Factura' attrs="{'invisible':['|',('estado','not in','RC'),('factura','=',False)]}">
+                            <button name="button_factura" string="Ver factura" type="object" class="btn"/>
+                        </page>
+                        <page name="abonos" string="Abonos" attrs="{'invisible':[('estado','not in',['OO','OA'])]}">
+                            <group>
+                                <button name="abonos" string="Ver abonos" type="object" class="btn btn-info"/>
+                                <button name="abonar" string="Abonar a esta asignación" type="object" class="btn btn-primary"/>
+                            </group>
+                            <group>
+                                <button name="revertir_abono" string="Devolver abono" type="object" class="btn btn-warning"/>
+                            </group>
+                        </page>
+                        <page name='habitacion' string='Esta habitación'>
+                            <group>
+                                <group>
+                                    <field name="tipo" string="Tipo de Habitación" readonly="1"/>
+                                </group>
+                                <group>
+                                    <field name="tema" string="Tema" readonly="1"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="comodidades"/>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="observacion"/>
+                                </group>
+                                <group>
+                                    <button name="edita_observacion" type="object" string="Editar observaciones" class="btn"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name='reservas' string='Reservas'>
+                            <group attrs="{'invisible':[('prox_reserva','=',False)]}">
+                                <field name="prox_reserva" string="Esta reserva"/>
+                            </group>
+                            <group>
+                                <field name="reserva_ids"/>
+                            </group>
+                        </page>
+                        <page name='prestados' string='Objetos Prestados' attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}">
+                            <group>
+                                <field name="prestados" widget="one2many_list">
+                                    <tree editable="bottom">
+                                        <control>
+                                            <create string="Prestar objeto"/>
+                                        </control>
+                                        <field name="objeto"/>
+                                        <field name="descripcion"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page name="consumos" string="Consumos" attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}">
+                            <group>
+                                <field name="consumos" widget="one2many_list" readonly="1">
+                                    <tree>
+                                        <field name="producto_id" string="Producto"/>
+                                        <field name="vlrUnitario" string="Valor Unitario $"/>
+                                        <field name="cantidad" string="Cantidad"/>
+                                        <field name="vlrSubtotal" string="Subtotal $"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>   
+            </form>
+        </field>
+    </record>
+    
+    <!--Kanban-->
+    <record id="class_dashboard" model="ir.ui.view">
+        <field name="name">Flujo Habitación kanban</field>
+        <field name="model">motgama.flujohabitacion</field>
+        <field name="type">kanban</field>
+        <field name="arch" type="xml">
+            <kanban quick_create="false" create="false" class='o_modules_kanban'>
+                <field name="codigo"/>
+                <field name="estado"/>
+                <field name="tipo"/>
+                <field name="tema"/>
+                <field name="comodidades"/>
+                <field name="observacion"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_module_vignette">
+                            <div class="o_dropdown_kanban dropdown" tabindex="-1">
+                                <a class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" data-display="static" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
+                                    <span class="fa fa-ellipsis-v"/>
+                                </a>
+                                <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <h4 style="padding-left: 5px;">Comodidades</h4>
+                                    <div style="padding-left: 5px;">
+                                        <field name="comodidades"/>
+                                    </div>
+                                    <t t-if="record.observacion">
+                                        <h4 style="padding-left: 5px;">Observaciones</h4>
+                                        <div style="padding-left: 5px;">
+                                            <field name="observacion"/>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+
+                            <a type='object' name='open_record'>
+                            <t t-if="record.estado.raw_value === 'D'">
+                                <img t-attf-src="/motgama/static/src/img/estado_verde.png" class="oe_module_icon" alt="Disponible"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'OO'">
+                                <img t-attf-src="/motgama/static/src/img/estado_rojo.png" class="oe_module_icon" alt="Ocupada Ocasional"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'OA'">
+                                <img t-attf-src="/motgama/static/src/img/estado_naranjado.png" class="oe_module_icon" alt="Ocupada Amanecida"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'LQ'">
+                                <img t-attf-src="/motgama/static/src/img/estado_fucsia.png" class="oe_module_icon" alt="Liquidada"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'RC'">
+                                <img t-attf-src="/motgama/static/src/img/estado_azul.png" class="oe_module_icon" alt="Aseo"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'R'">
+                                <img t-attf-src="/motgama/static/src/img/estado_amarillo.png" class="oe_module_icon" alt="Reservada"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'FS'">
+                                <img t-attf-src="/motgama/static/src/img/estado_azulclaro.png" class="oe_module_icon" alt="Fuera de Servicio"/>
+                            </t>
+                            <t t-if="record.estado.raw_value === 'FU'">
+                                <img t-attf-src="/motgama/static/src/img/estado_cafe.png" class="oe_module_icon" alt="Fuera de Uso"/>
+                            </t>
+                            </a>
+
+                            <div class="oe_module_desc" t-att-title="Title">
+                                <a type="object" name="open_record">
+                                    <h2 style="text-color: black;">
+                                        &amp;nbsp; <field name="codigo"/>
+                                    </h2>
+                                </a>
+                                <a type="object" name="open_record">
+                                    <p class="oe_module_name">
+                                        <span>&amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
+                                        &amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/></span>
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="wizard_asignacion_habitacion" model="ir.ui.view">
+        <field name="name">Asignación de habitacion</field>
+        <field name="model">motgama.wizardhabitacion</field>
+        <field name="arch" type="xml">
+            <form>
+                <div style="white-space: pre-line;">
+                    <h5><span>Asignacion de Habitación <field name="codigohab"/></span></h5>
+                </div>
+                <group>
+                    <field name="fecha"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="valorocasional"/>
+                        <field name="tiemponormal"/>
+                        <field name="valoradicional"/>
+                    </group>
+                    <group>
+                        <field name="valoramanecida"/>
+                        <field name="horainicioamanecida"/>
+                    </group>
+                </group>
+                <group>
+                    <field name="observacion" invisible="1"/>
+                    <field name="observacion" attrs="{'invisible':[('observacion','=','')]}" readonly="1"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="tipovehiculo"/>
+                    </group>
+                    <group>
+                    </group>
+                    <group attrs="{'invisible':[('tipovehiculo','not in',['particular','moto','taxi'])],'required':[('tipovehiculo','in',['particular','moto'])]}">
+                        <field name="placa"/>
+                    </group>
+                    <group attrs="{'invisible':[('tipovehiculo','not in',['particular','moto','taxi'])],'required':[('tipovehiculo','in',['particular','moto'])]}">
+                        <button name="check_placa" string="Revisar reporte de placa" type="object" class="btn btn-primary"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="asignatipo"/>
+                    </group>
+                    <group>
+                    </group>
+                </group>
+                <footer>
+                    <button type="object" name="button_asignar_wizard" string="Asignar" class="oe_highlight"/>
+                    <button string="Cancelar" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

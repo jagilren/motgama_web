@@ -1,0 +1,110 @@
+<odoo>
+    <data>
+        <template id="formato_factura">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <h2 class="text-center"><span t-field="doc.company_id.name"/></h2>
+                        <h5 class="text-center"><span t-field="doc.name"/></h5>
+                        <p class="text-center"><span t-field="doc.company_id.resol_texto"/></p>
+                        <h3>FACTURA DE VENTA: <span t-field="doc.number"/></h3>
+                        <h4>
+                            <t t-if="impHab">
+                                Habitación: <span t-field="doc.habitacion_id.codigo"/><br/>
+                            </t>
+                            Cliente: <span t-field="doc.partner_id"/>
+                        </h4>
+                        <table style="width: 100%;">
+                            <thead>
+                                <th style="font-size:8px">Precio</th>
+                                <th style="font-size:8px">Cant</th>
+                                <th style="font-size:8px">Total</th>
+                                <th style="font-size:8px">Imp</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.invoice_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="font-size:8px">
+                                            <span t-field="line.name" style="font-size:8px"/><br/>
+                                            $&amp;nbsp;<span t-field="line.price_unit"/>
+                                        </td>
+                                        <td style="font-size:8px"><span t-field="line.quantity"/></td>
+                                        <td style="font-size:8px"><span t-field="line.price_total"/></td>
+                                        <td style="font-size:8px">
+                                            <t t-foreach="line.invoice_line_tax_ids" t-as="tax">
+                                                <span t-field="tax.name"/><br/>
+                                                <t t-set="total_amount" t-value="'{:0,.2f}'.format(line.price_subtotal*tax.amount/100).replace(',','¿').replace('.',',').replace('¿','.')"/>
+                                                $&amp;nbsp;<span t-esc="total_amount"/><br/>
+                                            </t>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <table style="width: 100%;">
+                            <thead>
+                                <th style="font-size:8px">Impuesto</th>
+                                <th style="font-size:8px" class="text-right">Total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="doc.tax_line_ids" t-as="line">
+                                    <tr>
+                                        <td style="font-size:8px"><span t-field="line.name"/></td>
+                                        <td style="font-size:8px" class="text-right"><span t-field="line.amount_total"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <table style="width: 100%">
+                            <tbody>
+                                <tr>
+                                    <td style="font-size:8px">Total impuestos </td>
+                                    <td style="font-size:8px" class="text-right"><span t-field="doc.amount_tax"/></td>
+                                </tr>
+                                <tr></tr>
+                                <tr>
+                                    <td style="font-size:8px">Total facturado </td>
+                                    <td style="font-size:8px" class="text-right"><span t-field="doc.amount_total"/></td>
+                                </tr>
+                                <tr></tr>
+                                <t t-foreach="doc.recaudo.pagos" t-as="pago">
+                                    <t t-if="not pago.mediopago.lleva_prenda">
+                                        <tr>
+                                            <td style="font-size:8px"><span t-field="pago.mediopago.nombre"/></td>
+                                            <td style="font-size:8px" class="text-right">$&amp;nbsp;<span t-esc="'{:0,.2f}'.format(pago.valor).replace(',','¿').replace('.',',').replace('¿','.')"/></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <tr></tr>
+                                <tr>
+                                    <td style="font-size:8px">Total pagado</td>
+                                    <td style="font-size:8px" class="text-right">$&amp;nbsp;<span t-esc="'{:0,.2f}'.format(doc.recaudo.valor_pagado).replace(',','¿').replace('.',',').replace('¿','.')"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:8px">Saldo a pagar</td>
+                                    <td style="font-size:8px" class="text-right"><span t-field="doc.residual"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <strong style="font-size:8px">Fecha y hora: <span t-field="doc.fecha"/></strong>
+                        <br/>
+                        <p style="font-size:8px">Dirección: <span t-field="doc.company_id.street" style="font-size:8px"/></p><br/>
+                        <p><span t-field="doc.company_id.footer_factura" style="font-size:8px"/></p>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+        <report string="Motgama Factura Tirilla"
+            id="reporte_factura_80"
+            model="account.invoice"
+            report_type="qweb-html"
+            name="motgama.formato_factura"
+            file="motgama.formato_factura"
+            print_report_name="'Factura - %s' % (object.number)"
+            paperformat="motgama.formato_tirilla_80"/>
+    </data>
+</odoo>

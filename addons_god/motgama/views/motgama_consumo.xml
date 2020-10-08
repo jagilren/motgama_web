@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree                                                                                                              P7.0.4R -->
+  <record id="tree_view_consumo" model="ir.ui.view">
+    <field name="name">Consumos</field>
+    <field name="model">motgama.consumo</field>
+    <field name="limit">20</field>
+    <field name="arch" type="xml">   
+      <tree string="Consumo" editable="bottom" default_order='create_date desc'>
+        <field name="recepcion" string="recepcion" invisible="1"/>
+        <field name="llevaComanda" invisible="1"/>
+        <field name="permitecambiarvalor" invisible="1"/>
+        <field name="valorUnitario" invisible="1"/>
+        <field name="habitacion" string="Habitacion" required="1" domain="[('estado','in',['OO','OA','LQ']),('recepcion','=',recepcion)]" options="{'no_create':True}"/>
+        <field name="producto_id" string="Producto" domain="[('es_hospedaje','=',False),('sale_ok','=',True)]" options="{'no_create':True}" required="1"/>
+        <field name="lugar_id" string="Bodega de Inventario" required="1" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
+        <field name="textoComanda" attrs="{'readonly':[('llevaComanda','=',False)]}"/>
+        <field name="vlrUnitario" string="Valor Unitario $" attrs="{'readonly':[('permitecambiarvalor','=',False)]}"/>
+        <field name="cantidad" string="Cantidad" required="1"/>
+        <field name="vlrSubtotal" string="Subtotal $"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="form_wizard_consumo" model="ir.ui.view">
+    <field name="name">Wizard Consumos</field>
+    <field name="model">motgama.wizard.consumos</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <notebook>
+            <page string="Consumos ya validados">
+              <group>
+                <field name="consumo_ids">
+                  <tree create="false" editable="bottom">
+                    <field name="producto_id" readonly="1"/>
+                    <field name="vlrUnitario" readonly="1"/>
+                    <field name="cantidad" readonly="1"/>
+                    <field name="vlrSubtotal" readonly="1"/>
+                  </tree>
+                </field>
+              </group>
+            </page>
+            <page string="Agregar consumos">
+              <group>
+                <field name="habitacion_id" readonly="1"/>
+              </group>
+              <group>
+                <group>
+                  <field name="producto_id" domain="[('es_hospedaje','=',False),('sale_ok','=',True)]" options="{'no_create':True}"/>
+                </group>
+                <group>
+                  <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
+                </group>
+              </group>
+              <group>
+                <field name="linea_ids">
+                  <tree editable="bottom" create="false">
+                    <field name="cambiar_valor" invisible="1"/>
+                    <field name="lleva_comanda" invisible="1"/>
+                    <field name="producto_id" invisible="1"/>
+                    <field name="producto_id_save"/>
+                    <field name="cantidad"/>
+                    <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
+                    <field name="vlrUnitario" invisible="1"/>
+                    <field name="vlrUnitario_save" attrs="{'readonly':[('cambiar_valor','=',False)]}"/>
+                    <field name="comanda" attrs="{'readonly':[('lleva_comanda','=',False)]}"/>
+                    <field name="vlrSubtotal" invisible="1"/>
+                    <field name="vlrSubtotal_save"/>
+                  </tree>
+                </field>
+              </group>
+              <group>
+                <group>
+                  <field name="total_prods" readonly="1"/>
+                </group>
+                <group>
+                  <field name="total_consumos" readonly="1"/>
+                </group>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+        <footer>
+          <button name="agregar_consumos" string="Finalizar" type="object" class="btn btn-primary"/>
+          <button special="cancel" string="Cancelar" class="btn"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

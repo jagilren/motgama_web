@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+    <record id="tree_view_zona" model="ir.ui.view">
+        <field name="name">Zona</field>
+        <field name="model">motgama.zona</field>
+        <field name="arch" type="xml">
+            <tree string="Zona">
+                <field name="recepcion_id" />
+                <field name="codigo" />
+                <field name="nombre" />
+                <field name="active" />
+            </tree>
+        </field>
+    </record>
+<!--Formulario                                                                                                              P7.0.4R -->
+    <record id="form_view_zona" model="ir.ui.view">
+        <field name="name">Zona</field>
+        <field name="model">motgama.zona</field>
+        <field name="arch" type="xml">
+            <form string="Zona">
+                <header>
+                    <button name="fuera_uso" string="Fuera de uso" class="btn" type="object" attrs="{'invisible':[('estado','!=','H')]}"
+                        confirm="Va a cambiar el estado de toda la zona a fuera de uso, si hay habitaciones que no estén disponibles (Ocupada, fuera de uso, fuera de servicio, etc.) no se verán afectadas, si alguna habitación está reservada para cualquier momento a partir de este instante tampoco cambiará de estado, ¿Está seguro que desea continuar?"/>
+                    <button name="habilitar" string="Habilitar zona" class="btn btn-primary" type="object" attrs="{'invisible':[('estado','!=','FU')]}"
+                        confirm='Va a habilitar toda la zona, las habitaciones que no se encuentren en estado "Fuera de Uso" no se verán afectadas'/>
+                </header>
+                <sheet>
+                    <group name="group_bottom">
+                        <group name="group_left">            
+                            <field name="recepcion_id" class="oe_inline"
+                                placeholder="Seleccione la recepcion"/>
+                            <field name="codigo" class="oe_inline"
+                                placeholder="Ingrese el codigo de la zona" options="{'no_create_edit': True}" required="1"/>
+                            <field name="nombre" class="oe_inline"
+                                placeholder="Ingrese el nombre de la zona"/>
+                            <field name="estado" readonly="1"/>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                    <group>            
+                        <field name="habitacion_ids"/>                  
+                    </group>   
+                </sheet>    
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+<record id="tree_view_listapreciotipo" model="ir.ui.view">
+    <field name="name">Lista de precios por tipo de habitación</field>
+    <field name="model">motgama.listapreciotipo</field>
+    <field name="arch" type="xml">
+    <tree string="Lista de Precios">
+        <field name="tipo_id"/>
+        <field name="nombrelista"/>
+        <field name="tarifaocasional" />
+        <field name="tarifamanecida"/>
+        <field name="tarifahoradicional"/>
+        <field name="active"/>
+    </tree>
+    </field>
+</record>
+<!--Formulario                                                                                                                                  P7.0.4R -->
+<record id="form_view_listapreciotipo" model="ir.ui.view">
+    <field name="name">Lista de precios por tipo de habitación</field>
+    <field name="model">motgama.listapreciotipo</field>
+    <field name="arch" type="xml">
+        <form string="Lista de Precios">
+            <sheet>
+                <group name="group_bottom">
+                    <field name="tipo_id"/>
+                    <field name="nombrelista"/>
+                    <field name="tarifaocasional" />
+                    <field name="tarifamanecida"/>
+                    <field name="tarifahoradicional"/>
+                    <field name="active"/>
+                </group>             
+            </sheet>    
+        </form>
+    </field>
+</record>
+</odoo>

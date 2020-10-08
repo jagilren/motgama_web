@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--Tree                                                                                                                P7.0.4R-->
+    <record id="tree_view_habitaciones" model="ir.ui.view">
+        <field name="name">Habitacion</field>
+        <field name="model">motgama.habitacion</field>
+        <field name="arch" type="xml">
+            <tree string="Habitacion">
+                <field name="codigo"/>
+                <field name="nombre"/>
+                <field name="zona_id"/>
+                <field name="tema_id"/>
+                <field name="tipo_id"/>
+                <field name="tiemponormalocasional"/>
+                <field name="inmotica"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--Formulario-->
+    <record id="form_view_habitacion" model="ir.ui.view">
+        <field name="name">Habitacion</field>
+        <field name="model">motgama.habitacion</field>
+        <field name="arch" type="xml">
+        <form string="Habitacion">
+            <sheet>
+                <group name="group_bottom">
+                    <group name="group_left">            
+                        <field name="codigo" string="Codigo de la habitación" style="width:20%; font-size:20px; font-weight: bold;"/>
+                    </group>
+                </group>
+                <group name="group_top">
+                    <field name="nombre" string="Nombre"/>
+                    <field name="zona_id" string="Zona"/>
+                    <field name="tema_id" string="Tema de habitación"/>
+                    <field name="tipo_id" string="Tipo de Habitación"/>
+                    <field name="inmotica" string="inmotica"/>
+                    <field name="tiemponormalocasional" string="tiempo normal ocasional"/>
+                    <field name="active" string="Activar"/>
+                </group>
+                <group>
+                    <field name="listapreciohabitacion_ids" />
+                </group>
+            </sheet>    
+        </form>
+        </field>
+    </record>
+</odoo>

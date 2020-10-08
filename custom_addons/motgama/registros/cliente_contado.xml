@@ -1,8 +1,0 @@
-<odoo>
-    <data noupdate="1">
-        <record id="cliente_contado" model="res.partner">
-            <field name="name">CLIENTE CONTADO</field>
-            <field name="vat">1</field>
-        </record>
-    </data>
-</odoo>

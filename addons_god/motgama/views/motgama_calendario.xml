@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--Tree                                                                                                                P7.0.4R-->
+    <record id="tree_view_calendario" model="ir.ui.view">
+        <field name="name">Calendario</field>
+        <field name="model">motgama.calendario</field>
+        <field name="arch" type="xml">
+        <tree string="Calendario">
+            <field name="sucursal_id" />
+            <field name="diasemana"/>
+            <field name="listapreciodia"/>
+            <field name="listaprecionoche"/>
+            <field name="listaprecioproducto"/>
+            <field name="horainicioamanecida"/>
+            <field name="horafinamanecida"/>
+            <field name="horafininicioamanecida"/>
+            <field name="tiemponormalocasional"/>
+            <field name="flagignoretiempo"/>
+        </tree>
+        </field>
+    </record>
+    <!--Formulario-->
+    <record id="form_view_calendario" model="ir.ui.view">
+        <field name="name">Calendario</field>
+        <field name="model">motgama.calendario</field>
+        <field name="arch" type="xml">
+        <form string="Calendario">
+            <sheet>
+                <group name="group_bottom">
+                    <field name="sucursal_id" placeholder="Sucursal" />
+                    <field name="diasemana"/>
+                    <field name="listapreciodia"/><br/>
+                    <field name="listaprecionoche"/>
+                    <field name="listaprecioproducto"/>
+                    <field name="horainicioamanecida"/>
+                    <field name="horafinamanecida"/>
+                    <field name="horafininicioamanecida"/>
+                    <field name="tiemponormalocasional"/>
+                    <field name="flagignoretiempo"/>
+                    <field name="active"/>
+                </group>     
+            </sheet>    
+        </form>
+        </field>
+    </record>
+</odoo>

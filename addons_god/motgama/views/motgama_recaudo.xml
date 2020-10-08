@@ -1,0 +1,45 @@
+<odoo>
+    <record id="view_recaudo_form" model="ir.ui.view">
+        <field name="name">View Recaudo Form</field>
+        <field name="model">motgama.recaudo</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false">
+                <header>
+                    <field name='active' invisible='1'/>
+                    <button name='anula_recaudo' type='object' string='Anular' class='btn' attrs="{'invisible':[('active','=',False)]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <h1><span><field name="nrorecaudo"/></span></h1>
+                    </group>
+                    <group>
+                        <field name="movimiento_id"/>
+                        <field name="habitacion"/>
+                        <field name="cliente"/>
+                        <field name="factura"/>
+                    </group>
+                    <group>
+                        <field name="pagos">
+                            <tree>
+                                <field name="mediopago"/>
+                                <field name="valor"/>
+                            </tree>
+                            <form>
+                                <sheet>
+                                    <group>
+                                        <field name="mediopago"/>
+                                        <field name="valor"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                        <field name="prenda"/>
+                        <field name="total_pagado"/>
+                        <field name="valor_pagado"/>
+                        <field name="usuario_uid"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

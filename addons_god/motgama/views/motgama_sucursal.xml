@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<!--Tree-->
+<record id="tree_view_sucursal" model="ir.ui.view">
+    <field name="name">Sucursal</field>
+    <field name="model">motgama.sucursal</field>
+    <field name="arch" type="xml">
+    <tree string="Sucursal">
+        <field name="razonsocial_id" />
+        <field name="codigo" />
+        <field name="nombre" />
+        <field name="nit" />
+        <field name="email" />
+        <field name="telefono" />
+        <field name="ciudad" />
+        <field name="direccion" />
+        <field name="active" />
+        
+    </tree>
+    </field>
+</record>
+<!--Formulario                                                                                                              P7.0.4R -->
+<record id="form_view_sucursal" model="ir.ui.view">
+    <field name="name">Sucursal</field>
+    <field name="model">motgama.sucursal</field>
+    <field name="arch" type="xml">
+    <form string="Habitaciones">
+    <sheet>
+    <group name="group_top">
+            <group name="group_left"> 
+            <template id='motgama_frontend' name='motgama assets' inherit_id='website_sale.assets_frontend'>
+                <xpath expr="//link[@rel='stylesheet']" position="after">    
+                    <link rel="stylesheet" href="/motgama/static/src/css/styles.css" />    
+                </xpath>
+            </template>           
+                <field name="razonsocial_id" class="oe_motgama_sucursal"
+                    placeholder="Seleccionar la razón social" />
+                <field name="codigo" class="oe_motgama_sucursal"
+                    placeholder="ingrese el código de la sucursal" options="{'no_create_edit': True}" required="1" />
+                <field name="nombre" class="oe_motgama_sucursal"
+                    placeholder="Ingrese el nombre de la sucursal" />
+                <field name="nit" class="oe_motgama_sucursal"
+                placeholder="Ingrese el nit de la sucursal" />
+                <field name="email" class="oe_motgama_sucursal"
+                    placeholder="Ingrese el correo electrónico" />             
+                <field name="telefono" class="oe_motgama_sucursal"
+                    placeholder="ingrese el teléfono de la sucursal" />
+                <field name="ciudad" class="oe_motgama_sucursal"
+                    placeholder="Ingrese la ciudad de la sucursal" />
+                <field name="direccion" class=""
+                    placeholder="Ingrese la dirección de la sucursal" />
+                <field name="active" />
+            </group>           
+        </group> 
+        <group name="group_bottom">               
+            <field name="recepcion_ids" />
+        </group>
+    </sheet>    
+    </form>
+    </field>
+</record>
+</odoo>

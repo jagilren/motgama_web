@@ -1,0 +1,75 @@
+<odoo>
+    <report id="reporte_documentos"
+        model="motgama.reportedocumentos"
+        string="Reporte de Documentos"
+        report_type="qweb-pdf"
+        name="motgama.reportedocumentos"
+        paperformat="motgama.formato_reporte"/>
+
+    <template id="reportedocumentos">
+        <t t-call="web.html_container">
+            <div class="header" style="border-bottom: 2px solid black">
+                <h3 class="text-center">Reporte de Documentos</h3>
+            </div>
+            <div class="article">
+                <table class="table table-condensed table-bordered" style="width: 100%">
+                    <thead>
+                        <th class="text-center" style="width: 34%">Fecha</th>
+                        <th class="text-center" style="width: 33%">Documento</th>
+                        <th class="text-center" style="width: 33%">Cliente</th>
+                        <th class="text-center" style="width: 33%">Habitación</th>
+                        <th class="text-center" style="width: 33%">Valor Total</th>
+                        <th class="text-center" style="width: 33%">Estado</th>
+                        <th class="text-center" style="width: 33%">Usuario</th>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="doc">
+                            <tr>
+                                <td class="text-center">
+                                    <span t-field="doc.fecha"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="doc.doc"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="doc.cliente"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="doc.habitacion"/>
+                                </td>
+                                <td class="text-center">
+                                    $ <span t-field="doc.valor"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="doc.estado"/>
+                                </td>
+                                <td class="text-center">
+                                    <span t-field="doc.usuario"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+                <br/>
+                <p><span class="font-weight-bold">Total documentos:</span> <span t-esc="count"/><br/>
+                <span class="font-weight-bold">Total ventas:</span> $ <span t-esc="total"/></p>
+            </div>
+            <div class="footer">
+                <div class="row text-center" style="border-top: 1px solid black;">
+                    <div class="col col-3 offset-9 text-right">
+                        <ul class="list-inline mt-2">
+                            <li class="list-inline-item">Página:</li>
+                            <li class="list-inline-item">
+                                <span class="page"/>
+                            </li>
+                            <li class="list-inline-item">/</li>
+                            <li class="list-inline-item">
+                                <span class="topage"/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

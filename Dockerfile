@@ -58,12 +58,11 @@ RUN set -x;\
 
 # Install Odoo
 ENV ODOO_VERSION 12.0
-ARG ODOO_RELEASE=20190816
+ARG ODOO_RELEASE=20190821
 ARG ODOO_SHA=e95cdfe23d16a8572b63bc8d8e8616be5bc18a0a
+COPY ./docker/odoo.deb /
 RUN set -x; \
-        curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
-        && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
-        && dpkg --force-depends -i odoo.deb \
+        dpkg --force-depends -i odoo.deb \
         && apt-get update \
         && apt-get -y install -f --no-install-recommends \
         && rm -rf /var/lib/apt/lists/* odoo.deb
@@ -74,8 +73,8 @@ RUN pip3 install xlrd
 
 # Copy entrypoint script and Odoo configuration file
 RUN pip3 install num2words xlwt
-COPY ./entrypoint.sh /
-COPY ./odoo.conf /etc/odoo/
+COPY ./docker/entrypoint.sh /
+COPY ./docker/odoo.conf /etc/odoo/
 RUN chown odoo /etc/odoo/odoo.conf
 
 # Mount /var/lib/odoo to allow restoring filestore and /mnt/extra-addons for users addons
@@ -86,9 +85,10 @@ RUN mkdir -p /home/usr/files \
 VOLUME ["/var/lib/odoo", "/mnt/extra-addons","/home/usr/files"]
 
 # Copiar la carpeta de addons de Motgama
-RUN mkdir -p /home/gama
-ADD custom_addons /home/gama/
-RUN chown -R odoo /home/gama/
+RUN mkdir -p /home/spin
+ADD addons_terceros /home/spin/addons_terceros
+ADD addons_god /home/spin/addons_god
+RUN chown -R odoo /home/spin/
 
 # Expose Odoo services
 EXPOSE 8069 8071

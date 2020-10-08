@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--Tree                                                                                                            P7.0.4R -->
+    <record id="tree_view_inmotica" model="ir.ui.view">
+        <field name="name">inmotica</field>
+        <field name="model">motgama.inmotica</field>
+        <field name="arch" type="xml">
+            <tree string="Inmotica" create="false" delete="false">
+                <field name="habitacion"/>
+                <field name="parametro"/> 
+                <field name="evento"/>
+                <field name="fecha"/>
+                <field name="usuario_id"/>
+                <field name="mensaje"/>
+            </tree>
+        </field>
+    </record>
+    <!--Formulario-->
+    <record id="form_view_inmotica" model="ir.ui.view">
+        <field name="name">inmotica</field>
+        <field name="model">motgama.inmotica</field>
+        <field name="arch" type="xml">
+        <form string="Inmotica" create="false" edit="false" delete="false">
+            <sheet>
+                <group name="group_bottom">
+                    <field name="habitacion"/>
+                    <field name="parametro"/> 
+                    <field name="evento"/>
+                    <field name="fecha"/>
+                    <field name="usuario_id"/>
+                    <field name="mensaje"/>
+                </group>
+            </sheet>    
+        </form>
+        </field>
+    </record>
+</odoo>

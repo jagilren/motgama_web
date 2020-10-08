@@ -1,0 +1,19 @@
+<odoo>
+    <data>
+        <record id="product_category_form_motgama" model="ir.ui.view">
+            <field name="name">product.category.form.motgama</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <group name="first" position="after">
+                    <group name="motgama">
+                        <group string="Motgama">
+                            <field name="llevaComanda"/>
+                            <field name="es_hospedaje"/>
+                        </group>
+                    </group>
+                </group>
+            </field>
+        </record>
+    </data>
+</odoo>

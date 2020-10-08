@@ -1,0 +1,64 @@
+<odoo>
+    <record id="tree_view_prenda" model="ir.ui.view">
+        <field name="name">Prendas Tree</field>
+        <field name="model">motgama.prendas</field>
+        <field name="arch" type="xml">
+            <tree string="Prendas" create="false" edit="false">
+                <field name="nroprenda"/>
+                <field name="fecha"/>
+                <field name="descripcion"/>
+                <field name="cliente_id"/>
+                <field name="valorprenda"/>
+                <field name="valordeuda"/>
+                <field name="creado_uid"/>
+                <field name="pagado"/>
+                <field name="pagadofecha"/>
+                <field name="pago_uid"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="form_view_prenda" model="ir.ui.view">
+        <field name="name">Prendas Form</field>
+        <field name="model">motgama.prendas</field>
+        <field name="arch" type="xml">
+            <form string="Prenda" create="false" edit="false">
+                <field name="pagado" invisible="1"/>
+                <header>
+                    <button name="recaudo_prenda" type="object" string="Recaudar Prenda"
+                        class="btn btn-primary" attrs="{'invisible': [('pagado','=',True)]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <h1><span><field name="nroprenda"/></span></h1>
+                    </group>
+                    <group>
+                        <group name="left" string="Datos de la asignación">
+                            <field name="fecha"/>
+                            <field name="cliente_id" widget="res_partner_many2one" context="{'search_default_customer':1, 'show_address': 1, 'show_vat': True}" options="{&quot;always_reload&quot;: True}"/>
+                            <field name="tipovehiculo"/>
+                            <field name="placa" attrs="{'invisible':[('tipovehiculo','!=','peaton')]}"/>
+                            <field name="habitacion_id"/>
+                            <field name="factura"/>
+                            <field name="creado_uid"/>
+                        </group>
+                        <group name="right" string="Datos de la prenda">
+                            <group>
+                                <group>
+                                    <field name="descripcion"/>
+                                    <field name="valorprenda"/>
+                                    <field name="valordeuda"/>
+                                </group>
+                                <group string="Datos del pago" attrs="{'invisible': [('pagado','=',False)]}">
+                                    <field name="pagadofecha"/>
+                                    <field name="pago_uid"/>
+                                    <field name="recaudo"/>
+                                </group>
+                            </group>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

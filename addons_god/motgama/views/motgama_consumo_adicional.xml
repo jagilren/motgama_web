@@ -1,0 +1,106 @@
+<odoo>
+    <!--Tree                                                                                                              P7.0.4R -->
+    <record id="tree_view_consumos_adicionales" model="ir.ui.view">
+        <field name="name">Consumos Adicionales Tree</field>
+        <field name="model">motgama.facturaconsumos</field>
+        <field name="limit">100</field>
+        <field name="arch" type="xml"> 
+            <tree>
+                <field name="nombre"/>
+                <field name='cliente_id'/>
+                <field name="valor_total"/>
+                <field name="factura_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!--Form-->
+    <record id="form_view_consumos_adicionales" model="ir.ui.view">
+        <field name="name">Consumos Adicionales Form</field>
+        <field name="model">motgama.facturaconsumos</field>
+        <field name="arch" type="xml"> 
+            <form>
+                <header>
+                    <button name="btn_facturar" type="object" class="btn btn-primary" string="Facturar y recaudar" attrs="{'invisible':[('factura_id','!=',False)]}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <h2><span><field name="nombre"/></span></h2>
+                    </group>
+                    <group>
+                        <field name="cliente_id" attrs="{'readonly':[('factura_id','!=',False)]}"/>
+                        <field name="consumo_ids" attrs="{'readonly':[('factura_id','!=',False)]}">
+                            <tree editable="bottom">
+                                <control>
+                                    <create string="Agregar consumo"/>
+                                </control>
+                                <field name="permitecambiarvalor" invisible="1"/>
+                                <field name="producto_id" domain="[('es_hospedaje','=',False),('sale_ok','=',True)]" options="{'no_create':True}"/>
+                                <field name="vlrUnitario" attrs="{'readonly':[('permitecambiarvalor','=',False)]}"/>
+                                <field name="cantidad"/>
+                                <field name="vlrSubtotal"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <h3><span>Valor total $<field name="valor_total"/></span></h3>
+                    </group>
+                    <group>
+                        <field name="factura_id" readonly="1" attrs="{'invisible':[('factura_id','=',False)]}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!--Wizard-->
+    <record id="wizard_recaudo_consumos" model="ir.ui.view">
+        <field name="name">Wizard Consumos Adicionales Form</field>
+        <field name="model">motgama.wizardfacturaconsumos</field>
+        <field name="arch" type="xml"> 
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="deuda" readonly="True" style="font-size:20px;" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="total" readonly="True" style="font-size:20px;" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="cliente"/>
+                        <field name="pagos" widget='one2many_list' mode="tree">
+                            <tree string="Registro de pagos" editable="bottom">
+                                <control>
+                                    <create string="Agregar pago"/>
+                                </control>
+                                <field name="mediopago" options="{'no_create': true}"/>
+                                <field name="valor"/>
+                            </tree>
+                        </field>
+                        <field name="pago_prenda" readonly="True" invisible="1"/>
+                    </group>
+                    <group name="prenda_nueva" attrs="{'invisible': [('pago_prenda','=', False)]}">
+                        <h3>Rellene los campos de la prenda a registrar</h3>
+                        <group>
+                            <field name="prenda_descripcion" attrs="{'required': [('pago_prenda','=',True)]}"/>
+                        </group>
+                        <group>
+                            <field name="prenda_valor" attrs="{'required': [('pago_prenda','=',True)]}"/>
+                        </group>
+                    </group>
+                    <group name="prendas_cliente" attrs="{'invisible': [('pago_prenda','=', False)]}">
+                        <h3>Información de prendas previas del cliente</h3>
+                        <field name="prendas_pendientes" readonly="True"/>
+                        <field name="prendas_pagadas" readonly="True"/>
+                    </group>
+                    <footer>
+                        <button name="recaudar" string="Recaudar" type="object" class="oe_highlight"/>
+                        <button string="Cancelar" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

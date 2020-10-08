@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_account_invoice_form_inherit" model="ir.ui.view">
+            <field name="name">account.invoice.motgama.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//header" position="before">
+                    <field name="es_hospedaje" invisible="1"/>
+                </xpath>
+                <xpath expr="//header" position="inside">
+                    <button name='recaudo_factura' string='Recaudar factura' type='object' class='btn' attrs="{'invisible':[('state','!=','open')]}"/>
+                </xpath>
+                <xpath expr="//notebook" position="before">
+                    <group>
+                        <field name="asignafecha" readonly="1" attrs="{'invisible':[('es_hospedaje','=',False)]}"/>
+                        <field name="liquidafecha" readonly="1" attrs="{'invisible':[('es_hospedaje','=',False)]}"/>
+                    </group>
+                    <group attrs="{'invisible':[('lleva_prenda','=',False)]}">
+                        <field name="lleva_prenda" invisible="1"/>
+                        <field name="prenda_id"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='team_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//notebook" position="after">
+                    <group>
+                        <field name="recaudo" readonly="1" string="Recibo de pago"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
