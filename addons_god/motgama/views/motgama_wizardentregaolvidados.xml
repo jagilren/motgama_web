@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <act_window
+        id="action_wizard_entrega_olvidados"               
+        res_model="motgama.wizardentregaolvidados" 
+        name="Entrega Objetos Olvidados"
+        src_model="motgama.objolv"
+        view_type="form"    
+        view_mode="form"
+        multi="True"
+        target="new"
+    />
+
+    <record id="wizard_entrega_olvidados" model="ir.ui.view">
+        <field name="name">Entrega Objetos Olvidados</field>
+        <field name="model">motgama.wizardentregaolvidados</field>
+        <field name="arch" type="xml">
+            <form string="Objetos Olvidados">
+                <group>
+                    <field name="dardebaja"/>
+                    <field name="cliente_id" attrs="{'invisible': [('dardebaja','=',True)]}"/>
+                    <field name="fecha"/>
+                    <field name="observacion"/>
+                </group>
+                <footer>
+                    <button type="object" name="entregar_objeto" class="btn btn-info" string="Guardar"/>
+                    <button special="cancel" string="Descartar" class="oe_link"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
