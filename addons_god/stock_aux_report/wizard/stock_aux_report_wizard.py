@@ -41,19 +41,16 @@ class StockAuxReportWizard(models.TransientModel):
                         else:
                             reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] = 0 - transferencia.product_qty
                     else:
-                        if transferencia.picking_id.partner_id in reporte_aux[transferencia.location_id][transferencia.product_id]:
-                            if 'product_out' in reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id]:
-                                reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id]['product_out'] += transferencia.product_qty
-                            else:
-                                reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id]['product_out'] = transferencia.product_qty
+                        if 'product_out' in reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id]:
+                                reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] += transferencia.product_qty
                         else:
-                            reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id] = {'product_out': transferencia.product_qty}
+                            reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] = transferencia.product_qty
                 else:
                     reporte_aux[transferencia.location_id][transferencia.product_id] = {}
                     if transferencia.date < fecha_inicial:
                         reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] = 0 - transferencia.product_qty
                     else:
-                        reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id] = {'product_out': transferencia.product_qty}
+                        reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] = transferencia.product_qty
             elif transferencia.location_id in ubicaciones:
                 reporte_aux[transferencia.location_id] = {
                     transferencia.product_id: {}
@@ -61,7 +58,7 @@ class StockAuxReportWizard(models.TransientModel):
                 if transferencia.date < fecha_inicial:
                     reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] = 0 - transferencia.product_qty
                 else:
-                    reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id] = {'product_out': transferencia.product_qty}
+                    reporte_aux[transferencia.location_id][transferencia.product_id]['product_out']: transferencia.product_qty}
             
             if transferencia.location_dest_id in reporte_aux:
                 if transferencia.product_id in reporte_aux[transferencia.location_dest_id]:
@@ -71,19 +68,16 @@ class StockAuxReportWizard(models.TransientModel):
                         else:
                             reporte_aux[transferencia.location_dest_id][transferencia.product_id]['initial'] = transferencia.product_qty
                     else:
-                        if transferencia.picking_id.partner_id in reporte_aux[transferencia.location_dest_id][transferencia.product_id]:
-                            if 'product_in' in reporte_aux[transferencia.location_dest_id][transferencia.product_id][transferencia.picking_id.partner_id]:
-                                reporte_aux[transferencia.location_dest_id][transferencia.product_id][transferencia.picking_id.partner_id]['product_in'] += transferencia.product_qty
-                            else:
-                                reporte_aux[transferencia.location_dest_id][transferencia.product_id][transferencia.picking_id.partner_id]['product_in'] = transferencia.product_qty
+                        if 'product_in' in reporte_aux[transferencia.location_dest_id][transferencia.product_id]:
+                            reporte_aux[transferencia.location_dest_id][transferencia.product_id]['product_in'] += transferencia.product_qty
                         else:
-                            reporte_aux[transferencia.location_dest_id][transferencia.product_id][transferencia.picking_id.partner_id] = {'product_in': transferencia.product_qty}
+                            reporte_aux[transferencia.location_dest_id][transferencia.product_id]['product_in'] = transferencia.product_qty
                 else:
                     reporte_aux[transferencia.location_dest_id][transferencia.product_id] = {}
                     if transferencia.date < fecha_inicial:
                         reporte_aux[transferencia.location_dest_id][transferencia.product_id]['initial'] = transferencia.product_qty
                     else:
-                        reporte_aux[transferencia.location_dest_id][transferencia.product_id][transferencia.picking_id.partner_id] = {'product_in': transferencia.product_qty}
+                        reporte_aux[transferencia.location_dest_id][transferencia.product_id]['product_in'] = transferencia.product_qty
             elif transferencia.location_dest_id in ubicaciones:
                 reporte_aux[transferencia.location_dest_id] = {
                     transferencia.product_id: {}
@@ -91,47 +85,23 @@ class StockAuxReportWizard(models.TransientModel):
                 if transferencia.date < fecha_inicial:
                     reporte_aux[transferencia.location_dest_id][transferencia.product_id]['initial'] = transferencia.product_qty
                 else:
-                    reporte_aux[transferencia.location_dest_id][transferencia.product_id][transferencia.picking_id.partner_id] = {'product_in': transferencia.product_qty}
+                    reporte_aux[transferencia.location_dest_id][transferencia.product_id]['product_in'] = transferencia.product_qty
 
         reporte = []
         for ubicacion in reporte_aux:
             for producto in reporte_aux[ubicacion]:
                 initial = reporte_aux[ubicacion][producto]['initial'] if 'initial' in reporte_aux[ubicacion][producto] else 0
+                product_in = reporte_aux[ubicacion][producto]['product_in'] if 'product_in' in reporte_aux[ubicacion][producto] else 0
+                product_out = reporte_aux[ubicacion][producto]['product_out'] if 'product_out' in reporte_aux[ubicacion][producto] else 0
                 total = initial
                 dic = {
                     'producto': producto.name,
                     'ubicacion': ubicacion.name,
                     'inicial': initial,
-                    'product_in': 0,
-                    'product_out': 0,
+                    'product_in': product_in,
+                    'product_out': product_out,
                     'total': total
                 }
-                reporte.append(dic)
-                for asociado in reporte_aux[ubicacion][producto]:
-                    if asociado == 'initial':
-                        continue
-                    if 'product_in' in reporte_aux[ubicacion][producto][asociado]:
-                        total += reporte_aux[ubicacion][producto][asociado]['product_in']
-                        dic = {
-                            'producto': producto.name,
-                            'ubicacion': ubicacion.name,
-                            'inicial': 0,
-                            'product_in': reporte_aux[ubicacion][producto][asociado]['product_in'],
-                            'product_out': 0,
-                            'total': total
-                        }
-                        reporte.append(dic)
-                    if 'product_out' in reporte_aux[ubicacion][producto][asociado]:
-                        total -= reporte_aux[ubicacion][producto][asociado]['product_out']
-                        dic = {
-                            'producto': producto.name,
-                            'ubicacion': ubicacion.name,
-                            'inicial': 0,
-                            'product_out': reporte_aux[ubicacion][producto][asociado]['product_out'],
-                            'product_in': 0,
-                            'total': total
-                        }
-                        reporte.append(dic)
         
         for linea in reporte:
             nuevo = self.env['stock_aux_report.stock_aux_report'].create(linea)
