@@ -180,9 +180,6 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'email_to': email_to,
                     'body_html': html
                 }
-<<<<<<< HEAD:custom_addons/motgama/models/interfazcontable.py
-                return valoresCorreo, arch, doc
-=======
                 correo = self.env['mail.mail'].create(valoresCorreo)
                 if correo:
                     correo.sudo().send()
@@ -196,7 +193,6 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                 reg = self.env['motgama.interfazcontable.registro'].sudo().create(valoresInterfaz)
                 if not reg:
                     raise Warning('No fue posible crear la interfaz contable')
->>>>>>> correo2:addons_god/motgama/models/interfazcontable.py
         else:
             return {
                 'name': 'Interfaz Contable',

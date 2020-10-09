@@ -44,14 +44,10 @@ class MotgamaReservas(models.Model):
                 return record
 
         if record.fecha < fields.Datetime().now() + timedelta(hours=tiempoReserva):
-<<<<<<< HEAD:custom_addons/motgama/models/reservas.py
-            record.reservar_habitacion()
-=======
             if record.habitacion_id.estado == 'D':
                 record.habitacion_id.write({'estado':'R','prox_reserva':record.id,'notificar':True})
             else:
                 raise Warning('La habitación a reservar no está disponible en este momento')
->>>>>>> correo2:addons_god/motgama/models/reservas.py
 
         return record
     
@@ -69,18 +65,6 @@ class MotgamaReservas(models.Model):
 
     @api.multi
     def button_cancelar(self):
-<<<<<<< HEAD:custom_addons/motgama/models/reservas.py
-        for reserva in self:
-            if reserva.recaudo_id:
-                raise Warning('No se puede cancelar esta reserva, primero debe devolver el anticipo')
-            valores = {
-                'cancelada': True,
-                'cancelada_uid':self.env.user.id,
-                'fecha_cancela':fields.Datetime().now(),
-                'active':False
-            }
-            reserva.write(valores)
-=======
         return {
             'name': 'Cancelar reserva',
             'type': 'ir.actions.act_window',
@@ -90,7 +74,6 @@ class MotgamaReservas(models.Model):
             'view_id': self.env.ref('motgama.view_wizard_cancela_reserva').id,
             'target': 'new'
         }
->>>>>>> correo2:addons_god/motgama/models/reservas.py
 
     @api.model
     def reservar_cancelar_habitaciones(self):

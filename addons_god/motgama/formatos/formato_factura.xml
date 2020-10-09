@@ -4,11 +4,11 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
                     <div class="page">
-                        <h2 class="text-center"><span t-field="doc.company_id.name"/></h2>
-                        <h5 class="text-center"><span t-field="doc.name"/></h5>
-                        <p class="text-center"><span t-field="doc.company_id.resol_texto"/></p>
-                        <h3>FACTURA DE VENTA: <span t-field="doc.number"/></h3>
-                        <h4>
+                        <h2 class="text-center" style="font-size:8px"><span t-field="doc.company_id.name"/></h2>
+                        <h5 class="text-center" style="font-size:8px"><span t-field="doc.name"/></h5>
+                        <p class="text-center" style="font-size:8px"><span t-field="doc.company_id.resol_texto"/></p>
+                        <h3 style="font-size:8px">FACTURA DE VENTA: <span t-field="doc.number"/></h3>
+                        <h4 style="font-size:8px">
                             <t t-if="impHab">
                                 Habitación: <span t-field="doc.habitacion_id.codigo"/><br/>
                             </t>
