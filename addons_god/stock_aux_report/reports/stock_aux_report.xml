@@ -8,6 +8,7 @@
                 <field name="ubicacion"/>
                 <field name="categoria"/>
                 <field name="producto"/>
+                <field name="costo"/>
                 <field name="inicial"/>
                 <field name="product_in"/>
                 <field name="product_out"/>
@@ -30,6 +31,50 @@
         </field>
     </record>
 
+    <record id="form_aux_report" model="ir.ui.view">
+        <field name="name">Form Aux Report</field>
+        <field name="model">stock_aux_report.stock_aux_report</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="producto"/>
+                        </group>
+                        <group>
+                            <field name="costo"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="ubicacion"/>
+                        </group>
+                        <group>
+                            <field name="categoria"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="inicial"/>
+                        </group>
+                        <group>
+                            <field name="product_in"/>
+                        </group>
+                        <group>
+                            <field name="product_out"/>
+                        </group>
+                        <group>
+                            <field name="total"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="move_ids"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <report id="report_stock_aux_complete"
         model="stock_aux_report.stock_aux_report"
         string="Reporte completo"
@@ -49,17 +94,21 @@
                         <h5><span t-esc="categoria"/></h5>
                         <table style="width: 100%">
                             <thead>
-                                <th class="text-center" style="width: 20%">Producto</th>
-                                <th class="text-center" style="width: 20%">Cantidad inicial</th>
-                                <th class="text-center" style="width: 20%">Cantidad que ingresa</th>
-                                <th class="text-center" style="width: 20%">Cantidad que sale</th>
-                                <th class="text-center" style="width: 20%">Total</th>
+                                <th class="text-center" style="width: 16.8%">Producto</th>
+                                <th class="text-center" style="width: 16.8%">Valor</th>
+                                <th class="text-center" style="width: 16.6%">Cantidad inicial</th>
+                                <th class="text-center" style="width: 16.6%">Cantidad que ingresa</th>
+                                <th class="text-center" style="width: 16.6%">Cantidad que sale</th>
+                                <th class="text-center" style="width: 16.6%">Total</th>
                             </thead>
                             <tbody>
                                 <t t-foreach="docs[ubicacion][categoria]" t-as="doc">
                                     <tr>
                                         <td class="text-center">
                                             <span t-field="doc.producto"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.costo"/>
                                         </td>
                                         <td class="text-center">
                                             <span t-field="doc.inicial"/>

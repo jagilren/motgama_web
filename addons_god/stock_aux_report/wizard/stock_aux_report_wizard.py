@@ -111,6 +111,7 @@ class StockAuxReportWizard(models.TransientModel):
                     'categoria': producto.categ_id.name,
                     'producto': producto.name,
                     'ubicacion': ubicacion.name,
+                    'costo': producto.standard_price,
                     'inicial': initial,
                     'product_in': product_in,
                     'product_out': product_out,
@@ -126,8 +127,7 @@ class StockAuxReportWizard(models.TransientModel):
         
         return {
             'name': 'Reporte auxiliar de inventarios',
-            'view_mode': 'tree',
-            'view_id': self.env.ref('stock_aux_report.tree_aux_report').id,
+            'view_mode': 'tree,form',   
             'res_model': 'stock_aux_report.stock_aux_report',
             'type': 'ir.actions.act_window',
             'context':{
