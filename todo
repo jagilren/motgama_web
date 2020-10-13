@@ -1,19 +1,17 @@
 Auxiliar de inventarios para movimiento de productos con los filtros como fecha, categoría de producto, producto:
-    Quitar el asociado
-    Agregar categorías de producto y filtrarlas
-    1 Producto por línea
-    Fechas del periodo default en wizard (del 1 al 30 o 31 del mes actual)
-    Posibilidad de imprimir todo el reporte
-
-Tirilla reducir fuentes para mejor visualización y ahorro de papel
-    Reducir la letra
+    Valorizar con costo promedio
 
 Relación factura vieja - nota credito - factura nueva
 
 Recaudo de factura: Revisar
 
 Pago asociado al cliente de contado
+    Revisar pagos de abonos, recaudo, prenda y consumo sin habitación
 
 Facturas rectificativas en la interfaz contable
+    Revisar que se deben restar de la cuenta nacionales(Facturas)
 
 Plantilla para importar ajustes de inventario
+
+Botón en factura para reportarla como cliente problema (factura_anomalia) con observación
+    Revisar

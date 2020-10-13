@@ -274,11 +274,12 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
                 'payment_date': fields.Datetime().now(),
                 'payment_type': 'inbound',
                 'payment_method_id': 1,
-                'partner_type': 'customer'
+                'partner_type': 'customer',
+                'partner_id': self.cliente.id
             }
             payment = self.env['account.payment'].create(valoresPayment)
             if not payment:
-                raise Warning('No fue posible sentar el registro del pago')
+                raise Warning('No fue posible crear el registro del pago')
             payment.post()
 
         valoresRecaudo = {

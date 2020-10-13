@@ -5,12 +5,12 @@
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="doc">
                     <div class="page">
-                        <h2 class="text-center">Estado de cuenta</h2>
+                        <h2 class="text-center" style="font-size:8px">Estado de cuenta</h2>
                         <t t-if="impCons">
-                            <h5 class="text-center"><span t-field="doc.name"/></h5>
+                            <h5 class="text-center" style="font-size:8px"><span t-field="doc.name"/></h5>
                         </t>
-                        <p>Habitación: <span t-field="doc.movimiento.habitacion_id.codigo"/></p>
-                        <p>
+                        <p style="font-size:8px">Habitación: <span t-field="doc.movimiento.habitacion_id.codigo"/></p>
+                        <p style="font-size:8px">
                             Ingreso: <span t-field="doc.asignafecha"/>
                             <br/>
                             Salida: <span t-field="doc.liquidafecha"/>
@@ -18,51 +18,51 @@
                         <div style="width: 100%">
                             <table class="table table-condensed table-bordered" style="width: 100%">
                                 <thead>
-                                    <th class="text-left">Precio</th>
-                                    <th class="text-center">Cant</th>
-                                    <th class="text-right">Total</th>
+                                    <th class="text-left" style="font-size:8px">Precio</th>
+                                    <th class="text-center" style="font-size:8px">Cant</th>
+                                    <th class="text-right" style="font-size:8px">Total</th>
                                 </thead>
                                 <tbody class="sale_tbody">
                                     <t t-foreach="doc.order_line" t-as="line">
                                         <tr>
-                                            <td>
+                                            <td style="font-size:8px">
                                                 <span t-field="line.product_id.name"/>
                                                 <br/>
                                                 $&amp;nbsp;<span t-field="line.price_unit"/>
                                             </td>
-                                            <td class="text-center">
+                                            <td class="text-center" style="font-size:8px">
                                                 <span t-field="line.product_uom_qty"/>
                                             </td>
-                                            <td class="text-right">
+                                            <td class="text-right" style="font-size:8px">
                                                 <span t-field="line.price_total"/>
                                             </td>
                                         </tr>
                                     </t>
                                     <tr>
-                                        <td><strong>TOTAL:</strong></td>
+                                        <td><strong style="font-size:8px">TOTAL:</strong></td>
                                         <td></td>
                                         <td class="text-right">
-                                            <strong t-field="doc.amount_total"/>
+                                            <strong t-field="doc.amount_total" style="font-size:8px"/>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <t t-if="len(doc.movimiento.reasignaciones) > 0">
-                            <strong>OBSERVACIONES</strong>
+                            <strong style="font-size:8px">OBSERVACIONES</strong>
                             <br/>
-                            <p>Reasignaciones</p>
+                            <p style="font-size:8px">Reasignaciones</p>
                             <div style="width: 100%;">
                                 <table style="width: 100%" class="table table-condensed table-bordered">
                                     <thead>
-                                        <th class="text-left">Hab. anterior</th>
-                                        <th class="text-left">Hab. nueva</th>
+                                        <th class="text-left" style="font-size:8px">Hab. anterior</th>
+                                        <th class="text-left" style="font-size:8px">Hab. nueva</th>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="doc.movimiento.reasignaciones" t-as="reasignacion">
                                             <tr>
-                                                <td><span t-field="reasignacion.habitacion_anterior.codigo"/></td>
-                                                <td><span t-field="reasignacion.habitacion_nueva.codigo"/></td>
+                                                <td style="font-size:8px"><span t-field="reasignacion.habitacion_anterior.codigo"/></td>
+                                                <td style="font-size:8px"><span t-field="reasignacion.habitacion_nueva.codigo"/></td>
                                             </tr>
                                         </t>
                                     </tbody>
@@ -71,25 +71,25 @@
                             <br/>
                         </t>
                         <t t-if="len(doc.movimiento.cambiosplan) > 0">
-                            <p>Cambios de plan</p>
+                            <p style="font-size:8px">Cambios de plan</p>
                             <div style="width: 100%;">
                                 <table style="width: 100%" class="table table-condensed table-bordered">
                                     <thead>
-                                        <th class="text-left">Plan anterior</th>
-                                        <th class="text-left">Plan nuevo</th>
+                                        <th class="text-left" style="font-size:8px">Plan anterior</th>
+                                        <th class="text-left" style="font-size:8px">Plan nuevo</th>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="doc.movimiento.cambiosplan" t-as="cambioplan">
                                             <tr>
-                                                <td><span t-field="cambioplan.plan_anterior"/></td>
-                                                <td><span t-field="cambioplan.plan_nuevo"/></td>
+                                                <td style="font-size:8px"><span t-field="cambioplan.plan_anterior"/></td>
+                                                <td style="font-size:8px"><span t-field="cambioplan.plan_nuevo"/></td>
                                             </tr>
                                         </t>
                                     </tbody>
                                 </table>
                             </div>
                         </t>
-                        <p>Su propina es voluntaria</p>
+                        <p style="font-size:8px">Su propina es voluntaria</p>
                     </div>
                 </t>
             </t>

@@ -1,0 +1,18 @@
+<odoo>
+    <record id="view_wizard_anomalia" model="ir.ui.view">
+        <field name="name">View Wizard Anomalía</field>
+        <field name="model">motgama.wizard.anomalia</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="factura_id" readonly="1"/>
+                    <field name="motivo_anomalia"/>
+                </group>
+                <footer>
+                    <button name="registro_anomalia" string="Registrar anomalía" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

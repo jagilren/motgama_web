@@ -329,7 +329,7 @@ class MotgamaFlujoHabitacion(models.Model):
         return self.env.ref('motgama.reporte_estadocuenta_80').report_action(docids=[self.orden_venta.id])
 
 class PDFEstadoCuenta(models.AbstractModel):
-    _name = 'report.motgama.reporte_estadocuenta_80'
+    _name = 'report.motgama.formato_estadocuenta'
 
     @api.model
     def _get_report_values(self,docids,data=None):

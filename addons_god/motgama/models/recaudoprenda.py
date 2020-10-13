@@ -92,7 +92,8 @@ class MotgamaWizardPrenda(models.TransientModel):
                 'payment_date': fields.Datetime().now(),
                 'payment_type': 'inbound',
                 'payment_method_id': 1,
-                'partner_type': 'customer'
+                'partner_type': 'customer',
+                'partner_id': self.prenda.cliente_id.id
             }
             payment = self.env['account.payment'].create(valoresPayment)
             if not payment:

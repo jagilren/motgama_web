@@ -6,8 +6,8 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="ubicacion"/>
+                <field name="categoria"/>
                 <field name="producto"/>
-                <field name="asociado"/>
                 <field name="inicial"/>
                 <field name="product_in"/>
                 <field name="product_out"/>
@@ -21,17 +21,87 @@
         <field name="model">stock_aux_report.stock_aux_report</field>
         <field name="arch" type="xml">
             <search string="Buscar Reporte">
+                <field name="categoria"/>
                 <field name="producto"/>
                 <field name="ubicacion"/>
                 <filter string="Ubicación" name="groupby_ubicacion" context="{'group_by':'ubicacion'}"/>
-                <filter string="Producto" name="groupby_producto" context="{'group_by':'producto'}"/>
+                <filter string="Categoría" name="groupby_categoria" context="{'group_by':'categoria'}"/>
             </search>
         </field>
     </record>
 
+    <report id="report_stock_aux_complete"
+        model="stock_aux_report.stock_aux_report"
+        string="Reporte completo"
+        report_type="qweb-pdf"
+        name="stock_aux_report.stock_aux_report_complete_template"
+        paperformat="stock_aux_report.formato_reporte"/>
+    
+    <template id="stock_aux_report_complete_template">
+        <t t-call="web.html_container">
+            <div class="header" style="border-bottom: 2px solid black">
+                <h3 class="text-center">Reporte auxiliar de inventario</h3>
+            </div>
+            <div class="article" style="font-size: 15px;">
+                <t t-foreach="docs" t-as="ubicacion">
+                    <h4><span t-esc="ubicacion"/></h4>
+                    <t t-foreach="docs[ubicacion]" t-as="categoria">
+                        <h5><span t-esc="categoria"/></h5>
+                        <table style="width: 100%">
+                            <thead>
+                                <th class="text-center" style="width: 20%">Producto</th>
+                                <th class="text-center" style="width: 20%">Cantidad inicial</th>
+                                <th class="text-center" style="width: 20%">Cantidad que ingresa</th>
+                                <th class="text-center" style="width: 20%">Cantidad que sale</th>
+                                <th class="text-center" style="width: 20%">Total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs[ubicacion][categoria]" t-as="doc">
+                                    <tr>
+                                        <td class="text-center">
+                                            <span t-field="doc.producto"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.inicial"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.product_in"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.product_out"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.total"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
+            </div>
+            <div class="footer">
+                <div class="row text-center" style="border-top: 1px solid black;">
+                    <div class="col col-3 offset-9 text-right">
+                        <ul class="list-inline mt-2">
+                            <li class="list-inline-item">Página:</li>
+                            <li class="list-inline-item">
+                                <span class="page"/>
+                            </li>
+                            <li class="list-inline-item">/</li>
+                            <li class="list-inline-item">
+                                <span class="topage"/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
     <report id="report_stock_aux"
         model="stock_aux_report.stock_aux_report"
-        string="Reporte auxiliar de inventario"
+        string="Registros seleccionados"
         report_type="qweb-pdf"
         name="stock_aux_report.stock_aux_report_template"
         paperformat="stock_aux_report.formato_reporte"/>
@@ -42,44 +112,42 @@
                 <h3 class="text-center">Reporte auxiliar de inventario</h3>
             </div>
             <div class="article" style="font-size: 15px;">
-                <table class="table table-condensed table-bordered" style="width: 100%">
-                    <thead>
-                        <th class="text-center" style="width: 15%">Asociado</th>
-                        <th class="text-center" style="width: 15%">Ubicación</th>
-                        <th class="text-center" style="width: 14%">Producto</th>
-                        <th class="text-center" style="width: 14%">Cantidad inicial</th>
-                        <th class="text-center" style="width: 14%">Cantidad que ingresa</th>
-                        <th class="text-center" style="width: 14%">Cantidad que sale</th>
-                        <th class="text-center" style="width: 14%">Total</th>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="docs" t-as="doc">
-                            <tr>
-                                <td class="text-center">
-                                    <span t-field="doc.asociado"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.ubicacion"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.producto"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.inicial"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.product_in"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.product_out"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.total"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
+                <t t-foreach="docs" t-as="ubicacion">
+                    <h4><span t-esc="ubicacion"/></h4>
+                    <t t-foreach="docs[ubicacion]" t-as="categoria">
+                        <h5><span t-esc="categoria"/></h5>
+                        <table style="width: 100%">
+                            <thead>
+                                <th class="text-center" style="width: 20%">Producto</th>
+                                <th class="text-center" style="width: 20%">Cantidad inicial</th>
+                                <th class="text-center" style="width: 20%">Cantidad que ingresa</th>
+                                <th class="text-center" style="width: 20%">Cantidad que sale</th>
+                                <th class="text-center" style="width: 20%">Total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs[ubicacion][categoria]" t-as="doc">
+                                    <tr>
+                                        <td class="text-center">
+                                            <span t-field="doc.producto"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.inicial"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.product_in"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.product_out"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.total"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </t>
             </div>
             <div class="footer">
                 <div class="row text-center" style="border-top: 1px solid black;">

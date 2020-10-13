@@ -1,15 +1,25 @@
 from odoo import fields, models, api
 from odoo.exceptions import Warning
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import calendar
+import pytz
 
 class StockAuxReportWizard(models.TransientModel):
     _name = 'stock_aux_report.stock_aux_report_wizard'
 
-    fecha_inicial = fields.Datetime(string='Fecha inicial')
-    fecha_final = fields.Datetime(string='Fecha final')
+    fecha_inicial = fields.Datetime(string='Fecha inicial',default=lambda self: self._get_inicial())
+    fecha_final = fields.Datetime(string='Fecha final',default=lambda self: self._get_final())
     ubicacion_id = fields.Many2one(comodel_name='stock.location',string='Ubicación')
     producto_ids = fields.Many2many(comodel_name='product.product',string='Productos')
+
+    @api.model
+    def _get_inicial(self):
+        return fields.Datetime.now() - timedelta(days=1)
+
+    @api.model
+    def _get_final(self):
+        return fields.Datetime.now()
 
     @api.multi
     def get_report(self):
@@ -35,33 +45,35 @@ class StockAuxReportWizard(models.TransientModel):
         for transferencia in transferencias:
             if transferencia.location_id in reporte_aux:
                 if transferencia.product_id in reporte_aux[transferencia.location_id]:
+                    reporte_aux[transferencia.location_id][transferencia.product_id]['moves'].append(transferencia.id)
                     if transferencia.date < fecha_inicial:
                         if 'initial' in reporte_aux[transferencia.location_id][transferencia.product_id]:
                             reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] -= transferencia.product_qty
                         else:
                             reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] = 0 - transferencia.product_qty
                     else:
-                        if 'product_out' in reporte_aux[transferencia.location_id][transferencia.product_id][transferencia.picking_id.partner_id]:
-                                reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] += transferencia.product_qty
+                        if 'product_out' in reporte_aux[transferencia.location_id][transferencia.product_id]:
+                            reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] += transferencia.product_qty
                         else:
                             reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] = transferencia.product_qty
                 else:
-                    reporte_aux[transferencia.location_id][transferencia.product_id] = {}
+                    reporte_aux[transferencia.location_id][transferencia.product_id] = {'moves': [transferencia.id]}
                     if transferencia.date < fecha_inicial:
                         reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] = 0 - transferencia.product_qty
                     else:
                         reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] = transferencia.product_qty
             elif transferencia.location_id in ubicaciones:
                 reporte_aux[transferencia.location_id] = {
-                    transferencia.product_id: {}
+                    transferencia.product_id: {'moves': [transferencia.id]}
                 }
                 if transferencia.date < fecha_inicial:
                     reporte_aux[transferencia.location_id][transferencia.product_id]['initial'] = 0 - transferencia.product_qty
                 else:
-                    reporte_aux[transferencia.location_id][transferencia.product_id]['product_out']: transferencia.product_qty}
+                    reporte_aux[transferencia.location_id][transferencia.product_id]['product_out'] = transferencia.product_qty
             
             if transferencia.location_dest_id in reporte_aux:
                 if transferencia.product_id in reporte_aux[transferencia.location_dest_id]:
+                    reporte_aux[transferencia.location_dest_id][transferencia.product_id]['moves'].append(transferencia.id)
                     if transferencia.date < fecha_inicial:
                         if 'initial' in reporte_aux[transferencia.location_dest_id][transferencia.product_id]:
                             reporte_aux[transferencia.location_dest_id][transferencia.product_id]['initial'] += transferencia.product_qty
@@ -73,14 +85,14 @@ class StockAuxReportWizard(models.TransientModel):
                         else:
                             reporte_aux[transferencia.location_dest_id][transferencia.product_id]['product_in'] = transferencia.product_qty
                 else:
-                    reporte_aux[transferencia.location_dest_id][transferencia.product_id] = {}
+                    reporte_aux[transferencia.location_dest_id][transferencia.product_id] = {'moves': [transferencia.id]}
                     if transferencia.date < fecha_inicial:
                         reporte_aux[transferencia.location_dest_id][transferencia.product_id]['initial'] = transferencia.product_qty
                     else:
                         reporte_aux[transferencia.location_dest_id][transferencia.product_id]['product_in'] = transferencia.product_qty
             elif transferencia.location_dest_id in ubicaciones:
                 reporte_aux[transferencia.location_dest_id] = {
-                    transferencia.product_id: {}
+                    transferencia.product_id: {'moves': [transferencia.id]}
                 }
                 if transferencia.date < fecha_inicial:
                     reporte_aux[transferencia.location_dest_id][transferencia.product_id]['initial'] = transferencia.product_qty
@@ -93,15 +105,19 @@ class StockAuxReportWizard(models.TransientModel):
                 initial = reporte_aux[ubicacion][producto]['initial'] if 'initial' in reporte_aux[ubicacion][producto] else 0
                 product_in = reporte_aux[ubicacion][producto]['product_in'] if 'product_in' in reporte_aux[ubicacion][producto] else 0
                 product_out = reporte_aux[ubicacion][producto]['product_out'] if 'product_out' in reporte_aux[ubicacion][producto] else 0
-                total = initial
+                total = initial + product_in - product_out
+                moves = reporte_aux[ubicacion][producto]['moves']
                 dic = {
+                    'categoria': producto.categ_id.name,
                     'producto': producto.name,
                     'ubicacion': ubicacion.name,
                     'inicial': initial,
                     'product_in': product_in,
                     'product_out': product_out,
-                    'total': total
+                    'total': total,
+                    'move_ids': [(6,0,moves)]
                 }
+                reporte.append(dic)
         
         for linea in reporte:
             nuevo = self.env['stock_aux_report.stock_aux_report'].create(linea)
@@ -116,7 +132,7 @@ class StockAuxReportWizard(models.TransientModel):
             'type': 'ir.actions.act_window',
             'context':{
                 'search_default_groupby_ubicacion':1,
-                'search_default_groupby_producto':1
+                'search_default_groupby_categoria':1
             },
             'target':'main'
         }

@@ -56,6 +56,7 @@ class MotgamaWizardAbonos(models.TransientModel):
             valoresPayment = {
                 'payment_type': 'inbound',
                 'partner_type': 'customer',
+                'partner_id': self.env.ref('motgama.cliente_contado').id,
                 'amount': pago.valor,
                 'journal_id': pago.mediopago.diario_id.id,
                 'payment_date': fields.Date().today(),
@@ -182,6 +183,7 @@ class MotgamaRevertirAbonos(models.TransientModel):
         valoresPayment = {
             'payment_type': 'outbound',
             'partner_type': 'customer',
+            'partner_id': self.env.ref('motgama.partner_id').id,
             'amount': self.total_revertir,
             'journal_id': self.mediopago.diario_id.id,
             'payment_date': fields.Date().today(),

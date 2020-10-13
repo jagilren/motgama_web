@@ -245,7 +245,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 'payment_date': fields.Datetime().now(),
                 'payment_type': 'inbound',
                 'payment_method_id': 1,
-                'partner_type': 'customer'
+                'partner_type': 'customer',
+                'partner_id': self.cliente.id
             }
             payment = self.env['account.payment'].create(valoresPayment)
             if not payment:
@@ -333,7 +334,7 @@ class MotgamaWizardPago(models.TransientModel):
     valor =  fields.Float(string='Valor a pagar',required=True)
 
 class PDFFactura(models.AbstractModel):
-    _name = 'report.motgama.reporte_factura_80'
+    _name = 'report.motgama.formato_factura'
 
     @api.model
     def _get_report_values(self,docids,data=None):
