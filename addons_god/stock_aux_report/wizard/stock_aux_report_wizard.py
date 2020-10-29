@@ -32,7 +32,7 @@ class StockAuxReportWizard(models.TransientModel):
         fecha_inicial = self.fecha_inicial or datetime(2000,1,1)
         fecha_final = self.fecha_final or fields.Datetime().now()
         if self.ubicacion_id:
-            ubicaciones = self.env['stock.location'].search('id','child_of',[self.ubicacion_id.id])
+            ubicaciones = self.env['stock.location'].search([('id','child_of',[self.ubicacion_id.id])])
         else:
             ubicaciones = self.env['stock.location'].search([('usage','=','internal')])
         if self.producto_ids:

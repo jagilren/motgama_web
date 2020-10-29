@@ -12,6 +12,7 @@ class AccountInvoice(models.Model):
     liquidafecha = fields.Datetime(string="Salida")
     lleva_prenda = fields.Boolean(string='Lleva prenda',default=False)
     prenda_id = fields.Many2one(string='Prenda',comodel_name='motgama.prendas')
+    factura_electronica = fields.Boolean(string="Factura Electrónica",default=False)
 
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
