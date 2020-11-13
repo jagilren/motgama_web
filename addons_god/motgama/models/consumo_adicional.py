@@ -22,7 +22,7 @@ class MotgamaFacturaConsumos(models.Model):
 
     @api.model
     def _get_cliente(self):
-        return self.env['res.partner'].search([('vat','=','1')],limit=1).id
+        return self.env['res.partner'].sudo().search([('vat','=','1')],limit=1).id
 
     @api.depends('factura_id')
     def _compute_nombre(self):
@@ -96,7 +96,7 @@ class MotgamaLineaFacturaConsumos(models.Model):
     def create(self,values):
         prod = values['producto_id']
         if not 'vlrUnitario' in values:
-            values['vlrUnitario'] = self.env['product.template'].search([('id','=',prod)],limit=1).list_price
+            values['vlrUnitario'] = self.env['product.template'].sudo().search([('id','=',prod)],limit=1).list_price
         return super().create(values)
 
 class MotgamaWizardFacturaConsumos(models.TransientModel):
@@ -170,11 +170,11 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
         self.ensure_one()
 
         valores = {'partner_id' : self.cliente.id}
-        ordenVenta = self.env['sale.order'].create(valores)
+        ordenVenta = self.env['sale.order'].sudo().create(valores)
         if not ordenVenta:
             raise Warning('Error al registrar el consumo: No se pudo crear orden de venta')
         ordenVenta.action_confirm()
-        lugar = self.env['stock.location'].search([('recepcion','=',self.env.user.recepcion_id.id)],limit=1)
+        lugar = self.env['stock.location'].sudo().search([('recepcion','=',self.env.user.recepcion_id.id)],limit=1)
         if not lugar:
             raise Warning('No se encuentra la bodega de inventario ' + self.env.user.recepcion_id.nombre)
         for consumo in self.factura_id.consumo_ids:
@@ -197,7 +197,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
                 'product_uom_qty' : consumo.cantidad,
                 'product_id' : consumo.producto_id.product_variant_id.id
             }
-            nuevaLinea = self.env['sale.order.line'].create(valoresLinea)
+            nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLinea)
             if not nuevaLinea:
                 raise Warning('Error al registrar el consumo: No se pudo agregar el consumo a la orden de venta')
         if not self.env.user.recepcion_id:
@@ -223,7 +223,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
                         'picking_id' : entrega.id,
                         'move_id': move.id
                     }
-                    lineaTransferencia = self.env['stock.move.line'].create(valoresLineaTransferencia)
+                    lineaTransferencia = self.env['stock.move.line'].sudo().create(valoresLineaTransferencia)
                     if not lineaTransferencia:
                         raise Warning('No se pudo crear el movimiento de inventario')
                     entrega.button_validate()
@@ -277,7 +277,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
                 'partner_type': 'customer',
                 'partner_id': self.cliente.id
             }
-            payment = self.env['account.payment'].create(valoresPayment)
+            payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No fue posible crear el registro del pago')
             payment.post()
@@ -303,7 +303,7 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             if not nuevaPrenda:
                 raise Warning('No se pudo registrar la prenda')
             valoresRecaudo.update({'prenda': nuevaPrenda.id})
-            factura.sudo().write({'lleva_prenda':True,'prenda_id':nuevaPrenda.id})
+            factura.write({'lleva_prenda':True,'prenda_id':nuevaPrenda.id})
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('No se pudo registrar el recaudo')

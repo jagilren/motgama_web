@@ -6,7 +6,9 @@
             <form create="false" edit="false">
                 <header>
                     <field name='active' invisible='1'/>
-                    <button name='anula_recaudo' type='object' string='Anular' class='btn' attrs="{'invisible':[('active','=',False)]}"/>
+                    <field name="modificado" invisible="1"/>
+                    <button name='anular' type='object' string='Anular' class='btn' attrs="{'invisible':[('active','=',False)]}"/>
+                    <button name='editar' type="object" string="Modificar recaudo" class="btn" attrs="{'invisible':[('|'),('active','=',True),('modificado','=',True)]}"/>
                 </header>
                 <sheet>
                     <group>

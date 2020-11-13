@@ -29,3 +29,4 @@ from . import interfazcontable
 from . import bonos
 from . import descuento
 from . import factura_anomalia
+from . import editarecaudo

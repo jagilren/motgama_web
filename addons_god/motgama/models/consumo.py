@@ -35,7 +35,7 @@ class MotgamaConsumo(models.Model):
 
     @api.model
     def create(self,values):
-        cliente = self.env['res.partner'].search([('vat','=','1')], limit=1)
+        cliente = self.env['res.partner'].sudo().search([('vat','=','1')], limit=1)
         if not cliente:
             raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')
         esNegativo = False
@@ -52,7 +52,7 @@ class MotgamaConsumo(models.Model):
                     record.sudo().write({'vlrUnitario':record.valorUnitario})
             if record.producto_id.type == 'consu':
                 raise Warning('No se puede cancelar orden de restaurante')
-            ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
+            ordenVenta = self.env['sale.order'].sudo().search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
             if not ordenVenta:
                 raise Warning('Esta habitación no registra consumos')
             vendidas = 0
@@ -63,8 +63,8 @@ class MotgamaConsumo(models.Model):
             if cantidadPositiva > vendidas:
                 raise Warning('No se pueden devolver cantidades mayores a las ya registradas como consumos')
             if record.producto_id.type == 'product' and len(record.producto_id.bom_ids) == 0:
-                origen = self.env['stock.location'].search([('usage','=','customer')],limit=1)
-                tipo_operacion = self.env['stock.picking.type'].search([('code','=','incoming')],limit=1)
+                origen = self.env['stock.location'].sudo().search([('usage','=','customer')],limit=1)
+                tipo_operacion = self.env['stock.picking.type'].sudo().search([('code','=','incoming')],limit=1)
                 valoresTransferencia = {
                     'company_id': ordenVenta.company_id.id,
                     'location_dest_id': record.lugar_id.id,
@@ -75,7 +75,7 @@ class MotgamaConsumo(models.Model):
                     'product_id': record.producto_id.product_variant_id.id,
                     'sale_id': ordenVenta.id
                 }
-                transferencia = self.env['stock.picking'].create(valoresTransferencia)
+                transferencia = self.env['stock.picking'].sudo().create(valoresTransferencia)
                 if not transferencia:
                     raise Warning('No se pudo crear la transferencia de inventario')
                 valoresLinea = {
@@ -91,7 +91,7 @@ class MotgamaConsumo(models.Model):
                     'product_uom_qty': cantidadPositiva,
                     'picking_id': transferencia.id
                 }
-                lineaTransferencia = self.env['stock.move'].create(valoresLinea)
+                lineaTransferencia = self.env['stock.move'].sudo().create(valoresLinea)
                 if not lineaTransferencia:
                     raise Warning('No se pudo crear la transferencia de inventario')
                 transferencia.action_confirm()
@@ -106,7 +106,7 @@ class MotgamaConsumo(models.Model):
                     'move_id': lineaTransferencia.id,
                     'qty_done': cantidadPositiva
                 }
-                move_line = self.env['stock.move.line'].create(valores_move_line)
+                move_line = self.env['stock.move.line'].sudo().create(valores_move_line)
                 if not move_line:
                     raise Warning('No se pudo crear la transferencia de inventario')
                 transferencia.button_validate()
@@ -119,7 +119,7 @@ class MotgamaConsumo(models.Model):
                 else:
                     record.sudo().write({'vlrUnitario':record.valorUnitario})
             if len(record.producto_id.bom_ids) > 0:
-                bom_id = self.env['mrp.bom'].search([('product_tmpl_id','=',record.producto_id.id)],limit=1)
+                bom_id = self.env['mrp.bom'].sudo().search([('product_tmpl_id','=',record.producto_id.id)],limit=1)
                 if bom_id:
                     valoresProd = {
                         'product_id': record.producto_id.product_variant_id.id,
@@ -128,7 +128,7 @@ class MotgamaConsumo(models.Model):
                         'product_uom_id': record.producto_id.uom_id.id,
                         'bom_id': bom_id.id
                     }
-                    prod = self.env['mrp.production'].create(valoresProd)
+                    prod = self.env['mrp.production'].sudo().create(valoresProd)
                     if not prod:
                         raise Warning('No se pudo registrar orden de restaurante')
                     prod.action_assign()
@@ -142,7 +142,7 @@ class MotgamaConsumo(models.Model):
                         'product_qty': record.cantidad,
                         'product_uom_id': record.producto_id.uom_id.id
                     }
-                    produce = self.env['mrp.product.produce'].create(valoresProduce)
+                    produce = self.env['mrp.product.produce'].sudo().create(valoresProduce)
                     if not produce:
                         raise Warning('No se pudo registrar orden de restaurante')
                     produce._onchange_product_qty()
@@ -155,13 +155,13 @@ class MotgamaConsumo(models.Model):
                 if cantDisponible < record.cantidad:
                     message = 'No se registra cantidad suficiente de ' + record.producto_id.name + '. Va a vender ' + str(int(record.cantidad)) + ' unidades y tiene ' + str(cantDisponible) + ' unidades en ' + record.lugar_id.name
                     self.env.user.notify_info(message=message,title='No hay suficiente cantidad',sticky=False)
-            ordenVenta = self.env['sale.order'].search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
+            ordenVenta = self.env['sale.order'].sudo().search(['&',('movimiento','=',record.movimiento_id.id),('state','=','sale')], limit=1)
             if not ordenVenta:
                 valores = {
                     'partner_id' : cliente.id,
                     'movimiento' : record.movimiento_id.id
                 }
-                ordenVenta = self.env['sale.order'].create(valores)
+                ordenVenta = self.env['sale.order'].sudo().create(valores)
                 if not ordenVenta:
                     raise Warning('Error al registrar el consumo: No se pudo crear orden de venta')
                 ordenVenta.action_confirm()
@@ -174,7 +174,7 @@ class MotgamaConsumo(models.Model):
             'product_uom_qty' : record.cantidad,
             'product_id' : record.producto_id.product_variant_id.id
         }
-        nuevaLinea = self.env['sale.order.line'].create(valoresLinea)
+        nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLinea)
         if not nuevaLinea:
             raise Warning('Error al registrar el consumo: No se pudo agregar el consumo a la orden de venta')
 
@@ -202,7 +202,7 @@ class MotgamaConsumo(models.Model):
                         'picking_id' : entrega.id,
                         'move_id': move.id
                     }
-                    lineaTransferencia = self.env['stock.move.line'].create(valoresLineaTransferencia)
+                    lineaTransferencia = self.env['stock.move.line'].sudo().create(valoresLineaTransferencia)
                     if not lineaTransferencia:
                         raise Warning('No se pudo crear el movimiento de inventario')
                     entrega.button_validate()
@@ -271,7 +271,7 @@ class MotgamaWizardConsumos(models.TransientModel):
     def _onchange_habitacion(self):
         for record in self:
             if record.habitacion_id:
-                record.lugar_id = self.env['stock.location'].search([('recepcion','=',record.habitacion_id.recepcion.id)],limit=1)
+                record.lugar_id = self.env['stock.location'].sudo().search([('recepcion','=',record.habitacion_id.recepcion.id)],limit=1)
     
     @api.onchange('producto_id')
     def _onchange_producto(self):
@@ -279,7 +279,7 @@ class MotgamaWizardConsumos(models.TransientModel):
             if record.producto_id and record.habitacion_id:
                 movimiento = record.habitacion_id.ultmovimiento
                 lista = movimiento.listaprecioproducto
-                precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
+                precioLista = self.env['product.pricelist.item'].sudo().search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
                 if not precioLista:
                     precio = record.producto_id.list_price
                 else:

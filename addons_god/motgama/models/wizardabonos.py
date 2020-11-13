@@ -63,7 +63,7 @@ class MotgamaWizardAbonos(models.TransientModel):
                 'payment_method_id': 1,
                 'communication': 'Abono para movimiento con id: ' + str(self.movimiento_id.id)
             }
-            payment = self.env['account.payment'].create(valoresPayment)
+            payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No se pudo registrar el pago')
             payment.post()
@@ -190,7 +190,7 @@ class MotgamaRevertirAbonos(models.TransientModel):
             'payment_method_id': 1,
             'communication': 'Revertir abono de movimiento con id: ' + str(self.habitacion_id.ultmovimiento.id)
         }
-        payment = self.env['account.payment'].create(valoresPayment)
+        payment = self.env['account.payment'].sudo().create(valoresPayment)
         payment.post()
 
         valoresRecaudo = {

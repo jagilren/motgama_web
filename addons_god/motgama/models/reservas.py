@@ -135,7 +135,7 @@ class MotgamaReservas(models.Model):
                 if reserva.habitacion_id.estado == 'D':
                     reserva.habitacion_id.write({'estado':'R','prox_reserva':reserva.id,'notificar':True})
                 else:
-                    usuarios = self.env['res.users'].search([('recepcion_id','=',reserva.habitacion_id.recepcion.id)])
+                    usuarios = self.env['res.users'].sudo().search([('recepcion_id','=',reserva.habitacion_id.recepcion.id)])
                     uids = [usuario.id for usuario in usuarios]
                     valores = {
                         'fecha': fields.Datetime().now(),
@@ -368,11 +368,11 @@ class MotgamaWizardDevolverAnticipo(models.TransientModel):
         paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
         if paramAnticipos:
             ant = self.reserva_id.cliente_id.property_account_receivable_id
-            cuenta = self.env['account.account'].search([('code','=',paramAnticipos.valor)],limit=1)
+            cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
             if not cuenta:
                 raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
             self.reserva.cliente_id.write({'property_account_receivable_id': cuenta.id})
-        payment = self.env['account.payment'].create(valoresPayment)
+        payment = self.env['account.payment'].sudo().create(valoresPayment)
         payment.post()
         if paramAnticipos:
             self.reserva_id.cliente_id.write({'property_account_receivable_id':ant.id})
@@ -455,11 +455,11 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
             paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
             if paramAnticipos:
                 ant = self.cliente.property_account_receivable_id
-                cuenta = self.env['account.account'].search([('code','=',paramAnticipos.valor)],limit=1)
+                cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
                 if not cuenta:
                     raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
                 self.cliente.write({'property_account_receivable_id': cuenta.id})
-            payment = self.env['account.payment'].create(valoresPayment)
+            payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No se pudo registrar el pago')
             payment.post()

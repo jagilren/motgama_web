@@ -16,6 +16,7 @@
                 <group>
                     <field name="repite_id" attrs="{'invisible':[('repite','=',False)],'required':[('repite','=',True)]}"/>
                     <field name="genera_csv" attrs="{'invisible':[('repite','=',True)]}"/>
+                    <field name="envia_correo" attrs="{'invisible':[('genera_csv','=',False)]}"/>
                 </group>
                 <footer>
                     <button name="get_report" type="object" string="Generar reporte" class="btn btn-primary" attrs="{'invisible':[('repite','=',True)]}"/>
@@ -43,6 +44,24 @@
                 <field name="base"/>
                 <field name="sucursal"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="view_descarga_interfaz" model="ir.ui.view">
+        <field name="name">View Descarga Interfaz</field>
+        <field name="model">motgama.wizard.descargainterfaz</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <p>La interfaz contable está lista, descárguela ahora</p>
+                    <field name="nombre" invisible="1"/>
+                    <field name="arch" filename="nombre" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="descargar" string="Descargar" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
         </field>
     </record>
 

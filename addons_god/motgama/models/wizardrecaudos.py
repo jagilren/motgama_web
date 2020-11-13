@@ -13,6 +13,30 @@ class AccountInvoice(models.Model):
     lleva_prenda = fields.Boolean(string='Lleva prenda',default=False)
     prenda_id = fields.Many2one(string='Prenda',comodel_name='motgama.prendas')
     factura_electronica = fields.Boolean(string="Factura Electrónica",default=False)
+    movimiento_id = fields.Many2one(string="Movimiento",comodel_name="motgama.movimiento")
+    rectificativa = fields.Boolean(string="Factura Rectificativa",default=False)
+
+    @api.model
+    def _prepare_refund(self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
+        values = super()._prepare_refund(invoice,date_invoice=date_invoice,date=date,description=description,journal_id=journal_id)
+        if invoice.movimiento_id:
+            values['movimiento_id'] = invoice.movimiento_id.id
+            values['habitacion_id'] = invoice.habitacion_id.id
+        values['rectificativa'] = True
+        return values
+
+class AccountInvoiceRefund(models.TransientModel):
+    _inherit = 'account.invoice.refund'
+
+    @api.multi
+    def invoice_refund(self):
+        result = super().invoice_refund()
+        if 'res_id' in result:
+            invoice = self.env['account.invoice'].sudo().browse(self.env.context['active_id'])
+            if invoice.movimiento_id:
+                new_invoice = self.env['account.invoice'].sudo().browse(result['res_id'])
+                new_invoice.write({'movimiento_id': invoice.movimiento_id.id,'habitacion_id': invoice.habitacion_id.id})
+        return result
 
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
@@ -88,7 +112,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
 
     @api.model
     def _compute_cliente(self):
-        cliente = self.env['res.partner'].search([('vat','=','1')],limit=1)
+        cliente = self.env['res.partner'].sudo().search([('vat','=','1')],limit=1)
         if not cliente:
             raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')
         return cliente.id
@@ -204,7 +228,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if self.abonado != abono:
                 raise Warning('No debe modificar el valor abonado en la sección de pagos')
 
-        ordenVenta = self.env['sale.order'].search([('movimiento','=',self.movimiento.id),('state','=','sale')],limit=1)
+        ordenVenta = self.env['sale.order'].sudo().search([('movimiento','=',self.movimiento.id),('state','=','sale')],limit=1)
         if not ordenVenta:
             raise Warning('Error al recaudar: La habitación no fue liquidada correctamente')
         ordenVenta.write({'partner_id':self.cliente.id})
@@ -218,6 +242,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'partner_id':self.cliente.id,
             'es_hospedaje':True,
             'habitacion_id':self.habitacion.id,
+            'movimiento_id':self.movimiento.id,
             'company_id':ordenVenta.company_id.id,
             'asignafecha':ordenVenta.asignafecha,
             'liquidafecha':ordenVenta.liquidafecha,
@@ -249,7 +274,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 'partner_type': 'customer',
                 'partner_id': self.cliente.id
             }
-            payment = self.env['account.payment'].create(valoresPayment)
+            payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No fue posible sentar el registro del pago')
             payment.post()
@@ -339,7 +364,7 @@ class PDFFactura(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['account.invoice'].browse(docids)
+        docs = self.env['account.invoice'].sudo().browse(docids)
 
         paramImpHab = self.env['motgama.parametros'].search([('codigo','=','IMPHABENFACTURA')], limit=1)
         if paramImpHab:

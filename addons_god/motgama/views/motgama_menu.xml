@@ -1,6 +1,6 @@
 <?xml version='1.0'?>
 <odoo>
-    <menuitem id="menu_motgama" name="Motgama" web_icon="motgama,static/description/icon.png" />
+    <menuitem id="menu_motgama" name="Motgama" web_icon="motgama,static/description/icon.png" sequence="0"/>
 
     <!-- PRINCIPAL -->
     <!-- FLUJO DE HABITACIONES (CORE NEGOCIO)                                                                               P7.0.4R -->
@@ -246,16 +246,6 @@
         parent="menu_motgama_maestros_otros"
         action="accion_secuencias"/>
 
-    <act_window id="accion_productos"
-        name="Productos"
-        res_model="product.template"
-        view_mode="kanban,tree,form"/>
-    
-    <menuitem id="menu_motgama_productos"
-        name="Productos"
-        parent="menu_motgama_maestros_otros"
-        action="accion_productos"/>
-
     <act_window id="accion_categorias"
         name="Categorías de producto"
         res_model="product.category"
@@ -265,6 +255,16 @@
         name="Categorías de producto"
         parent='menu_motgama_maestros_otros'
         action="accion_categorias"/>
+
+    <act_window id="accion_productos"
+        name="Productos"
+        res_model="product.template"
+        view_mode="kanban,tree,form"/>
+    
+    <menuitem id="menu_motgama_productos"
+        name="Productos"
+        parent="menu_motgama_maestros_otros"
+        action="accion_productos"/>
 
     <act_window id="accion_lista_materiales"
         name="Listas de materiales (Ingredientes)"

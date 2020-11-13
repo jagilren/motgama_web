@@ -19,14 +19,14 @@ class WizardReporteVentas(models.TransientModel):
     def get_report(self):
         self.ensure_one()
 
-        reporte = self.env['motgama.reporteventas'].search([])
+        reporte = self.env['motgama.reporteventas'].sudo().search([])
         for x in reporte:
             x.unlink()
 
         if self.tipo_reporte == 'fecha':
-            facturas = self.env['account.invoice'].search([('state','in',['open','paid']),('fecha','<=',self.fecha_final),('fecha','>=',self.fecha_inicial)])
+            facturas = self.env['account.invoice'].sudo().search([('state','in',['open','paid']),('fecha','<=',self.fecha_final),('fecha','>=',self.fecha_inicial)])
         elif self.tipo_reporte == 'documento':
-            facturas = self.env['account.invoice'].search([('state','in',['open','paid']),('id','<=',self.doc_final.id),('id','>=',self.doc_inicial.id)])
+            facturas = self.env['account.invoice'].sudo().search([('state','in',['open','paid']),('id','<=',self.doc_final.id),('id','>=',self.doc_inicial.id)])
         else:
             facturas = []
         if not facturas:
@@ -52,7 +52,7 @@ class WizardReporteVentas(models.TransientModel):
                 valores['medio_pago'] = medios[0].nombre
             else:
                 valores['medio_pago'] = 'Múltiple'
-            nuevo = self.env['motgama.reporteventas'].create(valores)
+            nuevo = self.env['motgama.reporteventas'].sudo().create(valores)
             if not nuevo:
                 raise Warning('No fue posible generar el reporte')
 
@@ -87,7 +87,7 @@ class PDFReporteVentas(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['motgama.reporteventas'].browse(docids)
+        docs = self.env['motgama.reporteventas'].sudo().browse(docids)
 
         total = 0
         prods = {}

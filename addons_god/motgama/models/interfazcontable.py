@@ -19,6 +19,7 @@ class MotgamaWizardInterfazContable(models.TransientModel):
     repite_id = fields.Many2one(string='Interfaz a repetir',comodel_name='motgama.interfazcontable.registro')
 
     es_manual = fields.Boolean(string='Es manual',default=True)
+    envia_correo = fields.Boolean(string='Envía correo',default=False)
 
     @api.onchange('nueva')
     def _onchange_nueva(self):
@@ -56,8 +57,8 @@ class MotgamaWizardInterfazContable(models.TransientModel):
     def get_report(self):
         self.ensure_one()
 
-        apuntes = self.env['account.move.line'].search([('create_date','<=',self.fecha_final),('create_date','>=',self.fecha_inicial)])
-        facturas = self.env['account.invoice'].search([('fecha','>=',self.fecha_inicial),('fecha','<=',self.fecha_final)])
+        apuntes = self.env['account.move.line'].sudo().search([('create_date','<=',self.fecha_final),('create_date','>=',self.fecha_inicial)])
+        facturas = self.env['account.invoice'].sudo().search([('fecha','>=',self.fecha_inicial),('fecha','<=',self.fecha_final)])
 
         fact_inicial = '0'
         fact_final = '0'
@@ -132,7 +133,7 @@ class MotgamaWizardInterfazContable(models.TransientModel):
 
         if self.genera_csv:
             ruta = '/home/usr/files/'
-            nom_arch = str(self.fecha_inicial) + '.csv'
+            nom_arch = 'interfaz-' + str(self.fecha_inicial) + '.csv'
             ruta_arch = ruta + nom_arch
             with open(ruta_arch,mode='w') as f1:
                 writer = csv.writer(f1,delimiter=';',quotechar='"',quoting=csv.QUOTE_NONE)
@@ -152,47 +153,66 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     writer.writerow(row)
             with open(ruta_arch,mode='r',encoding='utf-8') as f2:
                 data = str.encode(f2.read(),'utf-8')
-                valores = {
-                    'name': nom_arch,
-                    'type': 'binary',
-                    'datas': base64.encodestring(data),
-                    'datas_fname': nom_arch,
-                    'res_model': 'motgama.interfazcontable',
-                    'mimetype': 'text/csv'
-                }
-                arch = self.env['ir.attachment'].create(valores)
-                
-                paramCorreo = self.env['motgama.parametros'].search([('codigo','=','EMAILINTERFAZ')],limit=1)
-                if not paramCorreo:
-                    raise Warning('No se ha definido el parámetro "EMAILINTERFAZ"')
-                sucursal = self.env['motgama.sucursal'].search([],limit=1).nombre
-                subject = sucursal + ': ' + nom_arch
-                html = '<p>Interfaz contable de ' + sucursal + ' adjunta</p>'
-                email_to = paramCorreo.valor
-                mailserver = self.env['ir.mail_server'].sudo().search([],limit=1)
-                if not mailserver:
-                    email_from = ''
-                else:
-                    email_from = mailserver.smtp_user
-                valoresCorreo = {
-                    'subject': subject,
-                    'email_from': email_from,
-                    'email_to': email_to,
-                    'body_html': html
-                }
-                correo = self.env['mail.mail'].create(valoresCorreo)
-                if correo:
-                    correo.sudo().send()
+
+                correo = False
+                if self.envia_correo:
+                    valores = {
+                        'name': nom_arch,
+                        'type': 'binary',
+                        'datas': base64.encodestring(data),
+                        'datas_fname': nom_arch,
+                        'res_model': 'motgama.interfazcontable',
+                        'mimetype': 'text/csv'
+                    }
+                    arch = self.env['ir.attachment'].sudo().create(valores)
+                    
+                    paramCorreo = self.env['motgama.parametros'].search([('codigo','=','EMAILINTERFAZ')],limit=1)
+                    if not paramCorreo:
+                        raise Warning('No se ha definido el parámetro "EMAILINTERFAZ"')
+                    sucursal = self.env['motgama.sucursal'].search([],limit=1).nombre
+                    subject = sucursal + ': ' + nom_arch
+                    html = '<p>Interfaz contable de ' + sucursal + ' adjunta</p>'
+                    email_to = paramCorreo.valor
+                    mailserver = self.env['ir.mail_server'].sudo().search([],limit=1)
+                    if not mailserver:
+                        email_from = ''
+                    else:
+                        email_from = mailserver.smtp_user
+                    valoresCorreo = {
+                        'subject': subject,
+                        'email_from': email_from,
+                        'email_to': email_to,
+                        'body_html': html
+                    }
+                    correo = self.env['mail.mail'].sudo().create(valoresCorreo)
+                    if correo:
+                        correo.sudo().send()
                 
                 valoresInterfaz = {
                     'nombre': doc if doc != '' else str(self.fecha_final),
                     'fecha_final': self.fecha_final,
                     'fecha_inicial': self.fecha_inicial,
-                    'correo': correo.id
+                    'correo': correo.id if correo else correo
                 }
                 reg = self.env['motgama.interfazcontable.registro'].sudo().create(valoresInterfaz)
                 if not reg:
                     raise Warning('No fue posible crear la interfaz contable')
+
+                valores_descarga = {
+                    'nombre': nom_arch,
+                    'arch': base64.encodestring(data)
+                }
+                descarga = self.env['motgama.wizard.descargainterfaz'].create(valores_descarga)
+                return {
+                    'name': 'Descargar Interfaz',
+                    'view_mode': 'form',
+                    'view_id': self.env.ref('motgama.view_descarga_interfaz').id,
+                    'res_model': 'motgama.wizard.descargainterfaz',
+                    'res_id': descarga.id,
+                    'type': 'ir.actions.act_window',
+                    'target':'new'
+                }
+
         else:
             return {
                 'name': 'Interfaz Contable',
@@ -267,7 +287,8 @@ class MotgamaInterfazContableRegistro(models.Model):
             'fecha_inicial': fecha_inicial,
             'fecha_final': fecha_final,
             'genera_csv': True,
-            'es_manual': False
+            'es_manual': False,
+            'envia_correo': True
         }
         nuevo = self.env['motgama.wizard.interfazcontable'].create(valores)
         if not nuevo:
@@ -287,7 +308,7 @@ class MotgamaInterfazContableRegistro(models.Model):
         reporte_ventas = self.env['motgama.reporteventas'].search([])
 
         pdf = self.env['report'].sudo().get_pdf(reporte_ventas.ids, 'motgama.reporte_ventas')
-        attachment_report = self.env['ir.attachment'].create({
+        attachment_report = self.env['ir.attachment'].sudo().create({
             'name': 'Reporte de ventas',
             'type': 'binary',
             'datas': base64.encodestring(pdf),
@@ -296,7 +317,7 @@ class MotgamaInterfazContableRegistro(models.Model):
         })
 
         valores_correo.update({'attachment_ids': [(6,0,[attachment_report.id, arch.id])]})
-        correo = self.env['mail.mail'].create(valores_correo)
+        correo = self.env['mail.mail'].sudo().create(valores_correo)
         if correo:
             correo.sudo().send()
         
@@ -309,3 +330,19 @@ class MotgamaInterfazContableRegistro(models.Model):
         reg = self.env['motgama.interfazcontable.registro'].create(valoresInterfaz)
         if not reg:
             raise Warning('No fue posible crear la interfaz contable')
+
+class MotgamaWizardDescargaInterfaz(models.TransientModel):
+    _name = 'motgama.wizard.descargainterfaz'
+    _description = 'Wizard Descargar Interfaz'
+    _rec_name = 'nombre'
+
+    nombre = fields.Char(string="Nombre del archivo")
+    arch = fields.Binary(string="Archivo")
+
+    def descargar(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_url',
+            'name': 'Interfaz contable',
+            'url': '/web/content/motgama.wizard.descargainterfaz/%s/arch/%s?download=true' %(self.id,self.nombre)
+        }

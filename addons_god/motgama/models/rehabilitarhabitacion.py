@@ -12,7 +12,7 @@ class MotgamaFlujoHabitacion(models.Model):
         self.ensure_one()
         movimiento = self.ultmovimiento
 
-        ordenVieja = self.env['sale.order'].search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
+        ordenVieja = self.env['sale.order'].sudo().search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
         if not ordenVieja:
             raise Warning('La habitación no fue correctamente liquidada')
 
@@ -20,7 +20,7 @@ class MotgamaFlujoHabitacion(models.Model):
             'partner_id' : ordenVieja.partner_id.id,
             'movimiento' : movimiento.id
         }
-        ordenNueva = self.env['sale.order'].create(valores)
+        ordenNueva = self.env['sale.order'].sudo().create(valores)
         if not ordenNueva:
             raise Warning('Error al crear nueva orden de venta')
         ordenNueva.action_confirm()
@@ -46,7 +46,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'product_uom_qty' : line.product_uom_qty,
                 'product_id' : line.product_id.id
             }
-            self.env['sale.order.line'].create(valores)
+            self.env['sale.order.line'].sudo().create(valores)
 
         estado = movimiento.asignatipo
         self.write({'estado': estado,'notificar':True})

@@ -12,21 +12,21 @@ class WizardReporteHospedaje(models.TransientModel):
     def get_report(self):
         self.ensure_one()
 
-        paramOcasional = self.env['motgama.parametros'].search([('codigo','=','CODHOSOCASIO')],limit=1)
+        paramOcasional = self.env['motgama.parametros'].sudo().search([('codigo','=','CODHOSOCASIO')],limit=1)
         if not paramOcasional:
             raise Warning('No se ha definido el parámetro CODHOSOCASIO, contacte al administrador')
-        paramAmanecida = self.env['motgama.parametros'].search([('codigo','=','CODHOSAMANE')],limit=1)
+        paramAmanecida = self.env['motgama.parametros'].sudo().search([('codigo','=','CODHOSAMANE')],limit=1)
         if not paramAmanecida:
             raise Warning('No se ha definido el parámetro CODHOSAMANE, contacte al administrador')
-        paramAdicional = self.env['motgama.parametros'].search([('codigo','=','CODHOSADCNAL')],limit=1)
+        paramAdicional = self.env['motgama.parametros'].sudo().search([('codigo','=','CODHOSADCNAL')],limit=1)
         if not paramAmanecida:
             raise Warning('No se ha definido el parámetro CODHOSADCNAL, contacte al administrador')
 
-        movimientos = self.env['motgama.movimiento'].search([('asignafecha','>',self.fecha_inicial),('asignafecha','<',self.fecha_final),('asignatipo','in',['OO','OA']),'|',('active','=',True),('active','=',False)])
+        movimientos = self.env['motgama.movimiento'].sudo().search([('asignafecha','>',self.fecha_inicial),('asignafecha','<',self.fecha_final),('asignatipo','in',['OO','OA']),'|',('active','=',True),('active','=',False)])
         if not movimientos:
             raise Warning('No hay movimientos que mostrar')
 
-        hospedajes = self.env['motgama.reportehospedaje'].search([])
+        hospedajes = self.env['motgama.reportehospedaje'].sudo().search([])
         for hospedaje in hospedajes:
             hospedaje.unlink()
 
@@ -59,7 +59,7 @@ class WizardReporteHospedaje(models.TransientModel):
                 else:
                     continue
                 valores.update({'valor':line.price_unit})
-                nuevo = self.env['motgama.reportehospedaje'].create(valores)
+                nuevo = self.env['motgama.reportehospedaje'].sudo().create(valores)
                 if not nuevo:
                     raise Warning('No se pudo crear el reporte')
 
@@ -88,7 +88,7 @@ class PDFReporteHospedaje(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['motgama.reportehospedaje'].browse(docids)
+        docs = self.env['motgama.reportehospedaje'].sudo().browse(docids)
 
         hospedajes = {}
         total = 0

@@ -1,17 +1,70 @@
-Auxiliar de inventarios para movimiento de productos con los filtros como fecha, categoría de producto, producto:
-    Valorizar con costo promedio
+Con el perfil de recepcionista aparece error al intentar agregar consumo negativo
+    La recepción necesita permiso de Ventas: Mostrar todos los documentos
 
-Relación factura vieja - nota credito - factura nueva
+Al intentar hacer un abono como RECEPCION... Lo siento, no tiene permiso para crear este tipo de documento. Sólo usuarios con los siguientes permisos están autorizados a hacer esto:- Accounting & Finance/Billing
+    La recepción necesita permiso de Ventas: Mostrar todos los documentos
 
-Recaudo de factura: Revisar
+El reporte Interfaz Contable con CSV (para un rango de 24 horas) se demora más de 120 segundos y en ocasiones no se genera.
+    Listo
 
-Pago asociado al cliente de contado
-    Revisar pagos de abonos, recaudo, prenda y consumo sin habitación
+Porqué el proceso de desasignación se demora más de 60 segundos?
+    Revisar PRIORIDAD
 
-Facturas rectificativas en la interfaz contable
-    Revisar que se deben restar de la cuenta nacionales(Facturas)
+Porqué el proceso de cambio de habitación  se demora aproximadamente 80 segundos?
+    Revisar PRIORIDAD
 
-Plantilla para importar ajustes de inventario
+Recaudo de factura: Cambiar al recaudo mismo
+    Con problemas al modificar
 
 Botón en factura para reportarla como cliente problema (factura_anomalia) con observación
+    Listo, revisar
+
+Las facturas no asociadas a hospedaje se generan (PDF) en formato de tamaño carta y debe ser en formato tirilla
+    El software de PDF trata de ajustar la impresión al tamaño de la hoja, pero si se selecciona la escala al 100% sale del tamaño que es
+
+Los consumos generados desde facturas no asociadas a hospedaje no se muestran en el reporte de consumos.
+    No se tenía en cuenta
+
+Debe existir una vista para parametrizar los prefijos y datos iniciales de las columnas "COMPROBANTE", "DOCUMENTO", Y "REFERENCIA" en el Interfaz Contable
+    Revisar: Parámetros
+
+El reporte de ventas veo que sufrió modificaciones, pues ya no discrimina los impuesto y los encabezados no aparece la información Tributaria y 
+Fiscal de la facturación.
+    Agregar encabezados a los reportes
+
+Al recaudar factura no asociada a hospedaje con prenda se genera error y la factura queda con un total de $0.00 como se muestra en la imagen adjunta.
+    Revisar recaudo con prenda en factura sin hospedaje
+
+Revisar permisos para que no deje entrar a las opciones que no debe
     Revisar
+
+Agregar permisos de bonos y precuenta
+    Revisar
+
+Hacer plantilla de tipos de transferencia con Jorge
+    Hacer
+
+Se genera una vista de error al intentar agregar observaciones sobre una habitación ocupada.
+    ?
+
+Falta NIT de la Empresa en Tirilla de Facturas
+    Revisar
+
+En el reporte de ventas puedo usar la opción importar?
+    No
+
+Los registros de Ingresos a caja  e Impuestos, en la Interfaz contable no llevan C.COSTO. ¿Dónde se puede parameterizar esto?
+    QUE?????
+
+Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
+    Revisar
+
+Las acciones de inmótica también deben estar sujetos a permisos
+    Agregar en permisos
+
+Establecer Permisos para ver Precuenta
+    Agregar
+
+Falta Agregar el parámetro PERSADIC en la plantilla de carga de datos.
+Falta Agregar el parámetro HOSPEDN en la plantilla de carga de datos.
+    Modificar plantilla?

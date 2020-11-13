@@ -9,7 +9,7 @@ class MotgamaFlujoHabitacion(models.Model):
     def button_aseo(self):
         self.ensure_one()
 
-        habitacion = self.env['motgama.habitacion'].search([('codigo','=',self.codigo)],limit=1)
+        habitacion = self.env['motgama.habitacion'].sudo().search([('codigo','=',self.codigo)],limit=1)
         if habitacion.zona_id.estado == 'FU':
             raise Warning('Toda la zona se encuentra fuera de uso, debe habilitar la zona completa')
         

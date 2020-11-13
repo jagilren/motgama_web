@@ -17,9 +17,9 @@ class WizardReporteConsumos(models.TransientModel):
             recepcion = self.recepcion
             ids = []
             if not recepcion:
-                consumos = self.env['motgama.consumo'].search([('active','=',True)])
+                consumos = self.env['motgama.consumo'].sudo().search([('active','=',True)])
             else:
-                consumos = self.env['motgama.consumo'].search([('recepcion','=',recepcion.id),('active','=',True)])
+                consumos = self.env['motgama.consumo'].sudo().search([('recepcion','=',recepcion.id),('active','=',True)])
             if not consumos:
                 raise Warning('No hay consumos qué mostrar')
             for consumo in consumos:
@@ -35,9 +35,9 @@ class WizardReporteConsumos(models.TransientModel):
             recepcion = self.recepcion
             ids = []
             if not recepcion:
-                consumos = self.env['motgama.consumo'].search(['|',('active','=',False),('active','=',True)])
+                consumos = self.env['motgama.consumo'].sudo().search(['|',('active','=',False),('active','=',True)])
             else:
-                consumos = self.env['motgama.consumo'].search(['&',('recepcion','=',recepcion.id),'|',('active','=',True),('active','=',False)])
+                consumos = self.env['motgama.consumo'].sudo().search(['&',('recepcion','=',recepcion.id),'|',('active','=',True),('active','=',False)])
             if not consumos:
                 raise Warning('No hay consumos qué mostrar')
 
@@ -48,7 +48,7 @@ class WizardReporteConsumos(models.TransientModel):
         else:
             raise Warning('Seleccione un tipo de reporte')
 
-        consumos = self.env['motgama.reporteconsumos'].search([])
+        consumos = self.env['motgama.reporteconsumos'].sudo().search([])
         if consumos:
             for consumo in consumos:
                 consumo.unlink()
@@ -65,13 +65,13 @@ class WizardReporteConsumos(models.TransientModel):
                 'usuario': consumo.create_uid.name,
                 'categoria': consumo.producto_id.categ_id.name
             }
-            nuevo = self.env['motgama.reporteconsumos'].create(valores)
+            nuevo = self.env['motgama.reporteconsumos'].sudo().create(valores)
             if not nuevo:
                 raise Warning('No se pudo crear el reporte')
         
         if self.tipo_reporte == 'fecha':
             ids = []
-            lineas = self.env['motgama.lineafacturaconsumos'].search([('create_date','<',fecha_final),('create_date','>',fecha_inicial)])
+            lineas = self.env['motgama.lineafacturaconsumos'].sudo().search([('create_date','<',fecha_final),('create_date','>',fecha_inicial)])
             for linea in lineas:
                 if not recepcion:
                     ids.append(linea)
@@ -89,7 +89,7 @@ class WizardReporteConsumos(models.TransientModel):
                     'usuario': consumo.create_uid.name,
                     'categoria': consumo.producto_id.categ_id.name
                 }
-                nuevo = self.env['motgama.reporteconsumos'].create(valores)
+                nuevo = self.env['motgama.reporteconsumos'].sudo().create(valores)
                 if not nuevo:
                     raise Warning('No se pudo crear el reporte')
 
@@ -127,7 +127,7 @@ class PDFReporteConsumos(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['motgama.reporteconsumos'].browse(docids)
+        docs = self.env['motgama.reporteconsumos'].sudo().browse(docids)
 
         productos = {}
         categorias = {}

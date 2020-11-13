@@ -90,7 +90,7 @@ class MotgamaCalendario(models.Model):#ok
     _order = 'diasemana ASC'
     _sql_constraints = [('codigo_uniq', 'unique (diasemana)', "El dia ya Existe, Verifique!")]
     diasemana = fields.Selection(string=u'Día Semana',selection=[('0', 'Lunes'), ('1', 'Martes'), ('2', 'Miércoles'), ('3', 'Jueves'), ('4', 'Viernes'), ('5', 'Sábado'), ('6', 'Domingo')])
-    listapreciodia = fields.Selection(string=u'Lista precio Día ',selection=[('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)    
+    listapreciodia = fields.Selection(string=u'Lista precio Día',selection=[('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)    
     listaprecionoche = fields.Selection(string=u'Lista precio Noche',selection=[ ('1', 'L1'),('2', 'L2'),('3', 'L3'),('4', 'L4'),('5', 'L5')],required=True)
     listaprecioproducto = fields.Many2one(string=u'Lista precio Productos',comodel_name='product.pricelist',required=True) #Toma listas de odoo
     horainicioamanecida = fields.Char(string='H. inicio amanecida (hh:mm)')
@@ -157,14 +157,14 @@ class MotgamaRecepcion(models.Model):#ok
     def create(self,values):
         record = super().create(values)
 
-        parent = self.env['stock.location'].search([('name','=','MOTGAMA')],limit=1)
+        parent = self.env['stock.location'].sudo().search([('name','=','MOTGAMA')],limit=1)
         if not parent:
             valores = {
                 'name' : 'MOTGAMA',
                 'usage' : 'internal',
                 'permite_consumo' : False
             }
-            parent = self.env['stock.location'].create(valores)
+            parent = self.env['stock.location'].sudo().create(valores)
             if not parent:
                 raise Warning('No existe ni se pudo crear el lugar de inventario "MOTGAMA", contacte al administrador')
 
@@ -175,7 +175,7 @@ class MotgamaRecepcion(models.Model):#ok
             'location_id' : parent.id,
             'permite_consumo' : True
         }
-        nuevoLugar = self.env['stock.location'].create(valoresLugar)
+        nuevoLugar = self.env['stock.location'].sudo().create(valoresLugar)
         if not nuevoLugar:
             raise Warning('Error al crear recepción: No se pudo crear el lugar de inventario para la nueva recepción')
 
@@ -185,16 +185,16 @@ class MotgamaRecepcion(models.Model):#ok
     def write(self,values):
         creado = super(MotgamaRecepcion, self).write(values)
 
-        lugar = self.env['stock.location'].search([('recepcion','=',self.id)],limit=1)
+        lugar = self.env['stock.location'].sudo().search([('recepcion','=',self.id)],limit=1)
         if not lugar:
-            parent = self.env['stock.location'].search([('name','=','MOTGAMA')],limit=1)
+            parent = self.env['stock.location'].sudo().search([('name','=','MOTGAMA')],limit=1)
             if not parent:
                 valores = {
                     'name' : 'MOTGAMA',
                     'usage' : 'internal',
                     'permite_consumo' : False
                 }
-                parent = self.env['stock.location'].create(valores)
+                parent = self.env['stock.location'].sudo().create(valores)
                 if not parent:
                     raise Warning('No existe ni se pudo crear el lugar de inventario "MOTGAMA", contacte al administrador')
 
@@ -205,7 +205,7 @@ class MotgamaRecepcion(models.Model):#ok
                 'location_id' : parent.id,
                 'permite_consumo' : True
             }
-            lugar = self.env['stock.location'].create(valoresLugar)
+            lugar = self.env['stock.location'].sudo().create(valoresLugar)
             if not lugar:
                 raise Warning('Error al crear el lugar de inventario para la recepción')
         else:
@@ -613,6 +613,7 @@ class MotgamaMovimiento(models.Model):#ok
     prestados = fields.One2many(string="Objetos Prestados",comodel_name='motgama.objprestados',inverse_name='movimiento_id')
     recaudo_ids = fields.One2many(string="Recaudos",comodel_name="motgama.recaudo",inverse_name='movimiento_id')
     bono_id = fields.Many2one(string='Bono aplicado',comodel_name='motgama.bonos')
+    factura_ids = fields.One2many(string='Facturas y rectificativas',comodel_name='account.invoice',inverse_name='movimiento_id')
 
 class MotgamaHistoricoMovimiento(models.Model):#ok
 #    Fields:  PENDIENTE REVISAR
@@ -839,7 +840,7 @@ class MotgamaConsumo(models.Model):
             if record.producto_id:
                 movimiento = self.env['motgama.movimiento'].search([('id','=',record.movimiento_id.id)], limit=1)
                 lista = movimiento.listaprecioproducto
-                precioLista = self.env['product.pricelist.item'].search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
+                precioLista = self.env['product.pricelist.item'].sudo().search(['&',('pricelist_id','=',lista.id),('product_tmpl_id','=',record.producto_id.id)], limit=1)
                 if not precioLista:
                     precio = record.producto_id.list_price
                 else:
@@ -917,6 +918,8 @@ class MotgamaRecaudo(models.Model):
     valor_pagado = fields.Float(string='Valor pagado',default=0.0)
     usuario_uid = fields.Many2one(string='Usuario que recauda',comodel_name='res.users', default=lambda self: self.env.user.id)
     tipo_recaudo = fields.Selection(string='Tipo de recaudo',selection=[('habitaciones','Recaudo de habitaciones'),('abonos','Recaudo de abonos'),('prenda','Recaudo de prenda'),('anticipos','Recaudo de anticipos'),('otros','Otros recaudos')])
+    estado = fields.Selection(string='Estado',selection=[('pagado','Pagado'),('anulado','Anulado')],default='pagado')
+    modificado = fields.Boolean(string="Modificado",default=False)
     active = fields.Boolean(string='Activo',default=True)
 
     @api.model
@@ -1039,7 +1042,7 @@ class MotgamaLog(models.Model):
                 'body_html': '<h3>' + values['descripcion'] + '</h3>',
                 'author_id': False
             }
-            correo = self.env['mail.mail'].create(valoresCorreo)
+            correo = self.env['mail.mail'].sudo().create(valoresCorreo)
             if correo:
                 correo.sudo().send()
         record = super().create(values)

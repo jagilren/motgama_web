@@ -114,6 +114,15 @@
                                 </group>
                                 <group>
                                     <field name="factura"/>
+                                    <field name="factura_ids">
+                                        <tree>
+                                            <field name="partner_id" string="Cliente"/>
+                                            <field name="date_invoice"/>
+                                            <field name="number"/>
+                                            <field name="rectificativa"/>
+                                            <field name="amount_total_signed"/>
+                                        </tree>
+                                    </field>
                                 </group>
                             </page>
                             <page name="aseo" string="Aseo" attrs="{'invisible':[('aseofecha','=',False)]}">
@@ -160,7 +169,7 @@
                         </group>
                     </group>
                     <group name="recaudos" string="Recaudos">
-                        <field name="recaudo_ids"/>
+                        <field name="recaudo_ids" domain="[('active','in',[True,False])]"/>
                     </group>
                 </sheet>
             </form>

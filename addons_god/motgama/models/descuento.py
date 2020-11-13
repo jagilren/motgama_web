@@ -43,7 +43,7 @@ class MotgamaWizardDescuento(models.TransientModel):
         paramDesc = self.env['motgama.parametros'].search([('codigo','=','CODDESCSERV')],limit=1)
         if not paramDesc:
             raise Warning('Error: No existe el parámetro "CODDESCSERV"')
-        prod_desc = self.env['product.template'].search([('default_code','=',paramDesc.valor)],limit=1)
+        prod_desc = self.env['product.template'].sudo().search([('default_code','=',paramDesc.valor)],limit=1)
         if not prod_desc:
             raise Warning('Error: No existe el producto de código "' + paramDesc.valor + '"')
 
@@ -56,6 +56,6 @@ class MotgamaWizardDescuento(models.TransientModel):
             'product_id' : prod_desc.product_variant_id.id,
             'es_hospedaje' : False
         }
-        nuevo = self.env['sale.order.line'].create(valores)
+        nuevo = self.env['sale.order.line'].sudo().create(valores)
         if not nuevo:
             raise Warning('Error: No se pudo agregar el descuento')

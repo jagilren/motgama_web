@@ -24,26 +24,30 @@ class MotgamaBonos(models.Model):
                     cons_hasta += str(record.cons_desde + record.cantidad - 1)
                 else:
                     raise Warning('No es posible cumplir con la cantidad de bonos requerida y el tamaño de consecutivo especificado')
-                record.codigo_inicial = record.prefijo + cons_desde
-                record.codigo_final = record.prefijo + cons_hasta
+                prefijo = record.prefijo if record.prefijo else ''
+                record.codigo_inicial = prefijo + cons_desde
+                record.codigo_final = prefijo + cons_hasta
 
     @api.model
     def create(self,values):
-        if values['cantidad'] <= 0:
-            raise Warning('No es posible crear ' + str(values['cantidad']) + ' bonos')
+        prefijo = ''
+        if 'prefijo' in values:
+            if values['prefijo']:
+                prefijo = values['prefijo']
         consecutivo = values['tipo_bono'] == 'consecutivo'
         if consecutivo:
+            if values['cantidad'] <= 0:
+                raise Warning('No es posible crear ' + str(values['cantidad']) + ' bonos')
             if values['digitos'] <= 0:
-                values['codigo'] = values['prefijo'] + str(values['cons_desde'])
+                values['codigo'] = prefijo + str(values['cons_desde'])
             elif values['digitos'] >= len(str(values['cons_desde'])):
                 ceros = values['digitos'] - len(str(values['cons_desde']))
-                values['codigo'] = values['prefijo']
+                values['codigo'] = prefijo
                 for x in range(ceros):
                     values['codigo'] += '0'
                 values['codigo'] += str(values['cons_desde'])
             else:
                 raise Warning('No es posible cumplir con la cantidad de bonos requerida y el tamaño de consecutivo especificado')
-            #values['tipo_bono'] = 'unico'
 
         record = super().create(values)
 
@@ -66,13 +70,13 @@ class MotgamaBonos(models.Model):
             }
             for x in range(record.cons_desde + 1,record.cons_desde + record.cantidad):
                 if record.digitos <= 0:
-                    valores['codigo'] = record.prefijo + str(x)
+                    valores['codigo'] = prefijo + str(x)
                     bono = self.env['motgama.bonos'].create(valores)
                     if not bono:
                         raise Warning('No se pudo crear el bono ' + valores['codigo'])
                 elif record.digitos >= len(str(x)):
                     ceros = record.digitos - len(str(x))
-                    codigo = record.prefijo
+                    codigo = prefijo
                     for y in range(ceros):
                         codigo += '0'
                     valores['codigo'] = codigo + str(x)
@@ -127,7 +131,7 @@ class MotgamaWizardBonos(models.TransientModel):
     def _onchange_validar(self):
         for record in self:
             if record.validar:
-                bono = self.env['motgama.bonos'].search([('codigo','=',self.codigo)], limit=1)
+                bono = self.env['motgama.bonos'].sudo().search([('codigo','=',self.codigo)], limit=1)
                 if not bono:
                     record.validar = False
                     raise Warning('El bono no existe o ha sido desactivado')

@@ -1,0 +1,49 @@
+<odoo>
+    <record id="wizard_edita_recaudo" model="ir.ui.view">
+        <field name="name">Wizard Edita Recaudo</field>
+        <field name="model">motgama.wizard.editarecaudo</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="recaudo_ant_id" invisible="1"/>
+                            <field name="cliente_id" invisible="1"/>
+                            <field name="prenda_id" invisible="1"/>
+                            <field name="recaudo_ant_id" readonly="1"/>
+                            <field name="cliente_id" readonly="1"/>
+                            <field name="prenda_id" readonly="1"/>
+                        </group>
+                        <group>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="total_a_pagar" invisible="1"/>
+                            <field name="total_a_pagar" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="valor_restante"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="pago_ids">
+                            <tree editable="bottom">
+                                <control>
+                                    <create string="Agregar pago"/>
+                                </control>
+                                <field name="pago_readonly" invisible="1"/>
+                                <field name="mediopago_id" domain="[('tipo','not in',['prenda','abono'])]" attrs="{'readonly':[('pago_readonly','=',True)]}"/>
+                                <field name="valor" attrs="{'readonly':[('pago_readonly','=',True)]}"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="recaudar" string="Nuevo recaudo" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

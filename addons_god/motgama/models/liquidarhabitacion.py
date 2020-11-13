@@ -121,16 +121,16 @@ class MotgamaFlujoHabitacion(models.Model):
             if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
                 desc_hosp = movimiento.tarifamanecida * movimiento.bono_id.porcpagoefectivo / 100
 
-            ordenVenta = self.env['sale.order'].search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
+            ordenVenta = self.env['sale.order'].sudo().search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
             if not ordenVenta:
-                cliente = self.env['res.partner'].search([('vat','=','1')], limit=1)
+                cliente = self.env['res.partner'].sudo().search([('vat','=','1')], limit=1)
                 if not cliente:
                     raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')
                 valores = {
                     'partner_id' : cliente.id,
                     'movimiento' : movimiento.id
                 }
-                ordenVenta = self.env['sale.order'].create(valores)
+                ordenVenta = self.env['sale.order'].sudo().create(valores)
                 if not ordenVenta:
                     raise Warning('Error al registrar el consumo: No se pudo crear orden de venta')
                 ordenVenta.action_confirm()
@@ -150,7 +150,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'product_id' : producto.product_variant_id.id,
                 'es_hospedaje' : True
             }
-            nuevaLinea = self.env['sale.order.line'].create(valoresLineaAmanecida)
+            nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaAmanecida)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de amanecida a la orden de venta')
 
@@ -195,16 +195,16 @@ class MotgamaFlujoHabitacion(models.Model):
             if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
                 desc_hosp = movimiento.tarifaocasional * movimiento.bono_id.porcpagoefectivo / 100
             
-            ordenVenta = self.env['sale.order'].search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
+            ordenVenta = self.env['sale.order'].sudo().search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
             if not ordenVenta:
-                cliente = self.env['res.partner'].search([('vat','=','1')], limit=1)
+                cliente = self.env['res.partner'].sudo().search([('vat','=','1')], limit=1)
                 if not cliente:
                     raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')
                 valores = {
                     'partner_id' : cliente.id,
                     'movimiento' : movimiento.id
                 }
-                ordenVenta = self.env['sale.order'].create(valores)
+                ordenVenta = self.env['sale.order'].sudo().create(valores)
                 if not ordenVenta:
                     raise Warning('Error al registrar el consumo: No se pudo crear orden de venta')
                 ordenVenta.action_confirm()
@@ -213,7 +213,7 @@ class MotgamaFlujoHabitacion(models.Model):
             codOcasional = self.env['motgama.parametros'].search([('codigo','=','CODHOSOCASIO')])
             if not codOcasional:
                 raise Warning('No existe el parámetro "CODHOSOCASIO"')
-            producto = self.env['product.template'].search([('default_code','=',codOcasional.valor)])
+            producto = self.env['product.template'].sudo().search([('default_code','=',codOcasional.valor)])
             if not producto:
                 raise Warning('No existe producto con Referencia interna: ' + codOcasional.valor + ' para Hospedaje Ocasional')
             valoresLineaOcasional = {
@@ -225,7 +225,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'product_id' : producto.product_variant_id.id,
                 'es_hospedaje' : True
             }
-            nuevaLinea = self.env['sale.order.line'].create(valoresLineaOcasional)
+            nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaOcasional)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje ocasional a la orden de venta')
 
@@ -242,7 +242,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 paramCodDesc = self.env['motgama.parametros'].search([('codigo','=','CODDESCOCUP')],limit=1)
                 if not paramCodDesc:
                     raise Warning('No se ha definido el parámetro "CODDECOCUP"')
-                prod_desc_ocup = self.env['product.template'].search([('default_code','=',paramCodDesc.valor)],limit=1)
+                prod_desc_ocup = self.env['product.template'].sudo().search([('default_code','=',paramCodDesc.valor)],limit=1)
                 if not prod_desc_ocup:
                     raise Warning('No existe el producto con referencia interna "' + paramCodDesc.codigo + '"')
                 paramDesc = self.env['motgama.parametros'].search([('codigo','=','%DESCPOCOTIEMPO')],limit=1)
@@ -261,7 +261,7 @@ class MotgamaFlujoHabitacion(models.Model):
                     'product_id' : prod_desc_ocup.product_variant_id.id,
                     'es_hospedaje' : False
                 }
-                nuevaLinea = self.env['sale.order.line'].create(valoresLineaDesc)
+                nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaDesc)
                 if not nuevaLinea:
                     raise Warning('Error al liquidar: No se pudo agregar el descuento por poco tiempo')
 
@@ -272,7 +272,7 @@ class MotgamaFlujoHabitacion(models.Model):
             codAdicionales = self.env['motgama.parametros'].search([('codigo','=','CODHOSADCNAL')])
             if not codAdicionales:
                 raise Warning('No existe el parámetro "CODHOSADCNAL"')
-            producto = self.env['product.template'].search([('default_code','=',codAdicionales.valor)])
+            producto = self.env['product.template'].sudo().search([('default_code','=',codAdicionales.valor)])
             if not producto:
                 raise Warning('No existe producto con Referencia interna: ' + codAdicionales.valor + ' para Hospedaje Adicional')
             valoresLineaAdicionales = {
@@ -284,7 +284,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'product_id' : producto.product_variant_id.id,
                 'es_hospedaje' : True
             }
-            nuevaLinea = self.env['sale.order.line'].create(valoresLineaAdicionales)
+            nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaAdicionales)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de horas adicionales a la orden de venta')
         
@@ -299,7 +299,7 @@ class MotgamaFlujoHabitacion(models.Model):
             param_bono = self.env['motgama.parametros'].search([('codigo','=','CODBONOPROM')],limit=1)
             if not param_bono:
                 raise Warning('No se ha definido el parámetro: "CODBONOPROM"')
-            prod_bono = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+            prod_bono = self.env['product.template'].sudo().search([('default_code','=',param_bono.valor)],limit=1)
             if not prod_bono:
                 raise Warning('No existe el producto con referencia interna "CODBONOPROM"')
             valoresLineaBono = {
@@ -311,7 +311,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'product_id' : prod_bono.product_variant_id.id,
                 'es_hospedaje' : False
             }
-            nuevo = self.env['sale.order.line'].create(valoresLineaBono)
+            nuevo = self.env['sale.order.line'].sudo().create(valoresLineaBono)
             if not nuevo:
                 raise Warning('Error al liquidar: No se pudo aplicar el bono al estado de cuenta')
 
@@ -333,7 +333,7 @@ class PDFEstadoCuenta(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['sale.order'].browse(docids)
+        docs = self.env['sale.order'].sudo().browse(docids)
 
         paramImpCons = self.env['motgama.parametros'].search([('codigo','=','IMPCONSCTACOBRO')], limit=1)
         if paramImpCons:
