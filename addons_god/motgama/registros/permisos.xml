@@ -31,6 +31,12 @@
         <record id="motgama_cambio_plan" model="motgama.permiso">
             <field name="name">Puede cambiar ocupación de habitaciones</field>
         </record>
+        <record id="motgama_precuenta" model="motgama.permiso">
+            <field name="name">Puede ver la precuenta del hospedaje</field>
+        </record>
+        <record id="motgama_inmotica" model="motgama.permiso">
+            <field name="name">Puede ejecutar acciones de inmótica</field>
+        </record>
 
         <!-- Consumos -->
         <record id="motgama_consumo_negativo" model="motgama.permiso">
@@ -43,6 +49,12 @@
         </record>
         <record id="motgama_pase_cortesia" model="motgama.permiso">
             <field name="name">Puede agregar pases o cortesías como medios de pago</field>
+        </record>
+        <record id="motgama_bono" model="motgama.permiso">
+            <field name="name">Puede agregar bonos a la asignación</field>
+        </record>
+        <record id="motgama_quita_bono" model="motgama.permiso">
+            <field name="name">Puede retirar bonos a la asignación</field>
         </record>
 
         <!-- Prenda -->

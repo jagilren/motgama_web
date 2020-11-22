@@ -96,6 +96,7 @@ class PDFReporteDocumentos(models.AbstractModel):
             total += doc.valor
         
         return {
+            'company': self.env['res.company']._company_default_get('account.invoice'),
             'docs': docs,
             'count': count,
             'total': "{:0,.1f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')

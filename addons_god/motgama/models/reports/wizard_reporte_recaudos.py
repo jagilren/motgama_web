@@ -156,6 +156,7 @@ class PDFReporteRecaudos(models.AbstractModel):
         total = "$ " + "{:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
         
         return {
+            'company': self.env['res.company']._company_default_get('account.invoice'),
             'docs': docs,
             'tipos': tiposRecaudo,
             'medios': mediosPago,

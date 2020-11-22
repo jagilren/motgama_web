@@ -66,7 +66,7 @@ class MotgamaWizardAbonos(models.TransientModel):
             payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No se pudo registrar el pago')
-            payment.post()
+            payment.sudo().post()
             
             valores = {
                 'cliente_id': self.env.ref('motgama.cliente_contado').id,
@@ -74,7 +74,7 @@ class MotgamaWizardAbonos(models.TransientModel):
                 'mediopago': pago.mediopago.id,
                 'valor': pago.valor,
                 'usuario_uid': self.env.user.id,
-                'pago_id': payment.id
+                'pago_id': payment.sudo().id
             }
             valoresPagos.append(valores)
         
@@ -183,7 +183,7 @@ class MotgamaRevertirAbonos(models.TransientModel):
         valoresPayment = {
             'payment_type': 'outbound',
             'partner_type': 'customer',
-            'partner_id': self.env.ref('motgama.partner_id').id,
+            'partner_id': self.env.ref('motgama.cliente_contado').id,
             'amount': self.total_revertir,
             'journal_id': self.mediopago.diario_id.id,
             'payment_date': fields.Date().today(),
@@ -191,7 +191,7 @@ class MotgamaRevertirAbonos(models.TransientModel):
             'communication': 'Revertir abono de movimiento con id: ' + str(self.habitacion_id.ultmovimiento.id)
         }
         payment = self.env['account.payment'].sudo().create(valoresPayment)
-        payment.post()
+        payment.sudo().post()
 
         valoresRecaudo = {
             'movimiento_id': self.habitacion_id.ultmovimiento.id,
@@ -211,7 +211,7 @@ class MotgamaRevertirAbonos(models.TransientModel):
             'fecha': fields.Datetime().now(),
             'cliente_id': self.env.ref('motgama.cliente_contado').id,
             'usuario_uid': self.env.user.id,
-            'pago_id': payment.id,
+            'pago_id': payment.sudo().id,
             'recaudo': recaudo.id
         }
         pago = self.env['motgama.pago'].create(valoresPago)

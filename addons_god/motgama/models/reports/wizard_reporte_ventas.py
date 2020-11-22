@@ -113,6 +113,7 @@ class PDFReporteVentas(models.AbstractModel):
             medios[medio] = "$ {:0,.2f}".format(medios[medio]).replace(',','¿').replace('.',',').replace('¿','.')
 
         return {
+            'company': self.env['res.company']._company_default_get('account.invoice'),
             'docs': docs,
             'count': len(docs),
             'total': "$ {:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.'),

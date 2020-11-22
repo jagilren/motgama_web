@@ -200,6 +200,24 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLinea)
             if not nuevaLinea:
                 raise Warning('Error al registrar el consumo: No se pudo agregar el consumo a la orden de venta')
+            valoresConsumo = {
+                'es_adicional': True,
+                'recepcion': self.env.user.recepcion_id.id,
+                'llevaComanda': False,
+                'producto_id': consumo.producto_id.id,
+                'cantidad': consumo.cantidad,
+                'valorUnitario': consumo.vlrUnitario,
+                'vlrUnitario': consumo.vlrUnitario,
+                'vlrSubtotal': consumo.vlrUnitario * consumo.cantidad,
+                'lugar_id': lugar.id,
+                'active': False,
+                'asigna_uid': self.env.user.id,
+                'permitecambiarvalor': False,
+            }
+            cons = self.env['motgama.consumo'].create(valoresConsumo)
+            if not cons:
+                raise Warning('No fue posible registrar el consumo')
+            
         if not self.env.user.recepcion_id:
             raise Warning('El usuario no tiene asignada una recepción')
         entregas = ordenVenta.picking_ids
@@ -280,7 +298,10 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No fue posible crear el registro del pago')
-            payment.post()
+            payment.sudo().post()
+            for valores in valoresPagos:
+                if valores['mediopago'] == pago.mediopago.id and valores['valor'] == pago.valor:
+                    valores['pago_id'] = payment.sudo().id
 
         valoresRecaudo = {
             'cliente': self.cliente.id,

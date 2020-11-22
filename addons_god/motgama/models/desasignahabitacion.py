@@ -2,6 +2,23 @@ from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 from datetime import datetime, timedelta
 
+class MotgamaFlujoHabitacion(models.Model):
+    _inherit = 'motgama.flujohabitacion'
+
+    @api.multi
+    def desasigna(self):
+        if not self.env.ref('motgama.motgama_desasigna') in self.env.user.permisos:
+            raise Warning('No tiene permitido desasignar habitaciones, contacte al administrador')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': "motgama.wizarddesasigna",
+            'name': "Desasigna habitacion",
+            'view_type': "form",
+            'view_mode': "form",
+            'target': "new"
+        }
+
 class MotgamaWizardDesasigna(models.TransientModel):
     _inherit = 'motgama.wizarddesasigna'
 

@@ -98,9 +98,15 @@ class MotgamaBonos(models.Model):
 class MotgamaFlujoHabitacion(models.Model):
     _inherit = 'motgama.flujohabitacion'
 
+    bono_id = fields.Many2one(string="Bono",comodel_name='motgama.bonos')
+
     @api.multi
     def aplicar_bono(self):
         self.ensure_one()
+        if not self.env.ref('motgama.motgama_bono') in self.env.user.permisos:
+            raise Warning('No tiene permitido agregar bonos, contacte al administrador')
+        if self.ultmovimiento.bono_id:
+            raise Warning('Ya se redimió un bono para esta habitación')
 
         return {
             'name': 'Aplicar bono',
@@ -111,6 +117,16 @@ class MotgamaFlujoHabitacion(models.Model):
             'view_id': self.env.ref('motgama.wizard_bonos').id,
             'target': 'new'
         }
+
+    @api.multi
+    def quita_bono(self):
+        self.ensure_one()
+        if not self.env.ref('motgama.motgama_quita_bono') in self.env.user.permisos:
+            raise Warning('No tiene permitido retirar bonos, contacte al administrador')
+
+        self.ultmovimiento.sudo().write({'bono_id': False})
+        self.bono_id.sudo().write({'usos': self.bono_id.usos - 1})
+        self.sudo().write({'bono_id': False})
 
 class MotgamaWizardBonos(models.TransientModel):
     _name = 'motgama.wizard.bono'
@@ -155,8 +171,7 @@ class MotgamaWizardBonos(models.TransientModel):
     def agregar(self):
         self.ensure_one()
 
-        if self.habitacion.ultmovimiento.bono_id:
-            raise Warning('Ya se redimió un bono para esta habitación')
         self.habitacion.ultmovimiento.write({'bono_id': self.bono.id})
-        self.bono.write({'usos': self.bono.usos + 1})
+        self.habitacion.sudo().write({'bono_id': self.bono.id})
+        self.bono.sudo().write({'usos': self.bono.usos + 1})
         return True

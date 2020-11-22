@@ -98,14 +98,14 @@ class MotgamaWizardPrenda(models.TransientModel):
             payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No fue posible sentar el registro del pago')
-            payment.post()
+            payment.sudo().post()
 
             valoresPago = {
                 'cliente_id': self.prenda.cliente_id.id,
                 'mediopago': pago.mediopago.id,
                 'valor': pago.valor,
                 'recaudo': recaudo.id,
-                'pago_id': payment.id
+                'pago_id': payment.sudo().id
             }
             pago = self.env['motgama.pago'].create(valoresPago)
             if not pago:

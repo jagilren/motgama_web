@@ -3,6 +3,24 @@ from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 
+class MotgamaFlujoHabitacion(models.Model):
+    _inherit = 'motgama.flujohabitacion'
+
+    @api.multi
+    def cambio_hab(self):
+        if not self.env.ref('motgama.motgama_reasigna_mayor') in self.env.user.permisos:
+            if not self.env.ref('motgama.motgama_reasigna_menor') in self.env.user.permisos:
+                raise Warning('No tiene permitido cambiar de plan, contacte al administrador')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': "motgama.wizardcambiohabitacion",
+            'name': "Cambio de plan habitacion",
+            'view_type': "form",
+            'view_mode': "form",
+            'target': "new"
+        }
+
 class MotgamaWizardCambiohabitacion(models.TransientModel):
     _inherit = 'motgama.wizardcambiohabitacion'
 
@@ -70,6 +88,18 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         else:
             raise Warning('Hay un problema con la asignación de la habitación')
 
+        valoresMovtoNuevo = {
+            'habitacion_id': movimiento.habitacion_id.id,
+            'asignatipo': movimiento.asignatipo,
+            'asignafecha': movimiento.asignafecha,
+            'asigna_uid': movimiento.asigna_uid.id,
+            'active': True,
+            'observacion': 'La asignación de la habitación  ' + flujoViejo.codigo + ' ha sido reasignada a la habitación ' + flujoNuevo.codigo
+        }
+        movtoNuevo = self.env['motgama.movimiento'].create(valoresMovtoNuevo)
+        if not movtoNuevo:
+            raise Warning('No fue posible registrar el movimiento')
+
         valoresMovto = {
             'habitacion_id': fullHabitacion.id,
             'tarifaocasional': tarifaocasional,
@@ -92,7 +122,8 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
 
         valoresViejo = {
             'estado': 'RC',
-            'notificar':True
+            'notificar': True,
+            'ultmovimiento': movtoNuevo.id
         }
         viejoguardado = flujoViejo.write(valoresViejo)
         if not viejoguardado:
@@ -102,7 +133,8 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
             'habitacion_anterior': flujoViejo.id,
             'movimiento_id': movimiento.id,
             'habitacion_nueva': flujoNuevo.id,
-            'descripcion': self.observacion
+            'descripcion': self.observacion,
+            'usuario_id': self.env.user.id
         }
         nuevaReasignacion = self.env['motgama.reasignacion'].create(valoresReasignacion)
         if not nuevaReasignacion:

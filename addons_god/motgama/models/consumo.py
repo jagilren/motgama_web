@@ -33,8 +33,12 @@ class ProductTemplate(models.Model):
 class MotgamaConsumo(models.Model):
     _inherit = 'motgama.consumo'
 
+    es_adicional = fields.Boolean(string="Facturado aparte",default=False)
+
     @api.model
     def create(self,values):
+        if 'es_adicional' in values and values['es_adicional']:
+            return super().create(values)
         cliente = self.env['res.partner'].sudo().search([('vat','=','1')], limit=1)
         if not cliente:
             raise Warning('No se ha agregado el cliente genérico (NIT: 1), contacte al administrador')

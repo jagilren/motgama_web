@@ -1,6 +1,24 @@
 from odoo import models, fields, api, _
 from odoo.exceptions import Warning
 
+class MotgamaFlujoHabitacion(models.Model):
+    _inherit = 'motgama.flujohabitacion'
+
+    @api.multi
+    def fuera_servicio(self):
+        if not self.env.ref('motgama.motgama_fuera_servicio') in self.env.user.permisos:
+            raise Warning('No tiene permisos para marcar esta habitación como Fuera de Servicio')
+        
+        return {
+            'name': 'Fuera de servicio',
+            'type': 'ir.actions.act_window',           
+            'res_model': "motgama.wizardfueradeservicio",
+            'view_type': "form",
+            'view_mode': "form",
+            'multi': "True",
+            'target': "new"
+        }
+
 class MotgamaWizardFueradeservicio(models.TransientModel):
     _inherit = 'motgama.wizardfueradeservicio'
 

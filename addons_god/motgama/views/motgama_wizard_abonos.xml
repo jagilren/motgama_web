@@ -84,7 +84,7 @@
                             <field name="total_revertir"/>
                         </group>
                         <group>
-                            <field name="mediopago"/>
+                            <field name="mediopago" domain="[('tipo','not in',['abono','prenda'])]"/>
                         </group>
                     </group>
                     <group>

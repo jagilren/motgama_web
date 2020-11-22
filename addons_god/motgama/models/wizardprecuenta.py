@@ -7,6 +7,9 @@ class MotgamaFlujoHabitacion(models.Model):
     @api.multi
     def button_precuenta(self):
         self.ensure_one()
+        if not self.env.ref('motgama.motgama_precuenta') in self.env.user.permisos:
+            raise Warning('No tiene permitido ver la precuenta')
+        
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'motgama.wizardprecuenta',

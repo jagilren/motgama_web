@@ -254,8 +254,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
             for pago in recaudo.pagos:
                 if pago.mediopago.tipo in ['prenda','abono']:
                     continue
-                if not pago.pago_id.journal_id.update_posted:
-                    pago.pago_id.journal_id.sudo().write({'update_posted':True})
+                if not pago.pago_id.sudo().journal_id.update_posted:
+                    pago.pago_id.sudo().journal_id.write({'update_posted':True})
                 pago.pago_id.sudo().cancel()
                 pago.pago_id.sudo().action_draft()
                 pago.pago_id.sudo().write({'invoice_ids': [(4,factura.id)]})
@@ -277,10 +277,10 @@ class MotgamaWizardRecaudo(models.TransientModel):
             payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No fue posible sentar el registro del pago')
-            payment.post()
+            payment.sudo().post()
             for valores in valoresPagos:
                 if valores['mediopago'] == pago.mediopago.id and valores['valor'] == pago.valor:
-                    valores['pago_id'] = payment.id
+                    valores['pago_id'] = payment.sudo().id
         
         valoresRecaudo = {
             'movimiento_id': self.movimiento.id,

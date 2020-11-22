@@ -344,6 +344,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     @api.multi
     def button_inmotica(self):
         self.ensure_one()
+        if not self.env.ref('motgama.motgama_inmotica') in self.env.user.permisos:
+            raise Warning('No tiene permitido realizar esta acción')
         if self.inmotica:
             valoresInmotica = {
                 'habitacion': self.codigo,
@@ -743,7 +745,7 @@ class MotgamaBonos(models.Model):
     multiple = fields.Boolean(string='Múltiple',default=False)
     maximo_uso = fields.Integer(string='Cantidad máxima de usos (0 = ilimitado)', default=1)
     usos = fields.Integer(string='Usos hasta el momento',default=0)
-    validodesde = fields.Date(string='Válido Desde',default=fields.Date().today())
+    validodesde = fields.Date(string='Válido Desde',default=lambda self: fields.Date().today())
     validohasta = fields.Date(string='Válido Hasta',required=True)
     tipo = fields.Selection(string='Tipo de descuento',selection=[('valor','Valor en pesos'),('porcentaje','Valor porcentual')],default='porcentaje',required=True)
     descuentavalor = fields.Float(string='Valor de descuento',default=0.0)
@@ -796,7 +798,7 @@ class MotgamaConsumo(models.Model):
     llevaComanda = fields.Boolean(string='¿Lleva Comanda?',default=False)
     textoComanda = fields.Text(string='Comanda')
     comanda = fields.Many2one(string='Comanda asociada',comodel_name='motgama.comanda')
-    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='set null',required=True)
+    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',ondelete='set null')
     movimiento_id = fields.Many2one(string='Movimiento',comodel_name='motgama.movimiento',compute='_compute_movimiento',store=True)
     producto_id = fields.Many2one(string='Producto',comodel_name='product.template',ondelete='set null',required=True)
     cantidad = fields.Float(string='Cantidad',required=True)
@@ -948,6 +950,7 @@ class MotgamaReasignacion(models.Model):
     habitacion_nueva = fields.Many2one(string='Habitación nueva',comodel_name='motgama.flujohabitacion')
     descripcion = fields.Char(string='Observaciones')
     active = fields.Boolean(string='Activo?',default=True)
+    usuario_id = fields.Many2one(string="Usuario responsable",comodel_name="res.users")
 
 class MotgamaUtilidades(models.TransientModel):
     _name = 'motgama.utilidades'   # sobreescribe en cada habitacion el precio del tipo                    #P7.0.4R

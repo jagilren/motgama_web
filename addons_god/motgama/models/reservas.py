@@ -373,7 +373,7 @@ class MotgamaWizardDevolverAnticipo(models.TransientModel):
                 raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
             self.reserva.cliente_id.write({'property_account_receivable_id': cuenta.id})
         payment = self.env['account.payment'].sudo().create(valoresPayment)
-        payment.post()
+        payment.sudo().post()
         if paramAnticipos:
             self.reserva_id.cliente_id.write({'property_account_receivable_id':ant.id})
         
@@ -393,7 +393,7 @@ class MotgamaWizardDevolverAnticipo(models.TransientModel):
             'mediopago': self.mediopago.id,
             'valor': -1 * self.anticipo,
             'usuario_uid': self.env.user.id,
-            'pago_id': payment.id,
+            'pago_id': payment.sudo().id,
             'recaudo': recaudo.id
         }
         pago = self.env['motgama.pago'].create(valoresPago)
@@ -462,7 +462,7 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
             payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No se pudo registrar el pago')
-            payment.post()
+            payment.sudo().post()
             if paramAnticipos:
                 self.cliente.write({'property_account_receivable_id':ant.id})
             
@@ -472,7 +472,7 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
                 'mediopago': pago.mediopago.id,
                 'valor': pago.valor,
                 'usuario_uid': self.env.user.id,
-                'pago_id': payment.id
+                'pago_id': payment.sudo().id
             }
             valoresPagos.append(valores)
         

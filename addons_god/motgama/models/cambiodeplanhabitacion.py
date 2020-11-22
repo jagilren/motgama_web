@@ -5,6 +5,23 @@ from odoo import models, fields, api, _
 from odoo.exceptions import UserError,Warning, ValidationError
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 
+class MotgamaFlujoHabitacion(models.Model):
+    _inherit = 'motgama.flujohabitacion'
+
+    @api.multi
+    def cambio_plan(self):
+        if not self.env.ref('motgama.motgama_cambio_plan') in self.env.user.permisos:
+            raise Warning('No tiene permitido cambiar de plan, contacte al administrador')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': "motgama.wizardcambiodeplan",
+            'name': "Cambio de plan habitacion",
+            'view_type': "form",
+            'view_mode': "form",
+            'target': "new"
+        }
+
 class MotgamaCambioPlan(models.Model):
     _name = 'motgama.cambioplan'
     _description = 'Registro de cambio de plan de habitación'
@@ -14,6 +31,7 @@ class MotgamaCambioPlan(models.Model):
     habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion')
     plan_anterior = fields.Selection(string='Plan anterior',selection=[('OO','Ocasional'),('OA','Amanecida')])
     plan_nuevo = fields.Selection(string='Plan nuevo',selection=[('OO','Ocasional'),('OA','Amanecida')])
+    usuario_id = fields.Many2one(string="Usuario responsable",comodel_name="res.users")
 
 class MotgamaWizardCambiodeplan(models.TransientModel):
     _inherit = 'motgama.wizardcambiodeplan'
@@ -73,7 +91,8 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                         'movimiento': movimiento.id,
                         'habitacion': flujo.id,
                         'plan_anterior': 'OO',
-                        'plan_nuevo': 'OA'
+                        'plan_nuevo': 'OA',
+                        'usuario_id': self.env.user.id
                     }
             else:
                 if not (flagInicioTz.time() <= fechaActualTz.time() <= flagFinInicioTz.time()): # OJO No incluye los extremos
@@ -85,7 +104,8 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                         'movimiento': movimiento.id,
                         'habitacion': flujo.id,
                         'plan_anterior': 'OO',
-                        'plan_nuevo': 'OA'
+                        'plan_nuevo': 'OA',
+                        'usuario_id': self.env.user.id
                     }
             
             valoresNotifica = {
@@ -103,7 +123,8 @@ class MotgamaWizardCambiodeplan(models.TransientModel):
                 'movimiento': movimiento.id,
                 'habitacion': flujo.id,
                 'plan_anterior': 'OA',
-                'plan_nuevo': 'OO'
+                'plan_nuevo': 'OO',
+                'usuario_id': self.env.user.id
             }
 
             valoresNotifica = {
