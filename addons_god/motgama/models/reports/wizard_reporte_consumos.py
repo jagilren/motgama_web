@@ -103,7 +103,7 @@ class PDFReporteConsumos(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['motgama.reporteconsumos'].sudo().browse(docids)
+        docs = self.env['motgama.reporteconsumos'].browse(docids)
 
         productos = {}
         categorias = {}
@@ -136,6 +136,7 @@ class PDFReporteConsumos(models.AbstractModel):
             
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
+            'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
             'productos': productos,
             'categorias': categorias,

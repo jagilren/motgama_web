@@ -114,6 +114,7 @@ class PDFReporteVentas(models.AbstractModel):
 
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
+            'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
             'count': len(docs),
             'total': "$ {:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.'),

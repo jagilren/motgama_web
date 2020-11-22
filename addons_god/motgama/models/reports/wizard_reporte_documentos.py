@@ -16,17 +16,17 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
         self.ensure_one()
 
         if self.tipo_reporte == 'fecha':
-            docs = self.env['sale.order'].sudo().search(['|','&',('movimiento','!=',False),'&',('liquidafecha','!=',False),'&',('liquidafecha','>',self.fecha_inicial),('liquidafecha','<',self.fecha_final),'&',('create_date','<',self.fecha_final),('create_date','>',self.fecha_inicial)])
+            docs = self.env['sale.order'].search(['|','&',('movimiento','!=',False),'&',('liquidafecha','!=',False),'&',('liquidafecha','>',self.fecha_inicial),('liquidafecha','<',self.fecha_final),'&',('create_date','<',self.fecha_final),('create_date','>',self.fecha_inicial)])
         elif self.tipo_reporte == 'documento':
             id_inicial = self.doc_inicial.id
             id_final = self.doc_final.id
-            docs = self.env['sale.order'].sudo().search([('id','<=',id_final),('id','>=',id_inicial)])
+            docs = self.env['sale.order'].search([('id','<=',id_final),('id','>=',id_inicial)])
         else:
             raise Warning('Seleccione un tipo de reporte')
         if not docs:
             raise Warning('No hay documentos que mostrar')
 
-        reporte = self.env['motgama.reportedocumentos'].sudo().search([])
+        reporte = self.env['motgama.reportedocumentos'].search([])
         for doc in reporte:
             doc.unlink()
         
@@ -58,7 +58,7 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
             else:
                 valores.update({'valor':0})
             
-            nuevo = self.env['motgama.reportedocumentos'].sudo().create(valores)
+            nuevo = self.env['motgama.reportedocumentos'].create(valores)
             if not nuevo:
                 raise Warning('No fue posible generar el informe')
         
@@ -88,7 +88,7 @@ class PDFReporteDocumentos(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['motgama.reportedocumentos'].sudo().browse(docids)
+        docs = self.env['motgama.reportedocumentos'].browse(docids)
         count = len(docs)
 
         total = 0
@@ -97,6 +97,7 @@ class PDFReporteDocumentos(models.AbstractModel):
         
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
+            'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
             'count': count,
             'total': "{:0,.1f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')

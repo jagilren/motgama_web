@@ -22,13 +22,13 @@
                     <img t-if="company.logo" t-att-src="image_data_uri(company.logo)" style="max-height: 45px;" alt="Logo"/>
                 </div>
                 <div class="col-3 mb4">
-                    <h6>Companía</h6>
-                    <h6>Nit</h6>
-                    <h6>Sucursal</h6>
+                    <h6><span t-field="company.name"/></h6>
+                    <h6>Nit: <span t-field="company.vat"/></h6>
+                    <h6><span t-field="sucursal.nombre"/></h6>
                 </div>
                 <div class="col-3 mb4">
-                    <h6 class="text-right">Dirección</h6>
-                    <h6 class="text-right">Teléfono</h6>
+                    <h6 class="text-right"><span t-field="company.street"/></h6>
+                    <h6 class="text-right"><span t-field="company.phone"/></h6>
                 </div>
             </div>
             <div class="row zero_min_height">

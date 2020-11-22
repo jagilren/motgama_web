@@ -34,11 +34,11 @@ class WizardReporteRecaudos(models.TransientModel):
             raise Warning('Seleccione algo para incluir en el reporte')
         domain.append(('tipo_recaudo','in',incluye))
 
-        recaudos = self.env['motgama.recaudo'].sudo().search(domain)
+        recaudos = self.env['motgama.recaudo'].search(domain)
         if not recaudos:
             raise Warning('No hay recaudos que mostrar')
 
-        reporte = self.env['motgama.reporterecaudos'].sudo().search([])
+        reporte = self.env['motgama.reporterecaudos'].search([])
         if reporte:
             for recaudo in reporte:
                 recaudo.unlink()
@@ -49,9 +49,9 @@ class WizardReporteRecaudos(models.TransientModel):
                     if recaudo.habitacion.recepcion.id != self.recepcion.id:
                         continue
                 else:
-                    invoice = self.env['account.invoice'].sudo().search([('recaudo','=',recaudo.id)],limit=1)
+                    invoice = self.env['account.invoice'].search([('recaudo','=',recaudo.id)],limit=1)
                     if invoice:
-                        factura = self.env['motgama.facturaconsumos'].sudo().search([('factura_id','=',invoice.id)],limit=1)
+                        factura = self.env['motgama.facturaconsumos'].search([('factura_id','=',invoice.id)],limit=1)
                         if factura:
                             if factura.recepcion.id != self.recepcion.id:
                                 continue
@@ -76,16 +76,16 @@ class WizardReporteRecaudos(models.TransientModel):
                 elif self.recepcion:
                     valores.update({'recepcion':self.recepcion.nombre})
                 else:
-                    invoice = self.env['account.invoice'].sudo().search([('recaudo','=',recaudo.id)],limit=1)
+                    invoice = self.env['account.invoice'].search([('recaudo','=',recaudo.id)],limit=1)
                     if invoice:
-                        factura = self.env['motgama.facturaconsumos'].sudo().search([('factura_id','=',invoice.id),('active','=',False)],limit=1)
+                        factura = self.env['motgama.facturaconsumos'].search([('factura_id','=',invoice.id),('active','=',False)],limit=1)
                         if factura:
                             valores.update({'recepcion':factura.recepcion.nombre})
-                nuevo = self.env['motgama.reporterecaudos'].sudo().create(valores)
+                nuevo = self.env['motgama.reporterecaudos'].create(valores)
                 if not nuevo:
                     raise Warning('No se pudo generar el reporte')
         
-        reporte = self.env['motgama.reporterecaudos'].sudo().search([])
+        reporte = self.env['motgama.reporterecaudos'].search([])
         if not reporte:
             raise Warning('No hay recaudos que mostrar')
 
@@ -117,7 +117,7 @@ class PDFReporteRecaudos(models.AbstractModel):
 
     @api.model
     def _get_report_values(self,docids,data=None):
-        docs = self.env['motgama.reporterecaudos'].sudo().browse(docids)
+        docs = self.env['motgama.reporterecaudos'].browse(docids)
 
         tiposRecaudo = {}
         mediosPago = {}
@@ -157,6 +157,7 @@ class PDFReporteRecaudos(models.AbstractModel):
         
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
+            'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
             'tipos': tiposRecaudo,
             'medios': mediosPago,

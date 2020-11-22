@@ -1,0 +1,9 @@
+<odoo>
+    <record id="view_reporte_anomalias" model="ir.ui.view">
+        <field name="name">Reporte de Anomalías</field>
+        <field name="model">account.invoice</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="number"/>
+                <field name="create_date"/>
+                <field name=""

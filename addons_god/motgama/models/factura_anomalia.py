@@ -6,6 +6,7 @@ class Invoice(models.Model):
 
     factura_anomalia = fields.Boolean(string="Factura con anomalía")
     motivo_anomalia = fields.Char(string="Motivo de la anomalía")
+    fecha_anomalia = fields.Datetime(string="Fecha y hora de la anomalía")
 
     @api.multi
     def registro_anomalia(self):
@@ -35,5 +36,6 @@ class WizardAnomalia(models.TransientModel):
         self.ensure_one()
         self.factura_id.sudo().write({
             'factura_anomalia': True,
-            'motivo_anomalia': self.motivo_anomalia
+            'motivo_anomalia': self.motivo_anomalia,
+            'fecha_anomalia': fields.Datetime().now()
         })
