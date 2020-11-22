@@ -2,17 +2,11 @@ El reporte de ventas veo que sufrió modificaciones, pues ya no discrimina los i
 Fiscal de la facturación.
     Agregar encabezados a los reportes
 
-Al recaudar factura no asociada a hospedaje con prenda se genera error y la factura queda con un total de $0.00 como se muestra en la imagen adjunta.
-    Revisar recaudo con prenda en factura sin hospedaje
-
 Debe existir una vista para parametrizar los prefijos y datos iniciales de las columnas "COMPROBANTE", "DOCUMENTO", Y "REFERENCIA" en el Interfaz Contable
     COMPROBANTE: Parámetros, DOCUMENTO: Secuencia Documento de Interfaz Contable en Secuencias, REFERENCIA: Como la quiere?
 
 Hacer plantilla de tipos de transferencia con Jorge
     Hacer
-
-Los registros de Ingresos a caja  e Impuestos, en la Interfaz contable no llevan C.COSTO. ¿Dónde se puede parameterizar esto?
-    CCOSTO: Agregar boolean en las cuentas
 
 Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
     Revisar
@@ -21,8 +15,6 @@ Falta Agregar el parámetro PERSADIC en la plantilla de carga de datos.
 Falta Agregar el parámetro HOSPEDN en la plantilla de carga de datos.
     Modificar plantilla?
 
-Movimientos: Que por defecto filtre los active=False
-    Agregar
 
 Con el perfil de recepcionista aparece error al intentar agregar consumo negativo
     La recepción necesita permiso de Ventas: Mostrar todos los documentos
@@ -85,4 +77,13 @@ Al habilitar habitación reasignada archiva el movimiento
     Probar
 
 Falta NIT de la Empresa en Tirilla de Facturas
+    Probar
+
+Los registros de Ingresos a caja e Impuestos, en la Interfaz contable no llevan C.COSTO. ¿Dónde se puede parameterizar esto?
+    Probar
+
+Al recaudar factura no asociada a hospedaje con prenda se genera error y la factura queda con un total de $0.00 como se muestra en la imagen adjunta.
+    Probar
+
+Movimientos: Que por defecto filtre los active=False
     Probar

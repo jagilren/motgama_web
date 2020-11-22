@@ -388,6 +388,7 @@
         name="Movimiento"
         res_model="motgama.movimiento"
         view_mode="tree,form"
+        context="{'search_default_false':1}"
         />
     <!-- Item de menu                                                                                                       P7.0.4R -->
     <menuitem id="menu_motgama_movimiento_form"

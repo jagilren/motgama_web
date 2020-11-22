@@ -13,7 +13,18 @@
                 <field name="asignatipo"/>
             </tree>
         </field>
-    </record> 
+    </record>
+
+    <record id="search_view_movimiento" model="ir.ui.view">
+        <field name="name">Movimiento Search</field>
+        <field name="model">motgama.movimiento</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="habitacion_id"/>
+                <filter string="Movimientos finalizados" name="false" domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
 
     <record id="form_view_movimiento" model="ir.ui.view">
         <field name="name">Movimiento Form</field>

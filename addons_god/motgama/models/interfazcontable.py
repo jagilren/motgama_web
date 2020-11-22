@@ -5,6 +5,11 @@ import csv
 import base64
 from datetime import datetime, timedelta
 
+class Account(models.Model):
+    _inherit = 'account.account'
+
+    ccosto = fields.Boolean(string="Lleva Centro de Costo en Interfaz",default=False)
+
 class MotgamaWizardInterfazContable(models.TransientModel):
     _name = 'motgama.wizard.interfazcontable'
     _description = 'Wizard Interfaz Contable'
@@ -124,7 +129,7 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'tipo': 1 if saldos[cuenta][asociado] >= 0 else 2,
                     'valor': abs(saldos[cuenta][asociado]),
                     'base': 0,
-                    'sucursal': sucursal
+                    'sucursal': sucursal if cuenta.ccosto else ''
                 }
                 nuevo = self.env['motgama.interfazcontable'].create(valores)
                 if not nuevo:
