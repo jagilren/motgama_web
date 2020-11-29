@@ -5,10 +5,12 @@
         <field name="arch" type="xml">
             <form create="false" edit="false">
                 <header>
+                    <field name="estado" invisible="1"/>
                     <field name='active' invisible='1'/>
                     <field name="modificado" invisible="1"/>
-                    <button name='anular' type='object' string='Anular' class='btn' attrs="{'invisible':[('active','=',False)]}"/>
-                    <button name='editar' type="object" string="Modificar recaudo" class="btn" attrs="{'invisible':[('|'),('active','=',True),('modificado','=',True)]}"/>
+                    <button name='anular' type='object' string='Anular' class='btn' attrs="{'invisible':[('estado','=','anulado')]}"
+                        confirm="¿Está seguro que desea anular este recaudo?"/>
+                    <button name='editar' type="object" string="Modificar recaudo" class="btn" attrs="{'invisible':['|',('estado','!=','anulado'),('modificado','=',True)]}"/>
                 </header>
                 <sheet>
                     <group>

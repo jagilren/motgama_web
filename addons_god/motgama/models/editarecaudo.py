@@ -11,10 +11,7 @@ class MotgamaRecaudo(models.Model):
         for pago in self.pagos:
             pago.pago_id.cancel()
 
-        self.sudo().write({
-            'active': False,
-            'estado': 'anulado'
-        })
+        self.sudo().write({'estado': 'anulado'})
     
     @api.multi
     def editar(self):
@@ -83,7 +80,7 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
                     restante -= pago.valor
                 record.valor_restante = restante
 
-    @api.model
+    @api.multi
     def recaudar(self):
         self.ensure_one()
 
@@ -99,13 +96,13 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
         if prenda > 0 or abonos > 0:
             prenda_new = 0.0
             abonos_new = 0.0
-            for pago in self.recaudo_ant_id.pagos:
+            for pago in self.pago_ids:
                 if pago.mediopago_id.tipo == 'prenda':
                     prenda_new = pago.valor
                 elif pago.mediopago_id.tipo == 'abono':
                     abonos_new += pago.valor
             if abonos != abonos_new or prenda_new != prenda:
-                raise Warning('Los pagos de prenda y abono no pueden ser modificados')
+                raise Warning('Los pagos de prenda y abonos no pueden ser modificados')
         
         if self.valor_restante >= 0.01:
             raise Warning('La cuenta no ha sido saldada')

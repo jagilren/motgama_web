@@ -109,5 +109,6 @@
         'reports/reporte_documentos.xml',
         'reports/reporte_hospedaje.xml',
         'reports/reporte_recaudo.xml',
-        'reports/reporte_ventas.xml']
+        'reports/reporte_ventas.xml',
+        'reports/reporte_anomalias.xml']
 }

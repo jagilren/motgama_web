@@ -1,15 +1,15 @@
-El reporte de ventas veo que sufrió modificaciones, pues ya no discrimina los impuesto y los encabezados no aparece la información Tributaria y 
-Fiscal de la facturación.
-    Agregar encabezados a los reportes
-
-Debe existir una vista para parametrizar los prefijos y datos iniciales de las columnas "COMPROBANTE", "DOCUMENTO", Y "REFERENCIA" en el Interfaz Contable
-    COMPROBANTE: Parámetros, DOCUMENTO: Secuencia Documento de Interfaz Contable en Secuencias, REFERENCIA: Como la quiere?
-
-Hacer plantilla de tipos de transferencia con Jorge
+Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
     Hacer
 
 Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
     Revisar
+
+Debe existir una vista para parametrizar los prefijos y datos iniciales de las columnas "COMPROBANTE", "DOCUMENTO", Y "REFERENCIA" en el Interfaz Contable
+    COMPROBANTE: Parámetros, DOCUMENTO: Secuencia Documento de Interfaz Contable en Secuencias
+    REFERENCIA: Como la quiere?
+
+Hacer plantilla de tipos de transferencia con Jorge
+    Hacer
 
 Falta Agregar el parámetro PERSADIC en la plantilla de carga de datos.
 Falta Agregar el parámetro HOSPEDN en la plantilla de carga de datos.
@@ -87,3 +87,8 @@ Al recaudar factura no asociada a hospedaje con prenda se genera error y la fact
 
 Movimientos: Que por defecto filtre los active=False
     Probar
+
+El reporte de ventas veo que sufrió modificaciones, pues ya no discrimina los impuesto y los encabezados no aparece la información Tributaria y 
+Fiscal de la facturación.
+    Agregar encabezados al reporte
+    Discriminar los Impuestos

@@ -1,9 +1,76 @@
 <odoo>
+    <record id="wizard_reporte_anomalias" model="ir.ui.view">
+        <field name="name">Reporte de Anomalías</field>
+        <field name="model">motgama.wizard.reporteanomalias</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="tipo" widget="radio"/>
+                    <field name="fecha_inicial"/>
+                    <field name="fecha_final"/>
+                </group>
+                <footer>
+                    <button name="get_report" type="object" string="Generar reporte" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <record id="view_reporte_anomalias" model="ir.ui.view">
         <field name="name">Reporte de Anomalías</field>
-        <field name="model">account.invoice</field>
+        <field name="model">motgama.reporteanomalias</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="number"/>
-                <field name="create_date"/>
-                <field name=""
+                <field name="numero"/>
+                <field name="fecha_factura"/>
+                <field name="fecha_anomalia"/>
+                <field name="motivo_anomalia"/>
+            </tree>
+        </field>
+    </record>
+
+    <report id="reporte_anomalias"
+        model="motgama.reporteanomalias"
+        string="Reporte de Anomalías"
+        report_type="qweb-pdf"
+        name="motgama.plantilla_reporte_anomalias"/>
+
+    <template id="plantilla_reporte_anomalias">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <h5>Reporte de anomalías desde <span t-esc="fecha_inicial"/> hasta <span t-esc="fecha_final"/></h5>
+                    <table>
+                        <thead>
+                            <th style="width: 25%" class="text-center">Número</th>
+                            <th style="width: 25%" class="text-center">Fecha de factura</th>
+                            <th style="width: 25%" class="text-center">Fecha de anomalía</th>
+                            <th style="width: 25%" class="text-center">Motivo de anomalía</th>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td class="text-center"><span t-field="doc.numero"/></td>
+                                    <td class="text-center"><span t-field="doc.fecha_factura"/></td>
+                                    <td class="text-center"><span t-field="doc.fecha_anomalia"/></td>
+                                    <td class="text-center"><span t-field="doc.motivo_anomalia"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <act_window id="action_reporte_anomalias_wizard"
+        name="Reporte de anomalías"
+        res_model="motgama.wizard.reporteanomalias"
+        view_mode="form"
+        target="new"/>
+
+    <menuitem action="action_reporte_anomalias_wizard"
+        id="menu_reporte_anomalias_wizard"
+        parent="menu_motgama_reportes"/>
+</odoo>

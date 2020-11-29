@@ -5,9 +5,9 @@
     <field name="name">Consumos</field>
     <field name="model">motgama.consumo</field>
     <field name="limit">20</field>
-    <field name="arch" type="xml">   
+    <field name="arch" type="xml">
       <tree string="Consumo" editable="bottom" default_order='create_date desc'>
-        <field name="recepcion" string="recepcion" invisible="1"/>
+        <field name="recepcion" invisible="1"/>
         <field name="llevaComanda" invisible="1"/>
         <field name="permitecambiarvalor" invisible="1"/>
         <field name="valorUnitario" invisible="1"/>
@@ -50,7 +50,9 @@
                   <field name="producto_id" domain="[('es_hospedaje','=',False),('sale_ok','=',True)]" options="{'no_create':True}"/>
                 </group>
                 <group>
-                  <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
+                  <field name="cambia_recepcion" invisible="1"/>
+                  <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}" attrs="{'readonly':[('cambia_recepcion','=',False)]}"/>
+                  <field name="lugar_id" invisible="1"/>
                 </group>
               </group>
               <group>
@@ -61,7 +63,9 @@
                     <field name="producto_id" invisible="1"/>
                     <field name="producto_id_save"/>
                     <field name="cantidad"/>
-                    <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}"/>
+                    <field name="cambia_recepcion" invisible="1"/>
+                    <field name="lugar_id" domain="[('permite_consumo','=',True)]" options="{'no_create':True}" attrs="{'readonly':[('cambia_recepcion','=',False)]}"/>
+                    <field name="lugar_id" invisible="1"/>
                     <field name="vlrUnitario" invisible="1"/>
                     <field name="vlrUnitario_save" attrs="{'readonly':[('cambiar_valor','=',False)]}"/>
                     <field name="comanda" attrs="{'readonly':[('lleva_comanda','=',False)]}"/>

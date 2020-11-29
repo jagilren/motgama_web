@@ -284,8 +284,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     ultmovimiento = fields.Many2one(string='Ultimo movimiento',comodel_name='motgama.movimiento',ondelete='set null')
     recepcion = fields.Many2one(string='Recepcion',comodel_name='motgama.recepcion',ondelete='restrict')
     active = fields.Boolean(string='Activo?',default=True)
-    tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo')
-    tema = fields.Many2one(string='Tema',comodel_name='motgama.tema')
+    tipo = fields.Many2one(string='Tipo de Habitación',comodel_name='motgama.tipo',ondelete="set null")
+    tema = fields.Many2one(string='Tema',comodel_name='motgama.tema', ondelete="set null")
     # Liquidación
     orden_venta = fields.Many2one(string='Estado de cuenta',comodel_name='sale.order',ondelete='set null')
     # Consumos
@@ -305,6 +305,35 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     lq = fields.Boolean(default=False)
     inmotica = fields.Boolean(default=False)
     observacion = fields.Text(string='Observaciones',default='')
+
+    @api.model
+    def get_view(self):
+        if self.env.ref('motgama.motgama_todas_recepciones') in self.env.user.permisos:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'motgama.flujohabitacion',
+                'name': 'Habitaciones: Todas las recepciones',
+                'view_mode': 'kanban,form',
+                'limit': 100
+            }
+        if not self.env.user.recepcion_id:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'motgama.utilidades',
+                'name': 'Utilidades',
+                'view_type': 'form',
+                'view_mode': 'form'
+            }
+        else:
+            return {
+                'type': 'ir.actions.act_window',
+                'res_model': 'motgama.flujohabitacion',
+                'name': 'Habitaciones ' + self.env.user.recepcion_id.nombre,
+                'view_mode': 'kanban,form',
+                'limit': 100,
+                'domain': [('recepcion','=',self.env.user.recepcion_id.id)]
+            }
+        return action
 
     #Función para abrir la información de la habitación cuando el usuario le de click
     @api.multi 
@@ -633,7 +662,7 @@ class MotgamaReservas(models.Model):#ok
     _description = 'Reservas'
     _rec_name = 'cod'
     cod = fields.Char(string='Código')
-    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',domain=[('customer','=',True),('vat','!=','1')],required=True)
+    cliente_id = fields.Many2one(comodel_name='res.partner', string='Cliente',domain=[('customer','=',True),'|',('vat','!=','1'),('vat','=',False)],required=True)
     fecha = fields.Datetime(string='Fecha de reserva',required=True)
     condecoracion = fields.Boolean(string='¿Con decoración?')
     notadecoracion = fields.Text(string='Nota para la decoración')
@@ -695,6 +724,8 @@ class MotgamaObjetosPrestados(models.Model):
 
     @api.model
     def create(self, values):
+        if self.env.ref('motgama.motgama_crea_prestados') not in self.env.user.permisos:
+            raise Warning('No está autorizado para prestar objetos')
         record = super().create(values)
         record.esNuevo = False
         return record

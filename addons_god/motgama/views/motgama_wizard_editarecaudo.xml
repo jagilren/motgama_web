@@ -19,11 +19,11 @@
                     </group>
                     <group>
                         <group>
-                            <field name="total_a_pagar" invisible="1"/>
-                            <field name="total_a_pagar" readonly="1"/>
+                            <field name="valor_restante"/>
                         </group>
                         <group>
-                            <field name="valor_restante"/>
+                            <field name="total_a_pagar" invisible="1"/>
+                            <field name="total_a_pagar" readonly="1"/>
                         </group>
                     </group>
                     <group>

@@ -256,6 +256,7 @@ class MotgamaWizardConsumos(models.TransientModel):
     habitacion_id = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',default=lambda self: self._get_habitacion())
     producto_id = fields.Many2one(string='Producto (Cod. Barras, Nombre, Código)',comodel_name='product.template')
     lugar_id = fields.Many2one(string='Recepción',comodel_name='stock.location')
+    cambia_recepcion = fields.Boolean(string="Cambia Recepción",default=lambda self: self._get_cambia_recepcion())
     linea_ids = fields.Many2many(string='Consumos',comodel_name='motgama.wizard.consumos.line')
     total_prods = fields.Integer(string='Total items',compute='_compute_items')
     total_consumos = fields.Float(string='Total consumos',compute='_compute_total')
@@ -307,6 +308,14 @@ class MotgamaWizardConsumos(models.TransientModel):
                 record.linea_ids = [(0,0,valores)]
                 record.producto_id = None
     
+    @api.model
+    def _get_cambia_recepcion(self):
+        try:
+            permiso = self.env.ref('motgama.motgama_consumo_recepcion') in self.env.user.permisos
+            return permiso
+        except ValueError:
+            return False 
+
     @api.depends('linea_ids.cantidad')
     def _compute_items(self):
         for record in self:
@@ -358,12 +367,18 @@ class MotgamaLineaConsumos(models.TransientModel):
     lugar_id = fields.Many2one(string='Recepción',comodel_name='stock.location')
     vlrUnitario = fields.Float(string='Valor Unitario')
     vlrUnitario_save = fields.Float(string='Valor Unitario')
+    cambia_recepcion = fields.Boolean(string="Cambia recepción",compute="_compute_cambia_recepcion")
     cantidad = fields.Integer(string='Cantidad')
     vlrSubtotal = fields.Float(string='Subtotal',compute='_compute_subtotal',store=True)
     vlrSubtotal_save = fields.Float(string='Subtotal',compute='_vlrSubtotal_save',store=True)
     cambiar_valor = fields.Boolean(string='Puede cambiar valor',default=False)
     lleva_comanda = fields.Boolean(string='Lleva comanda',default=False)
     comanda = fields.Text(string='Comanda',default='')
+
+    @api.depends()
+    def _compute_cambia_recepcion(self):
+        for record in self:
+            self.cambia_recepcion = self.env.ref('motgama.motgama_consumo_recepcion') in self.env.user.permisos
 
     @api.depends('vlrUnitario_save','cantidad')
     def _compute_subtotal(self):

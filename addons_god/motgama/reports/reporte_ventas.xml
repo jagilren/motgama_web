@@ -3,11 +3,124 @@
         model="motgama.reporteventas"
         string="Reporte de Ventas"
         report_type="qweb-pdf"
-        name="motgama.reporteventas"
-        paperformat="motgama.formato_reporte"/>
+        name="motgama.reporteventas"/>
 
     <template id="reporteventas">
         <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <t t-if="fecha_inicial and fecha_final">
+                        <h5>Reporte de ventas desde <span t-esc="fecha_inicial"/> hasta <span t-esc="fecha_final"/></h5>
+                    </t>
+                    <t t-elif="doc_inicial and doc_final">
+                        <h5>Reporte de ventas desde <span t-esc="doc_inicial"/> hasta <span t-esc="doc_final"/></h5>
+                    </t>
+                    <table style="width: 100%">
+                        <thead>
+                            <th class="text-center" style="width: 15%">Fecha</th>
+                            <th class="text-center" style="width: 14%">Factura</th>
+                            <th class="text-center" style="width: 14%">Cliente</th>
+                            <th class="text-center" style="width: 14%">Habitación</th>
+                            <th class="text-center" style="width: 14%">Valor Total</th>
+                            <th class="text-center" style="width: 15%">Medio de pago</th>
+                            <th class="text-center" style="width: 14%">Usuario</th>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="docs" t-as="doc">
+                                <tr>
+                                    <td class="text-center">
+                                        <span t-field="doc.fecha"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="doc.fac"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="doc.cliente"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="doc.habitacion"/>
+                                    </td>
+                                    <td class="text-center">
+                                        $ <span t-field="doc.valor"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="doc.medio_pago"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="doc.usuario"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <h5>Resumen por productos</h5>
+                    <table style="width: 100%">
+                        <thead>
+                            <th>Categoría de producto</th>
+                            <th>Total ventas</th>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="prods" t-as="prod">
+                                <tr>
+                                    <td class="text-center">
+                                        <span t-esc="prod.name"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="prods[prod]"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <h5>Resumen por impuestos</h5>
+                    <table style="width: 100%">
+                        <thead>
+                            <th>Impuesto</th>
+                            <th>Total impuesto</th>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="imps" t-as="imp">
+                                <tr>
+                                    <td class="text-center">
+                                        <span t-esc="imp.display_name"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="imps[imp]"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <h5>Resumen por medios de pago</h5>
+                    <table style="width: 100%">
+                        <thead>
+                            <th>Medio de pago</th>
+                            <th>Total recaudado</th>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="medios" t-as="medio">
+                                <tr>
+                                    <td class="text-center">
+                                        <span t-esc="medio.nombre"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="medios[medio]"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <br/>
+                    <p><span class="font-weight-bold">Total facturas:</span> <span t-esc="count"/><br/>
+                    <span class="font-weight-bold">Total de ventas:</span> $ <span t-esc="total"/></p>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <!--
             <div class="header" style="border-bottom: 2px solid black">
                 <h3 class="text-center">Reporte de Ventas</h3>
             </div>
@@ -109,6 +222,5 @@
                     </div>
                 </div>
             </div>
-        </t>
-    </template>
+    -->
 </odoo>

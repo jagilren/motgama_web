@@ -127,6 +127,7 @@
                                     <field name="factura"/>
                                     <field name="factura_ids">
                                         <tree>
+                                            <field name="state" invisible="1"/>
                                             <field name="partner_id" string="Cliente"/>
                                             <field name="date_invoice"/>
                                             <field name="number"/>
@@ -180,7 +181,7 @@
                         </group>
                     </group>
                     <group name="recaudos" string="Recaudos">
-                        <field name="recaudo_ids" domain="[('active','in',[True,False])]"/>
+                        <field name="recaudo_ids" domain="['|',('active','=',False),('active','=',True)]"/>
                     </group>
                 </sheet>
             </form>

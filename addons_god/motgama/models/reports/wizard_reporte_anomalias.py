@@ -22,11 +22,54 @@ class MotgamaWizardReporteAnomalias(models.TransientModel):
         else:
             raise Warning('Debe seleccionar un tipo de reporte')
 
+        facturas = self.env['account.invoice'].search(domain)
+        if not facturas:
+            raise Warning('No hay facturas con anomalía dentro del rango de fechas especificado')
+
+        reporte = self.env['motgama.reporteanomalias'].search([])
+        for o in reporte:
+            o.unlink()
+        
+        for factura in facturas:
+            valores = {
+                'fecha_inicial': self.fecha_inicial,
+                'fecha_final': self.fecha_final,
+                'numero': factura.number,
+                'fecha_factura': factura.date_invoice,
+                'fecha_anomalia': factura.fecha_anomalia,
+                'motivo_anomalia': factura.motivo_anomalia
+            }
+            reporte = self.env['motgama.reporteanomalias'].create(valores)
+            if not reporte:
+                raise Warning('No fue posible generar el reporte')
+
         return {
             'type': 'ir.actions.act_window',
             'name': 'Reporte de anomalías',
-            'res_model': 'account.invoice',
-            'view_mode': 'tree,form',
-            'views': [['motgama.view_reporte_anomalias','tree'],['account.invoice_form','form']],
-            'domain': domain
+            'res_model': 'motgama.reporteanomalias',
+            'view_mode': 'tree'
+        }
+
+class MotgamaReporteAnomalias(models.TransientModel):
+    _name = 'motgama.reporteanomalias'
+    _description = 'Reporte de Anomalías'
+
+    fecha_inicial = fields.Datetime(string="Fecha inicial")
+    fecha_final = fields.Datetime(string="Fecha final")
+    numero = fields.Char(string="Número")
+    fecha_factura = fields.Date(string="Fecha de factura")
+    fecha_anomalia = fields.Datetime(string="Fecha de anomalía")
+    motivo_anomalia = fields.Text(string="Motivo de anomalía")
+
+class PDFReporteAnomalias(models.AbstractModel):
+    _name = 'report.motgama.plantilla_reporte_anomalias'
+
+    @api.model
+    def _get_report_values(self,docids,data=None):
+        docs = self.env['motgama.reporteanomalias'].browse(docids)
+
+        return {
+            'docs': docs,
+            'fecha_inicial': docs[0].fecha_inicial,
+            'fecha_final': docs[0].fecha_final
         }

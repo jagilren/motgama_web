@@ -42,9 +42,36 @@ class WizardReporteVentas(models.TransientModel):
                 'valor': factura.amount_total,
                 'usuario': factura.user_id.name
             }
+            if self.tipo_reporte == 'fecha':
+                valores.update({
+                    'fecha_inicial': self.fecha_inicial,
+                    'fecha_final': self.fecha_final,
+                    'doc_inicial': False,
+                    'doc_final': False
+                })
+            elif self.tipo_reporte == 'documento':
+                valores.update({
+                    'doc_inicial': self.doc_inicial,
+                    'doc_final': self.doc_final,
+                    'fecha_inicial': False,
+                    'fecha_final': False
+                })
             medios = []
             for pago in factura.recaudo.pagos:
-                if pago.mediopago in medios:
+                if pago.mediopago.tipo == 'prenda' and factura.prenda_id and factura.prenda_id.recaudo:
+                    for pago1 in factura.prenda_id.recaudo.pagos:
+                        if pago1.mediopago not in medios:
+                            medios.append(pago1.mediopago)
+                elif pago.mediopago.tipo == 'abono' and factura.movimiento_id:
+                    for recaudo in factura.movimiento_id.recaudo_ids:
+                        if recaudo.estado == 'anulado' or recaudo == factura.recaudo:
+                            continue
+                        for pago2 in recaudo.pagos:
+                            if pago2.mediopago in ['prenda','abono']:
+                                continue
+                            if pago2.mediopago not in medios:
+                                medios.append(pago2.mediopago)
+                elif pago.mediopago in medios:
                     continue
                 else:
                     medios.append(pago.mediopago)
@@ -74,6 +101,11 @@ class MotgamaReporteVentas(models.TransientModel):
 
     factura = fields.Many2one(string='Factura',comodel_name='account.invoice')
 
+    fecha_inicial = fields.Datetime(string="Fecha inicial")
+    fecha_final = fields.Datetime(string="Fecha final")
+    doc_inicial = fields.Char(string='Factura inicial')
+    doc_final = fields.Char(string='Factura final')
+
     fecha = fields.Datetime(string='Fecha')
     fac = fields.Char(string='Factura')
     cliente = fields.Char(string='Cliente')
@@ -92,6 +124,7 @@ class PDFReporteVentas(models.AbstractModel):
         total = 0
         prods = {}
         medios = {}
+        imps = {}
         for doc in docs:
             total += doc.valor
 
@@ -102,22 +135,52 @@ class PDFReporteVentas(models.AbstractModel):
                     prods[linea.product_id.categ_id] = linea.price_unit * linea.quantity
 
             for pago in doc.factura.recaudo.pagos:
-                if pago.mediopago in medios:
+                if pago.mediopago.tipo == 'prenda' and doc.factura.prenda_id and doc.factura.prenda_id.recaudo:
+                    for pago1 in doc.factura.prenda_id.recaudo.pagos:
+                        if pago1.mediopago in medios:
+                            medios[pago1.mediopago] += pago1.valor
+                        else:
+                            medios[pago1.mediopago] = pago1.valor
+                elif pago.mediopago.tipo == 'abono' and doc.factura.movimiento_id:
+                    for recaudo in doc.factura.movimiento_id.recaudo_ids:
+                        if recaudo.estado == 'anulado' or recaudo == doc.factura.recaudo:
+                            continue
+                        for pago2 in recaudo.pagos:
+                            if pago2.mediopago in ['prenda','abono']:
+                                continue
+                            if pago2.mediopago in medios:
+                                medios[pago2.mediopago] += pago2.valor
+                            else:
+                                medios[pago2.mediopago] = pago2.valor
+                elif pago.mediopago in medios:
                     medios[pago.mediopago] += pago.valor
                 else:
                     medios[pago.mediopago] = pago.valor
+            
+            for linea_impuesto in doc.factura.tax_line_ids:
+                if linea_impuesto.tax_id in imps:
+                    imps[linea_impuesto.tax_id] += linea_impuesto.amount_total
+                else:
+                    imps[linea_impuesto.tax_id] = linea_impuesto.amount_total
 
         for prod in prods:
             prods[prod] = "$ {:0,.2f}".format(prods[prod]).replace(',','¿').replace('.',',').replace('¿','.')
         for medio in medios:
             medios[medio] = "$ {:0,.2f}".format(medios[medio]).replace(',','¿').replace('.',',').replace('¿','.')
+        for imp in imps:
+            imps[imp] = "$ {:0,.2f}".format(imps[imp]).replace(',','¿').replace('.',',').replace('¿','.')
 
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
             'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
             'count': len(docs),
-            'total': "$ {:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.'),
+            'total': "{:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.'),
             'prods': prods,
-            'medios': medios
+            'medios': medios,
+            'fecha_inicial': docs[0].fecha_inicial,
+            'fecha_final': docs[0].fecha_final,
+            'doc_inicial': docs[0].doc_inicial,
+            'doc_final': docs[0].doc_final,
+            'imps': imps
         }
