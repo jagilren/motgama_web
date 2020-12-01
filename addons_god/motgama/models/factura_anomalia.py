@@ -10,6 +10,9 @@ class Invoice(models.Model):
 
     @api.multi
     def registro_anomalia(self):
+        if self.env.ref('motgama.motgama_factura_anomalia') not in self.env.user.permisos:
+            raise Warning('No tiene permitido registrar anomalías')
+        
         return {
             'name': 'Registrar anomalía',
             'type': 'ir.actions.act_window',

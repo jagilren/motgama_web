@@ -109,6 +109,10 @@
             <field name="name">Puede generar facturas no asociadas a hospedaje</field>
             <field name="tipo">factura</field>
         </record>
+        <record id="motgama_factura_anomalia" model="motgama.permisos">
+            <field name="name">Puede registrar anomalía en facturas</field>
+            <field name="tipo">factura</field>
+        </record>
 
         <!-- Objetos olvidados -->
         <record id="motgama_entregar_olvidados" model="motgama.permiso">
