@@ -1,3 +1,33 @@
+Permiso para Crear-Editar-Eliminar Descuento
+    Crear permisos
+
+Crear...Permiso para crear reservas.  Permiso para Modificar reservas.  Permiso para Cancelar Reservas
+    Crear permisos
+
+Agregar permiso para Generar interfaz Contable por demanda (Actualmente oo aparece en Menú de recepción)
+    Agregar los permisos de los informes/reportes
+
+El encabezado de la Resolución DIAN no siempre es HABILITA, también puede ser AUTORIZA
+    Cambiar encabezado para que ellos lo pongan completo
+
+Hice un Descuento, recaudé correctamente descontando el descuento, sin embargo el reporte de recaudos aparece con el Total sin descuento.
+    Revisar reporte de recaudos al recaudar con descuento
+
+Porqué la opción de  Aplicar Descuento no se puede aplicar antes de liquidar una ocupación.  Se supone que si vamos a cobrarle al cliente con el Estado de cuenta debe tener ya el descuento aplicado.
+    Cambiar para que se pueda agregar el descuento con la habitación ocupada
+
+Donde se pueden parametrizar qué información sale al pie de página de la factura de venta impresa?
+    Mirar en Compañía
+
+Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  se genera un error.
+    Quitar recaudar factura y modificar el proceso de pago para que acepte recaudo
+
+Los abonos de los clientes deben generar un partida a la CAJA y la otra a una cuenta 28  de Abonos de Clientes y la está enviando a una cuenta 13 de Cuentas x Pagar
+    Revisar con mi papá
+
+Cuando un usuario puede ver las habitaciones de todas la recepciones las debe ver en en orden, primero las de la Recepción A y luego las de la Recepción  B.  (De lo contrario crea confusión)
+    Revisar el tema como sería mejor
+
 Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
     Hacer
 
@@ -92,3 +122,9 @@ El reporte de ventas veo que sufrió modificaciones, pues ya no discrimina los i
 Fiscal de la facturación.
     Agregar encabezados al reporte
     Discriminar los Impuestos
+
+Error al generar csv en Interfaz Contable "PermissionError: [Errno 13] Permission denied: '/home/usr/files/interfaz-2020-11-30 05:13:40.csv'"
+    Debes dar permisos completos a la carpeta donde se guarda la interfaz contable en el servidor (chmod 777)
+
+Donde encuentro el permiso "Technical Settings/Show Full Accounting Feature" para que las coordinadoras puedan anular recaudos y cambiar formas de pago?
+    Ajustes -> Activar modo desarrollador: Ajustes -> Usuarios -> Eliges el usuario -> Clic en Editar -> Activas "Mostrar características de contabilidad completas" -> Guardar
