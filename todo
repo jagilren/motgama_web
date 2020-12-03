@@ -1,7 +1,7 @@
 
 Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
     Hacer
-    
+
 Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  se genera un error.
     Modificar el proceso de pago para que genere recaudo
 
@@ -17,6 +17,7 @@ Organizar con Jorge lo de la referencia
 
 Hacer plantilla de tipos de transferencia con Jorge
     Hacer
+    
 
 Error al generar csv en Interfaz Contable "PermissionError: [Errno 13] Permission denied: '/home/usr/files/interfaz-2020-11-30 05:13:40.csv'"
     Debes dar permisos completos a la carpeta donde se guarda la interfaz contable en el servidor (chmod 777)
