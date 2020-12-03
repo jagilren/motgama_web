@@ -33,6 +33,9 @@
                         <field name="descbono" readonly="1"/>
                     </group>
                 </group>
+                <group attrs="{'invisible':[('desc','=',0.0)]}">
+                    <field name="desc" readonly="1"/>
+                </group>
                 <group>
                     <field name="abono_ids">
                         <tree>

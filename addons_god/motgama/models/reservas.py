@@ -7,6 +7,9 @@ class MotgamaReservas(models.Model):
 
     @api.model
     def create(self,values):
+        if self.env.ref('motgama.motgama_crea_reserva') not in self.env.user.permisos:
+            raise Warning('No tiene permitido crear reservas')
+
         record = super().create(values)
         record.esNueva = False
         record.cod = 'Reserva Nro. ' + str(record.id)
@@ -53,6 +56,9 @@ class MotgamaReservas(models.Model):
     
     @api.multi
     def button_modificar(self):
+        if self.env.ref('motgama.motgama_edita_reserva') not in self.env.user.permisos:
+            raise Warning('No tiene permitido modificar reservas')
+
         return {
             'name': 'Modificar reserva',
             'type': 'ir.actions.act_window',
@@ -65,6 +71,9 @@ class MotgamaReservas(models.Model):
 
     @api.multi
     def button_cancelar(self):
+        if self.env.ref('motgama.motgama_cancela_reserva') not in self.env.user.permisos:
+            raise Warning('No tiene permitido cancelar reservas')
+
         return {
             'name': 'Cancelar reserva',
             'type': 'ir.actions.act_window',

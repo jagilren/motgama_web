@@ -54,11 +54,12 @@
         </field>
     </record>
 
-    <act_window id="action_reporte_hospedaje_wizard"
-        name= "Reporte de hospedaje"
-        res_model="motgama.wizard.reportehospedaje"
-        view_mode="form"
-        target="new"/>
+    <record id="action_reporte_hospedaje_wizard" model="ir.actions.server">
+        <field name="name">Reporte de hospedaje</field>
+        <field name="model_id" ref="motgama.model_motgama_wizard_reportehospedaje"/>
+        <field name="state">code</field>
+        <field name="code">action = model.check_permiso()</field>
+    </record>
 
     <menuitem action="action_reporte_hospedaje_wizard"
         id="menu_reporte_hospedaje"

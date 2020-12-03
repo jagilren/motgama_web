@@ -13,6 +13,7 @@ class Permiso(models.Model):
 
     tipos = [
         ('flujo','Flujo Habitaciones'),
+        ('reserva','Reservas'),
         ('consumo','Consumos'),
         ('desc','Descuentos y bonos'),
         ('prenda','Prendas'),

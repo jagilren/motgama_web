@@ -88,8 +88,8 @@
                     <button name="aplicar_bono" string="Aplicar bono" type="object" class="btn"
                         attrs="{'invisible':[('estado','not in',['OO','OA'])]}"/>
                     
-                    <button name='agregar_descuento' string='Agregar descuento' type='object' class='btn'
-                        attrs="{'invisible':[('estado','!=','LQ')]}"/>
+                    <button name='agregar_descuento' string='Descuento por mal servicio' type='object' class='btn'
+                        attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}"/>
                         
                 </header>
                 <field name="factura" invisible="1"/>
@@ -199,7 +199,7 @@
         <field name="model">motgama.flujohabitacion</field>
         <field name="type">kanban</field>
         <field name="arch" type="xml">
-            <kanban quick_create="false" create="false" class='o_modules_kanban'>
+            <kanban quick_create="false" create="false" class='o_modules_kanban' default_order="recepcion asc,codigo asc">
                 <field name="codigo"/>
                 <field name="estado"/>
                 <field name="tipo"/>
@@ -214,6 +214,10 @@
                                     <span class="fa fa-ellipsis-v"/>
                                 </a>
                                 <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                    <h4 style="padding-left: 5px;">Recepción</h4>
+                                    <div style="padding-left: 5px;">
+                                        <field name="recepcion"/>
+                                    </div>
                                     <h4 style="padding-left: 5px;">Comodidades</h4>
                                     <div style="padding-left: 5px;">
                                         <field name="comodidades"/>
@@ -262,8 +266,12 @@
                                 </a>
                                 <a type="object" name="open_record">
                                     <p class="oe_module_name">
-                                        <span>&amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
-                                        &amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/></span>
+                                        <span style="font-size: 10px;">
+                                            &amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
+                                            &amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/><br/>
+                                            &amp;nbsp;&amp;nbsp; RECEPCIÓN: <field name="recepcion"/><br/>
+                                            &amp;nbsp;&amp;nbsp; ESTADO: <field name="estado"/>
+                                        </span>
                                     </p>
                                 </a>
                             </div>

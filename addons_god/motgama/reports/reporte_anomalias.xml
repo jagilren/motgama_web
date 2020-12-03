@@ -64,11 +64,12 @@
         </t>
     </template>
 
-    <act_window id="action_reporte_anomalias_wizard"
-        name="Reporte de anomalías"
-        res_model="motgama.wizard.reporteanomalias"
-        view_mode="form"
-        target="new"/>
+    <record id="action_reporte_anomalias_wizard" model="ir.actions.server">
+        <field name="name">Reporte de anomalías</field>
+        <field name="model_id" ref="motgama.model_motgama_wizard_reporteanomalias"/>
+        <field name="state">code</field>
+        <field name="code">action = model.check_permiso()</field>
+    </record>
 
     <menuitem action="action_reporte_anomalias_wizard"
         id="menu_reporte_anomalias_wizard"

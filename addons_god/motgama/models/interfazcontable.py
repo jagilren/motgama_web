@@ -26,6 +26,19 @@ class MotgamaWizardInterfazContable(models.TransientModel):
     es_manual = fields.Boolean(string='Es manual',default=True)
     envia_correo = fields.Boolean(string='Envía correo',default=False)
 
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motgama_informe_interfaz') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Interfaz contable",
+            'res_model': "motgama.wizard.interfazcontable",
+            'view_mode': "form",
+            'target': "new"
+        }
+
     @api.onchange('nueva')
     def _onchange_nueva(self):
         for record in self:

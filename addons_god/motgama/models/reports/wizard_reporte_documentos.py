@@ -11,6 +11,19 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
     doc_inicial = fields.Many2one(string='Documento inicial',comodel_name='sale.order')
     doc_final = fields.Many2one(string='Documento final',comodel_name='sale.order')
 
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motgama_informe_documentos') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Reporte de documentos",
+            'res_model': "motgama.wizard.reportedocumentos",
+            'view_mode': "form",
+            'target': "new"
+        }
+
     @api.multi
     def get_report(self):
         self.ensure_one()

@@ -1,130 +1,53 @@
-Permiso para Crear-Editar-Eliminar Descuento
-    Crear permisos
 
-Crear...Permiso para crear reservas.  Permiso para Modificar reservas.  Permiso para Cancelar Reservas
-    Crear permisos
-
-Agregar permiso para Generar interfaz Contable por demanda (Actualmente oo aparece en Menú de recepción)
-    Agregar los permisos de los informes/reportes
-
-El encabezado de la Resolución DIAN no siempre es HABILITA, también puede ser AUTORIZA
-    Cambiar encabezado para que ellos lo pongan completo
-
-Hice un Descuento, recaudé correctamente descontando el descuento, sin embargo el reporte de recaudos aparece con el Total sin descuento.
-    Revisar reporte de recaudos al recaudar con descuento
-
-Porqué la opción de  Aplicar Descuento no se puede aplicar antes de liquidar una ocupación.  Se supone que si vamos a cobrarle al cliente con el Estado de cuenta debe tener ya el descuento aplicado.
-    Cambiar para que se pueda agregar el descuento con la habitación ocupada
-
-Donde se pueden parametrizar qué información sale al pie de página de la factura de venta impresa?
-    Mirar en Compañía
-
+Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
+    Hacer
+    
 Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  se genera un error.
-    Quitar recaudar factura y modificar el proceso de pago para que acepte recaudo
+    Modificar el proceso de pago para que genere recaudo
 
 Los abonos de los clientes deben generar un partida a la CAJA y la otra a una cuenta 28  de Abonos de Clientes y la está enviando a una cuenta 13 de Cuentas x Pagar
     Revisar con mi papá
 
-Cuando un usuario puede ver las habitaciones de todas la recepciones las debe ver en en orden, primero las de la Recepción A y luego las de la Recepción  B.  (De lo contrario crea confusión)
-    Revisar el tema como sería mejor
-
-Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
-    Hacer
-
 Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
     Revisar
 
-Debe existir una vista para parametrizar los prefijos y datos iniciales de las columnas "COMPROBANTE", "DOCUMENTO", Y "REFERENCIA" en el Interfaz Contable
-    COMPROBANTE: Parámetros, DOCUMENTO: Secuencia Documento de Interfaz Contable en Secuencias
-    REFERENCIA: Como la quiere?
+
+Organizar con Jorge lo de la referencia
+    Hacer
 
 Hacer plantilla de tipos de transferencia con Jorge
     Hacer
-
-Falta Agregar el parámetro PERSADIC en la plantilla de carga de datos.
-Falta Agregar el parámetro HOSPEDN en la plantilla de carga de datos.
-    Modificar plantilla?
-
-
-Con el perfil de recepcionista aparece error al intentar agregar consumo negativo
-    La recepción necesita permiso de Ventas: Mostrar todos los documentos
-
-Al intentar hacer un abono como RECEPCION... Lo siento, no tiene permiso para crear este tipo de documento. Sólo usuarios con los siguientes permisos están autorizados a hacer esto:- Accounting & Finance/Billing
-    La recepción necesita permiso de Ventas: Mostrar todos los documentos
-
-El reporte Interfaz Contable con CSV (para un rango de 24 horas) se demora más de 120 segundos y en ocasiones no se genera.
-    Listo, revisar lentitud
-
-Porqué el proceso de desasignación se demora más de 60 segundos?
-    Revisar PRIORIDAD
-
-Porqué el proceso de cambio de habitación  se demora aproximadamente 80 segundos?
-    Revisar PRIORIDAD
-
-Recaudo de factura: Cambiar al recaudo mismo
-    Con problemas al modificar
-
-Botón en factura para reportarla como cliente problema (factura_anomalia) con observación
-    Listo, revisar
-
-Las facturas no asociadas a hospedaje se generan (PDF) en formato de tamaño carta y debe ser en formato tirilla
-    El software de PDF trata de ajustar la impresión al tamaño de la hoja, pero si se selecciona la escala al 100% sale del tamaño que es
-
-Sudo() en aplicar bonos
-    Probar
-
-Permisos consumo negativo (Recepcion)
-    Probar
-
-Revisar permisos para que no deje entrar a las opciones que no debe
-    Probar
-
-Agregar permisos de bonos y precuenta
-    Probar
-
-Los consumos generados desde facturas no asociadas a hospedaje no se muestran en el reporte de consumos.
-    Probar
-
-Se genera una vista de error al intentar agregar observaciones sobre una habitación ocupada.
-    Probar
-
-En el reporte de ventas puedo usar la opción importar?
-    No tiene utilidad y al hacerlo dañaría el informe
-
-Las acciones de inmótica también deben estar sujetos a permisos
-    Probar
-
-Establecer Permisos para ver Precuenta
-    Probar
-
-Devolver abonos: Que prenda no aparezca, sale error 'motgama.partner_id'?
-    Probar
-
-En reasignaciones y cambios de plan que muestre el usuario
-    Probar
-
-Al habilitar habitación reasignada archiva el movimiento
-    Probar
-
-Falta NIT de la Empresa en Tirilla de Facturas
-    Probar
-
-Los registros de Ingresos a caja e Impuestos, en la Interfaz contable no llevan C.COSTO. ¿Dónde se puede parameterizar esto?
-    Probar
-
-Al recaudar factura no asociada a hospedaje con prenda se genera error y la factura queda con un total de $0.00 como se muestra en la imagen adjunta.
-    Probar
-
-Movimientos: Que por defecto filtre los active=False
-    Probar
-
-El reporte de ventas veo que sufrió modificaciones, pues ya no discrimina los impuesto y los encabezados no aparece la información Tributaria y 
-Fiscal de la facturación.
-    Agregar encabezados al reporte
-    Discriminar los Impuestos
 
 Error al generar csv en Interfaz Contable "PermissionError: [Errno 13] Permission denied: '/home/usr/files/interfaz-2020-11-30 05:13:40.csv'"
     Debes dar permisos completos a la carpeta donde se guarda la interfaz contable en el servidor (chmod 777)
 
 Donde encuentro el permiso "Technical Settings/Show Full Accounting Feature" para que las coordinadoras puedan anular recaudos y cambiar formas de pago?
     Ajustes -> Activar modo desarrollador: Ajustes -> Usuarios -> Eliges el usuario -> Clic en Editar -> Activas "Mostrar características de contabilidad completas" -> Guardar
+
+Crear...Permiso para crear reservas.  Permiso para Modificar reservas.  Permiso para Cancelar Reservas
+    Listo
+
+Agregar permiso para Generar interfaz Contable por demanda (Actualmente oo aparece en Menú de recepción)
+    Listo
+
+Permiso para Crear-Editar-Eliminar Descuento
+    Listo
+
+Porqué la opción de  Aplicar Descuento no se puede aplicar antes de liquidar una ocupación.  Se supone que si vamos a cobrarle al cliente con el Estado de cuenta debe tener ya el descuento aplicado.
+    Listo, pero es probable que al eliminar el descuento, este no desaparezca del estado de cuenta pero aparecerá con cantidad 0 y valor 0. Eso sí, al facturar si desaparece por completo.
+    Por la forma en que trabaja Odoo no permite que se elimine cuando hay ventas confirmadas, por ejemplo cuando ya hay consumos o cuando la habitación ya está liquidada
+
+Hice un Descuento, recaudé correctamente descontando el descuento, sin embargo el reporte de recaudos aparece con el Total sin descuento.
+    Pruébate con la nueva dinámica del descuento, pero a mí me muestra el recaudo como es
+
+El encabezado de la Resolución DIAN no siempre es HABILITA, también puede ser AUTORIZA
+    Decidí que mejor agregues el texto completo de la resolución
+
+Donde se pueden parametrizar qué información sale al pie de página de la factura de venta impresa?
+    Donde configuras los datos de la razón social, en la pestaña Motgama donde también está la resolución
+
+Cuando un usuario puede ver las habitaciones de todas la recepciones las debe ver en en orden, primero las de la Recepción A y luego las de la Recepción  B.  (De lo contrario crea confusión)
+    Ya la habitación dice de qué recepción es y además están ordenadas por recepción
+
+Falta Agregar los parámetros PERSADIC y HOSPEDN en la plantilla de carga de datos.
+    Esta en el archivo Productos_Hospedaje.xlsx adjunto, allí están todos los productos relacionados con Hospedaje

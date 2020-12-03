@@ -42,6 +42,7 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     bono = fields.Many2one(string='Bonos',comodel_name='motgama.bonos',default=lambda self: self._get_bono())
     bono_ids = fields.Many2many(string='Bono',comodel_name='motgama.bonos',compute='_compute_bono')
     descbono = fields.Float(string='Descuento por bono, pagando en efectivo',compute='_compute_descbono')
+    desc = fields.Float(string='Descuento por mal servicio',default=lambda self: self._get_desc())
 
     @api.model
     def _get_fecha(self):
@@ -58,6 +59,16 @@ class MotgamaWizardPrecuenta(models.TransientModel):
         flujoId = self.env.context['active_id']
         flujo = self.env['motgama.flujohabitacion'].browse(flujoId)
         return flujo.ultmovimiento.bono_id.id
+
+    @api.model
+    def _get_desc(self):
+        flujoId = self.env.context['active_id']
+        flujo = self.env['motgama.flujohabitacion'].browse(flujoId)
+        desc = self.env['motgama.descuento'].search([('movimiento_id','=',flujo.ultmovimiento.id)],limit=1)
+        if desc:
+            return desc.valorDesc
+        else:
+            return 0.0
 
     @api.depends('bono')
     def _compute_bono(self):
@@ -275,4 +286,4 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     def _compute_adeudado(self):
         for record in self:
             total = record.valor_total - record.abonado
-            record.adeudado = total - record.descbono
+            record.adeudado = total - record.descbono - record.desc

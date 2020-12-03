@@ -56,11 +56,12 @@
         </field>
     </record>
 
-    <act_window id="action_reporte_consumo_wizard"
-        name="Reporte de consumos"
-        res_model="motgama.wizard.reporteconsumo"
-        view_mode="form"
-        target="new"/>
+    <record id="action_reporte_consumo_wizard" model="ir.actions.server">
+        <field name="name">Reporte de consumos</field>
+        <field name="model_id" ref="motgama.model_motgama_wizard_reporteconsumo"/>
+        <field name="state">code</field>
+        <field name="code">action = model.check_permiso()</field>
+    </record>
 
     <menuitem action="action_reporte_consumo_wizard"
         id="menu_reporte_consumo"

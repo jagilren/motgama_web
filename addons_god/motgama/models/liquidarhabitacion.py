@@ -317,6 +317,11 @@ class MotgamaFlujoHabitacion(models.Model):
 
         self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
+
+        desc = self.env['motgama.descuento'].search([('movimiento_id','=',movimiento.id)],limit=1)
+        if desc:
+            desc.aplica_descuento()
+
         ordenVenta.write({'liquidafecha':fechaActual})
 
         self.puede_liquidar = False

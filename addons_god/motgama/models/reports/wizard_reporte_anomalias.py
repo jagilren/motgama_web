@@ -1,4 +1,5 @@
 from odoo import models, fields, api
+from odoo.exceptions import Warning
 
 class MotgamaWizardReporteAnomalias(models.TransientModel):
     _name = 'motgama.wizard.reporteanomalias'
@@ -7,6 +8,19 @@ class MotgamaWizardReporteAnomalias(models.TransientModel):
     tipo = fields.Selection(string="Tipo de reporte",selection=[('factura','Por fecha de factura'),('anomalia','Por fecha de anomalía')],default='factura')
     fecha_inicial = fields.Datetime(string="Fecha inicial", required=True)
     fecha_final = fields.Datetime(string="Fecha final", required=True)
+
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motagama_informe_anomalias') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Reporte de anomalías",
+            'res_model': "motgama.wizard.reporteanomalias",
+            'view_mode': "form",
+            'target': "new"
+        }
 
     @api.multi
     def get_report(self):

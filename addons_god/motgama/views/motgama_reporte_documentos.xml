@@ -60,11 +60,12 @@
         </field>
     </record>
 
-    <act_window id="action_reporte_documentos_wizard"
-        name= "Reporte de documentos"
-        res_model="motgama.wizard.reportedocumentos"
-        view_mode="form"
-        target="new"/>
+    <record id="action_reporte_documentos_wizard" model="ir.actions.server">
+        <field name="name">Reporte de documentos</field>
+        <field name="model_id" ref="motgama.model_motgama_wizard_reportedocumentos"/>
+        <field name="state">code</field>
+        <field name="code">action = model.check_permiso()</field>
+    </record>
 
     <menuitem action="action_reporte_documentos_wizard"
         id="menu_reporte_documentos"

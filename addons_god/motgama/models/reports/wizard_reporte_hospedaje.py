@@ -8,6 +8,19 @@ class WizardReporteHospedaje(models.TransientModel):
     fecha_final = fields.Datetime(string= 'Fecha final',required=True)
     recepcion = fields.Many2one(string='Recepcion',comodel_name='motgama.recepcion')
 
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motgama_informe_ocupaciones') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Reporte de ocupaciones",
+            'res_model': "motgama.wizard.reportehospedaje",
+            'view_mode': "form",
+            'target': "new"
+        }
+
     @api.multi
     def get_report(self):
         self.ensure_one()

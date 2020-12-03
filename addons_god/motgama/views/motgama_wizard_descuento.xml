@@ -6,12 +6,22 @@
             <form>
                 <sheet>
                     <group>
-                        <field name='valorHosp' readonly="1"/>
-                        <field name='valorDesc' required="1"/>
+                        <field name="cambia_tipo" invisible="1"/>
+                        <field name="valorHosp" invisible="1"/>
+                        <field name="tipo" invisible="1"/>
+                        <field name="tipo" widget="radio" 
+                            attrs="{'invisible':[('tipo','=',False)],'readonly':[('cambia_tipo','=',False)]}"/>
+                        <field name='valorHosp' readonly="1" attrs="{'invisible':[('valorHosp','=',0.0)]}"/>
+                        <field name='valorDesc' required="1" attrs="{'readonly':[('tipo','=','eliminar')]}"/>
                     </group>
                 </sheet>
                 <footer>
-                    <button name='agregar_descuento' type="object" string='Agregar descuento' class='btn btn-primary'/>
+                    <button name='agregar_descuento' type="object" string='Agregar descuento' class='btn btn-primary'
+                        attrs="{'invisible':[('tipo','!=',False)]}"/>
+                    <button name='editar_descuento' type="object" string='Modificar descuento' class='btn btn-primary'
+                        attrs="{'invisible':[('tipo','!=','editar')]}"/>
+                    <button name='eliminar_descuento' type="object" string='Eliminar descuento' class='btn btn-primary'
+                        attrs="{'invisible':[('tipo','!=','eliminar')]}"/>
                     <button special='cancel' string='Cancelar' class="btn"/>
                 </footer>
             </form>

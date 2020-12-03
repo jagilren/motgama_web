@@ -1007,41 +1007,8 @@ class MotgamaMedioPago(models.Model):
 class Company(models.Model):
     _inherit = 'res.company'
 
-    resol_nro = fields.Char(string='Nro. Resolución')
-    resol_fecha = fields.Date(string='Fecha de resolución')
-    resol_fin = fields.Date(string='Fecha de fin de vigencia')
-    resol_prefijo = fields.Char(string='Prefijo')
-    resol_inicial = fields.Char(string='Factura inical')
-    resol_final = fields.Char(string='Factura final')
-    resol_texto = fields.Text(string='Vista previa',compute='_compute_texto',store=True)
-
+    resol_texto = fields.Text(string='Vista previa')
     footer_factura = fields.Text(string='Pie de página en facturas')
-
-    @api.depends('resol_nro','resol_fecha','resol_fin','resol_prefijo','resol_inicial','resol_final')
-    def _compute_texto(self):
-        for record in self:
-            texto = 'RES DIAN No. '
-            if record.resol_nro:
-                texto += str(record.resol_nro)
-            texto += ' de '
-            if record.resol_fecha:
-                texto += str(record.resol_fecha)
-            texto += '\nVIGENTE HASTA '
-            if record.resol_fin:
-                texto += str(record.resol_fin)
-            texto += '\nHABILITA DESDE '
-            if record.resol_prefijo:
-                texto += str(record.resol_prefijo)
-            texto += ' '
-            if record.resol_inicial:
-                texto += str(record.resol_inicial)
-            texto += ' HASTA '
-            if record.resol_prefijo:
-                texto += str(record.resol_prefijo)
-            texto += ' '
-            if record.resol_final:
-                texto += str(record.resol_final)
-            record.resol_texto = texto
 
 class MotgamaLog(models.Model):
     _name = 'motgama.log'

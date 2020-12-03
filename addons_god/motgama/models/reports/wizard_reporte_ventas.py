@@ -15,6 +15,19 @@ class WizardReporteVentas(models.TransientModel):
 
     es_manual = fields.Boolean(string='Es manual',default=True)
 
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motgama_informe_diariovtas') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Reporte de ventas",
+            'res_model': "motgama.wizard.reporteventas",
+            'view_mode': "form",
+            'target': "new"
+        }
+
     @api.multi
     def get_report(self):
         self.ensure_one()

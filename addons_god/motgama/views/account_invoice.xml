@@ -10,7 +10,6 @@
                     <field name="es_hospedaje" invisible="1"/>
                 </xpath>
                 <xpath expr="//header" position="inside">
-                    <button name='recaudo_factura' string='Recaudar factura' type='object' class='btn' attrs="{'invisible':[('state','!=','open')]}"/>
                     <button name="registro_anomalia" string="Registrar anomalía" type="object" class="btn" attrs="{'invisible':[('factura_anomalia','=',True)]}"/>
                 </xpath>
                 <xpath expr="//notebook" position="before">

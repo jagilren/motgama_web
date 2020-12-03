@@ -54,6 +54,20 @@
             <field name="tipo">flujo</field>
         </record>
 
+        <!-- Reservas -->
+        <record id="motgama_crea_reserva" model="motgama.permiso">
+            <field name="name">Puede crear reservas</field>
+            <field name="tipo">reserva</field>
+        </record>
+        <record id="motgama_edita_reserva" model="motgama.permiso">
+            <field name="name">Puede modificar reservas</field>
+            <field name="tipo">reserva</field>
+        </record>
+        <record id="motgama_cancela_reserva" model="motgama.permiso">
+            <field name="name">Puede cancelar reservas</field>
+            <field name="tipo">reserva</field>
+        </record>
+
         <!-- Consumos -->
         <record id="motgama_consumo_negativo" model="motgama.permiso">
             <field name="name">Puede agregar consumos negativos</field>
@@ -67,6 +81,14 @@
         <!-- Descuentos y bonos -->
         <record id="motgama_descuento_servicio" model="motgama.permiso">
             <field name="name">Puede agregar descuentos por mal servicio</field>
+            <field name="tipo">desc</field>
+        </record>
+        <record id="motgama_edita_descuento" model="motgama.permiso">
+            <field name="name">Puede editar descuentos por mal servicio</field>
+            <field name="tipo">desc</field>
+        </record>
+        <record id="motgama_elimina_descuento" model="motgama.permiso">
+            <field name="name">Puede eliminar descuento por mal servicio</field>
             <field name="tipo">desc</field>
         </record>
         <record id="motgama_pase_cortesia" model="motgama.permiso">
@@ -109,7 +131,7 @@
             <field name="name">Puede generar facturas no asociadas a hospedaje</field>
             <field name="tipo">factura</field>
         </record>
-        <record id="motgama_factura_anomalia" model="motgama.permisos">
+        <record id="motgama_factura_anomalia" model="motgama.permiso">
             <field name="name">Puede registrar anomalía en facturas</field>
             <field name="tipo">factura</field>
         </record>
@@ -137,8 +159,16 @@
             <field name="name">Puede generar informe diario de ventas</field>
             <field name="tipo">informes</field>
         </record>
-        <record id="motgama_informe_movimientos" model="motgama.permiso">
-            <field name="name">Puede generar informe de movimientos</field>
+        <record id="motgama_informe_documentos" model="motgama.permiso">
+            <field name="name">Puede generar informe de documentos</field>
+            <field name="tipo">informes</field>
+        </record>
+        <record id="motgama_informe_interfaz" model="motgama.permiso">
+            <field name="name">Puede generar interfaz contable</field>
+            <field name="tipo">informes</field>
+        </record>
+        <record id="motagama_informe_anomalias" model="motgama.permiso">
+            <field name="name">Puede generar informe de anomalías</field>
             <field name="tipo">informes</field>
         </record>
 

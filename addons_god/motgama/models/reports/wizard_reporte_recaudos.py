@@ -14,6 +14,19 @@ class WizardReporteRecaudos(models.TransientModel):
     incluye_anticipos = fields.Boolean(string='Incluir anticipos',default=True)
     incluye_otros = fields.Boolean(string='Incluir otros recaudos',default=True)
 
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motgama_informe_recaudos') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Reporte de recaudos",
+            'res_model': "motgama.wizard.reporterecaudos",
+            'view_mode': "form",
+            'target': "new"
+        }
+
     @api.multi
     def get_report(self):
         self.ensure_one()

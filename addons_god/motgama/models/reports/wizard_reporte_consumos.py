@@ -9,6 +9,19 @@ class WizardReporteConsumos(models.TransientModel):
     fecha_final = fields.Datetime(string='Fecha final')
     recepcion = fields.Many2one(string='Recepción',comodel_name='motgama.recepcion')
 
+    @api.model
+    def check_permiso(self):
+        if self.env.ref('motgama.motgama_informe_consumos') not in self.env.user.permisos:
+            raise Warning('No tiene permitido generar este informe')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'name': "Reporte de consumos",
+            'res_model': "motgama.wizard.reporteconsumo",
+            'view_mode': "form",
+            'target': "new"
+        }
+
     @api.multi
     def get_report(self):
         self.ensure_one()

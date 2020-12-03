@@ -21,7 +21,7 @@ class MotgamaFlujoHabitacion(models.Model):
                 'active':False
             }
             movimiento.write(valores)
-        self.write({'estado':'D','notificar':False,'bono_id':False}) # pone en estado disponible
+        self.write({'estado':'D','notificar':False,'bono_id':False,'orden_venta':False}) # pone en estado disponible
 
         self.refresh_views()
         

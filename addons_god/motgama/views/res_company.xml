@@ -9,12 +9,6 @@
                 <xpath expr="//page" position="after">
                     <page name="facturacion" string='Facturación'>
                         <group string="Resolución DIAN">
-                            <field name='resol_nro'/>
-                            <field name='resol_fecha'/>
-                            <field name='resol_fin'/>
-                            <field name='resol_prefijo'/>
-                            <field name='resol_inicial'/>
-                            <field name='resol_final'/>
                             <field name='resol_texto'/>
                         </group>
                         <group string="Otra información">
