@@ -68,6 +68,10 @@ class WizardReporteConsumos(models.TransientModel):
 
         for consumo in ids:
             valores = {
+                'tipo_reporte': self.tipo_reporte,
+                'fecha_inicial': self.fecha_inicial,
+                'fecha_final': self.fecha_final,
+                'recepcion_reporte': self.recepcion,
                 'recepcion': consumo.lugar_id.recepcion.nombre,
                 'fecha': consumo.create_date,
                 'habitacion': consumo.habitacion.codigo,
@@ -99,6 +103,11 @@ class WizardReporteConsumos(models.TransientModel):
 class ReporteConsumos(models.TransientModel):
     _name = 'motgama.reporteconsumos'
 
+    tipo_reporte = fields.Char(string='Tipo de reporte')
+    fecha_inicial = fields.Datetime(string='Fecha inicial')
+    fecha_final = fields.Datetime(string='Fecha final')
+    recepcion_reporte = fields.Char(string='Recepción reporte')
+
     recepcion = fields.Char(string='Recepción')
     fecha = fields.Datetime(string='Fecha')
     habitacion = fields.Char(string='Habitación')
@@ -113,6 +122,11 @@ class ReporteConsumos(models.TransientModel):
 
 class PDFReporteConsumos(models.AbstractModel):
     _name = 'report.motgama.reporteconsumos'
+
+    tipos_reporte = {
+        'transito': 'en tránsito',
+        'fecha': 'entre fechas'
+    }
 
     @api.model
     def _get_report_values(self,docids,data=None):
@@ -150,6 +164,10 @@ class PDFReporteConsumos(models.AbstractModel):
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
             'sucursal': self.env['motgama.sucursal'].search([],limit=1),
+            'tipo_reporte': docs[0].tipo_reporte,
+            'tipos_reporte': self.tipos_reporte,
+            'hoy': fields.Datetime().now(),
+            'recepcion_reporte': docs[0].recepcion_reporte,
             'docs': docs,
             'productos': productos,
             'categorias': categorias,

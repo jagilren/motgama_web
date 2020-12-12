@@ -11,7 +11,15 @@
             <t t-call="web.external_layout">
                 <div class="page">
                     <div>
-                        <h2 class="text-center">Reporte de consumos</h2>
+                        <t t-if="tipo_reporte == 'transito'">
+                            <h5>Reporte de consumos <span t-esc="tipos_reporte[tipo_reporte]"/> del <span t-esc="hoy"/>
+                            <t t-if="recepcion_reporte"> en la recepción <span t-esc="recepcion_reporte"/></t></h5>
+                        </t>
+                        <t t-else="">
+                            <h5>Reporte de consumos <span t-esc="tipos_reporte[tipo_reporte]"/>
+                            desde <span t-field="docs[0].fecha_inicial"/> hasta <span t-field="docs[0].fecha_final"/>
+                            <t t-if="recepcion_reporte"> en la recepción <span t-esc="recepcion_reporte"/></t></h5>
+                        </t>
                     </div>
                     <div>
                         <table style="width: 100%; text-size: 10px;">

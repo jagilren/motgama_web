@@ -275,7 +275,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     _name = 'motgama.flujohabitacion'
     _description = 'Flujo Habitación'
     _rec_name = 'codigo'
-    _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El código habitación ya Existe, Verifique!")]
+    _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El código de la habitación ya Existe, Verifique!")]
 
     _inherit = 'base'
 
