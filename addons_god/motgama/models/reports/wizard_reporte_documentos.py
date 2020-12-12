@@ -45,6 +45,11 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
         
         for doc in docs:
             valores = {
+                'tipo_reporte': self.tipo_reporte,
+                'fecha_inicial': self.fecha_inicial,
+                'fecha_final': self.fecha_final,
+                'doc_inicial': self.doc_inicial,
+                'doc_final': self.doc_final,
                 'fecha': doc.create_date,
                 'doc': doc.name,
                 'cliente': doc.partner_id.name,
@@ -88,6 +93,12 @@ class MotgamaReporteDocumentos(models.TransientModel):
     _name = 'motgama.reportedocumentos'
     _description = 'Reporte de documentos'
 
+    tipo_reporte = fields.Char(string='Tipo reporte')
+    fecha_inicial = fields.Datetime(string='Fecha inicial')
+    fecha_final = fields.Datetime(string='Fecha final')
+    doc_inicial = fields.Datetime(string="Documento inicial")
+    doc_final = fields.Datetime(string="Documento final")
+
     fecha = fields.Datetime(string='Fecha')
     doc = fields.Char(string='Documento')
     cliente = fields.Char(string='Cliente')
@@ -99,6 +110,11 @@ class MotgamaReporteDocumentos(models.TransientModel):
 class PDFReporteDocumentos(models.AbstractModel):
     _name = 'report.motgama.reportedocumentos'
 
+    tipos_reporte = {
+        'fecha': 'entre las fechas',
+        'documento': 'entre los documentos'
+    }
+
     @api.model
     def _get_report_values(self,docids,data=None):
         docs = self.env['motgama.reportedocumentos'].browse(docids)
@@ -109,6 +125,8 @@ class PDFReporteDocumentos(models.AbstractModel):
             total += doc.valor
         
         return {
+            'tipo_reporte': docs[0].tipo_reporte,
+            'tipos_reporte': self.tipos_reporte,
             'company': self.env['res.company']._company_default_get('account.invoice'),
             'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
