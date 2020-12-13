@@ -3,8 +3,7 @@
         model="motgama.reportedocumentos"
         string="Reporte de Documentos"
         report_type="qweb-pdf"
-        name="motgama.reportedocumentos"
-        paperformat="motgama.formato_reporte"/>
+        name="motgama.reportedocumentos"/>
 
     <template id="reportedocumentos">
         <t t-call="web.html_container">
@@ -12,10 +11,10 @@
                 <div class="page">
                     <div>
                         <t t-if="tipo_reporte == 'fecha'">
-                            <h3 class="text-center">Reporte de Documentos entre <span t-field="docs[0].fecha_inicial"/> y <span t-field="docs[0].fecha_final"/></h3>
+                            <h5 class="text-center">Reporte de Documentos entre <span t-field="docs[0].fecha_inicial"/> y <span t-field="docs[0].fecha_final"/></h5>
                         </t>
                         <t t-else="">
-                            <h3 class="text-center">Reporte de Documentos entre <span t-field="docs[0].doc_inicial"/> y <span t-field="docs[0].doc_final"/></h3>
+                            <h5 class="text-center">Reporte de Documentos entre <span t-field="docs[0].doc_inicial"/> y <span t-field="docs[0].doc_final"/></h5>
                         </t>
                     </div>
                     <div>
@@ -57,6 +56,8 @@
                                 </t>
                             </tbody>
                         </table>
+                    </div>
+                    <div>
                         <br/>
                         <p><span class="font-weight-bold">Total documentos:</span> <span t-esc="count"/><br/>
                         <span class="font-weight-bold">Total ventas:</span> $ <span t-esc="total"/></p>

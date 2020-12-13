@@ -23,6 +23,7 @@ class AccountInvoice(models.Model):
             values['movimiento_id'] = invoice.movimiento_id.id
             values['habitacion_id'] = invoice.habitacion_id.id
         values['rectificativa'] = True
+        values['fecha'] = fields.Datetime().now()
         return values
 
 class AccountInvoiceRefund(models.TransientModel):

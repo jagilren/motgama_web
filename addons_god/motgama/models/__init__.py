@@ -31,3 +31,4 @@ from . import descuento
 from . import factura_anomalia
 from . import editarecaudo
 from . import observacion
+from . import payment

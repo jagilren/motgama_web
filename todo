@@ -1,14 +1,5 @@
-Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
-    Hacer
-
-Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  se genera un error.
-    Modificar el proceso de pago para que genere recaudo
-
 Los abonos de los clientes deben generar un partida a la CAJA y la otra a una cuenta 28  de Abonos de Clientes y la está enviando a una cuenta 13 de Cuentas x Pagar
     Revisar con mi papá
-
-Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
-    Revisar
 
 
 Organizar con Jorge lo de la referencia
@@ -51,3 +42,12 @@ Cuando un usuario puede ver las habitaciones de todas la recepciones las debe ve
 
 Falta Agregar los parámetros PERSADIC y HOSPEDN en la plantilla de carga de datos.
     Esta en el archivo Productos_Hospedaje.xlsx adjunto, allí están todos los productos relacionados con Hospedaje
+
+Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
+    Listo
+
+Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  se genera un error.
+    Desaparece la opción, te recomiendo que no rompas conciliación sino que utilices la opción de 'Anular' en el recaudo. Si vas solo a cambiar los medios de pago puedes utilizar la opción 'Modificar recaudo'
+
+Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
+    Listo

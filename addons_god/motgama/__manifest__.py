@@ -90,6 +90,7 @@
         'views/motgama_wizard_anomalia.xml',
         'views/motgama_wizard_editarecaudo.xml',
         'views/account.xml',
+        'views/payment_wizard.xml',
         'formatos/formato_papel_tirilla.xml',
         'formatos/formato_estadocuenta.xml',
         'formatos/formato_factura.xml',

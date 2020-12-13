@@ -71,7 +71,7 @@ class WizardReporteConsumos(models.TransientModel):
                 'tipo_reporte': self.tipo_reporte,
                 'fecha_inicial': self.fecha_inicial,
                 'fecha_final': self.fecha_final,
-                'recepcion_reporte': self.recepcion,
+                'recepcion_reporte': self.recepcion.nombre if self.recepcion else False,
                 'recepcion': consumo.lugar_id.recepcion.nombre,
                 'fecha': consumo.create_date,
                 'habitacion': consumo.habitacion.codigo,

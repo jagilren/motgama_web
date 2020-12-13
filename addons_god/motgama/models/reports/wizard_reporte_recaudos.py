@@ -115,6 +115,10 @@ class MotgamaReporteRecaudos(models.TransientModel):
     _name = 'motgama.reporterecaudos'
     _description = 'Reporte de Recaudos'
 
+    fecha_inicial = fields.Datetime(string="Fecha inicial")
+    fecha_final = fields.Datetime(string="Fecha final")
+    recepcion_reporte = fields.Char(string='Recepción reporte')
+
     nrorecaudo = fields.Char(string='Nro. Recaudo')
     recepcion = fields.Char(string='Recepción')
     fecha = fields.Datetime(string='Fecha')

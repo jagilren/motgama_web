@@ -64,8 +64,8 @@ class WizardReporteVentas(models.TransientModel):
                 })
             elif self.tipo_reporte == 'documento':
                 valores.update({
-                    'doc_inicial': self.doc_inicial,
-                    'doc_final': self.doc_final,
+                    'doc_inicial': self.doc_inicial.name,
+                    'doc_final': self.doc_final.name,
                     'fecha_inicial': False,
                     'fecha_final': False
                 })

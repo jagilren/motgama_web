@@ -58,6 +58,9 @@ class WizardReporteHospedaje(models.TransientModel):
 
             for line in factura.invoice_line_ids:
                 valores = {
+                    'fecha_inicial': self.fecha_inicial,
+                    'fecha_final': self.fecha_final,
+                    'recepcion_reporte': self.recepcion.nombre if self.recepcion else False,
                     'recepcion': movimiento.habitacion_id.zona_id.recepcion_id.nombre,
                     'fecha': movimiento.asignafecha,
                     'habitacion': movimiento.habitacion_id.codigo,
@@ -88,6 +91,10 @@ class WizardReporteHospedaje(models.TransientModel):
 
 class ReporteHospedaje(models.TransientModel):
     _name = 'motgama.reportehospedaje'
+
+    fecha_inicial = fields.Datetime(string='Fecha inicial')
+    fecha_final = fields.Datetime(string='Fecha final')
+    recepcion_reporte = fields.Char(string='Recepción del reporte')
 
     recepcion = fields.Char(string='Recepción')
     fecha = fields.Datetime(string='Fecha')

@@ -9,7 +9,7 @@ class MotgamaRecaudo(models.Model):
         self.ensure_one()
 
         for pago in self.pagos:
-            pago.pago_id.cancel()
+            pago.pago_id.sudo().cancel()
 
         self.sudo().write({'estado': 'anulado'})
     

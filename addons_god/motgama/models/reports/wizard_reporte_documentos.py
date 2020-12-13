@@ -46,10 +46,10 @@ class MotgamaWizardReporteDocumentos(models.TransientModel):
         for doc in docs:
             valores = {
                 'tipo_reporte': self.tipo_reporte,
-                'fecha_inicial': self.fecha_inicial,
-                'fecha_final': self.fecha_final,
-                'doc_inicial': self.doc_inicial,
-                'doc_final': self.doc_final,
+                'fecha_inicial': self.fecha_inicial if self.fecha_inicial else False,
+                'fecha_final': self.fecha_final if self.fecha_final else False,
+                'doc_inicial': self.doc_inicial.name if self.doc_inicial else False,
+                'doc_final': self.doc_final.name if self.doc_final else False,
                 'fecha': doc.create_date,
                 'doc': doc.name,
                 'cliente': doc.partner_id.name,
@@ -96,8 +96,8 @@ class MotgamaReporteDocumentos(models.TransientModel):
     tipo_reporte = fields.Char(string='Tipo reporte')
     fecha_inicial = fields.Datetime(string='Fecha inicial')
     fecha_final = fields.Datetime(string='Fecha final')
-    doc_inicial = fields.Datetime(string="Documento inicial")
-    doc_final = fields.Datetime(string="Documento final")
+    doc_inicial = fields.Char(string="Documento inicial")
+    doc_final = fields.Char(string="Documento final")
 
     fecha = fields.Datetime(string='Fecha')
     doc = fields.Char(string='Documento')

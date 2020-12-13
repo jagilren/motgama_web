@@ -3,88 +3,80 @@
         model="motgama.reportehospedaje"
         string="Reporte de Hospedaje"
         report_type="qweb-pdf"
-        name="motgama.reportehospedaje"
-        paperformat="motgama.formato_reporte"/>
+        name="motgama.reportehospedaje"/>
 
     <template id="reportehospedaje">
         <t t-call="web.html_container">
-            <div class="header" style="border-bottom: 2px solid black">
-                <h3 class="text-center">Reporte de Hospedaje</h3>
-            </div>
-            <div class="article">
-                <table class="table table-condensed table-bordered" style="width: 100%">
-                    <thead>
-                        <th class="text-center" style="width: 16%">Recepción</th>
-                        <th class="text-center" style="width: 17%">Fecha</th>
-                        <th class="text-center" style="width: 16%">Habitación</th>
-                        <th class="text-center" style="width: 16%">Tipo de hospedaje</th>
-                        <th class="text-center" style="width: 19%">Valor</th>
-                        <th class="text-center" style="width: 16%">Usuario</th>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="docs" t-as="doc">
-                            <tr>
-                                <td class="text-center">
-                                    <span t-field="doc.recepcion"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.fecha"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.habitacion"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.tipoHospedaje"/>
-                                </td>
-                                <td class="text-center">
-                                    $ <span t-field="doc.valor"/>
-                                </td>
-                                <td class="text-center">
-                                    <span t-field="doc.usuario"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-                <br/>
-                <h4>Resumen por hospedajes</h4>
-                <table class="table table-condensed table-bordered" style="width: 100%">
-                    <thead>
-                        <th class="text-center" style="width: 50%">Tipo de hospedaje</th>
-                        <th class="text-center" style="width: 50%">Total</th>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="hospedajes" t-as="hosp">
-                            <tr>
-                                <td class="text-center">
-                                    <span t-esc="hosp"/>
-                                </td>
-                                <td class="text-center">
-                                    $ <span t-esc="hospedajes[hosp]"/>
-                                </td>
-                            </tr>
-                        </t>
-                    </tbody>
-                </table>
-                <br/>
-                <p><span class="font-weight-bold">Total Hospedajes:</span> $ <span t-esc="total"/></p>
-            </div>
-            <div class="footer">
-                <div class="row text-center" style="border-top: 1px solid black;">
-                    <div class="col col-3 offset-9 text-right">
-                        <ul class="list-inline mt-2">
-                            <li class="list-inline-item">Página:</li>
-                            <li class="list-inline-item">
-                                <span class="page"/>
-                            </li>
-                            <li class="list-inline-item">/</li>
-                            <li class="list-inline-item">
-                                <span class="topage"/>
-                            </li>
-                        </ul>
+            <t t-call="web.external_layout">
+                <div class="page">
+                    <div>
+                        <h5 class="text-center">
+                            Reporte de hospedajes desde <span t-field="docs[0].fecha_inicial"/> hasta <span t-field="docs[0].fecha_final"/>
+                            <t t-if="docs[0].recepcion_reporte"> de la recepción <span t-esc="docs[0].recepcion_reporte"/></t>
+                        </h5>
+                    </div>
+                    <div>
+                        <table class="table table-condensed table-bordered" style="width: 100%">
+                            <thead>
+                                <th class="text-center" style="width: 16%">Recepción</th>
+                                <th class="text-center" style="width: 17%">Fecha</th>
+                                <th class="text-center" style="width: 16%">Habitación</th>
+                                <th class="text-center" style="width: 16%">Tipo de hospedaje</th>
+                                <th class="text-center" style="width: 19%">Valor</th>
+                                <th class="text-center" style="width: 16%">Usuario</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="doc">
+                                    <tr>
+                                        <td class="text-center">
+                                            <span t-field="doc.recepcion"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.fecha"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.habitacion"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.tipoHospedaje"/>
+                                        </td>
+                                        <td class="text-center">
+                                            $ <span t-field="doc.valor"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-field="doc.usuario"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <br/>
+                        <h4>Resumen por hospedajes</h4>
+                        <table class="table table-condensed table-bordered" style="width: 100%">
+                            <thead>
+                                <th class="text-center" style="width: 50%">Tipo de hospedaje</th>
+                                <th class="text-center" style="width: 50%">Total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="hospedajes" t-as="hosp">
+                                    <tr>
+                                        <td class="text-center">
+                                            <span t-esc="hosp"/>
+                                        </td>
+                                        <td class="text-center">
+                                            $ <span t-esc="hospedajes[hosp]"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <br/>
+                        <p><span class="font-weight-bold">Total Hospedajes:</span> $ <span t-esc="total"/></p>
                     </div>
                 </div>
-            </div>
+            </t>
         </t>
     </template>
 </odoo>
