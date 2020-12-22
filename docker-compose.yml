@@ -2,7 +2,7 @@ version: "2"
 
 services:
   motgama_odoo:
-    image: odoo:12
+    image: motgama
     container_name: motgama_odoo
     build: .
     depends_on:
