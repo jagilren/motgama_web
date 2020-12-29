@@ -1,5 +1,45 @@
+16.	Interfaz Campos "DOCUMENTO" (Pendiente por revisar porque no es el usuario quien define cuando se crea un consecutivo nuevo, pues si genera una interfaz de un año anterior, por ejemplo, y le da la opción "NUEVO", va a crear un nuevo consecutivo para una información pasada).  Se propone poner un parámetro de fecha que corresponde al #1 y de ahí en adelante hacer la diferencia con la fecha de la Interfaz que se está consultando.  Además, debe tener un prefijo alfabético.
+    Agregar vista en maestros para configurar el consecutivo con fecha 1 y offset que reste, y quitar el consecutivo de DOC
+
+8.	Revisar la presentación de las notificaciones de alarma por terminación de tiempo. (Alertas o marcado de habitación próxima a vencer tiempo de hospedaje) normal. No están apareciendo.
+    Agregar con boolean_button
+
+9.	Abonos a Ocupaciones Ocasionales llevarlos a la cuenta 28 como si fuera un anticipo de reserva o abono a decoración.
+    Copiar de anticipos de reservas
+
+6.	Nota crédito en un turno posterior refleja en la interfase un valor duplicado en cxc. Revisar reversión del pago. Debe hacerse un nuevo documento que anule el recaudo anterior
+    Hacer
+
+4.	Modificar el Recaudo, permitir agregar Prenda y cortesías o cualquier forma de pago que se cree nueva.
+    Modificar
+
+13.	Informe de hospedaje colocar cantidad de horas adicionales (En el reporte de Hospedaje líquida sólo una hora adicional, independiente de cuántas horas adicionales liquidó la ocupación).
+    Discriminar cantidad y colocar el valor unitario
+
+4.	Modificar el Recaudo, permitir agregar Prenda y cortesías o cualquier forma de pago que se cree nueva.
+    Modificar
+
+1.	Al usar el TAB para cambiar la cantidad en consumos genera error
+    Revisar
+
+3.	Vista consulta estado de cuenta saca un formato
+    Revisar
+
+10.	Retirar bono después de liquidado no desaparece del estado de cuenta.
+    Revisar
+
+11.	Si rehabilita hospedaje con bono >> se elimina el bono >> vuelve a liquidar.  El estado de cuenta queda mal (Anular estado de cuenta y generar uno nuevo).
+    Revisar
+
+14.	En el aplicativo de procesos especiales debe existir un parámetro donde se establece si el total se redondea a centenas o miles en los descuentos realizados.
+    Revisar
+
+15.	Permisos para operario de inventarios.  No debe tener acceso a algunas utilidades como "AJUSTE DE INVENTARIO" o "CREACIÓN DE ITEMS" O "LUGARES" o "CREACIÓN DE TRANSACCIONES".  Debe estar en listado de permisos.
+    Versión 2
+
+
 Los abonos de los clientes deben generar un partida a la CAJA y la otra a una cuenta 28  de Abonos de Clientes y la está enviando a una cuenta 13 de Cuentas x Pagar
-    Revisar con mi papá
+    Copiar de los anticipos
 
 
 Organizar con Jorge lo de la referencia
@@ -50,4 +90,19 @@ Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  
     Desaparece la opción, te recomiendo que no rompas conciliación sino que utilices la opción de 'Anular' en el recaudo. Si vas solo a cambiar los medios de pago puedes utilizar la opción 'Modificar recaudo'
 
 Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
+    Listo
+
+
+2.	Recaudar factura sin hospedaje genera mensaje de error
+    Intenta realizarlo porque no me genera ningún error
+
+5.	Búsqueda en prendas por nombre cliente.
+    Listo, también por Nro. de Prenda
+
+7.	Agregar en plan contable si la cuenta requiere NIT y poner uno por defecto
+    Listo
+17.	Interfaz Contable "cuentas contables Estáticas" o por defecto (En eróticos, IVA, otros)
+    Agregado NIT por defecto, igual al punto 7
+
+12.	Informe diario colocar el identificador de la forma de pago cuando son varias
     Listo

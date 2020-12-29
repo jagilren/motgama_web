@@ -7,6 +7,7 @@
             <field name="arch" type="xml">
                 <tree>
                     <field name="nombre"/>
+                    <field name="cod"/>
                     <field name="tipo"/>
                     <field name="diario_id"/>
                 </tree>

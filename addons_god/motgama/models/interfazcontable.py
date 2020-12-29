@@ -9,6 +9,8 @@ class Account(models.Model):
     _inherit = 'account.account'
 
     ccosto = fields.Boolean(string="Lleva Centro de Costo en Interfaz",default=False)
+    lleva_nit = fields.Boolean(string="Lleva NIT por defecto")
+    nit = fields.Char(string="NIT")
 
 class MotgamaWizardInterfazContable(models.TransientModel):
     _name = 'motgama.wizard.interfazcontable'
@@ -131,13 +133,20 @@ class MotgamaWizardInterfazContable(models.TransientModel):
         lineas = []
         for cuenta in saldos:
             for asociado in saldos[cuenta]:
+                if not asociado.vat or asociado.vat in ["1",""]:
+                    if  cuenta.lleva_nit:
+                        nit = cuenta.nit
+                    else:
+                        nit = ''
+                else:
+                    nit = asociado.vat
                 valores = {
                     'cod_cuenta': cuenta.code,
                     'comprobante': comp,
                     'fecha': self.fecha_inicial,
                     'documento': doc,
                     'referencia': fact_inicial + '-' + fact_final,
-                    'nit':  asociado.vat if asociado.vat != "1" else "",
+                    'nit':  nit,
                     'nom_cuenta': cuenta.name,
                     'tipo': 1 if saldos[cuenta][asociado] >= 0 else 2,
                     'valor': abs(saldos[cuenta][asociado]),

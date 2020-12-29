@@ -1,4 +1,16 @@
 <odoo>
+    <record id="search_view_prenda" model="ir.ui.view">
+        <field name="name">Prendas Search</field>
+        <field name="model">motgama.prendas</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="nroprenda"/>
+                <field name="cliente_id"/>
+                <filter string="Prendas pagadas" name="filtro_pagadas" domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
     <record id="tree_view_prenda" model="ir.ui.view">
         <field name="name">Prendas Tree</field>
         <field name="model">motgama.prendas</field>

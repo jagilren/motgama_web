@@ -998,6 +998,11 @@ class MotgamaMedioPago(models.Model):
     lleva_prenda = fields.Boolean(string='¿Lleva Prenda?',compute='_compute_prenda')
     diario_id = fields.Many2one(string='Diario de pago',comodel_name='account.journal')
     active = fields.Boolean(string='Activo',default=True)
+    cod = fields.Char(string="Código",size=2)
+
+    @api.onchange('nombre')
+    def onchange_nombre(self):
+        self.cod = self.nombre[:2].upper()
 
     @api.depends('tipo')
     def _compute_prenda(self):

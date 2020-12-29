@@ -91,7 +91,15 @@ class WizardReporteVentas(models.TransientModel):
             if len(medios) == 1:
                 valores['medio_pago'] = medios[0].nombre
             else:
-                valores['medio_pago'] = 'Múltiple'
+                med = ''
+                for medio in medios:
+                    if med != '':
+                        med += '-'
+                    cod = medio.cod if medio.cod else medio.nombre[:2].upper()
+                    med += cod
+                valores['medio_pago'] = med
+            if factura.type == 'out_refund':
+                valores['medio_pago'] = 'Nota Crédito'
             nuevo = self.env['motgama.reporteventas'].create(valores)
             if not nuevo:
                 raise Warning('No fue posible generar el reporte')
