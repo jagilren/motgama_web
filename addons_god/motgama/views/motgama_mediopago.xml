@@ -23,6 +23,7 @@
                         <group>
                             <field name="lleva_prenda" invisible="1"/>
                             <field name="nombre"/>
+                            <field name="cod"/>
                             <field name="tipo"/>
                             <field name="diario_id" attrs="{'invisible':[('lleva_prenda','=',True)]}" domain="[('type','in',['bank', 'cash'])]"/>
                             <field name="active"/>
