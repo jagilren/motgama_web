@@ -32,3 +32,4 @@ from . import factura_anomalia
 from . import editarecaudo
 from . import observacion
 from . import payment
+from . import wizard_docto

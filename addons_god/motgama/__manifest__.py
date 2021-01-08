@@ -2,7 +2,7 @@
 # hola
 {
     'name':'MOTGAMA',
-    'version':'0.0.1',
+    'version':'1.0',
     'summary':'Gestión de Moteles (MOTGAMA)',
     'description':'Aplicación para la gestión del motel.',
     'category':'',
@@ -28,8 +28,10 @@
         'mrp'],
     'installable':True,
     'application': True,
-    'data':['security/groups.xml',
+    'data':[
+        'security/groups.xml',
         'security/ir.model.access.csv',
+        'registros/secuencia_docto.xml',
         'views/motgama_sucursal.xml',        
         'views/motgama_parametros.xml',
         'views/motgama_recepcion.xml',
@@ -89,6 +91,7 @@
         'views/motgama_reporte_ventas.xml',
         'views/motgama_wizard_anomalia.xml',
         'views/motgama_wizard_editarecaudo.xml',
+        'views/motgama_wizard_docto.xml',
         'views/account.xml',
         'views/payment_wizard.xml',
         'formatos/formato_papel_tirilla.xml',
@@ -103,7 +106,6 @@
         'registros/secuencia_recaudo.xml',
         'registros/cliente_contado.xml',
         'registros/medios_pago.xml',
-        'registros/secuencia_docto.xml',
         'registros/permisos.xml',
         'reports/formato_reporte.xml',
         'reports/reporte_consumos.xml',

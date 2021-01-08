@@ -8,6 +8,7 @@ class AccountInvoice(models.Model):
     es_hospedaje = fields.Boolean(default=False)
     habitacion_id = fields.Many2one(string='Habitación',comodel_name="motgama.flujohabitacion")
     recaudo = fields.Many2one(string='Recaudo',comodel_name='motgama.recaudo',ondelete='set null')
+    recaudo_ids = fields.One2many(string='Recaudos',comodel_name='motgama.recaudo',inverse_name='factura')
     asignafecha = fields.Datetime(string="Ingreso")
     liquidafecha = fields.Datetime(string="Salida")
     lleva_prenda = fields.Boolean(string='Lleva prenda',default=False)
@@ -261,6 +262,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 pago.pago_id.sudo().action_draft()
                 pago.pago_id.sudo().write({'invoice_ids': [(4,factura.id)]})
                 pago.pago_id.sudo().post()
+            recaudo.sudo().write({'factura':factura.id})
         for pago in self.pagos:
             if pago.mediopago.tipo in ['prenda','abono']:
                 continue
@@ -322,7 +324,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if not nuevoPago:
                 raise Warning('No se pudo guardar la información del pago')
         
-        self.habitacion.write({'estado':'RC','factura':factura.id,'notificar':True})
+        self.habitacion.write({'estado':'RC','factura':factura.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
         self.movimiento.write({
             'recaudafecha':fields.Datetime().now(),
             'recauda_uid':self.env.user.id,

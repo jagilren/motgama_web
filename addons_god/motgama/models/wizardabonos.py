@@ -53,20 +53,30 @@ class MotgamaWizardAbonos(models.TransientModel):
         for pago in self.pagos:
             if pago.valor <= 0:
                 raise Warning('El valor del pago no puede ser menor o igual a cero')
+            cliente = self.env.ref('motgama.cliente_contado')
             valoresPayment = {
                 'payment_type': 'inbound',
                 'partner_type': 'customer',
-                'partner_id': self.env.ref('motgama.cliente_contado').id,
+                'partner_id': cliente.id,
                 'amount': pago.valor,
                 'journal_id': pago.mediopago.diario_id.id,
                 'payment_date': fields.Date().today(),
                 'payment_method_id': 1,
                 'communication': 'Abono para movimiento con id: ' + str(self.movimiento_id.id)
             }
+            paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+            if paramAnticipos:
+                ant = cliente.property_account_receivable_id
+                cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
+                if not cuenta:
+                    raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+                cliente.write({'property_account_receivable_id': cuenta.id})
             payment = self.env['account.payment'].sudo().create(valoresPayment)
             if not payment:
                 raise Warning('No se pudo registrar el pago')
             payment.sudo().post()
+            if paramAnticipos:
+                cliente.write({'property_account_receivable_id':ant.id})
             
             valores = {
                 'cliente_id': self.env.ref('motgama.cliente_contado').id,

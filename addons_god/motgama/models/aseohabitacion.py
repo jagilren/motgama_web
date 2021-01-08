@@ -21,7 +21,7 @@ class MotgamaFlujoHabitacion(models.Model):
             valores = {'aseofecha':fechaActual,
                 'aseo_uid':self.env.user.id}
             movimiento.write(valores)
-            self.sudo().write({'estado':'RC','notificar':True}) # pone en estado disponible
+            self.sudo().write({'estado':'RC','notificar':True,'sin_alerta':True,'alerta_msg':''}) # pone en estado disponible
         else:
             raise Warning('No se pudo cambiar el estado para asear la habitación')
     

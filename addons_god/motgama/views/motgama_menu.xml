@@ -132,15 +132,30 @@
 
     <!-- Accion -->
     <act_window id="accion_motgama_parametros_form"
-        name="Parametros"
+        name="Parámetros"
         res_model="motgama.parametros"
         view_mode="tree,form"
         />
     <!-- Item de menu -->
     <menuitem id="menu_motgama_parametros_form"
-        name="Parametros"
+        name="Parámetros"
         parent="menu_motgama_maestros_motel"
         action="accion_motgama_parametros_form"
+        />
+
+    <!-- Wizard consecutivo interfaz -->
+    <record id="accion_secuencia_docto" model="ir.actions.act_window">
+        <field name="name">Secuencia Interfaz</field>
+        <field name="res_model">motgama.secuencia.documento</field>
+        <field name="view_mode">form</field>
+        <field name="view_type">form</field>
+        <field name="res_id" ref="motgama.secuencia_docto"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_consecutivo"
+        name="Consecutivo interfaz"
+        parent="menu_motgama_maestros_motel"
+        action="accion_secuencia_docto"
         />
 
     <!-- Accion -->

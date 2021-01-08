@@ -18,12 +18,13 @@
                     <div>
                         <table class="table table-condensed table-bordered" style="width: 100%">
                             <thead>
-                                <th class="text-center" style="width: 16%">Recepción</th>
-                                <th class="text-center" style="width: 17%">Fecha</th>
-                                <th class="text-center" style="width: 16%">Habitación</th>
-                                <th class="text-center" style="width: 16%">Tipo de hospedaje</th>
-                                <th class="text-center" style="width: 19%">Valor</th>
-                                <th class="text-center" style="width: 16%">Usuario</th>
+                                <th class="text-center" style="width: 14%">Recepción</th>
+                                <th class="text-center" style="width: 14%">Fecha</th>
+                                <th class="text-center" style="width: 14%">Habitación</th>
+                                <th class="text-center" style="width: 15%">Tipo de hospedaje</th>
+                                <th class="text-center" style="width: 14%">Cantidad</th>
+                                <th class="text-center" style="width: 14%">Valor</th>
+                                <th class="text-center" style="width: 15%">Usuario</th>
                             </thead>
                             <tbody>
                                 <t t-foreach="docs" t-as="doc">
@@ -41,6 +42,9 @@
                                             <span t-field="doc.tipoHospedaje"/>
                                         </td>
                                         <td class="text-center">
+                                            <span t-field="doc.cantidad"/>
+                                        </td>
+                                        <td class="text-center">
                                             $ <span t-field="doc.valor"/>
                                         </td>
                                         <td class="text-center">
@@ -54,8 +58,9 @@
                         <h4>Resumen por hospedajes</h4>
                         <table class="table table-condensed table-bordered" style="width: 100%">
                             <thead>
-                                <th class="text-center" style="width: 50%">Tipo de hospedaje</th>
-                                <th class="text-center" style="width: 50%">Total</th>
+                                <th class="text-center" style="width: 34%">Tipo de hospedaje</th>
+                                <th class="text-center" style="width: 33%">Cantidad</th>
+                                <th class="text-center" style="width: 33%">Total</th>
                             </thead>
                             <tbody>
                                 <t t-foreach="hospedajes" t-as="hosp">
@@ -64,7 +69,10 @@
                                             <span t-esc="hosp"/>
                                         </td>
                                         <td class="text-center">
-                                            $ <span t-esc="hospedajes[hosp]"/>
+                                            <span t-esc="hospedajes[hosp]['cantidad']"/>
+                                        </td>
+                                        <td class="text-center">
+                                            $ <span t-esc="hospedajes[hosp]['valor']"/>
                                         </td>
                                     </tr>
                                 </t>

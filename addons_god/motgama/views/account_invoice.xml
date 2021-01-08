@@ -28,6 +28,7 @@
                 <xpath expr="//notebook" position="after">
                     <group>
                         <field name="recaudo" readonly="1" string="Recibo de pago"/>
+                        <field name="recaudo_ids" readonly="1" string="Todos los recaudos"/>
                     </group>
                     <group>
                         <field name="factura_anomalia" readonly="1"/>

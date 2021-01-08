@@ -33,7 +33,7 @@
                                     <create string="Agregar pago"/>
                                 </control>
                                 <field name="pago_readonly" invisible="1"/>
-                                <field name="mediopago_id" domain="[('tipo','not in',['prenda','abono'])]" attrs="{'readonly':[('pago_readonly','=',True)]}"/>
+                                <field name="mediopago_id" domain="[('tipo','!=','abono')]" attrs="{'readonly':[('pago_readonly','=',True)]}"/>
                                 <field name="valor" attrs="{'readonly':[('pago_readonly','=',True)]}"/>
                             </tree>
                         </field>

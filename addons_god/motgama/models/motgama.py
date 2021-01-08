@@ -305,6 +305,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
     lq = fields.Boolean(default=False)
     inmotica = fields.Boolean(default=False)
     observacion = fields.Text(string='Observaciones',default='')
+    sin_alerta = fields.Boolean(string="Sin Alerta",default=True)
+    alerta_msg = fields.Char(string="Mensaje alerta")
 
     @api.model
     def get_view(self):
@@ -783,10 +785,17 @@ class MotgamaBonos(models.Model):
     porcpagoefectivo = fields.Float(string='Porcentaje descuento',default=0.0)
     # El descuento se lo puede aplicar a :
     aplicahospedaje = fields.Boolean(string='Aplica en hospedaje',default=True)
+    aplica_adicional = fields.Boolean(string="Aplica en hospedaje adicional",default=False)
     aplicarestaurante = fields.Boolean(string='Aplica en restaurante',default=False)
     aplicaconsumos = fields.Boolean(string='Aplica en otros productos',default=False)
     valor = fields.Float(string='Valor descuento',compute='_compute_valor')
     active = fields.Boolean(string='Activo',default=True)
+
+    @api.onchange('aplicahospedaje')
+    def _onchange_aplica(self):
+        for record in self:
+            if not record.aplicahospedaje:
+                record.aplica_adicional = False
 
     @api.onchange('tipo_bono')
     def _onchange_tipobono(self):
@@ -1052,9 +1061,6 @@ class MotgamaLog(models.Model):
             if correo:
                 correo.sudo().send()
         record = super().create(values)
-        if record.tipo_evento == 'notificacion':
-            for usuario in record.notificacion_uids:
-                usuario.sudo().notify_warning(message=record.descripcion,title=record.asunto,sticky=True)
         return record
 
 class MotgamaWizardFueradeservicio(models.TransientModel):

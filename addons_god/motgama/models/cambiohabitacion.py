@@ -114,7 +114,9 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
 
         valoresNuevo = {
             'estado': flujoViejo.estado,
-            'ultmovimiento': movimiento.id
+            'ultmovimiento': movimiento.id,
+            'sin_alerta':True,
+            'alerta_msg':''
         }
         nuevoguardado = flujoNuevo.write(valoresNuevo)
         if not nuevoguardado:
@@ -123,7 +125,9 @@ class MotgamaWizardCambiohabitacion(models.TransientModel):
         valoresViejo = {
             'estado': 'RC',
             'notificar': True,
-            'ultmovimiento': movtoNuevo.id
+            'ultmovimiento': movtoNuevo.id,
+            'sin_alerta':True,
+            'alerta_msg':''
         }
         viejoguardado = flujoViejo.write(valoresViejo)
         if not viejoguardado:

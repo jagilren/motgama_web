@@ -51,11 +51,13 @@ class MotgamaWizardDesasigna(models.TransientModel):
             raise Warning('La habitación tiene consumos registrados, no se desasigna')   
 
         if movimiento:  # Modifica el estado para poner en aseo y poder habilitar nuevamente la habitacion                #P7.0.4R
-            valores = {'desasignafecha':fechaActual,
-                        'desasigna_uid':self.env.user.id,
-                        'observacion':self.observacion}
+            valores = {
+                'desasignafecha':fechaActual,
+                'desasigna_uid':self.env.user.id,
+                'observacion':self.observacion
+            }
             movimiento.write(valores)
-            flujo.sudo().write({'estado':'RC','notificar':True}) # pone en estado de aseo
+            flujo.sudo().write({'estado':'RC','notificar':True,'sin_alerta':True,'alerta_msg':''}) # pone en estado de aseo
 
             valores = {
                 'fecha': fields.Datetime().now(),

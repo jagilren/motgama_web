@@ -71,10 +71,10 @@ class WizardReporteHospedaje(models.TransientModel):
                 elif line.product_id.default_code == paramAmanecida.valor:
                     valores.update({'tipoHospedaje':'AM'})
                 elif line.product_id.default_code == paramAdicional.valor:
-                    valores.update({'tipoHospedaje':'AD'})
+                    valores.update({'tipoHospedaje':'AD','cantidad':line.quantity})
                 else:
                     continue
-                valores.update({'valor':line.price_unit})
+                valores.update({'valor':line.price_unit * line.quantity})
                 nuevo = self.env['motgama.reportehospedaje'].create(valores)
                 if not nuevo:
                     raise Warning('No se pudo crear el reporte')
@@ -100,6 +100,7 @@ class ReporteHospedaje(models.TransientModel):
     fecha = fields.Datetime(string='Fecha')
     habitacion = fields.Char(string='Habitación')
     tipoHospedaje = fields.Selection(string='Tipo de hospedaje',selection=[('O','Hospedaje Ocasional'),('AM','Hospedaje Amanecida'),('AD','Hospedaje Adicional')])
+    cantidad = fields.Float(string="Cantidad",default=1)
     valor = fields.Float(string='Valor')
     usuario = fields.Char(string='Usuario')
 
@@ -115,15 +116,19 @@ class PDFReporteHospedaje(models.AbstractModel):
         for doc in docs:
             tipoHospedaje = 'Hospedaje Ocasional' if doc.tipoHospedaje == 'O' else 'Hospedaje Amanecida' if doc.tipoHospedaje == 'AM' else 'Hospedaje Adicional' if doc.tipoHospedaje == 'AD' else ''
             if tipoHospedaje in hospedajes:
-                hospedajes[tipoHospedaje] += doc.valor
+                hospedajes[tipoHospedaje]['cantidad'] += doc.cantidad
+                hospedajes[tipoHospedaje]['valor'] += doc.valor
             else:
-                hospedajes[tipoHospedaje] = doc.valor
+                hospedajes[tipoHospedaje] = {'cantidad': doc.cantidad, 'valor': doc.valor}
             total += doc.valor
+
+        for hospedaje in hospedajes:
+            hospedajes[hospedaje]['valor'] = "{:0,.2f}".format(hospedajes[hospedaje]['valor']).replace(',','¿').replace('.',',').replace('¿','.')
         
         return {
             'company': self.env['res.company']._company_default_get('account.invoice'),
             'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
             'hospedajes': hospedajes,
-            'total': "{:0,.1f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
+            'total': "{:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
         }

@@ -49,7 +49,7 @@ class MotgamaFlujoHabitacion(models.Model):
             self.env['sale.order.line'].sudo().create(valores)
 
         estado = movimiento.asignatipo
-        self.write({'estado': estado,'notificar':True})
+        self.write({'estado': estado,'notificar':True,'sin_alerta':True,'alerta_msg':''})
 
         self.refresh_views()
         

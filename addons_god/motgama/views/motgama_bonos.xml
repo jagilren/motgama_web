@@ -12,6 +12,7 @@
                 <field name="validodesde"/>
                 <field name="validohasta"/>
                 <field name="aplicahospedaje" />
+                <field name="aplica_adicional"/>
                 <field name="aplicarestaurante"/>
                 <field name="aplicaconsumos"/>
             </tree>
@@ -68,6 +69,7 @@
                     </group>
                     <group string="Aplica en">
                         <field name="aplicahospedaje"/>
+                        <field name="aplica_adicional" attrs="{'invisible':[('aplicahospedaje','=',False)]}"/>
                         <field name="aplicarestaurante"/>
                         <field name="aplicaconsumos"/>
                     </group>

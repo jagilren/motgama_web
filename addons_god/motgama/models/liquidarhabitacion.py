@@ -259,7 +259,7 @@ class MotgamaFlujoHabitacion(models.Model):
                     'price_unit' : -1 * movimiento.tarifaocasional * desc_tiempo / 100,
                     'product_uom_qty' : 1,
                     'product_id' : prod_desc_ocup.product_variant_id.id,
-                    'es_hospedaje' : False
+                    'es_hospedaje' : True
                 }
                 nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaDesc)
                 if not nuevaLinea:
@@ -275,6 +275,10 @@ class MotgamaFlujoHabitacion(models.Model):
             producto = self.env['product.template'].sudo().search([('default_code','=',codAdicionales.valor)])
             if not producto:
                 raise Warning('No existe producto con Referencia interna: ' + codAdicionales.valor + ' para Hospedaje Adicional')
+
+            if movimiento.bono_id and movimiento.bono_id.aplica_adicional:
+                desc_hosp += movimiento.tarifaocasional * movimiento.bono_id.porcpagoefectivo / 100
+
             valoresLineaAdicionales = {
                 'customer_lead' : 0,
                 'name' : producto.name,
@@ -309,13 +313,13 @@ class MotgamaFlujoHabitacion(models.Model):
                 'price_unit' : -1 * (desc_cons + desc_hosp + desc_rest),
                 'product_uom_qty' : 1,
                 'product_id' : prod_bono.product_variant_id.id,
-                'es_hospedaje' : False
+                'es_hospedaje' : True
             }
             nuevo = self.env['sale.order.line'].sudo().create(valoresLineaBono)
             if not nuevo:
                 raise Warning('Error al liquidar: No se pudo aplicar el bono al estado de cuenta')
 
-        self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True})
+        self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
 
         desc = self.env['motgama.descuento'].search([('movimiento_id','=',movimiento.id)],limit=1)

@@ -1,4 +1,4 @@
-from odoo import fields, models, api
+from odoo import fields, models, api, SUPERUSER_ID
 from odoo.exceptions import Warning
 from datetime import datetime, timedelta
 
@@ -48,7 +48,7 @@ class MotgamaReservas(models.Model):
 
         if record.fecha < fields.Datetime().now() + timedelta(hours=tiempoReserva):
             if record.habitacion_id.estado == 'D':
-                record.habitacion_id.write({'estado':'R','prox_reserva':record.id,'notificar':True})
+                record.habitacion_id.write({'estado':'R','prox_reserva':record.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
             else:
                 raise Warning('La habitación a reservar no está disponible en este momento')
 
@@ -71,7 +71,7 @@ class MotgamaReservas(models.Model):
 
     @api.multi
     def button_cancelar(self):
-        if self.env.ref('motgama.motgama_cancela_reserva') not in self.env.user.permisos:
+        if self.env.ref('motgama.motgama_cancela_reserva') not in self.env.user.permisos and self.env.user.id != SUPERUSER_ID:
             raise Warning('No tiene permitido cancelar reservas')
 
         return {
@@ -142,7 +142,7 @@ class MotgamaReservas(models.Model):
             intervaloReservar = reserva.fecha - fields.Datetime().now()
             if fields.Datetime().now() < reserva.fecha and intervaloReservar <= timedelta(hours=tiempoReserva):
                 if reserva.habitacion_id.estado == 'D':
-                    reserva.habitacion_id.write({'estado':'R','prox_reserva':reserva.id,'notificar':True})
+                    reserva.habitacion_id.write({'estado':'R','prox_reserva':reserva.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
                 else:
                     usuarios = self.env['res.users'].sudo().search([('recepcion_id','=',reserva.habitacion_id.recepcion.id)])
                     uids = [usuario.id for usuario in usuarios]
@@ -158,7 +158,7 @@ class MotgamaReservas(models.Model):
             fechaCancelar = reserva.fecha + timedelta(minutes=tiempoCancelaReserva)
             if fields.Datetime().now() >= fechaCancelar:
                 if reserva.habitacion_id.estado == 'R':
-                    reserva.habitacion_id.write({'estado':'D','prox_reserva':False,'notificar':False})
+                    reserva.habitacion_id.write({'estado':'D','prox_reserva':False,'notificar':False,'sin_alerta':True,'alerta_msg':''})
                 reserva.button_cancelar()
     
     @api.multi
@@ -208,7 +208,7 @@ class MotgamaReservas(models.Model):
         fecha_final = self.fecha + timedelta(minutes=tiempoCancelaReserva)
         if fecha_inicial <= fields.Datetime().now() <= fecha_final:
             if self.habitacion_id.estado == 'D':
-                self.habitacion_id.write({'estado':'R','prox_reserva':self.id,'notificar':True})
+                self.habitacion_id.write({'estado':'R','prox_reserva':self.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
             else:
                 raise Warning('La habitación no se encuentra disponible y no puede cambiarse a Reservada')
         else:
@@ -320,7 +320,7 @@ class MotgamaWizardModificaReserva(models.TransientModel):
             
             if reserva.fecha < fields.Datetime().now() + timedelta(hours=tiempoReserva):
                 if reserva.habitacion_id.estado == 'D':
-                    reserva.habitacion_id.write({'estado':'R','prox_reserva':record.id,'notificar':True})
+                    reserva.habitacion_id.write({'estado':'R','prox_reserva':record.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
                 else:
                     raise Warning('La habitación no está disponible en este momento')
             
@@ -523,7 +523,7 @@ class MotgamaWizardCancelaReserva(models.TransientModel):
         self.ensure_one()
 
         if self.reserva_id.habitacion_id.estado == 'R':
-            self.reserva_id.habitacion_id.write({'estado':'RC','prox_reserva':False})
+            self.reserva_id.habitacion_id.write({'estado':'RC','prox_reserva':False,'sin_alerta':True,'alerta_msg':''})
 
         valores = {
             'cancelada': True,

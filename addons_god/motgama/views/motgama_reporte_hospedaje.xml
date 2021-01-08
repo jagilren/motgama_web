@@ -32,6 +32,7 @@
                 <field name="fecha"/>
                 <field name="habitacion"/>
                 <field name="tipoHospedaje"/>
+                <field name="cantidad"/>
                 <field name="valor"/>
                 <field name="usuario"/>
             </tree>

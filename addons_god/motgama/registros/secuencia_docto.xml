@@ -1,13 +1,9 @@
 <odoo>
     <data noupdate="1">
-        <record id="sequence_docto" model="ir.sequence">
-            <field name="name">Secuencia Documento de Interfaz Contable</field>
-            <field name="code">motgama.interfazcontable.documento</field>
-            <field name="active">TRUE</field>
-            <field name="prefix">DOC</field>
-            <field name="padding">0</field>
-            <field name="number_next">1</field>
-            <field name="number_increment">1</field>
+        <record id="secuencia_docto" model="motgama.secuencia.documento">
+            <field name="prefijo"></field>
+            <field name="fecha_inicial" eval="datetime.now().date()"/>
+            <field name="offset">0</field>
         </record>
     </data>
 </odoo>

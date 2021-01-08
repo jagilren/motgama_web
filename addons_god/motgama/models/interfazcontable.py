@@ -125,10 +125,7 @@ class MotgamaWizardInterfazContable(models.TransientModel):
             sucursal = ''
         else:
             sucursal = paramSucursal.valor
-        if self.nueva:
-            doc = self.env['ir.sequence'].next_by_code('motgama.interfazcontable.documento') or ''
-        else:
-            doc = ''
+        doc = self.env['motgama.secuencia.documento'].get_consecutivo(self.fecha_inicial.date())
 
         lineas = []
         for cuenta in saldos:

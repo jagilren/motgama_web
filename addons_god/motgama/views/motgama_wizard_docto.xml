@@ -1,0 +1,15 @@
+<odoo>
+    <record id="wizard_docto" model="ir.ui.view">
+        <field name="name">Wizard Documento</field>
+        <field name="model">motgama.secuencia.documento</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="prefijo"/>
+                    <field name="fecha_inicial"/>
+                    <field name="offset"/>
+                </group>
+            </form>
+        </field>
+    </record>
+</odoo>

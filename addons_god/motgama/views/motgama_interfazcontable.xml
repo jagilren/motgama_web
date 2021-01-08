@@ -6,7 +6,7 @@
         <field name="arch" type="xml">
             <form string="Interfaz Contable">
                 <group>
-                    <field name="nueva"/>
+                    <field name="nueva" invisible="1"/>
                     <field name="repite" attrs="{'invisible':[('nueva','=',True)]}"/>
                 </group>
                 <group>
