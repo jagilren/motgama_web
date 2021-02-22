@@ -1011,7 +1011,8 @@ class MotgamaMedioPago(models.Model):
 
     @api.onchange('nombre')
     def onchange_nombre(self):
-        self.cod = self.nombre[:2].upper()
+        if self.nombre:
+            self.cod = self.nombre[:2].upper()
 
     @api.depends('tipo')
     def _compute_prenda(self):

@@ -1,3 +1,28 @@
+Persiste el error de la cuentas que tienen bono.  Cada vez que la liquido >>> Rehabilto y Vuelvo a Liquidar hace un descuento una y otra vez del bono, incluso se vuelve negativo el recaudo como te muestro en la imagen de abajo.  La liquidación de la Precuenta está bien, pero el recaudo está errado
+    Actualízalo y revisa, porque hice varias pruebas liquidando y rehabilitando
+
+Corrección de mostrar varias código de formas para cuando se presentan varias formas de pago en un mismo recaudo (Correcta), pero persiste error de Abonos son llevados a una cuenta  13 y debe ir a una 28. O falta configurar parámetro, para verlo reflejado?
+    Actualízalo y revisa, porque hice varias pruebas con abonos y anticipos y tienen el funcionamiento correcto
+
+Se generaron una factura con eróticos y otra con bebidas, pagadas ambas en efectivo, se ejecutó el proceso de validación {llave} y aparece el siguiente error.
+    Listo
+
+La configuración del servidor de almacenamiento para los procesos de llave, deben poder establecer sobre qué carpeta o ruta, se va  a almacenar la información en el servidor FTP, WebDAV, Cloud Drive o el que se vaya a usar
+    Listo
+
+La Interfaz Contable no tiene aún una fecha inicial (Fecha Cero), a partir de la cual comienza el conteo del consecutivo. No lo vi en los parámetros.
+    En Datos Maestros -> Consecutivo interfaz cambias esos datos
+
+El impuesto de IVA, se puede aplicar por categoría de producto?  actualmente lo veo sólo por Producto
+    Los impuestos se aplican por producto, no es posible hacerlo por categoría
+
+Me aparece este error al intentar borrar registro en el diario contable.
+    Explícame mejor qué es lo que estás intentando borrar, pero lo que veo en el error es que estás intentando borrar un diario que ya tiene facturas publicadas, y odoo no lo permite
+
+Los Reportes Relacionados en el menú Motgama >> Reportes, es necesario que se puedan exportar por lo menos a  PDF en Tamaño Carta.
+    Si el reporte tiene agrupaciones debes quitarlas o abrirlas, allí salen los registros, debes seleccionarlos todos con el checkbox donde están los títulos de la tabla y darle al botón Imprimir, todos los reportes tienen esta opción
+
+
 Enviar terceros en archivo plano en el formato de Ilimitada y marcar los contactos la primera vez que se envíen para que no se vuelvan a enviar
     Que Jorge envíe el archivo
 
