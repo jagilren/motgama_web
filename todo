@@ -1,26 +1,50 @@
-Persiste el error de la cuentas que tienen bono.  Cada vez que la liquido >>> Rehabilto y Vuelvo a Liquidar hace un descuento una y otra vez del bono, incluso se vuelve negativo el recaudo como te muestro en la imagen de abajo.  La liquidación de la Precuenta está bien, pero el recaudo está errado
-    Actualízalo y revisa, porque hice varias pruebas liquidando y rehabilitando
+El Auxiliar de Inventario no está respetando el parámetro de fecha inicial. Para tener certeza de la fidelidad del informe la vista debería tener los siguientes parámetros:
+a. Fecha Inicial: Es la fecha a partir de la cual se tendrán en cuenta los movimientos de entrada y salida hasta la fecha de corte inicio para determinar el Valor de la columna Saldo Inicial.  (Por defecto es la fecha donde se puso en producción el aplicativo con sus saldos iniciales)
+b. Fecha Fecha de Corte Inicio:  Es la fecha inicial a partir de la cual se tomará la referencia para establecer los valores de las columnas ENTRADAS y SALIDAS.  (Por defecto es el día 1 del mes corriente)
+c. Fecha de Corte Fin: Es la fecha límite hasta donde se incluyen los movimientos de los productos a reportar  para los valores de las columnas ENTRADAS Y SALIDAS (por defecto es la fecha y hora actual)
+Las condiciones que deben cumplir estos tres parámetros son: Fecha inicial <=fecha de Corte inicio <= Fecha de Corte Fin
 
-Corrección de mostrar varias código de formas para cuando se presentan varias formas de pago en un mismo recaudo (Correcta), pero persiste error de Abonos son llevados a una cuenta  13 y debe ir a una 28. O falta configurar parámetro, para verlo reflejado?
-    Actualízalo y revisa, porque hice varias pruebas con abonos y anticipos y tienen el funcionamiento correcto
+Tradicionalmente un Auxiliar de inventario Tiene columnas del valor del inventario inicial y valor del inventario final.  En este auxiliar no veo tales columnas. Remover la opción “EDITAR”  sobre los registros del auxiliar de inventario. El Auxiliar de Inventario se debe exportar mínimamente a PDF o Excel
 
-Se generaron una factura con eróticos y otra con bebidas, pagadas ambas en efectivo, se ejecutó el proceso de validación {llave} y aparece el siguiente error.
-    Listo
 
-La configuración del servidor de almacenamiento para los procesos de llave, deben poder establecer sobre qué carpeta o ruta, se va  a almacenar la información en el servidor FTP, WebDAV, Cloud Drive o el que se vaya a usar
-    Listo
+Debe existir una(s) vista(s) para poder configurar CRUD sobre las siguientes tablas de las base de datos:
+    a. Productos.
+    b. Categorías de Producto
+    c. Transacciones
+    d. Proveedores
+    e. Clientes
+    f. CRUD Tipos de Operaciones
+    g. En general Permiso para usar cualquier Tipo de operación existente (incluso “devolver”, “desechar”, “desbloquear”, “Ajustar Inventario”)
+    h. Secuencias
+    i. Ubicaciones
+    j. Bancos
+    k. Tablas maestras en general de las que dependan los movimientos
+    Podemos agendar una reunión para revisar uno por uno como lo podemos manejar
 
-La Interfaz Contable no tiene aún una fecha inicial (Fecha Cero), a partir de la cual comienza el conteo del consecutivo. No lo vi en los parámetros.
-    En Datos Maestros -> Consecutivo interfaz cambias esos datos
+El movimiento producto de la venta de un(os) consumo(s) a un cliente de hospedaje (o a una factura no asociada a hospedaje), debe tener restricciones en el módulo de inventarios de ODOO y normalmente sólo está disponible para los administradores del sistema o para la Administradora del Establecimiento
+    Podemos agendar una reunión para revisar uno por uno como lo podemos manejar
 
-El impuesto de IVA, se puede aplicar por categoría de producto?  actualmente lo veo sólo por Producto
-    Los impuestos se aplican por producto, no es posible hacerlo por categoría
+Claridad sobre qué tipos de movimiento u operaciones afectan el “COSTO PROMEDIO” de los ítems. ¿Donde se parametriza si el TIPO DE OPERACIÓN AFECTA EL COSTO PROMEDIO?
+    Las operaciones de inventario solitas nunca afectan el costo promedio del artículo, para que este se actualice el artículo debe ingresar a través de una compra (Para esto toma relevancia el módulo de compras)
 
-Me aparece este error al intentar borrar registro en el diario contable.
-    Explícame mejor qué es lo que estás intentando borrar, pero lo que veo en el error es que estás intentando borrar un diario que ya tiene facturas publicadas, y odoo no lo permite
+Cómo se crea un Movimiento correcto para devoluciones de inventario, en caso de artículos vencidos que se deban retornar al proveedor.
+    El artículo debería ingresar a través de una compra, y el movimiento de inventario que ésta genera tiene la opción de devolver.
 
-Los Reportes Relacionados en el menú Motgama >> Reportes, es necesario que se puedan exportar por lo menos a  PDF en Tamaño Carta.
-    Si el reporte tiene agrupaciones debes quitarlas o abrirlas, allí salen los registros, debes seleccionarlos todos con el checkbox donde están los títulos de la tabla y darle al botón Imprimir, todos los reportes tienen esta opción
+Queda pendiente una vista o informe donde se puedan ver los artículos en tránsito, es decir que están cargados en  las habitaciones activas, pero aún no se han liquidado o facturado. Debe poder filtrar por ubicación, categoría, producto, cantidad, fecha.
+    El reporte de consumos tiene la opción "En tránsito" que permite visualizarlos, revísalo y me dices si le falta algo
+
+Si defino varios TIPOS DE OPERACIÓN por ejemplo.
+    TRANSFERENCIA A. Para realizar transferencia de mercancías entre moteles de la misma razón social.
+    TRANSFERENCIA B. Para realizar transferencia de mercancías entre moteles de diferente razón social.
+    TRANSFERENCIA C. Para realizar transferencias de mercancía entre propietarios y motel.
+Como hago posteriormente para filtrar los movimientos realizados por cada uno de los tipos de operación definidos?
+    Véamoslo en la reunión de los permisos, al ingresar al módulo de inventarios lo primero que ves son los tipos de transferencias
+
+Error al tratar de crear un Proveedor con RUT
+    Es un bug general de Odoo, al parecer exige que al nit se le agreguen letras al inicio, nosotros lo trabajamos CCxxxxxxx para cédula y NIxxxxxx-x para Nit
+
+El informe de saldos se debe poder exportar a PDF y Excel
+    Para exportar a Excel debes expandir las agrupaciones, te recomiendo que cambies la agrupación por la de ubicaciones y expandas las que te sirvan, seleccionas todos los registros con el checkbox de la barra de títulos de la tabla y le das Acción -> Exportar. Para PDF es lo mismo pero en vez de Acción selecciona Imprimir
 
 
 Enviar terceros en archivo plano en el formato de Ilimitada y marcar los contactos la primera vez que se envíen para que no se vuelvan a enviar
@@ -34,98 +58,3 @@ Organizar con Jorge lo de la referencia
 
 Hacer plantilla de tipos de transferencia con Jorge
     Hacer
-
-
-14.	En el aplicativo de procesos especiales debe existir un parámetro donde se establece si el total se redondea a centenas o miles en los descuentos realizados.
-    Externo
-
-15.	Permisos para operario de inventarios.  No debe tener acceso a algunas utilidades como "AJUSTE DE INVENTARIO" o "CREACIÓN DE ITEMS" O "LUGARES" o "CREACIÓN DE TRANSACCIONES".  Debe estar en listado de permisos.
-    Versión 2
-
-
-6.	Nota crédito en un turno posterior refleja en la interfase un valor duplicado en cxc. Revisar reversión del pago. Debe hacerse un nuevo documento que anule el recaudo anterior
-    Probar
-
-4.	Modificar el Recaudo, permitir agregar Prenda y cortesías o cualquier forma de pago que se cree nueva.
-    Probar
-
-3.	Vista consulta estado de cuenta saca un formato
-    Probar en el servidor de ellos
-    
-13.	Informe de hospedaje colocar cantidad de horas adicionales (En el reporte de Hospedaje líquida sólo una hora adicional, independiente de cuántas horas adicionales liquidó la ocupación).
-    Probar
-
-Bonos: Aplicar en horas adicionales o no cuando es en hospedaje
-    Probar
-
-
-Error al generar csv en Interfaz Contable "PermissionError: [Errno 13] Permission denied: '/home/usr/files/interfaz-2020-11-30 05:13:40.csv'"
-    Debes dar permisos completos a la carpeta donde se guarda la interfaz contable en el servidor (chmod 777)
-
-Donde encuentro el permiso "Technical Settings/Show Full Accounting Feature" para que las coordinadoras puedan anular recaudos y cambiar formas de pago?
-    Ajustes -> Activar modo desarrollador: Ajustes -> Usuarios -> Eliges el usuario -> Clic en Editar -> Activas "Mostrar características de contabilidad completas" -> Guardar
-
-Crear...Permiso para crear reservas.  Permiso para Modificar reservas.  Permiso para Cancelar Reservas
-    Listo
-
-Agregar permiso para Generar interfaz Contable por demanda (Actualmente oo aparece en Menú de recepción)
-    Listo
-
-Permiso para Crear-Editar-Eliminar Descuento
-    Listo
-
-Porqué la opción de  Aplicar Descuento no se puede aplicar antes de liquidar una ocupación.  Se supone que si vamos a cobrarle al cliente con el Estado de cuenta debe tener ya el descuento aplicado.
-    Listo, pero es probable que al eliminar el descuento, este no desaparezca del estado de cuenta pero aparecerá con cantidad 0 y valor 0. Eso sí, al facturar si desaparece por completo.
-    Por la forma en que trabaja Odoo no permite que se elimine cuando hay ventas confirmadas, por ejemplo cuando ya hay consumos o cuando la habitación ya está liquidada
-
-Hice un Descuento, recaudé correctamente descontando el descuento, sin embargo el reporte de recaudos aparece con el Total sin descuento.
-    Pruébate con la nueva dinámica del descuento, pero a mí me muestra el recaudo como es
-
-El encabezado de la Resolución DIAN no siempre es HABILITA, también puede ser AUTORIZA
-    Decidí que mejor agregues el texto completo de la resolución
-
-Donde se pueden parametrizar qué información sale al pie de página de la factura de venta impresa?
-    Donde configuras los datos de la razón social, en la pestaña Motgama donde también está la resolución
-
-Cuando un usuario puede ver las habitaciones de todas la recepciones las debe ver en en orden, primero las de la Recepción A y luego las de la Recepción  B.  (De lo contrario crea confusión)
-    Ya la habitación dice de qué recepción es y además están ordenadas por recepción
-
-Falta Agregar los parámetros PERSADIC y HOSPEDN en la plantilla de carga de datos.
-    Esta en el archivo Productos_Hospedaje.xlsx adjunto, allí están todos los productos relacionados con Hospedaje
-
-Modificar los reportes para que tengan los valores iniciales (Ej: fecha_inicial) y finales (Ej: fecha_final)
-    Listo
-
-Si se rompe una conciliación y luego se escoge la opción  "RECAUDAR FACTURA"  se genera un error.
-    Desaparece la opción, te recomiendo que no rompas conciliación sino que utilices la opción de 'Anular' en el recaudo. Si vas solo a cambiar los medios de pago puedes utilizar la opción 'Modificar recaudo'
-
-Las facturas Rectificativas deben aparecer en el comprobante Diario de Ventas
-    Listo
-
-2.	Recaudar factura sin hospedaje genera mensaje de error
-    Intenta realizarlo porque no me genera ningún error
-
-5.	Búsqueda en prendas por nombre cliente.
-    Listo, también por Nro. de Prenda
-
-7.	Agregar en plan contable si la cuenta requiere NIT y poner uno por defecto
-    Listo
-17.	Interfaz Contable "cuentas contables Estáticas" o por defecto (En eróticos, IVA, otros)
-    Agregado NIT por defecto, igual al punto 7
-
-12.	Informe diario colocar el identificador de la forma de pago cuando son varias
-    Listo
-
-16.	Interfaz Campos "DOCUMENTO" (Pendiente por revisar porque no es el usuario quien define cuando se crea un consecutivo nuevo, pues si genera una interfaz de un año anterior, por ejemplo, y le da la opción "NUEVO", va a crear un nuevo consecutivo para una información pasada).  Se propone poner un parámetro de fecha que corresponde al #1 y de ahí en adelante hacer la diferencia con la fecha de la Interfaz que se está consultando.  Además, debe tener un prefijo alfabético.
-    Listo
-
-8.	Revisar la presentación de las notificaciones de alarma por terminación de tiempo. (Alertas o marcado de habitación próxima a vencer tiempo de hospedaje) normal. No están apareciendo.
-    Listo
-
-10.	Retirar bono después de liquidado no desaparece del estado de cuenta.
-    Listo
-11.	Si rehabilita hospedaje con bono >> se elimina el bono >> vuelve a liquidar.  El estado de cuenta queda mal (Anular estado de cuenta y generar uno nuevo).
-    Listo, igual al punto 10
-
-9.	Abonos a Ocupaciones Ocasionales llevarlos a la cuenta 28 como si fuera un anticipo de reserva o abono a decoración.
-    Listo

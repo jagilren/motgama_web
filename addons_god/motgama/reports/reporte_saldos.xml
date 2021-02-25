@@ -1,0 +1,113 @@
+<odoo>
+    <report id="reporte_saldos"
+        model="stock.quant"
+        string="Reporte de Saldos"
+        report_type="qweb-pdf"
+        name="motgama.reportesaldoshoy"
+        paperformat="motgama.formato_reporte"/>
+
+    <template id="reportesaldoshoy">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="costo_total" t-value="0.0"/>
+                <t t-set="und_total" t-value="0"/>
+                <div class="page">
+                    <div>
+                        <h5 class="text-center">
+                            Reporte de saldos al día <span t-esc="fecha"/>
+                        </h5>
+                    </div>
+                    <div>
+                        <table class="table table-bordered" style="width: 100%">
+                            <thead>
+                                <th class="text-center" style="width: 30%">Artículo</th>
+                                <th class="text-center" style="width: 30%">Ubicación</th>
+                                <th class="text-center" style="width: 6%">Unidades existentes</th>
+                                <th class="text-center" style="width: 10%">Unidad de medida</th>
+                                <th class="text-center" style="width: 6%">Costo unitario</th>
+                                <th class="text-center" style="width: 6%">Costo total</th>
+                                <th class="text-center" style="width: 6%">Valor unitario</th>
+                                <th class="text-center" style="width: 6%">Valor total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="doc">
+                                    <tr>
+                                        <td><span t-field="doc.product_id"/></td>
+                                        <td><span t-field="doc.location_id"/></td>
+                                        <td><span t-field="doc.quantity"/></td>
+                                        <td><span t-field="doc.product_uom_id"/></td>
+                                        <td><span t-field="doc.product_id.standard_price"/></td>
+                                        <td><span t-esc="doc.product_id.standard_price * doc.quantity"/></td>
+                                        <td><span t-field="doc.product_id.lst_price"/></td>
+                                        <td><span t-esc="doc.product_id.lst_price * doc.quantity"/></td>
+                                        <t t-set="costo_total" t-value="costo_total + doc.product_id.standard_price * doc.quantity"/>
+                                        <t t-set="und_total" t-value="und_total + doc.quantity"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <p>Total de artículos: <span t-esc="und_total"/></p>
+                        <p>Costo total del inventario: <span t-esc="costo_total"/></p>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <report id="reporte_saldos_fecha"
+        model="product.product"
+        string="Reporte de Saldos"
+        report_type="qweb-pdf"
+        name="motgama.reportesaldosfecha"
+        paperformat="motgama.formato_reporte"/>
+
+    <template id="reportesaldosfecha">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-set="costo_total" t-value="0.0"/>
+                <t t-set="und_total" t-value="0"/>
+                <div class="page">
+                    <div>
+                        <h5 class="text-center">
+                            Reporte de saldos al día <span t-esc="fecha"/>
+                        </h5>
+                    </div>
+                    <div>
+                        <table class="table table-bordered" style="width: 100%">
+                            <thead>
+                                <th class="text-center" style="width: 30%">Artículo</th>
+                                <th class="text-center" style="width: 6%">Unidades existentes</th>
+                                <th class="text-center" style="width: 10%">Unidad de medida</th>
+                                <th class="text-center" style="width: 6%">Costo unitario</th>
+                                <th class="text-center" style="width: 6%">Costo total</th>
+                                <th class="text-center" style="width: 6%">Valor unitario</th>
+                                <th class="text-center" style="width: 6%">Valor total</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="docs" t-as="doc">
+                                    <tr>
+                                        <td><span t-field="doc.name"/></td>
+                                        <td><span t-field="doc.qty_available"/></td>
+                                        <td><span t-field="doc.uom_id"/></td>
+                                        <td><span t-field="doc.standard_price"/></td>
+                                        <td><span t-esc="doc.standard_price * doc.qty_available"/></td>
+                                        <td><span t-field="doc.lst_price"/></td>
+                                        <td><span t-esc="doc.lst_price * doc.qty_available"/></td>
+                                        <t t-set="costo_total" t-value="costo_total + doc.standard_price * doc.qty_available"/>
+                                        <t t-set="und_total" t-value="und_total + doc.qty_available"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div>
+                        <p>Total de artículos: <span t-esc="und_total"/></p>
+                        <p>Costo total del inventario: <span t-esc="costo_total"/></p>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

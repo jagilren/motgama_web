@@ -444,4 +444,16 @@
         parent="menu_motgama_query"
         action="accion_motgama_log"
         />
+
+
+    <!-- REPORTES -->
+    <menuitem action="stock_aux_report.action_aux_report_wizard"
+        id="menu_aux_report_wizard"
+        name="Reporte auxiliar de inventario"
+        parent="menu_motgama_reportes"/>
+    
+    <menuitem action="stock.action_stock_quantity_history"
+        id="menu_stock_report"
+        name="Reporte de saldos de inventario"
+        parent="menu_motgama_reportes"/>
 </odoo>

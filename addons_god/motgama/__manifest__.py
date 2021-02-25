@@ -25,7 +25,8 @@
         'web_notify',
         'account_cancel',
         'sh_message',
-        'mrp'],
+        'mrp',
+        'stock_aux_report'],
     'installable':True,
     'application': True,
     'data':[
@@ -113,5 +114,7 @@
         'reports/reporte_hospedaje.xml',
         'reports/reporte_recaudo.xml',
         'reports/reporte_ventas.xml',
-        'reports/reporte_anomalias.xml']
+        'reports/reporte_anomalias.xml',
+        'reports/reporte_aux.xml',
+        'reports/reporte_saldos.xml']
 }
