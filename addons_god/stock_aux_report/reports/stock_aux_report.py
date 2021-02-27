@@ -6,14 +6,16 @@ class StockAuxReport(models.TransientModel):
     _rec_name = 'producto'
 
     currency_id = fields.Many2one(string='Moneda',comodel_name='res.currency',default=lambda self: self._get_currency())
+    
+    ubicacion = fields.Char(string='Ubicación')
     categoria = fields.Char(string='Categoría')
     producto = fields.Char(string='Producto')
-    ubicacion = fields.Char(string='Ubicación')
-    costo = fields.Monetary(string='Valor')
-    inicial = fields.Float(string='Cantidad inicial')
-    product_in = fields.Float(string='Cantidad que ingresa')
-    product_out = fields.Float(string='Cantidad que sale')
-    total = fields.Float(string='Cantidad total')
+    inicial = fields.Float(string='Saldo anterior')
+    valor_ant = fields.Monetary(string='Valor anterior')
+    product_in = fields.Float(string='Entradas')
+    product_out = fields.Float(string='Salidas')
+    total = fields.Float(string='Saldo actual')
+    valor_act = fields.Monetary(string='Valor actual')
 
     move_ids = fields.Many2many(string='Movimientos de inventario',comodel_name='stock.move')
 

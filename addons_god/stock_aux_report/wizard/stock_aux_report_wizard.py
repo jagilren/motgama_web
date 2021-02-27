@@ -108,14 +108,15 @@ class StockAuxReportWizard(models.TransientModel):
                 total = initial + product_in - product_out
                 moves = reporte_aux[ubicacion][producto]['moves']
                 dic = {
+                    'ubicacion': ubicacion.name,
                     'categoria': producto.categ_id.name,
                     'producto': producto.name,
-                    'ubicacion': ubicacion.name,
-                    'costo': producto.standard_price,
                     'inicial': initial,
+                    'valor_ant': producto.standard_price * initial,
                     'product_in': product_in,
                     'product_out': product_out,
                     'total': total,
+                    'valor_act': total * producto.standard_price,
                     'move_ids': [(6,0,moves)]
                 }
                 reporte.append(dic)
