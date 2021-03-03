@@ -6,7 +6,7 @@
         <field name="model">motgama.movimiento</field>
         <field name="limit">100</field>
         <field name="arch" type="xml">
-            <tree string="Movimiento" create="false" delete="false" default_order='create_date desc'>
+            <tree string="Movimiento" create="false" delete="false" default_order='recaudafecha desc, id asc'>
                 <field name="habitacion_id"/>
                 <field name="tipovehiculo"/>
                 <field name="asignafecha"/>

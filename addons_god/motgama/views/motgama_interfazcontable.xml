@@ -74,6 +74,5 @@
 
     <menuitem action="action_interfaz_contable_wizard"
         id="menu_interfaz_contable"
-        parent="menu_motgama_reportes"
-        groups="group_motgama_superuser"/>
+        parent="menu_motgama_reportes"/>
 </odoo>

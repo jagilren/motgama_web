@@ -8,17 +8,17 @@
 
     <template id="reportesaldoshoy">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-call="web.internal_layout">
                 <t t-set="costo_total" t-value="0.0"/>
                 <t t-set="und_total" t-value="0"/>
                 <div class="page">
                     <div>
-                        <h5 class="text-center">
+                        <h5 class="text-center" style="font-size: 10px;">
                             Reporte de saldos al día <span t-esc="fecha"/>
                         </h5>
                     </div>
                     <div>
-                        <table class="table table-bordered" style="width: 100%">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 30%">Artículo</th>
                                 <th class="text-center" style="width: 30%">Ubicación</th>
@@ -47,7 +47,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div>
+                    <div style="font-size: 10px;">
                         <p>Total de artículos: <span t-esc="und_total"/></p>
                         <p>Costo total del inventario: <span t-esc="costo_total"/></p>
                     </div>
@@ -65,17 +65,17 @@
 
     <template id="reportesaldosfecha">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-call="web.internal_layout">
                 <t t-set="costo_total" t-value="0.0"/>
                 <t t-set="und_total" t-value="0"/>
                 <div class="page">
                     <div>
-                        <h5 class="text-center">
+                        <h5 class="text-center" style="font-size: 10px;">
                             Reporte de saldos al día <span t-esc="fecha"/>
                         </h5>
                     </div>
                     <div>
-                        <table class="table table-bordered" style="width: 100%">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 30%">Artículo</th>
                                 <th class="text-center" style="width: 6%">Unidades existentes</th>
@@ -102,7 +102,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div>
+                    <div style="font-size: 10px;">
                         <p>Total de artículos: <span t-esc="und_total"/></p>
                         <p>Costo total del inventario: <span t-esc="costo_total"/></p>
                     </div>

@@ -36,7 +36,7 @@ class MotgamaWizardPrecuenta(models.TransientModel):
     hospedaje_adicional = fields.Float(string='Hospedaje Adicional',compute='_compute_precio')
     valor_total = fields.Float(string='Total hospedaje',compute='_compute_total')
     abono_ids = fields.Many2many(string="Abonos",comodel_name='motgama.recaudo',compute="_compute_abonos")
-    adeudado = fields.Float(string='Total a pagar (efectivo)',compute="_compute_adeudado")
+    adeudado = fields.Float(string='Total a pagar',compute="_compute_adeudado")
     abonado = fields.Float(string="Total abonado",compute="_compute_abonado")
     movimiento = fields.Boolean()
     bono = fields.Many2one(string='Bonos',comodel_name='motgama.bonos',default=lambda self: self._get_bono())

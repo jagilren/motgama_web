@@ -8,16 +8,14 @@
 
     <template id="reporterecaudos">
         <t t-call="web.html_container">
-            <t t-call="web.external_layout">
+            <t t-call="web.internal_layout">
                 <div class="page">
+                    <h5 style="font-size: 10px;">
+                        Reporte de recaudos desde <span t-field="docs[0].fecha_inicial"/> hasta <span t-field="docs[0].fecha_final"/>
+                        <t t-if="docs[0].recepcion_reporte"> de la recepción <span t-esc="docs[0].recepcion_reporte"/></t>
+                    </h5>
                     <div>
-                        <h5 class="text-center">
-                            Reporte de recaudos desde <span t-field="docs[0].fecha_inicial"/> hasta <span t-field="docs[0].fecha_final"/>
-                            <t t-if="docs[0].recepcion_reporte"> de la recepción <span t-esc="docs[0].recepcion_reporte"/></t>
-                        </h5>
-                    </div>
-                    <div>
-                        <table class="table table-condensed table-bordered" style="width: 100%">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 10%">Nro. Recaudo</th>
                                 <th class="text-center" style="width: 10%">Recepción</th>
@@ -66,10 +64,10 @@
                     </div>
                     <div>
                         <br/>
-                        <h4>Resumen por Tipo de Recaudo</h4>
+                        <h4 style="font-size: 10px;">Resumen por Tipo de Recaudo</h4>
                     </div>
                     <div>
-                        <table class="table table-condensed table-bordered" style="width: 100%">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 50%">Tipo de Recaudo</th>
                                 <th class="text-center" style="width: 50%">Total</th>
@@ -89,12 +87,12 @@
                         </table>
                     </div>
                     <div>
-                        <p><span class="font-weight-bold">Total habitaciones:</span> <span t-esc="habitaciones"/></p>
+                        <p><span class="font-weight-bold" style="font-size: 10px;">Total habitaciones:</span> <span t-esc="habitaciones"  style="font-size: 10px;"/></p>
                         <br/>
-                        <h4>Resumen por Medio de Pago</h4>
+                        <h4 style="font-size: 10px;">Resumen por Medio de Pago</h4>
                     </div>
                     <div>
-                        <table class="table table-condensed table-bordered" style="width: 100%">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 50%">Medio de Pago</th>
                                 <th class="text-center" style="width: 50%">Total</th>
@@ -115,7 +113,7 @@
                     </div>
                     <div>
                         <br/>
-                        <h4>Total Recaudos</h4><span class="text-right"><t t-esc="total"/></span>
+                        <h4 style="font-size: 10px;">Total Recaudos</h4><span style="font-size: 10px;"><t t-esc="total"/></span>
                     </div>
                 </div>
             </t>

@@ -250,7 +250,8 @@
     <menuitem id="menu_motgama_categorias"
         name="Categorías de producto"
         parent='menu_motgama_maestros_otros'
-        action="accion_categorias"/>
+        action="accion_categorias"
+        sequence="0"/>
 
     <act_window id="accion_productos"
         name="Productos"
@@ -260,7 +261,8 @@
     <menuitem id="menu_motgama_productos"
         name="Productos"
         parent="menu_motgama_maestros_otros"
-        action="accion_productos"/>
+        action="accion_productos"
+        sequence="1"/>
 
     <act_window id="accion_lista_materiales"
         name="Listas de materiales (Ingredientes)"

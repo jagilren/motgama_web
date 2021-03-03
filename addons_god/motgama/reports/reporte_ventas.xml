@@ -10,12 +10,12 @@
             <t t-call="web.external_layout">
                 <div class="page">
                     <t t-if="fecha_inicial and fecha_final">
-                        <h5>Reporte de ventas desde <span t-esc="fecha_inicial"/> hasta <span t-esc="fecha_final"/></h5>
+                        <h5 style="font-size: 10px;">Reporte de ventas desde <span t-esc="fecha_inicial"/> hasta <span t-esc="fecha_final"/></h5>
                     </t>
                     <t t-elif="doc_inicial and doc_final">
-                        <h5>Reporte de ventas desde <span t-esc="doc_inicial"/> hasta <span t-esc="doc_final"/></h5>
+                        <h5 style="font-size: 10px;">Reporte de ventas desde <span t-esc="doc_inicial"/> hasta <span t-esc="doc_final"/></h5>
                     </t>
-                    <table style="width: 100%">
+                    <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                         <thead>
                             <th class="text-center" style="width: 15%">Fecha</th>
                             <th class="text-center" style="width: 14%">Factura</th>
@@ -54,8 +54,8 @@
                         </tbody>
                     </table>
                     <br/>
-                    <h5>Resumen por productos</h5>
-                    <table style="width: 100%">
+                    <h5 style="font-size: 10px;">Resumen por productos</h5>
+                    <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                         <thead>
                             <th>Categoría de producto</th>
                             <th>Total ventas</th>
@@ -74,8 +74,8 @@
                         </tbody>
                     </table>
                     <br/>
-                    <h5>Resumen por impuestos</h5>
-                    <table style="width: 100%">
+                    <h5 style="font-size: 10px;">Resumen por impuestos</h5>
+                    <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                         <thead>
                             <th>Impuesto</th>
                             <th>Total impuesto</th>
@@ -93,8 +93,8 @@
                             </t>
                         </tbody>
                     </table>
-                    <h5>Resumen por medios de pago</h5>
-                    <table style="width: 100%">
+                    <h5 style="font-size: 10px;">Resumen por medios de pago</h5>
+                    <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                         <thead>
                             <th>Medio de pago</th>
                             <th>Total recaudado</th>
@@ -113,7 +113,7 @@
                         </tbody>
                     </table>
                     <br/>
-                    <p><span class="font-weight-bold">Total facturas:</span> <span t-esc="count"/><br/>
+                    <p style="font-size: 10px;"><span class="font-weight-bold">Total facturas:</span> <span t-esc="count"/><br/>
                     <span class="font-weight-bold">Total de ventas:</span> $ <span t-esc="total"/></p>
                 </div>
             </t>

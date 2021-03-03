@@ -10,13 +10,13 @@
             <t t-call="web.external_layout">
                 <div class="page">
                     <div>
-                        <h5 class="text-center">
+                        <h5 style="font-size: 10px;">
                             Reporte de hospedajes desde <span t-field="docs[0].fecha_inicial"/> hasta <span t-field="docs[0].fecha_final"/>
                             <t t-if="docs[0].recepcion_reporte"> de la recepción <span t-esc="docs[0].recepcion_reporte"/></t>
                         </h5>
                     </div>
                     <div>
-                        <table class="table table-condensed table-bordered" style="width: 100%">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 14%">Recepción</th>
                                 <th class="text-center" style="width: 14%">Fecha</th>
@@ -55,8 +55,8 @@
                             </tbody>
                         </table>
                         <br/>
-                        <h4>Resumen por hospedajes</h4>
-                        <table class="table table-condensed table-bordered" style="width: 100%">
+                        <h4 style="font-size: 10px;">Resumen por hospedajes</h4>
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 34%">Tipo de hospedaje</th>
                                 <th class="text-center" style="width: 33%">Cantidad</th>
@@ -81,7 +81,7 @@
                     </div>
                     <div>
                         <br/>
-                        <p><span class="font-weight-bold">Total Hospedajes:</span> $ <span t-esc="total"/></p>
+                        <p style="font-size: 10px;"><span class="font-weight-bold">Total Hospedajes:</span> $ <span t-esc="total"/></p>
                     </div>
                 </div>
             </t>

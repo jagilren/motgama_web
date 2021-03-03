@@ -10,7 +10,7 @@
         <t t-call="web.html_container">
             <t t-call="web.external_layout">
                 <div class="page">
-                    <div>
+                    <div style="font-size: 10px;">
                         <t t-if="tipo_reporte == 'transito'">
                             <h5>Reporte de consumos <span t-esc="tipos_reporte[tipo_reporte]"/> del <span t-esc="hoy"/>
                             <t t-if="recepcion_reporte"> en la recepción <span t-esc="recepcion_reporte"/></t></h5>
@@ -22,15 +22,15 @@
                         </t>
                     </div>
                     <div>
-                        <table style="width: 100%; text-size: 10px;">
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
-                                <th class="text-center" style="width: 13%">Recepción</th>
-                                <th class="text-center" style="width: 12%">Fecha</th>
-                                <th class="text-center" style="width: 13%">Habitación</th>
-                                <th class="text-center" style="width: 12%">Producto</th>
-                                <th class="text-center" style="width: 13%">Cantidad</th>
+                                <th class="text-center" style="width: 12%">Recepción</th>
+                                <th class="text-center" style="width: 10%">Fecha</th>
+                                <th class="text-center" style="width: 10%">Habitación</th>
+                                <th class="text-center" style="width: 22%">Producto</th>
+                                <th class="text-center" style="width: 10%">Cantidad</th>
                                 <th class="text-center" style="width: 12%">Valor Unitario</th>
-                                <th class="text-center" style="width: 13%">Valor Total</th>
+                                <th class="text-center" style="width: 12%">Valor Total</th>
                                 <th class="text-center" style="width: 12%">Usuario</th>
                             </thead>
                             <tbody>
@@ -66,8 +66,8 @@
                         </table>
                     </div>
                     <div>
-                        <h6>Resumen por Productos</h6>
-                        <table style="width: 100%">
+                        <h6 style="font-size: 10px;">Resumen por Productos</h6>
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 34%">Producto</th>
                                 <th class="text-center" style="width: 34%">Cantidad</th>
@@ -91,8 +91,8 @@
                         </table>
                     </div>
                     <div>
-                        <h6>Resumen por Categorías</h6>
-                        <table style="width: 100%">
+                        <h6 style="font-size: 10px;">Resumen por Categorías</h6>
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
                             <thead>
                                 <th class="text-center" style="width: 34%">Categoría</th>
                                 <th class="text-center" style="width: 34%">Total</th>
@@ -111,7 +111,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div>
+                    <div style="font-size: 10px;">
                         <p><span class="font-weight-bold">Total consumos:</span> $ <span t-esc="total"/></p>
                     </div>
                 </div>
