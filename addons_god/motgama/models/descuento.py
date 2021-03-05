@@ -61,7 +61,7 @@ class MotgamaDescuento(models.Model):
             'price_unit' : 0.0 - self.valorDesc,
             'product_uom_qty' : 1,
             'product_id' : prod_desc.product_variant_id.id,
-            'es_hospedaje' : False
+            'es_hospedaje' : True
         }
         nuevo = self.env['sale.order.line'].sudo().create(valores)
         if not nuevo:

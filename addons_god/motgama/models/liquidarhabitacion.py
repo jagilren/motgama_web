@@ -247,9 +247,10 @@ class MotgamaFlujoHabitacion(models.Model):
                     raise Warning('No existe el producto con referencia interna "' + paramCodDesc.codigo + '"')
                 paramDesc = self.env['motgama.parametros'].search([('codigo','=','%DESCPOCOTIEMPO')],limit=1)
                 if not paramDesc:
-                    raise Warning('No se ha definido el parámetro "%DESCPOCOTIEMPO"')
+                    desc_tiempo = 0.0
                 try:
-                    desc_tiempo = float(paramDesc.valor)
+                    if paramDesc:
+                        desc_tiempo = float(paramDesc.valor)
                 except ValueError:
                     raise Warning('El parámetro "' + paramDesc.codigo + '" está mal definido')
                 valoresLineaDesc = {

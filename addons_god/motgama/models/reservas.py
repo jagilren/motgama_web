@@ -446,6 +446,10 @@ class MotgamaWizardRecaudoReserva(models.TransientModel):
     @api.multi
     def recaudar_reserva(self):
         self.ensure_one()
+        if abs(self.deuda) >= 0.01:
+            raise Warning('La cuenta no ha sido saldada')
+        elif self.deuda < 0:
+            raise Warning('El valor pagado es mayor al valor de la cuenta')
 
         valoresPagos = []
         for pago in self.pagos:

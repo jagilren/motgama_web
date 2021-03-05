@@ -46,12 +46,14 @@
                         <table style="width: 100%;">
                             <thead>
                                 <th style="font-size:12px">Impuesto</th>
+                                <th style="font-size:12px" class="text-center">Base</th>
                                 <th style="font-size:12px" class="text-right">Total</th>
                             </thead>
                             <tbody>
                                 <t t-foreach="doc.tax_line_ids" t-as="line">
                                     <tr>
                                         <td style="font-size:12px"><span t-field="line.name"/></td>
+                                        <td style="font-size:12px" class="text-center"><span t-field="line.base"/></td>
                                         <td style="font-size:12px" class="text-right"><span t-field="line.amount_total"/></td>
                                     </tr>
                                 </t>

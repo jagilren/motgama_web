@@ -168,6 +168,10 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
     @api.multi
     def recaudar(self):
         self.ensure_one()
+        if abs(self.deuda) >= 0.01:
+            raise Warning('La cuenta no ha sido saldada')
+        elif self.deuda < 0:
+            raise Warning('El valor pagado es mayor al valor de la cuenta')
 
         valores = {'partner_id' : self.cliente.id}
         ordenVenta = self.env['sale.order'].sudo().create(valores)

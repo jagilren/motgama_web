@@ -107,13 +107,23 @@ class MotgamaWizardInterfazContable(models.TransientModel):
 
         saldos = {}
         for apunte in apuntes:
+            op = -1 if apunte.debit < apunte.credit else 1
             if apunte.account_id in saldos:
                 if apunte.partner_id in saldos[apunte.account_id]:
-                    saldos[apunte.account_id][apunte.partner_id] += apunte.debit - apunte.credit
+                    saldos[apunte.account_id][apunte.partner_id]['saldo'] += apunte.debit - apunte.credit
+                    saldos[apunte.account_id][apunte.partner_id]['base'] += apunte.tax_base_amount * op
                 else:
-                    saldos[apunte.account_id][apunte.partner_id] = apunte.debit - apunte.credit
+                    saldos[apunte.account_id][apunte.partner_id] = {
+                        'saldo': apunte.debit - apunte.credit,
+                        'base': apunte.tax_base_amount * op
+                    }
             else:
-                saldos[apunte.account_id] = {apunte.partner_id: apunte.debit - apunte.credit}
+                saldos[apunte.account_id] = {
+                    apunte.partner_id: {
+                        'saldo': apunte.debit - apunte.credit,
+                        'base': apunte.tax_base_amount * op
+                    }
+                }
 
         paramComprobante = self.env['motgama.parametros'].search([('codigo','=','COMPROBANTE')],limit=1)
         if not paramComprobante:
@@ -130,13 +140,25 @@ class MotgamaWizardInterfazContable(models.TransientModel):
         lineas = []
         for cuenta in saldos:
             for asociado in saldos[cuenta]:
-                if not asociado.vat or asociado.vat in ["1",""]:
-                    if  cuenta.lleva_nit:
+                if cuenta.lleva_nit:
+                    if cuenta.nit:
                         nit = cuenta.nit
                     else:
-                        nit = ''
+                        if not asociado.vat or asociado.vat in ["1",""]:
+                            nit = ''
+                        else:
+                            nit = ''
+                            for x in asociado.vat:
+                                if x.isnumeric() or x == '-':
+                                    nit += x
                 else:
-                    nit = asociado.vat
+                    if not asociado.vat or asociado.vat in ["1",""]:
+                        nit = ''
+                    else:
+                        nit = ''
+                        for x in asociado.vat:
+                            if x.isnumeric() or x == '-':
+                                nit += x
                 valores = {
                     'cod_cuenta': cuenta.code,
                     'comprobante': comp,
@@ -145,9 +167,9 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'referencia': fact_inicial + '-' + fact_final,
                     'nit':  nit,
                     'nom_cuenta': cuenta.name,
-                    'tipo': 1 if saldos[cuenta][asociado] >= 0 else 2,
-                    'valor': abs(saldos[cuenta][asociado]),
-                    'base': 0,
+                    'tipo': 1 if saldos[cuenta][asociado]['saldo'] >= 0 else 2,
+                    'valor': abs(saldos[cuenta][asociado]['saldo']),
+                    'base': abs(saldos[cuenta][asociado]['base']),
                     'sucursal': sucursal if cuenta.ccosto else ''
                 }
                 nuevo = self.env['motgama.interfazcontable'].create(valores)
@@ -164,14 +186,14 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                 for linea in lineas:
                     cod_cuenta = linea.cod_cuenta
                     comprobante = linea.comprobante
-                    fecha = linea.fecha.strftime('%Y%m%d')
+                    fecha = linea.fecha.strftime('%m/%d/%Y')
                     documento = linea.documento
                     referencia = linea.referencia
                     nit = '' if not linea.nit else str(linea.nit)
                     nom_cuenta = linea.nom_cuenta
                     tipo = linea.tipo
                     valor = linea.valor
-                    base = 0
+                    base = linea.base
                     sucursal = linea.sucursal
                     row = [cod_cuenta,comprobante,fecha,documento,referencia,nit,nom_cuenta,tipo,valor,base,sucursal]
                     writer.writerow(row)

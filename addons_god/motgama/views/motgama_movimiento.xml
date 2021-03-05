@@ -9,6 +9,7 @@
             <tree string="Movimiento" create="false" delete="false" default_order='recaudafecha desc, id asc'>
                 <field name="habitacion_id"/>
                 <field name="tipovehiculo"/>
+                <field name="recaudafecha"/>
                 <field name="asignafecha"/>
                 <field name="asignatipo"/>
             </tree>

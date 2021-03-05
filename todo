@@ -1,8 +1,8 @@
-Se presenta un error en la Interfaz Contable cuando se registra un pago con prenda. Aparece un línea débito adicional de efectivo que no debe existir, pues para eso está la 130505 de la prenda. Creo que ocurre cuando la cuenta tiene más de un recaudo.
+Interfaz contable no aparece a recepción
+
+Que la alerta se mantenga durante las horas adicionales y agregar la alerta en el form
 
 En la Interfaz Contable si el valor de Dcto por tiempo es $0, no debe aparecer dicha línea en el reporte. Actualmente está apareciendo
-
-A pesar de que el registro de  Cuenta x Cobrar lleva el NIT del Cliente, la cuenta de IVA no debe llevar ese NIT, sino el que tiene por defecto. Ni las demás cuentas crédito deben llevar ese NIT
 
 Los abonos tienen un faltante en su comportamiento en la Interfaz contable, para darles claridad usemos el siguiente ejemplo
 Suponga que el un cliente hizo un abono el día 25-02-2021 21:00 de $50.000
@@ -13,19 +13,36 @@ La interfaz de generada el día 27/02/2021 07:00 tiene que contener la contrapar
 28051001	02-26-2021	001	BEST0411	0016-0032  NIT101010	ABONO A CUENTAS….	1	50000	CCBEST
 Actualmente el algoritmo de la interfaz no tiene este comportamiento, se debe corregir
 
-En el reporte de Interfaz en las cuentas de impuestos está dejando en cero la columna BASE, y no debe ser así.
+Se presenta un error en la Interfaz Contable cuando se registra un pago con prenda. Aparece un línea débito adicional de efectivo que no debe existir, pues para eso está la 130505 de la prenda. Creo que ocurre cuando la cuenta tiene más de un recaudo.
 
-El DCTO. por mal servicio si rehabilito varias veces me toma valores negativos de hospedaje
 
 No es posible desactivar el parámetro %DESCPOCOTIEMPO, porque aparece un error al momento de liquidar. Se debe poder desactivar, para eso está la opción.
+    Solucionado, ¿Hay otro parámetro que deba permitir que esté desactivado?
 
-El campo de fecha en la interfaz (por lo menos en el CSV), debe pasar con el formato mm/dd/aaaa.  Tal como se ha mostrado en los archivos de ejemplo enviados en oportunidades anteriores.
+A pesar de que el registro de  Cuenta x Cobrar lleva el NIT del Cliente, la cuenta de IVA no debe llevar ese NIT, sino el que tiene por defecto. Ni las demás cuentas crédito deben llevar ese NIT
+    Solucionado, ¿Estaría bien así?
 
-Aparece un error al intentar generar una factura rectificativa con la opción de “CANCELAR FACTURA”: El número de factura debe ser único por compañía
+
+El DCTO. por mal servicio si rehabilito varias veces me toma valores negativos de hospedaje
+    Solucionado
 
 En la factura de Venta Impresa en Tirilla falta la información de la base para los impuestos.  Puede ser una base discriminada por cada tipo de impuesto cobrado o una consolidación de la sumatoria de las bases involucradas. Tal como se evidencia en el ejemplo de factura enviadas con anterioridad
+    Solucionado
 
 El sistema deja recaudar las cuentas sin asociarle una forma de pago.  Y aunque técnicamente es correcto porque lo lleva a una Cuenta x Cobrar, esto en la práctica complica las cosas porque una recepcionista inexperta por la celeridad  del momento recaudar así y luego se enreda en el cierre. La sugerencia es que bloquee el recaudo si no se asocia  por lo menos medio de pago.
+    Solucionado
+
+En el reporte de Interfaz en las cuentas de impuestos está dejando en cero la columna BASE, y no debe ser así.
+    Solucionado
+
+Aparece un error al intentar generar una factura rectificativa con la opción de “CANCELAR FACTURA”: El número de factura debe ser único por compañía
+    Revisa la secuencia de rectificativas que el próximo número no haya sido asignado a una rectificativa ya creada
+
+El campo de fecha en la interfaz (por lo menos en el CSV), debe pasar con el formato mm/dd/aaaa.  Tal como se ha mostrado en los archivos de ejemplo enviados en oportunidades anteriores.
+    Solucionado
+
+Agregar a movimiento tree la fecha de recaudo
+    Solucionado
 
 
 Enviar terceros en archivo plano en el formato de Ilimitada y marcar los contactos la primera vez que se envíen para que no se vuelvan a enviar
@@ -39,25 +56,3 @@ Organizar con Jorge lo de la referencia
 
 Hacer plantilla de tipos de transferencia con Jorge
     Hacer
-
-Cuando se presentan sólo facturas no asociadas  a hospedaje  e intento hacer el proceso de reducción me aparece el siguiente mensaje y no se realiza ningún proceso. La factura debe estar en estado borrador para validarla
-    Revisado, veo que se generan problemas al utilizar el superusuario para cambiar de estado la factura, por esta razón es necesario que el usuario que ejecute el proceso tenga los permisos de administración de facturación
-
-Cambiar el orden en el menú de configuraciòn primero “CATEGORÍA DE PRODUCTO” que “PRODUCTOS”
-    Listo
-
-Como nuestros usuarios todavía son muy dependientes de la impresión en papel, Para todos los reportes, se debe evitar que un registro ocupe más de una línea.  Sobre todo en campos como fecha y forma de pago.  
-Si es necesario tener una fuente más pequeña o poner el papel en orientación “apaisada” es preferible a gastar muchas hojas
-    Listo
-
-La palabra efectivo entre paréntesis debe desaparecer de la vista “Ver precuenta”
-    Listo
-
-El punto de coloreado (alerta), que aparece sobrepuesto sobre la habitación no está apareciendo cuando la habitación está próxima a vencer su tiempo de hospedaje normal. Sólo aparece cuando lleva mucho tiempo liquidada sin recaudar.  Y realmdente es más importante en la primera situación.
-    El proceso sí funciona, pero actualmente tiene un margen de error de 5 minutos. La acción se ejecuta cada 5 minutos, aunque esto se puede reducir, ten en cuenta que puede impactar el rendimiento de la aplicación cuando sean muchas las habitaciones que se vayan a notificar. Entonces el aviso podrá salir hasta máximo 5 minutos después de pasado el tiempo de notificación
-
-El reporte de movimiento se debe ordenar por fecha de salida (pago), y no por fecha de ingreso. ¿Es posible cambiar este comportamiento con los filtros?
-    ¿A qué te refieres con el reporte de Movimiento? Consulta -> Movimiento ?
-
-Como hago para que el perfil se recepción le sea visible la opción interfaz contable en el menú de Reportes, si ya tiene los siguientes permisos
-    Solucionado

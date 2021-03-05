@@ -27,7 +27,7 @@
                         </group>
                     </group>
                     <group>
-                        <field name="pago_ids">
+                        <field name="pago_ids" widget="one2many_list">
                             <tree editable="bottom">
                                 <control>
                                     <create string="Agregar pago"/>

@@ -160,6 +160,10 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
     @api.multi
     def recaudar(self):
         self.ensure_one()
+        if abs(self.valor_restante) >= 0.01:
+            raise Warning('La cuenta no ha sido saldada')
+        elif self.valor_restante < 0:
+            raise Warning('El valor pagado es mayor al valor de la cuenta')
 
         valorPrenda = 0.0
         prenda = 0.0
