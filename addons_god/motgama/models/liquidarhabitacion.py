@@ -253,18 +253,20 @@ class MotgamaFlujoHabitacion(models.Model):
                         desc_tiempo = float(paramDesc.valor)
                 except ValueError:
                     raise Warning('El parámetro "' + paramDesc.codigo + '" está mal definido')
-                valoresLineaDesc = {
-                    'customer_lead' : 0,
-                    'name' : prod_desc_ocup.name,
-                    'order_id' : ordenVenta.id,
-                    'price_unit' : -1 * movimiento.tarifaocasional * desc_tiempo / 100,
-                    'product_uom_qty' : 1,
-                    'product_id' : prod_desc_ocup.product_variant_id.id,
-                    'es_hospedaje' : True
-                }
-                nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaDesc)
-                if not nuevaLinea:
-                    raise Warning('Error al liquidar: No se pudo agregar el descuento por poco tiempo')
+                dcto = -1 * movimiento.tarifaocasional * desc_tiempo / 100
+                if abs(dcto) >= 0.01:
+                    valoresLineaDesc = {
+                        'customer_lead' : 0,
+                        'name' : prod_desc_ocup.name,
+                        'order_id' : ordenVenta.id,
+                        'price_unit' : dcto,
+                        'product_uom_qty' : 1,
+                        'product_id' : prod_desc_ocup.product_variant_id.id,
+                        'es_hospedaje' : True
+                    }
+                    nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaDesc)
+                    if not nuevaLinea:
+                        raise Warning('Error al liquidar: No se pudo agregar el descuento por poco tiempo')
 
         else:
             raise Warning('Error del sistema, la habitación no está ocupada')

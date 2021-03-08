@@ -1,8 +1,4 @@
-Interfaz contable no aparece a recepción
-
-Que la alerta se mantenga durante las horas adicionales y agregar la alerta en el form
-
-En la Interfaz Contable si el valor de Dcto por tiempo es $0, no debe aparecer dicha línea en el reporte. Actualmente está apareciendo
+Se presenta un error en la Interfaz Contable cuando se registra un pago con prenda. Aparece un línea débito adicional de efectivo que no debe existir, pues para eso está la 130505 de la prenda. Creo que ocurre cuando la cuenta tiene más de un recaudo.
 
 Los abonos tienen un faltante en su comportamiento en la Interfaz contable, para darles claridad usemos el siguiente ejemplo
 Suponga que el un cliente hizo un abono el día 25-02-2021 21:00 de $50.000
@@ -13,36 +9,27 @@ La interfaz de generada el día 27/02/2021 07:00 tiene que contener la contrapar
 28051001	02-26-2021	001	BEST0411	0016-0032  NIT101010	ABONO A CUENTAS….	1	50000	CCBEST
 Actualmente el algoritmo de la interfaz no tiene este comportamiento, se debe corregir
 
-Se presenta un error en la Interfaz Contable cuando se registra un pago con prenda. Aparece un línea débito adicional de efectivo que no debe existir, pues para eso está la 130505 de la prenda. Creo que ocurre cuando la cuenta tiene más de un recaudo.
+
+Tenemos el auxiliar de inventario casi listo.  Pero en el encabezado de la versión impresa deben quedar plasmados los parámetros Fecha Inicial y Fecha Final y fecha de generación del informe y el usuario que lo generó preferiblemente.
+
+Además es súper importante que el informe auxiliar por defecto, no haga ninguna agrupación por localización. Es decir la información de movimientos del artículo debe aparecer totalizada de todas las localizaciones donde haya existido movimiento. Los filtros por localización si el usuario desea los adiciona según su necesidad.  Tal como se muestra, por ejemplo el reporte de valuación de Inventario en su vista por defecto
+
+El encabezado de reporte de saldos debe especificar cual es la  fecha de corte de esos totales y la fecha de generación del informe y el usuario que lo generó preferiblemente.
+Cada registro del reporte de saldos debe procurar ocupar solo una línea, para evitar que sea tan voluminoso.  Es preferible truncar el nombre del artículo o generarlo en orientación apaisada
+
+El encabezado de reporte de valuación de inventario debe especificar cuál es la  fecha de corte de esos totales y la fecha de generación del informe y el usuario que lo generó preferiblemente.
+
+El reporte de valuación de inventario debe poder agruparse por Ubicación.
+
+Cada registro del reporte de saldos debe procurar ocupar solo una línea, para evitar que sea tan voluminoso.  Es preferible truncar el nombre del artículo o generarlo en orientación apaisada
+
+En varios de los reportes no basta con seleccionar el cuadro de opción de jerarquía superior para que aparezca el botón de imprimir, sino, que se necesita ir a seleccionar un artículo específico para que aparezca dicho botón.  No debe ser así.
+
+Como hago para asociarle una secuencia diferente a las operaciones de recepción de mercancía provenientes de una solicitud de cotización?
 
 
-No es posible desactivar el parámetro %DESCPOCOTIEMPO, porque aparece un error al momento de liquidar. Se debe poder desactivar, para eso está la opción.
-    Solucionado, ¿Hay otro parámetro que deba permitir que esté desactivado?
-
-A pesar de que el registro de  Cuenta x Cobrar lleva el NIT del Cliente, la cuenta de IVA no debe llevar ese NIT, sino el que tiene por defecto. Ni las demás cuentas crédito deben llevar ese NIT
-    Solucionado, ¿Estaría bien así?
-
-
-El DCTO. por mal servicio si rehabilito varias veces me toma valores negativos de hospedaje
-    Solucionado
-
-En la factura de Venta Impresa en Tirilla falta la información de la base para los impuestos.  Puede ser una base discriminada por cada tipo de impuesto cobrado o una consolidación de la sumatoria de las bases involucradas. Tal como se evidencia en el ejemplo de factura enviadas con anterioridad
-    Solucionado
-
-El sistema deja recaudar las cuentas sin asociarle una forma de pago.  Y aunque técnicamente es correcto porque lo lleva a una Cuenta x Cobrar, esto en la práctica complica las cosas porque una recepcionista inexperta por la celeridad  del momento recaudar así y luego se enreda en el cierre. La sugerencia es que bloquee el recaudo si no se asocia  por lo menos medio de pago.
-    Solucionado
-
-En el reporte de Interfaz en las cuentas de impuestos está dejando en cero la columna BASE, y no debe ser así.
-    Solucionado
-
-Aparece un error al intentar generar una factura rectificativa con la opción de “CANCELAR FACTURA”: El número de factura debe ser único por compañía
-    Revisa la secuencia de rectificativas que el próximo número no haya sido asignado a una rectificativa ya creada
-
-El campo de fecha en la interfaz (por lo menos en el CSV), debe pasar con el formato mm/dd/aaaa.  Tal como se ha mostrado en los archivos de ejemplo enviados en oportunidades anteriores.
-    Solucionado
-
-Agregar a movimiento tree la fecha de recaudo
-    Solucionado
+Como se configura ODOO para que aparezcan alertas cuando se alcanzan Stock Mínimo y Máximo en el movimiento de inventarios.  Excepto cuando su valor es 0 (Cero)
+    Como te mostré en la capacitación, lo que se puede configurar es una regla de reabastecimiento que genera órdenes de compra cuando se alcanza un mínimo de inventario
 
 
 Enviar terceros en archivo plano en el formato de Ilimitada y marcar los contactos la primera vez que se envíen para que no se vuelvan a enviar

@@ -90,11 +90,14 @@
                     
                     <button name='agregar_descuento' string='Descuento por mal servicio' type='object' class='btn'
                         attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}"/>
-                        
                 </header>
                 <field name="factura" invisible="1"/>
                 <field name="orden_venta" invisible="1"/>
                 <sheet>
+                    <field name="sin_alerta" invisible="1"/>
+                    <div class="alert alert-warning" role="alert" attrs="{'invisible':[('sin_alerta','=',True)]}">
+                        <field name="alerta_msg" nolabel="1"/>
+                    </div>
                     <group name="group_bottom">
                         <group name="group_left">            
                             <field name="codigo" string="Codigo de la habitación" style="width:20%; font-size:20px; font-weight: bold;"/>
@@ -287,7 +290,7 @@
                                     <p class="oe_module_name">
                                         <span style="font-size: 10px;">
                                             &amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
-                                            &amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/><br/>
+                                            <t t-if="record.tema">&amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/><br/></t>
                                             &amp;nbsp;&amp;nbsp; RECEPCIÓN: <field name="recepcion"/><br/>
                                             &amp;nbsp;&amp;nbsp; ESTADO: <field name="estado"/>
                                         </span>

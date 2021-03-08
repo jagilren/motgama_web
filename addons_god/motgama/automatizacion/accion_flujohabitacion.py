@@ -79,21 +79,31 @@ class MotgamaFlujohabitacion(models.Model):
                     })
                     notificar = True
                 elif fechaActual > fechaFin:
-                    valoresFlujo.update({'sin_alerta':True,'alerta_msg':''})
+                    valoresFlujo.update({'sin_alerta':False,'alerta_msg':'El hospedaje de esta habitación finalizó a la(s) ' + horaFinStr + ' del ' + fechaFinStr})
+                    valores.update({
+                        'asunto': 'La habitación ' + flujo.codigo + ' finalizó el tiempo de ocupación',
+                        'descripcion': 'La habitación ' + flujo.codigo + ' terminó su tiempo de ocupación y comienza a contar horas adicionales'
+                    })
+                    notificar = True
 
             elif flujo.estado == 'OA':
                 fechaFin = flujo.ultmovimiento.horafinamanecida
+                horaFinStr = (fechaFin - timedelta(hours=5)).strftime('%-I:%M:%S %p')
+                fechaFinStr = (fechaFin - timedelta(hours=5)).strftime('%d/%m/%Y')
                 if fechaFin > fechaActual and fechaFin - fechaActual <= timedelta(minutes=tiempoFin):
-                    horaFinStr = (fechaFin - timedelta(hours=5)).strftime('%-I:%M:%S %p')
-                    fechaFinStr = (fechaFin - timedelta(hours=5)).strftime('%d/%m/%Y')
                     valoresFlujo.update({'sin_alerta':False,'alerta_msg':'El hospedaje de esta habitación finaliza a la(s) ' + horaFinStr + ' del ' + fechaFinStr})
                     valores.update({
-                        'asunto': 'Habitación ' + flujo.codigo + ' está próxima a terminar el tiempo de amanecida',
+                        'asunto': 'La habitación ' + flujo.codigo + ' está próxima a terminar el tiempo de amanecida',
                         'descripcion': 'La habitación ' + flujo.codigo + ' terminará su tiempo de amanecida en ' + str(tiempoFin) + ' minutos'
                     })
                     notificar = True
                 elif fechaActual > fechaFin:
-                    valoresFlujo.update({'sin_alerta':True,'alerta_msg':''})
+                    valoresFlujo.update({'sin_alerta':False,'alerta_msg':'El hospedaje de esta habitación finalizó a la(s) ' + horaFinStr + ' del ' + fechaFinStr})
+                    valores.update({
+                        'asunto': 'La habitación ' + flujo.codigo + ' finalizó el tiempo de amanecida',
+                        'descripcion': 'La habitación ' + flujo.codigo + ' terminó su tiempo de amanecida y comienza a contar horas adicionales'
+                    })
+                    notificar = True
 
             elif flujo.estado == 'LQ':
                 if flujo.lq and tiempoLiq != 0:
