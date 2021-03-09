@@ -4,3 +4,4 @@ from . import wizard_reporte_recaudos
 from . import wizard_reporte_documentos
 from . import wizard_reporte_ventas
 from . import wizard_reporte_anomalias
+from . import saldos

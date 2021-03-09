@@ -10,28 +10,6 @@ La interfaz de generada el día 27/02/2021 07:00 tiene que contener la contrapar
 Actualmente el algoritmo de la interfaz no tiene este comportamiento, se debe corregir
 
 
-Tenemos el auxiliar de inventario casi listo.  Pero en el encabezado de la versión impresa deben quedar plasmados los parámetros Fecha Inicial y Fecha Final y fecha de generación del informe y el usuario que lo generó preferiblemente.
-
-Además es súper importante que el informe auxiliar por defecto, no haga ninguna agrupación por localización. Es decir la información de movimientos del artículo debe aparecer totalizada de todas las localizaciones donde haya existido movimiento. Los filtros por localización si el usuario desea los adiciona según su necesidad.  Tal como se muestra, por ejemplo el reporte de valuación de Inventario en su vista por defecto
-
-El encabezado de reporte de saldos debe especificar cual es la  fecha de corte de esos totales y la fecha de generación del informe y el usuario que lo generó preferiblemente.
-Cada registro del reporte de saldos debe procurar ocupar solo una línea, para evitar que sea tan voluminoso.  Es preferible truncar el nombre del artículo o generarlo en orientación apaisada
-
-El encabezado de reporte de valuación de inventario debe especificar cuál es la  fecha de corte de esos totales y la fecha de generación del informe y el usuario que lo generó preferiblemente.
-
-El reporte de valuación de inventario debe poder agruparse por Ubicación.
-
-Cada registro del reporte de saldos debe procurar ocupar solo una línea, para evitar que sea tan voluminoso.  Es preferible truncar el nombre del artículo o generarlo en orientación apaisada
-
-En varios de los reportes no basta con seleccionar el cuadro de opción de jerarquía superior para que aparezca el botón de imprimir, sino, que se necesita ir a seleccionar un artículo específico para que aparezca dicho botón.  No debe ser así.
-
-Como hago para asociarle una secuencia diferente a las operaciones de recepción de mercancía provenientes de una solicitud de cotización?
-
-
-Como se configura ODOO para que aparezcan alertas cuando se alcanzan Stock Mínimo y Máximo en el movimiento de inventarios.  Excepto cuando su valor es 0 (Cero)
-    Como te mostré en la capacitación, lo que se puede configurar es una regla de reabastecimiento que genera órdenes de compra cuando se alcanza un mínimo de inventario
-
-
 Enviar terceros en archivo plano en el formato de Ilimitada y marcar los contactos la primera vez que se envíen para que no se vuelvan a enviar
     Que Jorge envíe el archivo
 

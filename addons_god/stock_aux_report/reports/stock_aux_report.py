@@ -6,6 +6,10 @@ class StockAuxReport(models.TransientModel):
     _rec_name = 'producto'
 
     currency_id = fields.Many2one(string='Moneda',comodel_name='res.currency',default=lambda self: self._get_currency())
+
+    fecha_inicial = fields.Datetime(string="Fecha inicial")
+    fecha_final = fields.Datetime(string="Fecha final")
+    genera_uid = fields.Many2one(string="Usuario que genera",comodel_name="res.users")
     
     ubicacion = fields.Char(string='Ubicación')
     categoria = fields.Char(string='Categoría')
@@ -34,16 +38,14 @@ class ReportStockAuxComplete(models.AbstractModel):
         
         rep = {}
         for doc in docs:
-            if doc.ubicacion in rep:
-                if doc.categoria in rep[doc.ubicacion]:
-                    rep[doc.ubicacion][doc.categoria].append(doc)
-                else:
-                    rep[doc.ubicacion][doc.categoria] = [doc]
+            if doc.categoria in rep:
+                rep[doc.categoria].append(doc)
             else:
-                rep[doc.ubicacion] = {doc.categoria: [doc]}
+                rep[doc.categoria] = [doc]
         
         return {
-            'docs': rep
+            'docs': rep,
+            'sucursal': self.env['motgama.sucursal'].search([],limit=1).nombre
         }
 
 class ReportStockAux(models.AbstractModel):
@@ -57,14 +59,12 @@ class ReportStockAux(models.AbstractModel):
 
         rep = {}
         for doc in docs:
-            if doc.ubicacion in rep:
-                if doc.categoria in rep[doc.ubicacion]:
-                    rep[doc.ubicacion][doc.categoria].append(doc)
-                else:
-                    rep[doc.ubicacion][doc.categoria] = [doc]
+            if doc.categoria in rep:
+                rep[doc.categoria].append(doc)
             else:
-                rep[doc.ubicacion] = {doc.categoria: [doc]}
+                rep[doc.categoria] = [doc]
         
         return {
-            'docs': rep
+            'docs': rep,
+            'sucursal': self.env['motgama.sucursal'].search([],limit=1).nombre
         }

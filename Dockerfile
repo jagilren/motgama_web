@@ -85,8 +85,9 @@ VOLUME ["/var/lib/odoo", "/mnt/extra-addons","/home/usr/files"]
 # Copiar la carpeta de addons de Motgama
 RUN mkdir -p /home/spin
 ADD addons_terceros /home/spin/addons_terceros
+RUN chown -R odoo /home/spin/addons_terceros
 ADD addons_god /home/spin/addons_god
-RUN chown -R odoo /home/spin/
+RUN chown -R odoo /home/spin/addons_god
 
 # Expose Odoo services
 EXPOSE 8069 8071

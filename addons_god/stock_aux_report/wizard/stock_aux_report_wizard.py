@@ -108,6 +108,9 @@ class StockAuxReportWizard(models.TransientModel):
                 total = initial + product_in - product_out
                 moves = reporte_aux[ubicacion][producto]['moves']
                 dic = {
+                    'fecha_inicial': self.fecha_inicial,
+                    'fecha_final': self.fecha_final,
+                    'genera_uid': self.env.user.id,
                     'ubicacion': ubicacion.name,
                     'categoria': producto.categ_id.name,
                     'producto': producto.name,
@@ -132,7 +135,6 @@ class StockAuxReportWizard(models.TransientModel):
             'res_model': 'stock_aux_report.stock_aux_report',
             'type': 'ir.actions.act_window',
             'context':{
-                'search_default_groupby_ubicacion':1,
                 'search_default_groupby_categoria':1
             },
             'target':'main'

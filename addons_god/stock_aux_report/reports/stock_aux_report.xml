@@ -96,90 +96,93 @@
                     <t t-set="tot_out" t-value="0"/>
                     <t t-set="tot_tot" t-value="0"/>
                     <t t-set="tot_act" t-value="0.0"/>
-                    <t t-foreach="docs" t-as="ubicacion">
-                        <h4 style="font-size: 10px;"><span t-esc="ubicacion"/></h4>
-                        <t t-foreach="docs[ubicacion]" t-as="categoria">
-                            <h5 style="font-size: 10px;"><span t-esc="categoria"/></h5>
-                            <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
-                                <thead>
-                                    <th class="text-center" style="width: 15%">Producto</th>
-                                    <th class="text-center" style="width: 14%">Saldo anterior</th>
-                                    <th class="text-center" style="width: 14%">Valor anterior</th>
-                                    <th class="text-center" style="width: 14%">Entradas</th>
-                                    <th class="text-center" style="width: 14%">Salidas</th>
-                                    <th class="text-center" style="width: 14%">Saldo actual</th>
-                                    <th class="text-center" style="width: 15%">Valor actual</th>
-                                </thead>
-                                <tbody>
-                                    <t t-set="cat_inic" t-value="0"/>
-                                    <t t-set="cat_ant" t-value="0.0"/>
-                                    <t t-set="cat_in" t-value="0"/>
-                                    <t t-set="cat_out" t-value="0"/>
-                                    <t t-set="cat_tot" t-value="0"/>
-                                    <t t-set="cat_act" t-value="0.0"/>
-                                    <t t-foreach="docs[ubicacion][categoria]" t-as="doc">
-                                        <tr>
-                                            <td class="text-center">
-                                                <span t-field="doc.producto"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.inicial"/>
-                                                <t t-set="cat_inic" t-value="cat_inic + doc.inicial"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.valor_ant"/>
-                                                <t t-set="cat_ant" t-value="cat_ant + doc.valor_ant"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.product_in"/>
-                                                <t t-set="cat_in" t-value="cat_in + doc.product_in"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.product_out"/>
-                                                <t t-set="cat_out" t-value="cat_out + doc.product_out"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.total"/>
-                                                <t t-set="cat_tot" t-value="cat_tot + doc.total"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.valor_act"/>
-                                                <t t-set="cat_act" t-value="cat_act + doc.valor_act"/>
-                                            </td>
-                                        </tr>
-                                    </t>
+                    <h5 style="font-size: 12px;"><span t-esc="sucursal"/></h5>
+                    <h5 style="font-size: 11px;">Reporte auxiliar de inventario</h5>
+                    <h5 style="font-size: 10px;">Fecha inicial: <span t-field="docs[list(docs)[0]][0].fecha_inicial"/></h5>
+                    <h5 style="font-size: 10px;">Fecha final: <span t-field="docs[list(docs)[0]][0].fecha_final"/></h5>
+                    <h5 style="font-size: 10px;" t-if="docs[list(docs)[0]][0].genera_uid">Usuario que genera: <span t-field="docs[list(docs)[0]][0].genera_uid.name"/></h5>
+                    <br/>
+                    <t t-foreach="docs" t-as="categoria">
+                        <h5 style="font-size: 10px;"><span t-esc="categoria"/></h5>
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 15%">Producto</th>
+                                <th class="text-center" style="width: 14%">Saldo anterior</th>
+                                <th class="text-center" style="width: 14%">Valor anterior</th>
+                                <th class="text-center" style="width: 14%">Entradas</th>
+                                <th class="text-center" style="width: 14%">Salidas</th>
+                                <th class="text-center" style="width: 14%">Saldo actual</th>
+                                <th class="text-center" style="width: 15%">Valor actual</th>
+                            </thead>
+                            <tbody>
+                                <t t-set="cat_inic" t-value="0"/>
+                                <t t-set="cat_ant" t-value="0.0"/>
+                                <t t-set="cat_in" t-value="0"/>
+                                <t t-set="cat_out" t-value="0"/>
+                                <t t-set="cat_tot" t-value="0"/>
+                                <t t-set="cat_act" t-value="0.0"/>
+                                <t t-foreach="docs[categoria]" t-as="doc">
                                     <tr>
                                         <td class="text-center">
-                                            Total categoría
+                                            <span t-field="doc.producto"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_inic"/>
-                                            <t t-set="tot_inic" t-value="tot_inic + cat_inic"/>
+                                            <span t-field="doc.inicial"/>
+                                            <t t-set="cat_inic" t-value="cat_inic + doc.inicial"/>
                                         </td>
                                         <td class="text-center">
-                                            $ <span t-esc="cat_ant"/>
-                                            <t t-set="tot_ant" t-value="tot_ant + cat_ant"/>
+                                            <span t-field="doc.valor_ant"/>
+                                            <t t-set="cat_ant" t-value="cat_ant + doc.valor_ant"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_in"/>
-                                            <t t-set="tot_in" t-value="tot_in + cat_in"/>
+                                            <span t-field="doc.product_in"/>
+                                            <t t-set="cat_in" t-value="cat_in + doc.product_in"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_out"/>
-                                            <t t-set="tot_out" t-value="tot_out + cat_out"/>
+                                            <span t-field="doc.product_out"/>
+                                            <t t-set="cat_out" t-value="cat_out + doc.product_out"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_tot"/>
-                                            <t t-set="tot_tot" t-value="tot_tot + cat_tot"/>
+                                            <span t-field="doc.total"/>
+                                            <t t-set="cat_tot" t-value="cat_tot + doc.total"/>
                                         </td>
                                         <td class="text-center">
-                                            $ <span t-esc="cat_act"/>
-                                            <t t-set="tot_act" t-value="tot_act + cat_act"/>
+                                            <span t-field="doc.valor_act"/>
+                                            <t t-set="cat_act" t-value="cat_act + doc.valor_act"/>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                        </t>
+                                </t>
+                                <tr>
+                                    <td class="text-center">
+                                        Total <span t-esc="categoria"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_inic"/>
+                                        <t t-set="tot_inic" t-value="tot_inic + cat_inic"/>
+                                    </td>
+                                    <td class="text-center">
+                                        $ <span t-esc="cat_ant"/>
+                                        <t t-set="tot_ant" t-value="tot_ant + cat_ant"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_in"/>
+                                        <t t-set="tot_in" t-value="tot_in + cat_in"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_out"/>
+                                        <t t-set="tot_out" t-value="tot_out + cat_out"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_tot"/>
+                                        <t t-set="tot_tot" t-value="tot_tot + cat_tot"/>
+                                    </td>
+                                    <td class="text-center">
+                                        $ <span t-esc="cat_act"/>
+                                        <t t-set="tot_act" t-value="tot_act + cat_act"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </t>
                     <h2 style="font-size: 10px;">Total general</h2>
                     <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
@@ -240,90 +243,92 @@
                     <t t-set="tot_out" t-value="0"/>
                     <t t-set="tot_tot" t-value="0"/>
                     <t t-set="tot_act" t-value="0.0"/>
-                    <t t-foreach="docs" t-as="ubicacion">
-                        <h4 style="font-size: 10px;"><span t-esc="ubicacion"/></h4>
-                        <t t-foreach="docs[ubicacion]" t-as="categoria">
-                            <h5 style="font-size: 10px;"><span t-esc="categoria"/></h5>
-                            <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
-                                <thead>
-                                    <th class="text-center" style="width: 15%">Producto</th>
-                                    <th class="text-center" style="width: 14%">Saldo anterior</th>
-                                    <th class="text-center" style="width: 14%">Valor anterior</th>
-                                    <th class="text-center" style="width: 14%">Entradas</th>
-                                    <th class="text-center" style="width: 14%">Salidas</th>
-                                    <th class="text-center" style="width: 14%">Saldo actual</th>
-                                    <th class="text-center" style="width: 15%">Valor actual</th>
-                                </thead>
-                                <tbody>
-                                    <t t-set="cat_inic" t-value="0"/>
-                                    <t t-set="cat_ant" t-value="0.0"/>
-                                    <t t-set="cat_in" t-value="0"/>
-                                    <t t-set="cat_out" t-value="0"/>
-                                    <t t-set="cat_tot" t-value="0"/>
-                                    <t t-set="cat_act" t-value="0.0"/>
-                                    <t t-foreach="docs[ubicacion][categoria]" t-as="doc">
-                                        <tr>
-                                            <td class="text-center">
-                                                <span t-field="doc.producto"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.inicial"/>
-                                                <t t-set="cat_inic" t-value="cat_inic + doc.inicial"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.valor_ant"/>
-                                                <t t-set="cat_ant" t-value="cat_ant + doc.valor_ant"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.product_in"/>
-                                                <t t-set="cat_in" t-value="cat_in + doc.product_in"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.product_out"/>
-                                                <t t-set="cat_out" t-value="cat_out + doc.product_out"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.total"/>
-                                                <t t-set="cat_tot" t-value="cat_tot + doc.total"/>
-                                            </td>
-                                            <td class="text-center">
-                                                <span t-field="doc.valor_act"/>
-                                                <t t-set="cat_act" t-value="cat_act + doc.valor_act"/>
-                                            </td>
-                                        </tr>
-                                    </t>
+                    <h5 style="font-size: 12px;"><span t-esc="sucursal"/></h5>
+                    <h5 style="font-size: 10px;">Fecha inicial: <span t-field="docs[list(docs)[0]][0].fecha_inicial"/></h5>
+                    <h5 style="font-size: 10px;">Fecha final: <span t-field="docs[list(docs)[0]][0].fecha_final"/></h5>
+                    <h5 style="font-size: 10px;" t-if="docs[list(docs)[0]][0].genera_uid">Usuario que genera: <span t-field="docs[list(docs)[0]][0].genera_uid.name"/></h5>
+                    <br/>
+                    <t t-foreach="docs" t-as="categoria">
+                        <h5 style="font-size: 10px;"><span t-esc="categoria"/></h5>
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
+                            <thead>
+                                <th class="text-center" style="width: 15%">Producto</th>
+                                <th class="text-center" style="width: 14%">Saldo anterior</th>
+                                <th class="text-center" style="width: 14%">Valor anterior</th>
+                                <th class="text-center" style="width: 14%">Entradas</th>
+                                <th class="text-center" style="width: 14%">Salidas</th>
+                                <th class="text-center" style="width: 14%">Saldo actual</th>
+                                <th class="text-center" style="width: 15%">Valor actual</th>
+                            </thead>
+                            <tbody>
+                                <t t-set="cat_inic" t-value="0"/>
+                                <t t-set="cat_ant" t-value="0.0"/>
+                                <t t-set="cat_in" t-value="0"/>
+                                <t t-set="cat_out" t-value="0"/>
+                                <t t-set="cat_tot" t-value="0"/>
+                                <t t-set="cat_act" t-value="0.0"/>
+                                <t t-foreach="docs[categoria]" t-as="doc">
                                     <tr>
                                         <td class="text-center">
-                                            Total categoría
+                                            <span t-field="doc.producto"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_inic"/>
-                                            <t t-set="tot_inic" t-value="tot_inic + cat_inic"/>
+                                            <span t-field="doc.inicial"/>
+                                            <t t-set="cat_inic" t-value="cat_inic + doc.inicial"/>
                                         </td>
                                         <td class="text-center">
-                                            $ <span t-esc="cat_ant"/>
-                                            <t t-set="tot_ant" t-value="tot_ant + cat_ant"/>
+                                            <span t-field="doc.valor_ant"/>
+                                            <t t-set="cat_ant" t-value="cat_ant + doc.valor_ant"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_in"/>
-                                            <t t-set="tot_in" t-value="tot_in + cat_in"/>
+                                            <span t-field="doc.product_in"/>
+                                            <t t-set="cat_in" t-value="cat_in + doc.product_in"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_out"/>
-                                            <t t-set="tot_out" t-value="tot_out + cat_out"/>
+                                            <span t-field="doc.product_out"/>
+                                            <t t-set="cat_out" t-value="cat_out + doc.product_out"/>
                                         </td>
                                         <td class="text-center">
-                                            <span t-esc="cat_tot"/>
-                                            <t t-set="tot_tot" t-value="tot_tot + cat_tot"/>
+                                            <span t-field="doc.total"/>
+                                            <t t-set="cat_tot" t-value="cat_tot + doc.total"/>
                                         </td>
                                         <td class="text-center">
-                                            $ <span t-esc="cat_act"/>
-                                            <t t-set="tot_act" t-value="tot_act + cat_act"/>
+                                            <span t-field="doc.valor_act"/>
+                                            <t t-set="cat_act" t-value="cat_act + doc.valor_act"/>
                                         </td>
                                     </tr>
-                                </tbody>
-                            </table>
-                        </t>
+                                </t>
+                                <tr>
+                                    <td class="text-center">
+                                        Total <span t-esc="categoria"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_inic"/>
+                                        <t t-set="tot_inic" t-value="tot_inic + cat_inic"/>
+                                    </td>
+                                    <td class="text-center">
+                                        $ <span t-esc="cat_ant"/>
+                                        <t t-set="tot_ant" t-value="tot_ant + cat_ant"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_in"/>
+                                        <t t-set="tot_in" t-value="tot_in + cat_in"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_out"/>
+                                        <t t-set="tot_out" t-value="tot_out + cat_out"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-esc="cat_tot"/>
+                                        <t t-set="tot_tot" t-value="tot_tot + cat_tot"/>
+                                    </td>
+                                    <td class="text-center">
+                                        $ <span t-esc="cat_act"/>
+                                        <t t-set="tot_act" t-value="tot_act + cat_act"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </t>
                     <h2 style="font-size: 10px;">Total general</h2>
                     <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
