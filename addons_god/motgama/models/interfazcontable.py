@@ -172,10 +172,11 @@ class MotgamaWizardInterfazContable(models.TransientModel):
                     'base': abs(saldos[cuenta][asociado]['base']),
                     'sucursal': sucursal if cuenta.ccosto else ''
                 }
-                nuevo = self.env['motgama.interfazcontable'].create(valores)
-                if not nuevo:
-                    raise Warning('No se pudo cargar la interfaz contable')
-                lineas.append(nuevo)
+                if abs(saldos[cuenta][asociado]['saldo']) > 0.01:
+                    nuevo = self.env['motgama.interfazcontable'].create(valores)
+                    if not nuevo:
+                        raise Warning('No se pudo cargar la interfaz contable')
+                    lineas.append(nuevo)
 
         if self.genera_csv:
             ruta = '/home/usr/files/'

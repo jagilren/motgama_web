@@ -1,15 +1,3 @@
-Se presenta un error en la Interfaz Contable cuando se registra un pago con prenda. Aparece un línea débito adicional de efectivo que no debe existir, pues para eso está la 130505 de la prenda. Creo que ocurre cuando la cuenta tiene más de un recaudo.
-
-Los abonos tienen un faltante en su comportamiento en la Interfaz contable, para darles claridad usemos el siguiente ejemplo
-Suponga que el un cliente hizo un abono el día 25-02-2021 21:00 de $50.000
-Al momento de la generación de la Interfaz Contable el día 26-02-2021 07:00 no se había facturado dicho hospedaje, por tanto uno de los registros de la interfaz queda con el abono en crédito  de siguiente forma
-28051001	02-25-2021	001	BEST0410	0001-0015  NIT101010	ABONO A CUENTAS….	2	50000	CCBEST	
-La cuenta se factura el día 26/02/2021:13:55.
-La interfaz de generada el día 27/02/2021 07:00 tiene que contener la contrapartida del abono del abono en débito así:
-28051001	02-26-2021	001	BEST0411	0016-0032  NIT101010	ABONO A CUENTAS….	1	50000	CCBEST
-Actualmente el algoritmo de la interfaz no tiene este comportamiento, se debe corregir
-
-
 Enviar terceros en archivo plano en el formato de Ilimitada y marcar los contactos la primera vez que se envíen para que no se vuelvan a enviar
     Que Jorge envíe el archivo
 

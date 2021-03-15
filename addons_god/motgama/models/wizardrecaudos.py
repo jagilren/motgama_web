@@ -256,12 +256,40 @@ class MotgamaWizardRecaudo(models.TransientModel):
             for pago in recaudo.pagos:
                 if pago.mediopago.tipo in ['prenda','abono']:
                     continue
-                if not pago.pago_id.sudo().journal_id.update_posted:
-                    pago.pago_id.sudo().journal_id.write({'update_posted':True})
-                pago.pago_id.sudo().cancel()
-                pago.pago_id.sudo().action_draft()
-                pago.pago_id.sudo().write({'invoice_ids': [(4,factura.id)]})
-                pago.pago_id.sudo().post()
+                paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+                if paramAnticipos:
+                    ant = pago.pago_id.partner_id.property_account_payable_id
+                    cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
+                    if not cuenta:
+                        raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+                    pago.pago_id.partner_id.sudo().write({'property_account_receivable_id': cuenta.id})
+                val_pago = {
+                    'amount': pago.pago_id.amount,
+                    'currency_id': pago.pago_id.currency_id.id,
+                    'journal_id': pago.pago_id.journal_id.id,
+                    'payment_date': fields.Datetime().now(),
+                    'payment_type': 'outbound',
+                    'payment_method_id': 1,
+                    'partner_type': 'customer',
+                    'partner_id': pago.pago_id.partner_id.id
+                }
+                payment = self.env['account.payment'].create(val_pago)
+                payment.sudo().post()
+                if paramAnticipos:
+                    pago.pago_id.partner_id.sudo().write({'property_account_receivable_id': ant.id})
+                val_pago = {
+                    'amount': pago.pago_id.amount,
+                    'currency_id': pago.pago_id.currency_id.id,
+                    'journal_id': pago.pago_id.journal_id.id,
+                    'payment_date': fields.Datetime().now(),
+                    'payment_type': 'inbound',
+                    'payment_method_id': 1,
+                    'partner_type': 'customer',
+                    'partner_id': pago.pago_id.partner_id.id,
+                    'invoice_ids': [(4,factura.id)]
+                }
+                payment = self.env['account.payment'].create(val_pago)
+                payment.sudo().post()
             recaudo.sudo().write({'factura':factura.id})
         for pago in self.pagos:
             if pago.mediopago.tipo in ['prenda','abono']:
