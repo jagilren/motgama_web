@@ -63,6 +63,10 @@
                         <table style="width: 100%">
                             <tbody>
                                 <tr>
+                                    <td style="font-size:12px">Subtotal </td>
+                                    <td style="font-size:12px" class="text-right"><span t-field="doc.amount_untaxed"/></td>
+                                </tr>
+                                <tr>
                                     <td style="font-size:12px">Total impuestos </td>
                                     <td style="font-size:12px" class="text-right"><span t-field="doc.amount_tax"/></td>
                                 </tr>

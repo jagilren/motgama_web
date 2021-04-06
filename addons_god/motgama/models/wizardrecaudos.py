@@ -248,7 +248,8 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'company_id':ordenVenta.company_id.id,
             'asignafecha':ordenVenta.asignafecha,
             'liquidafecha':ordenVenta.liquidafecha,
-            'fecha':fields.Datetime().now()
+            'fecha':fields.Datetime().now(),
+            'account_id':self.cliente.property_account_receivable_id.id
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()
@@ -258,7 +259,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
                     continue
                 paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
                 if paramAnticipos:
-                    ant = pago.pago_id.partner_id.property_account_payable_id
+                    ant = pago.pago_id.partner_id.property_account_receivable_id
                     cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
                     if not cuenta:
                         raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')

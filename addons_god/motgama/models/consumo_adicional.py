@@ -281,7 +281,8 @@ class MotgamaWizardFacturaConsumos(models.TransientModel):
             raise Warning('No se pudo crear la factura')
         valoresFactura = {
             'es_hospedaje':True,
-            'fecha':fields.Datetime().now()
+            'fecha':fields.Datetime().now(),
+            'account_id':self.cliente.property_account_receivable_id.id
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()

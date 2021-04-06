@@ -93,27 +93,30 @@
                             </t>
                         </tbody>
                     </table>
-                    <h5 style="font-size: 10px;">Resumen por medios de pago</h5>
-                    <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
-                        <thead>
-                            <th>Medio de pago</th>
-                            <th>Total recaudado</th>
-                        </thead>
-                        <tbody>
-                            <t t-foreach="medios" t-as="medio">
-                                <tr>
-                                    <td class="text-center">
-                                        <span t-esc="medio.nombre"/>
-                                    </td>
-                                    <td class="text-center">
-                                        <span t-esc="medios[medio]"/>
-                                    </td>
-                                </tr>
-                            </t>
-                        </tbody>
-                    </table>
+                    <t t-if="len(medios) > 0">
+                        <h5 style="font-size: 10px;">Resumen por medios de pago</h5>
+                        <table style="width: 100%; font-size: 8px;" class="table table-sm table-bordered">
+                            <thead>
+                                <th>Medio de pago</th>
+                                <th>Total recaudado</th>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="medios" t-as="medio">
+                                    <tr>
+                                        <td class="text-center">
+                                            <span t-esc="medio.nombre"/>
+                                        </td>
+                                        <td class="text-center">
+                                            <span t-esc="medios[medio]"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
                     <br/>
-                    <p style="font-size: 10px;"><span class="font-weight-bold">Total facturas:</span> <span t-esc="count"/><br/>
+                    <p style="font-size: 10px;"><span class="font-weight-bold">Total facturas:</span> <span t-esc="count['facturas']"/><br/>
+                    <span class="font-weight-bold">Total notas crédito:</span> <span t-esc="count['rectificativas']"/><br/>
                     <span class="font-weight-bold">Total de ventas:</span> $ <span t-esc="total"/></p>
                 </div>
             </t>

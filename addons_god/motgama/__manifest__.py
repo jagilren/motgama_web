@@ -26,7 +26,8 @@
         'account_cancel',
         'sh_message',
         'mrp',
-        'stock_aux_report'],
+        'stock_aux_report',
+        'l10n_co'],
     'installable':True,
     'application': True,
     'data':[

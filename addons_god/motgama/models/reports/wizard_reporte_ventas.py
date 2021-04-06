@@ -53,7 +53,7 @@ class WizardReporteVentas(models.TransientModel):
                 'cliente': factura.partner_id.name,
                 'habitacion': factura.habitacion_id.codigo or '',
                 'valor': factura.amount_total,
-                'usuario': factura.user_id.name
+                'usuario': factura.create_uid.name
             }
             if self.tipo_reporte == 'fecha':
                 valores.update({
@@ -146,43 +146,54 @@ class PDFReporteVentas(models.AbstractModel):
         prods = {}
         medios = {}
         imps = {}
+        c_fact = 0
+        c_rect = 0
         for doc in docs:
-            total += doc.valor
+            factor = 0
+            if doc.factura.type == 'out_refund':
+                c_rect += 1
+                factor = -1
+            elif doc.factura.type == 'out_invoice':
+                c_fact += 1
+                factor = 1
+
+            total += doc.valor * factor
 
             for linea in doc.factura.invoice_line_ids:
                 if linea.product_id.categ_id in prods:
-                    prods[linea.product_id.categ_id] += linea.price_unit * linea.quantity
+                    prods[linea.product_id.categ_id] += linea.price_unit * linea.quantity * factor
                 else:
-                    prods[linea.product_id.categ_id] = linea.price_unit * linea.quantity
+                    prods[linea.product_id.categ_id] = linea.price_unit * linea.quantity * factor
 
-            for pago in doc.factura.recaudo.pagos:
-                if pago.mediopago.tipo == 'prenda' and doc.factura.prenda_id and doc.factura.prenda_id.recaudo:
-                    for pago1 in doc.factura.prenda_id.recaudo.pagos:
-                        if pago1.mediopago in medios:
-                            medios[pago1.mediopago] += pago1.valor
-                        else:
-                            medios[pago1.mediopago] = pago1.valor
-                elif pago.mediopago.tipo == 'abono' and doc.factura.movimiento_id:
-                    for recaudo in doc.factura.movimiento_id.recaudo_ids:
-                        if recaudo.estado == 'anulado' or recaudo == doc.factura.recaudo:
-                            continue
-                        for pago2 in recaudo.pagos:
-                            if pago2.mediopago in ['prenda','abono']:
-                                continue
-                            if pago2.mediopago in medios:
-                                medios[pago2.mediopago] += pago2.valor
+            if doc.factura.recaudo.estado != 'anulado':
+                for pago in doc.factura.recaudo.pagos:
+                    if pago.mediopago.tipo == 'prenda' and doc.factura.prenda_id and doc.factura.prenda_id.recaudo:
+                        for pago1 in doc.factura.prenda_id.recaudo.pagos:
+                            if pago1.mediopago in medios:
+                                medios[pago1.mediopago] += pago1.valor
                             else:
-                                medios[pago2.mediopago] = pago2.valor
-                elif pago.mediopago in medios:
-                    medios[pago.mediopago] += pago.valor
-                else:
-                    medios[pago.mediopago] = pago.valor
+                                medios[pago1.mediopago] = pago1.valor
+                    elif pago.mediopago.tipo == 'abono' and doc.factura.movimiento_id:
+                        for recaudo in doc.factura.movimiento_id.recaudo_ids:
+                            if recaudo.estado == 'anulado' or recaudo == doc.factura.recaudo:
+                                continue
+                            for pago2 in recaudo.pagos:
+                                if pago2.mediopago in ['prenda','abono']:
+                                    continue
+                                if pago2.mediopago in medios:
+                                    medios[pago2.mediopago] += pago2.valor
+                                else:
+                                    medios[pago2.mediopago] = pago2.valor
+                    elif pago.mediopago in medios:
+                        medios[pago.mediopago] += pago.valor
+                    else:
+                        medios[pago.mediopago] = pago.valor
             
             for linea_impuesto in doc.factura.tax_line_ids:
                 if linea_impuesto.tax_id in imps:
-                    imps[linea_impuesto.tax_id] += linea_impuesto.amount_total
+                    imps[linea_impuesto.tax_id] += linea_impuesto.amount_total * factor
                 else:
-                    imps[linea_impuesto.tax_id] = linea_impuesto.amount_total
+                    imps[linea_impuesto.tax_id] = linea_impuesto.amount_total * factor
 
         for prod in prods:
             prods[prod] = "$ {:0,.2f}".format(prods[prod]).replace(',','¿').replace('.',',').replace('¿','.')
@@ -195,7 +206,7 @@ class PDFReporteVentas(models.AbstractModel):
             'company': self.env['res.company']._company_default_get('account.invoice'),
             'sucursal': self.env['motgama.sucursal'].search([],limit=1),
             'docs': docs,
-            'count': len(docs),
+            'count': {'facturas':c_fact,'rectificativas':c_rect},
             'total': "{:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.'),
             'prods': prods,
             'medios': medios,
