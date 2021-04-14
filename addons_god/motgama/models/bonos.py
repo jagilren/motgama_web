@@ -2,7 +2,70 @@ from odoo import models, fields, api
 from odoo.exceptions import Warning
 
 class MotgamaBonos(models.Model):
-    _inherit = 'motgama.bonos'
+#    Fields: Bonos: el cliente tiene una forma de pago por medio de bonos Creado: Mayo 16 del 2019
+    _name = 'motgama.bonos'
+    _description = 'Bonos'
+    _rec_name = 'codigo'
+    _sql_constraints = [('codigo_uniq', 'unique (codigo)', "El Código ya Existe, Verifique!")]
+    tipo_bono = fields.Selection(string='Tipo de bono',required=True,selection=[('unico','Bono único'),('consecutivo','Bonos consecutivos'),('multiple','Bono múltiple')],default='unico')
+    prefijo = fields.Char(string='Prefijo',default='')
+    cons_desde = fields.Integer(string='Consecutivo desde')
+    cantidad = fields.Integer(string='Cantidad de bonos a generar')
+    digitos = fields.Integer(string='Tamaño del consecutivo',help='Completará el código del bono con ceros a la izquierda para completar esa cantidad de dígitos, un cero significa que no tendrá ceros a la izquierda')
+    codigo_inicial = fields.Char(string='Código inicial',compute='_compute_codigos',store=True)
+    codigo_final = fields.Char(string='Código final',compute='_compute_codigos',store=True)
+    codigo = fields.Char(string='Código')
+    multiple = fields.Boolean(string='Múltiple',default=False)
+    maximo_uso = fields.Integer(string='Cantidad máxima de usos (0 = ilimitado)', default=1)
+    usos = fields.Integer(string='Usos hasta el momento',default=0)
+    validodesde = fields.Date(string='Válido Desde',default=lambda self: fields.Date().today())
+    validohasta = fields.Date(string='Válido Hasta',required=True)
+    tipo = fields.Selection(string='Tipo de descuento',selection=[('valor','Valor en pesos'),('porcentaje','Valor porcentual')],default='porcentaje',required=True)
+    descuentavalor = fields.Float(string='Valor de descuento',default=0.0)
+    porcpagoefectivo = fields.Float(string='Porcentaje descuento',default=0.0)
+    # El descuento se lo puede aplicar a :
+    aplicahospedaje = fields.Boolean(string='Aplica en hospedaje',default=True)
+    aplica_adicional = fields.Boolean(string="Aplica en hospedaje adicional",default=False)
+    aplicarestaurante = fields.Boolean(string='Aplica en restaurante',default=False)
+    aplicaconsumos = fields.Boolean(string='Aplica en otros productos',default=False)
+    valor = fields.Float(string='Valor descuento',compute='_compute_valor')
+    active = fields.Boolean(string='Activo',default=True)
+
+    @api.onchange('aplicahospedaje')
+    def _onchange_aplica(self):
+        for record in self:
+            if not record.aplicahospedaje:
+                record.aplica_adicional = False
+
+    @api.onchange('tipo_bono')
+    def _onchange_tipobono(self):
+        for record in self:
+            if record.tipo_bono in ['unico','consecutivo']:
+                record.multiple = False
+            elif record.tipo_bono == 'multiple':
+                record.multiple = True
+
+    @api.onchange('multiple')
+    def _onchange_multiple(self):
+        for record in self:
+            if not record.multiple:
+                record.maximo_uso = 1
+    
+    @api.onchange('tipo')
+    def _onchange_tipo(self):
+        for record in self:
+            if record.tipo == 'valor':
+                record.porcpagoefectivo = 0.0
+            elif record.tipo == 'porcentaje':
+                record.descuentavalor = 0.0
+    
+    @api.depends('tipo','descuentavalor','porcpagoefectivo')
+    def _compute_valor(self):
+        for record in self:
+            if record.tipo == 'valor':
+                record.valor = record.descuentavalor
+            elif record.tipo == 'porcentaje':
+                record.valor = record.porcpagoefectivo
 
     @api.depends('prefijo','cons_desde','cantidad','digitos')
     def _compute_codigos(self):
@@ -88,90 +151,9 @@ class MotgamaBonos(models.Model):
 
         return record
 
-        @api.multi
-        def write(self,values):
-            for x in values:
-                if x in ['prefijo','cons_desde','cantidad','digitos']:
-                    raise Warning('No puede modificar los parámetros de los bonos consecutivos')
-            return super().write(values)
-
-class MotgamaFlujoHabitacion(models.Model):
-    _inherit = 'motgama.flujohabitacion'
-
-    bono_id = fields.Many2one(string="Bono",comodel_name='motgama.bonos')
-
     @api.multi
-    def aplicar_bono(self):
-        self.ensure_one()
-        if not self.env.ref('motgama.motgama_bono') in self.env.user.permisos:
-            raise Warning('No tiene permitido agregar bonos, contacte al administrador')
-        if self.ultmovimiento.bono_id:
-            raise Warning('Ya se redimió un bono para esta habitación')
-
-        return {
-            'name': 'Aplicar bono',
-            'type': 'ir.actions.act_window',
-            'res_model': 'motgama.wizard.bono',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': self.env.ref('motgama.wizard_bonos').id,
-            'target': 'new'
-        }
-
-    @api.multi
-    def quita_bono(self):
-        self.ensure_one()
-        if not self.env.ref('motgama.motgama_quita_bono') in self.env.user.permisos:
-            raise Warning('No tiene permitido retirar bonos, contacte al administrador')
-
-        self.ultmovimiento.sudo().write({'bono_id': False})
-        self.bono_id.sudo().write({'usos': self.bono_id.usos - 1})
-        self.sudo().write({'bono_id': False})
-
-class MotgamaWizardBonos(models.TransientModel):
-    _name = 'motgama.wizard.bono'
-    _description = 'Wizard Bonos'
-
-    habitacion = fields.Many2one(string='Habitación',comodel_name='motgama.flujohabitacion',default=lambda self: self._get_habitacion())
-    codigo = fields.Char(string='Código del bono')
-    inf_bono = fields.Many2many(string='Información del bono', comodel_name='motgama.bonos')
-    bono_valido = fields.Boolean(string='Bono validado', default=False)
-    bono = fields.Many2one(string='Bono',comodel_name='motgama.bonos')
-    validar = fields.Boolean(string='Validar', default=False)
-
-    @api.model
-    def _get_habitacion(self):
-        return self.env.context['active_id']
-
-    @api.onchange('validar')
-    def _onchange_validar(self):
-        for record in self:
-            if record.validar:
-                bono = self.env['motgama.bonos'].sudo().search([('codigo','=',self.codigo)], limit=1)
-                if not bono:
-                    record.validar = False
-                    raise Warning('El bono no existe o ha sido desactivado')
-
-                if fields.Date().today() < bono.validodesde:
-                    record.validar = False
-                    raise Warning('El bono no está disponible todavía, es válido desde ' + str(bono.validodesde))
-                elif fields.Date().today() > bono.validohasta:
-                    record.validar = False
-                    raise Warning('El bono se ha vencido, fue válido hasta ' + str(bono.validohasta))
-
-                if bono.maximo_uso != 0 and bono.usos >= bono.maximo_uso:
-                    record.validar = False
-                    raise Warning('El bono ya cumplió su límite de usos, Cantidad máxima: ' + str(bono.maximo_uso))
-
-                record.bono_valido = True
-                record.inf_bono = [(6,0,[bono.id])]
-                record.bono = bono.id
-
-    @api.multi
-    def agregar(self):
-        self.ensure_one()
-
-        self.habitacion.ultmovimiento.write({'bono_id': self.bono.id})
-        self.habitacion.sudo().write({'bono_id': self.bono.id})
-        self.bono.sudo().write({'usos': self.bono.usos + 1})
-        return True
+    def write(self,values):
+        for x in values:
+            if x in ['prefijo','cons_desde','cantidad','digitos']:
+                raise Warning('No puede modificar los parámetros de los bonos consecutivos')
+        return super().write(values)

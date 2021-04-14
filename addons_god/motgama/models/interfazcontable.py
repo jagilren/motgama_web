@@ -5,13 +5,6 @@ import csv
 import base64
 from datetime import datetime, timedelta
 
-class Account(models.Model):
-    _inherit = 'account.account'
-
-    ccosto = fields.Boolean(string="Lleva Centro de Costo en Interfaz",default=False)
-    lleva_nit = fields.Boolean(string="Lleva NIT por defecto")
-    nit = fields.Char(string="NIT")
-
 class MotgamaWizardInterfazContable(models.TransientModel):
     _name = 'motgama.wizard.interfazcontable'
     _description = 'Wizard Interfaz Contable'
