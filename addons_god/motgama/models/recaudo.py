@@ -34,12 +34,82 @@ class MotgamaRecaudo(models.Model):
     estado = fields.Selection(string='Estado',selection=[('pagado','Pagado'),('anulado','Anulado')],default='pagado')
     modificado = fields.Boolean(string="Modificado",default=False)
     active = fields.Boolean(string='Activo',default=True)
+    anula_id = fields.Many2one(string="Recaudo de anulación",comodel_name="motgama.recaudo")
 
     @api.model
     def create(self,values):
         if values.get('nrorecaudo','Nuevo') == 'Nuevo':
             values['nrorecaudo'] = self.env['ir.sequence'].next_by_code('motgama.recaudo') or 'Nuevo'
         return super().create(values)
+
+    @api.multi
+    def anular(self):
+        self.ensure_one()
+
+        valoresPagos = []
+        for pago in self.pagos:
+            payment = False
+            if pago.pago_id:
+                move_lines = self.env['account.move.line'].search([('payment_id','=',pago.pago_id.id)])
+                move_lines.sudo().remove_move_reconcile()
+                valoresPayment = {
+                    'amount': pago.pago_id.amount,
+                    'currency_id': pago.pago_id.currency_id.id,
+                    'journal_id': pago.pago_id.journal_id.id,
+                    'payment_date': fields.Datetime().now(),
+                    'payment_type': 'outbound',
+                    'payment_method_id': 1,
+                    'partner_type': 'customer',
+                    'partner_id': pago.pago_id.partner_id.id
+                }
+                payment = self.env['account.payment'].sudo().create(valoresPayment)
+                if not payment:
+                    raise Warning('No fue posible cancelar el registro del pago')
+                payment.sudo().post()
+            valoresPago = {
+                'movimiento_id': self.movimiento_id.id if self.movimiento_id else False,
+                'cliente_id': self.cliente.id,
+                'fecha': fields.Datetime().now(),
+                'mediopago': pago.mediopago.id,
+                'valor': 0 - pago.valor,
+                'usuario_uid': self.env.user.id,
+                'pago_id': payment.id if payment else False
+            }
+            valoresPagos.append(valoresPago)
+
+        valoresRecaudo = {
+            'movimiento_id': self.movimiento_id.id if self.movimiento_id else False,
+            'habitacion': self.habitacion.id if self.habitacion else False,
+            'cliente': self.cliente.id,
+            'factura': self.factura.id,
+            'total_pagado': 0 - self.total_pagado,
+            'valor_pagado': 0 - self.valor_pagado,
+            'tipo_recaudo': 'habitaciones' if self.habitacion else 'otros',
+            'recepcion_id': self.recepcion_id.id,
+            'pagos': [(0,0,valores) for valores in valoresPagos],
+            'estado': 'anulado'
+        }
+        nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
+        if not nuevoRecaudo:
+            raise Warning('No fue posible anular el recaudo')
+
+        self.sudo().write({'estado': 'anulado'})
+    
+    @api.multi
+    def editar(self):
+        self.ensure_one()
+
+        if self.factura and self.factura.state in ['cancel','draft']:
+            raise Warning('El estado de la factura ' + self.factura.number + ' no permite modificar el recaudo')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizard.editarecaudo',
+            'name': 'Modificar recaudo',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new'
+        }
 
 class MotgamaMedioPago(models.Model):
     _name = 'motgama.mediopago'

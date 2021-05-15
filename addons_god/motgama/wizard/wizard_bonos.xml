@@ -1,0 +1,40 @@
+<odoo>
+    <record id="wizard_bonos" model='ir.ui.view'>
+        <field name='name'>Wizard Bonos</field>
+        <field name="model">motgama.wizard.bono</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name='bono_valido' invisible="1"/>
+                <field name="bono" invisible="1"/>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="codigo" attrs="{'readonly':[('bono_valido','=',True)]}"/>
+                        </group>
+                        <group>
+                            <field name="validar" attrs="{'invisible': [('bono_valido','=',True)]}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="inf_bono" editable="bottom" readonly="1" attrs="{'invisible':[('bono_valido','=',False)]}">
+                            <tree>
+                                <field name="validodesde"/>
+                                <field name="validohasta"/>
+                                <field name="tipo"/>
+                                <field name="valor"/>
+                                <field name="aplicahospedaje"/>
+                                <field name="aplicarestaurante"/>
+                                <field name="aplicaconsumos"/>
+                            </tree>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name='agregar' string="Agregar bono" type="object" class="btn btn-primary"
+                        attrs="{'invisible': [('bono_valido','=',False)]}"/>
+                    <button special="cancel" string='Cancelar' class='btn'/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,4 +1,34 @@
 <odoo>
+    <record id="form_view_wizard_reserva" model="ir.ui.view">
+        <field name="name">Wizard Modifica Reserva Habitaciones</field>
+        <field name="model">motgama.wizard.modificareserva</field>
+        <field name="arch" type="xml">
+            <form string="Modificar Reserva">
+                <sheet>
+                    <group>
+                        <h1><span><field name="cod" readonly="1"/></span></h1>
+                        <br/>
+                    </group>
+                    <group>
+                        <field name="fecha"/>
+                    </group>
+                    <group>
+                        <field name="decoracion"/>
+                        <field name="notadecoracion"/>
+                    </group>
+                    <group>
+                        <field name="tipohabitacion_id" options="{'no_create': true}"/>
+                        <field name="habitacion_id" options="{'no_create': true}"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="button_modificar" string="Modificar" class="btn btn-primary" type="object"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
     <record id="wizard_recaudo_reserva" model="ir.ui.view">
         <field name="name">Wizard Recaudo Reserva Form</field>
         <field name="model">motgama.wizard.recaudoreserva</field>

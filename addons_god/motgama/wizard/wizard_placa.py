@@ -46,23 +46,3 @@ class MotgamaWizardPlaca(models.TransientModel):
             raise Warning('No se pudo registrar el evento de placa')
 
         return True
-
-class MotgamaFlujoHabitacion(models.Model):
-    _inherit = 'motgama.flujohabitacion'
-
-    @api.multi
-    def button_reporte_placa(self):
-        self.ensure_one()
-
-        if not self.ultmovimiento.placa_vehiculo:
-            raise Warning('No se registró placa de vehículo, puede hacer el reporte en el menú Procesos -> Placas Registradas')
-
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'motgama.wizard.placa',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': self.env.ref('motgama.wizard_placa_form').id,
-            'target': 'new',
-            'name': 'Reportar placa ' + self.ultmovimiento.placa_vehiculo
-        }

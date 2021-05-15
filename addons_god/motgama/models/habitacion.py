@@ -355,6 +355,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
         
         return True
 
+    # Liquidar
     @api.multi
     def button_liquidar(self):
         self.ensure_one()
@@ -751,4 +752,132 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             'view_mode':"form",
             'multi':"True",
             'target':"new"
+        }
+
+    # Abonos
+    @api.multi
+    def abonos(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window', 
+            'res_model': 'motgama.abonos',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new',
+            'name': 'Abonos de la habitación ' + self.codigo
+        }
+    @api.multi
+    def abonar(self):
+        self.ensure_one()
+        if not self.env.ref('motgama.motgama_ingreso_anticipo') in self.env.user.permisos:
+            raise Warning('No tiene permitido ingresar abonos, contacte al administrador')
+        return {
+            'name': 'Abonar',
+            'type': 'ir.actions.act_window', 
+            'res_model': 'motgama.wizard.abonos',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new'
+        }
+    @api.multi
+    def revertir_abono(self):
+        self.ensure_one()
+        return {
+            'name': 'Revertir abonos',
+            'type': 'ir.actions.act_window', 
+            'res_model': 'motgama.wizard.revertirabonos',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'target': 'new'
+        }
+    @api.multi
+    def devolver_abono(self):
+        self.ensure_one()
+
+    # Consumo
+    @api.multi
+    def button_consumos(self):
+        self.ensure_one()
+
+        return {
+            'name': 'Agregar consumos a la habitación ' + self.codigo,
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizard.consumos',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.form_wizard_consumo').id,
+            'target': 'new'
+        }
+
+    # Precuenta
+    @api.multi
+    def button_precuenta(self):
+        self.ensure_one()
+        if not self.env.ref('motgama.motgama_precuenta') in self.env.user.permisos:
+            raise Warning('No tiene permitido ver la precuenta')
+        
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizardprecuenta',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.form_wizard_precuenta').id,
+            'target': 'new',
+            'name': 'Precuenta de la habitación ' + self.codigo
+        }
+
+    # Recaudo
+    @api.multi
+    def button_recaudar(self):
+        self.ensure_one()
+        if not self.env.ref('motgama.motgama_recauda_habitacion') in self.env.user.permisos:
+            raise Warning('No tiene permitido recaudar habitaciones, contacte al administrador')
+
+        if not self.puede_recaudar:
+            prestados = self.env['motgama.objprestados'].search([('habitacion_id','=',self.id)])
+            if prestados:
+                return {
+                    'name': 'Hay objetos prestados',
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'motgama.confirm.prestados',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'view_id': self.env.ref('motgama.form_confirm_prestados').id,
+                    'target': 'new'
+                }
+            else:
+                self.write({'puede_recaudar': True})
+        self.write({'puede_recaudar': False})
+        return {
+            'name': 'Recaudar habitación',
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizardrecaudo',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.motgama_wizard_recaudo').id,
+            'target': 'new',
+            'context': {'current_id': self.id}
+        }
+    
+    @api.multi
+    def button_factura(self):
+        self.ensure_one()
+        return self.env.ref('motgama.reporte_factura_80').report_action(docids=[self.factura.id])
+    
+    # Placa
+    @api.multi
+    def button_reporte_placa(self):
+        self.ensure_one()
+
+        if not self.ultmovimiento.placa_vehiculo:
+            raise Warning('No se registró placa de vehículo, puede hacer el reporte en el menú Procesos -> Placas Registradas')
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': 'motgama.wizard.placa',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'view_id': self.env.ref('motgama.wizard_placa_form').id,
+            'target': 'new',
+            'name': 'Reportar placa ' + self.ultmovimiento.placa_vehiculo
         }

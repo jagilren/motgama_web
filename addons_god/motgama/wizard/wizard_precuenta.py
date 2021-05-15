@@ -1,25 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import Warning
 
-class MotgamaFlujoHabitacion(models.Model):
-    _inherit = 'motgama.flujohabitacion'
-
-    @api.multi
-    def button_precuenta(self):
-        self.ensure_one()
-        if not self.env.ref('motgama.motgama_precuenta') in self.env.user.permisos:
-            raise Warning('No tiene permitido ver la precuenta')
-        
-        return {
-            'type': 'ir.actions.act_window',
-            'res_model': 'motgama.wizardprecuenta',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': self.env.ref('motgama.form_wizard_precuenta').id,
-            'target': 'new',
-            'name': 'Precuenta de la habitación ' + self.codigo
-        }
-
 class MotgamaWizardPrecuenta(models.TransientModel):
     _name = 'motgama.wizardprecuenta'
     _description = 'Visualización de Precuenta'

@@ -156,20 +156,3 @@ class MotgamaLineaConsumos(models.TransientModel):
         if not 'vlrUnitario_save' in values:
             values['vlrUnitario_save'] = values['vlrUnitario']
         return super().create(values)
-
-class MotgamaFlujoHabitacion(models.Model):
-    _inherit = 'motgama.flujohabitacion'
-
-    @api.multi
-    def button_consumos(self):
-        self.ensure_one()
-
-        return {
-            'name': 'Agregar consumos a la habitación ' + self.codigo,
-            'type': 'ir.actions.act_window',
-            'res_model': 'motgama.wizard.consumos',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'view_id': self.env.ref('motgama.form_wizard_consumo').id,
-            'target': 'new'
-        }

@@ -1,0 +1,51 @@
+<odoo>
+    <record id="wizard_recaudo_consumos" model="ir.ui.view">
+        <field name="name">Wizard Consumos Adicionales Form</field>
+        <field name="model">motgama.wizardfacturaconsumos</field>
+        <field name="arch" type="xml"> 
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="deuda" readonly="True" style="font-size:20px;" widget="monetary"/>
+                        </group>
+                        <group>
+                            <field name="total" readonly="True" style="font-size:20px;" widget="monetary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="cliente"/>
+                        <field name="pagos" widget='one2many_list' mode="tree">
+                            <tree string="Registro de pagos" editable="bottom">
+                                <control>
+                                    <create string="Agregar pago"/>
+                                </control>
+                                <field name="mediopago" options="{'no_create': true}" domain="[('tipo','!=','abono')]"/>
+                                <field name="valor"/>
+                            </tree>
+                        </field>
+                        <field name="pago_prenda" readonly="True" invisible="1"/>
+                    </group>
+                    <group name="prenda_nueva" attrs="{'invisible': [('pago_prenda','=', False)]}">
+                        <h3>Rellene los campos de la prenda a registrar</h3>
+                        <group>
+                            <field name="prenda_descripcion" attrs="{'required': [('pago_prenda','=',True)]}"/>
+                        </group>
+                        <group>
+                            <field name="prenda_valor" attrs="{'required': [('pago_prenda','=',True)]}"/>
+                        </group>
+                    </group>
+                    <group name="prendas_cliente" attrs="{'invisible': [('pago_prenda','=', False)]}">
+                        <h3>Información de prendas previas del cliente</h3>
+                        <field name="prendas_pendientes" readonly="True"/>
+                        <field name="prendas_pagadas" readonly="True"/>
+                    </group>
+                    <footer>
+                        <button name="recaudar" string="Recaudar" type="object" class="oe_highlight"/>
+                        <button string="Cancelar" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
