@@ -53,7 +53,7 @@ class WizardReporteVentas(models.TransientModel):
                 'cliente': factura.partner_id.name,
                 'habitacion': factura.habitacion_id.codigo or '',
                 'valor': factura.amount_total,
-                'usuario': factura.create_uid.name
+                'usuario': factura.usuario_id.name if factura.usuario_id else factura.create_uid.name
             }
             if self.tipo_reporte == 'fecha':
                 valores.update({

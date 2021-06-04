@@ -19,6 +19,7 @@ class Invoice(models.Model):
     factura_electronica = fields.Boolean(string="Factura Electrónica",default=False)
     movimiento_id = fields.Many2one(string="Movimiento",comodel_name="motgama.movimiento")
     rectificativa = fields.Boolean(string="Factura Rectificativa",default=False)
+    usuario_id = fields.Many2one(string="Usuario que genera",comodel_name="res.users",default=lambda self: self.env.user.id)
 
     @api.multi
     def registro_anomalia(self):
@@ -44,6 +45,13 @@ class Invoice(models.Model):
         values['rectificativa'] = True
         values['fecha'] = fields.Datetime().now()
         return values
+
+    @api.model
+    def create(self, values):
+        if values['type'] in ['in_invoice','in_refund']:
+            if self.env.ref('motgama.motgama_factura_proveedor') not in self.env.user.permisos:
+                raise Warning('No tiene permitido registrar facturas o notas crédito de proveedor')
+        return super().create(values)
 
 class AccountInvoiceRefund(models.TransientModel):
     _inherit = 'account.invoice.refund'

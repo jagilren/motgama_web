@@ -105,9 +105,10 @@ class MotgamaWizardRecaudo(models.TransientModel):
     def recaudar(self):
         self.ensure_one()
         if abs(self.deuda) >= 0.01:
-            raise Warning('La cuenta no ha sido saldada')
-        elif self.deuda < 0:
-            raise Warning('El valor pagado es mayor al valor de la cuenta')
+            if self.deuda < 0:
+                raise Warning('El valor pagado es mayor al valor de la cuenta')
+            else:
+                raise Warning('La cuenta no ha sido saldada')
         
         valoresPagos = []
         nroPrendas = 0
@@ -132,9 +133,9 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 nroPrendas += 1
                 if nroPrendas > 1:
                     raise Warning('Solo se permite registrar un pago con prenda')
-            elif pago.mediopago.tipo == 'pase':
-                if not self.env.ref('motgama.motgama_pase_cortesia') in self.env.user.permisos:
-                    raise Warning('Error: No tiene permiso para registrar pago con Pase/Cortesía')
+            # elif pago.mediopago.tipo == 'pase':
+            #     if not self.env.ref('motgama.motgama_pase_cortesia') in self.env.user.permisos:
+            #         raise Warning('Error: No tiene permiso para registrar pago con Pase/Cortesía')
             elif pago.mediopago.tipo == 'abono':
                 tiene_abono = True
                 abono = pago.valor
@@ -170,56 +171,109 @@ class MotgamaWizardRecaudo(models.TransientModel):
             'asignafecha':ordenVenta.asignafecha,
             'liquidafecha':ordenVenta.liquidafecha,
             'fecha':fields.Datetime().now(),
-            'account_id':self.cliente.property_account_receivable_id.id
+            'account_id':self.cliente.property_account_receivable_id.id,
+            'usuario_id': self.env.user.id
         }
         factura.write(valoresFactura)
         factura.action_invoice_open()
+        move_lines_reconcile = []
         for recaudo in self.movimiento.recaudo_ids:
             for pago in recaudo.pagos:
                 if pago.mediopago.tipo in ['prenda','abono']:
                     continue
-                paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
-                if paramAnticipos:
-                    ant = pago.pago_id.partner_id.property_account_receivable_id
-                    cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
-                    if not cuenta:
-                        raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
-                    pago.pago_id.partner_id.sudo().write({'property_account_receivable_id': cuenta.id})
-                val_pago = {
-                    'amount': pago.pago_id.amount,
-                    'currency_id': pago.pago_id.currency_id.id,
-                    'journal_id': pago.pago_id.journal_id.id,
-                    'payment_date': fields.Datetime().now(),
-                    'payment_type': 'outbound',
-                    'payment_method_id': 1,
-                    'partner_type': 'customer',
-                    'partner_id': pago.pago_id.partner_id.id
+                # val_pago = {
+                #     'amount': pago.pago_id.amount,
+                #     'currency_id': pago.pago_id.currency_id.id,
+                #     'journal_id': pago.pago_id.journal_id.id,
+                #     'payment_date': fields.Datetime().now(),
+                #     'payment_type': 'outbound',
+                #     'payment_method_id': 1,
+                #     'partner_type': 'customer',
+                #     'partner_id': pago.pago_id.partner_id.id
+                # }
+                # payment = self.env['account.payment'].create(val_pago)
+                # payment.sudo().post()
+                # 
+                # val_pago = {
+                #     'amount': pago.pago_id.amount,
+                #     'currency_id': pago.pago_id.currency_id.id,
+                #     'journal_id': pago.pago_id.journal_id.id,
+                #     'payment_date': fields.Datetime().now(),
+                #     'payment_type': 'inbound',
+                #     'payment_method_id': 1,
+                #     'partner_type': 'customer',
+                #     'partner_id': self.cliente.id,
+                #     'invoice_ids': [(4,factura.id)]
+                # }
+                # payment = self.env['account.payment'].create(val_pago)
+                # payment.sudo().post()
+                if recaudo.tipo_recaudo == 'abonos':
+                    pago.sudo().write({'cliente': self.cliente.id})
+                move = self.env['account.move'].sudo().search([('name','=',pago.pago_id.move_name)],limit=1)
+                lines = move.line_ids.filtered(lambda r: r.account_id.reconcile)
+                move_lines_reconcile.extend(lines.ids)
+            vals = {'factura':factura.id}
+            if recaudo.tipo_recaudo == 'abonos':
+                vals['cliente'] = self.cliente.id
+            recaudo.sudo().write(vals)
+        move_lines_unreconcile = self.env['account.move.line'].sudo().browse(move_lines_reconcile)
+        move_lines_unreconcile.sudo().remove_move_reconcile()
+        paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+        if self.movimiento.recaudo_ids:
+            if paramAnticipos:
+                cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
+                if not cuenta:
+                    raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+            else:
+                cuenta = self.cliente.property_account_receivable_id
+            cuenta_pte = self.env.ref('l10n_co.1_l10n_co_chart_template_generic_liquidity_transfer')
+            vals_move = {
+                'date': fields.Date().today(),
+                'journal_id': self.env.ref('motgama.motgama_diario_abonos').id,
+                'state': 'draft'
+            }
+            move = self.env['account.move'].sudo().create(vals_move)
+            vals_move_lines = [
+                {
+                    'account_id': cuenta.id,
+                    'date_maturity': fields.Date().today(),
+                    'debit': self.abonado,
+                    'credit': 0,
+                    'partner_id': self.env.ref('motgama.cliente_contado').id
+                },{
+                    'account_id': cuenta_pte.id,
+                    'date_maturity': fields.Date().today(),
+                    'debit': 0,
+                    'credit': self.abonado,
+                    'partner_id': self.env.ref('motgama.cliente_contado').id
+                },{
+                    'account_id': cuenta_pte.id,
+                    'date_maturity': fields.Date().today(),
+                    'debit': self.abonado,
+                    'credit': 0,
+                    'partner_id': self.cliente.id
+                },{
+                    'account_id': factura.account_id.id,
+                    'date_maturity': fields.Date().today(),
+                    'debit': 0,
+                    'credit': self.abonado,
+                    'partner_id': self.cliente.id
                 }
-                payment = self.env['account.payment'].create(val_pago)
-                payment.sudo().post()
-                if paramAnticipos:
-                    pago.pago_id.partner_id.sudo().write({'property_account_receivable_id': ant.id})
-                val_pago = {
-                    'amount': pago.pago_id.amount,
-                    'currency_id': pago.pago_id.currency_id.id,
-                    'journal_id': pago.pago_id.journal_id.id,
-                    'payment_date': fields.Datetime().now(),
-                    'payment_type': 'inbound',
-                    'payment_method_id': 1,
-                    'partner_type': 'customer',
-                    'partner_id': pago.pago_id.partner_id.id,
-                    'invoice_ids': [(4,factura.id)]
-                }
-                payment = self.env['account.payment'].create(val_pago)
-                payment.sudo().post()
-            recaudo.sudo().write({'factura':factura.id})
+            ]
+            move.sudo().write({'line_ids':[(0,0,vals) for vals in vals_move_lines]})
+            move.sudo().post()
+            lines = move.line_ids.filtered(lambda r: r.account_id.reconcile)
+            move_lines_reconcile.extend(lines.ids)
+            for recaudo in self.movimiento.recaudo_ids:
+                recaudo.sudo().write({'move_id': move.id})
+        lines = factura.move_id.line_ids.filtered(lambda r: r.account_id.reconcile)
+        move_lines_reconcile.extend(lines.ids)
         for pago in self.pagos:
             if pago.mediopago.tipo in ['prenda','abono']:
                 continue
             valoresPayment = {
                 'amount': pago.valor,
                 'currency_id': pago.mediopago.diario_id.company_id.currency_id.id,
-                'invoice_ids': [(4,factura.id)],
                 'journal_id': pago.mediopago.diario_id.id,
                 'payment_date': fields.Datetime().now(),
                 'payment_type': 'inbound',
@@ -231,10 +285,22 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if not payment:
                 raise Warning('No fue posible sentar el registro del pago')
             payment.sudo().post()
+            move_name = payment.move_name
+            move = self.env['account.move'].sudo().search([('name','=',move_name)],limit=1)
+            lines = move.line_ids.filtered(lambda r: r.account_id.reconcile)
+            move_lines_reconcile.extend(lines.ids)
             for valores in valoresPagos:
                 if valores['mediopago'] == pago.mediopago.id and valores['valor'] == pago.valor:
                     valores['pago_id'] = payment.sudo().id
-        
+        move_lines = self.env['account.move.line'].sudo().browse(move_lines_reconcile)
+        account_ids = []
+        for line in move_lines:
+            if line.account_id.id in account_ids:
+                continue
+            account_ids.append(line.account_id.id)
+        for account_id in account_ids:
+            move_lines_reconcile = move_lines.filtered(lambda r: r.account_id.id == account_id)
+            move_lines_reconcile.reconcile()
         valoresRecaudo = {
             'movimiento_id': self.movimiento.id,
             'habitacion': self.habitacion.id,

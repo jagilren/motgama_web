@@ -118,12 +118,23 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
 
         valoresPagos = []
         cuenta_prenda = 0
+        move_lines_reconcile = self.env['account.move.line']
+        if self.recaudo_ant_id.tipo_recaudo in ['abonos','anticipos'] and self.recaudo_ant_id.move_id:
+            move_lines_reconcile += self.recaudo_ant_id.move_id.line_ids.filtered(lambda r: r.account_id.reconcile)
+            move_lines_reconcile.remove_move_reconcile()
+            self.recaudo_ant_id.move_id.button_cancel()
+            new_value = move_lines_reconcile[0].credit + self.total_a_pagar if move_lines_reconcile[0].credit > 0 else move_lines_reconcile[0].debit + self.total_a_pagar
+            self.recaudo_ant_id.move_id.write({
+                'line_ids': [(1,line.id,{
+                    'debit': new_value if line.debit > 0 else 0,
+                    'credit': new_value if line.credit > 0 else 0
+                }) for line in self.recaudo_ant_id.move_id.line_ids]
+            })
         for pago in self.pago_ids:
             if pago.mediopago_id.tipo not in ['prenda','abono']:
                 valoresPayment = {
                     'amount': pago.valor,
                     'currency_id': pago.mediopago_id.diario_id.company_id.currency_id.id,
-                    'invoice_ids': [(4,self.recaudo_ant_id.factura.id)],
                     'journal_id': pago.mediopago_id.diario_id.id,
                     'payment_date': fields.Datetime().now(),
                     'payment_type': 'inbound',
@@ -135,6 +146,7 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
                 if not payment:
                     raise Warning('No fue posible crear el registro del pago')
                 payment.post()
+                move_lines_reconcile += self.env['account.move.line'].search([('payment_id','=',payment.id)]).filtered(lambda r: r.account_id.reconcile)
             elif pago.mediopago_id.tipo == 'prenda' and not pago.original:
                 cuenta_prenda += 1
                 if cuenta_prenda > 1:
@@ -163,6 +175,20 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
                 'pago_id': payment.id if pago.mediopago_id.tipo not in ['prenda','abono'] else False
             }
             valoresPagos.append(valores)
+        for recaudo in self.recaudo_ant_id.movimiento_id.recaudo_ids:
+            for pago in recaudo.pagos.filtered(lambda r: r.pago_id):
+                move_lines = self.env['account.move.line'].search([('payment_id','=',pago.pago_id.id)]).filtered(lambda r: r.account_id.reconcile)
+                move_lines.remove_move_reconcile()
+                move_lines_reconcile += move_lines
+        move_lines_reconcile += self.recaudo_ant_id.factura.move_id.line_ids.filtered(lambda r: r.account_id.reconcile)
+        account_ids = []
+        for line in move_lines_reconcile:
+            if line.account_id.id in account_ids:
+                continue
+            account_ids.append(line.account_id.id)
+        self.recaudo_ant_id.move_id.post()
+        for account_id in account_ids:
+            move_lines_reconcile.filtered(lambda r: r.account_id.id == account_id).reconcile()
         valoresRecaudo = {
             'movimiento_id': self.recaudo_ant_id.movimiento_id.id if self.recaudo_ant_id.movimiento_id else False,
             'habitacion': self.recaudo_ant_id.habitacion.id if self.recaudo_ant_id.habitacion else False,
@@ -170,14 +196,16 @@ class MotgamaWizardEditaRecaudo(models.TransientModel):
             'factura': self.recaudo_ant_id.factura.id,
             'total_pagado': self.total_a_pagar,
             'valor_pagado': self.total_a_pagar - valorPrenda,
-            'tipo_recaudo': 'habitaciones' if self.recaudo_ant_id.habitacion else 'otros',
+            'tipo_recaudo': self.recaudo_ant_id.tipo_recaudo,
             'recepcion_id': self.recaudo_ant_id.recepcion_id.id,
-            'pagos': [(0,0,valores) for valores in valoresPagos]
+            'pagos': [(0,0,valores) for valores in valoresPagos],
+            'move_id': self.recaudo_ant_id.move_id.id if  self.recaudo_ant_id.move_id else False
         }
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('Error al crear el nuevo recaudo')
-        nuevoRecaudo.factura.sudo().write({'recaudo':nuevoRecaudo.id})
+        if self.recaudo_ant_id.tipo_recaudo not in ['anticipos','abonos']:
+            nuevoRecaudo.factura.sudo().write({'recaudo':nuevoRecaudo.id})
 
         self.recaudo_ant_id.sudo().write({'modificado':True})
 
@@ -213,3 +241,44 @@ class MotgamaWizardEditaPago(models.TransientModel):
         for record in self:
             if record.original or record.mediopago_id.tipo == 'abono':
                 raise Warning('No debe modificar la prenda o los abonos de este recaudo')
+
+class MotgamaWizardAnulaRecaudo(models.TransientModel):
+    _name = 'motgama.wizard_anula_recaudo'
+    _description = 'Wizard Edita Recaudo'
+
+    desc = {
+        'recaudo': '''
+            Si anula solo este recaudo, se van a anular todos los pagos registrados excepto los abonos y la prenda (si hay).
+            Si desea anular también los abonos debe seleccionar "Este recaudo y todos los abonos" en Tipo de anulación.
+            Para liberar la prenda es necesario ir manualmente a la prenda y darle de baja.
+
+            ¿Está seguro que desea anular este recaudo?
+        ''',
+        'todo': '''
+            Va a anular este recaudo con todos los pagos y abonos relacionados.
+            Si existe prenda asociada y desea liberarla deberá ir manualmente a la prenda y darle de baja.
+
+            ¿Está seguro que desea anular este recaudo?
+        '''
+    }
+
+    tipo_anulacion = fields.Selection(string="Tipo de anulación",selection=[('recaudo','Solo este recaudo'),('todo','Este recaudo y todos los abonos')],default="recaudo")
+    descripcion = fields.Text(string="Descripción",compute="_compute_descripcion")
+
+    @api.depends('tipo_anulacion')
+    def _compute_descripcion(self):
+        for record in self:
+            if record.tipo_anulacion:
+                record.descripcion = self.desc[record.tipo_anulacion]
+
+    def anular(self):
+        self.ensure_one()
+
+        id_recaudo = self.env.context['active_id']
+        recaudo = self.env['motgama.recaudo'].browse(id_recaudo)
+        if self.tipo_anulacion == 'recaudo':
+            recaudo.anular(force=True)
+        else:
+            for abono in recaudo.movimiento_id.recaudo_ids:
+                abono.anular(force=True)
+        return True

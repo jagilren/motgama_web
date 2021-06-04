@@ -8,7 +8,7 @@ from . import wizard_descuento
 from . import wizard_abonos
 from . import wizard_anomalia
 from . import wizard_prestados
-from . import wizard_edita_recaudo
+from . import wizard_recaudo
 from . import wizard_docto
 from . import wizard_asignacion
 from . import wizard_olvidados
@@ -17,7 +17,7 @@ from . import wizard_fuera_uso
 from . import wizard_reservas
 from . import wizard_precuenta
 from . import wizard_cierre_turno
-from . import wizard_recaudo
+from . import wizard_edita_recaudo
 from . import wizard_placa
 from . import wizard_observacion
 from . import wizard_prenda

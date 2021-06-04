@@ -101,18 +101,24 @@ class MotgamaWizardInterfazContable(models.TransientModel):
         saldos = {}
         for apunte in apuntes:
             op = -1 if apunte.debit < apunte.credit else 1
+            if apunte.account_id.lleva_nit:
+                asociado = apunte.account_id.nit
+            elif not apunte.account_id.con_nit:
+                asociado = ''
+            else:
+                asociado = apunte.partner_id
             if apunte.account_id in saldos:
-                if apunte.partner_id in saldos[apunte.account_id]:
-                    saldos[apunte.account_id][apunte.partner_id]['saldo'] += apunte.debit - apunte.credit
-                    saldos[apunte.account_id][apunte.partner_id]['base'] += apunte.tax_base_amount * op
+                if asociado in saldos[apunte.account_id]:
+                    saldos[apunte.account_id][asociado]['saldo'] += apunte.debit - apunte.credit
+                    saldos[apunte.account_id][asociado]['base'] += apunte.tax_base_amount * op
                 else:
-                    saldos[apunte.account_id][apunte.partner_id] = {
+                    saldos[apunte.account_id][asociado] = {
                         'saldo': apunte.debit - apunte.credit,
                         'base': apunte.tax_base_amount * op
                     }
             else:
                 saldos[apunte.account_id] = {
-                    apunte.partner_id: {
+                    asociado: {
                         'saldo': apunte.debit - apunte.credit,
                         'base': apunte.tax_base_amount * op
                     }
@@ -133,25 +139,16 @@ class MotgamaWizardInterfazContable(models.TransientModel):
         lineas = []
         for cuenta in saldos:
             for asociado in saldos[cuenta]:
-                if cuenta.lleva_nit:
-                    if cuenta.nit:
-                        nit = cuenta.nit
-                    else:
-                        if not asociado.vat or asociado.vat in ["1",""]:
-                            nit = ''
-                        else:
-                            nit = ''
-                            for x in asociado.vat:
-                                if x.isnumeric() or x == '-':
-                                    nit += x
+                if isinstance(asociado,str):
+                    nit = asociado
+                elif not asociado or not asociado.vat or asociado.vat in ["1",""]:
+                    nit = ''
                 else:
-                    if not asociado.vat or asociado.vat in ["1",""]:
-                        nit = ''
-                    else:
-                        nit = ''
-                        for x in asociado.vat:
-                            if x.isnumeric() or x == '-':
-                                nit += x
+                    nit = ''
+                    for x in asociado.vat:
+                        if x.isnumeric() or x == '-':
+                            nit += x
+                    
                 valores = {
                     'cod_cuenta': cuenta.code,
                     'comprobante': comp,

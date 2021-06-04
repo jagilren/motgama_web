@@ -1,0 +1,23 @@
+<odoo>
+    <data noupdate="1">
+        <record id="secuencia_abonos" model="ir.sequence">
+            <field name="name">Secuencia Abonos</field>
+            <field name="code">motgama.abonos</field>
+            <field name="active" eval="True"/>
+            <field name="prefix">ABO</field>
+            <field name="padding">0</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+    </data>
+    <data noupdate="0">
+        <record id="motgama_diario_abonos" model="account.journal">
+            <field name="code">ABO</field>
+            <field name="company_id" eval="1"/>
+            <field name="name">Abonos</field>
+            <field name="sequence_id" ref="motgama.secuencia_abonos"/>
+            <field name="type">general</field>
+            <field name="update_posted" eval="True"/>
+        </record>
+    </data>
+</odoo>

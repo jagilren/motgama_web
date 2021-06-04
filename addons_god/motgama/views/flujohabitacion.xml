@@ -152,12 +152,12 @@
                                 <field name="prox_reserva" string="Esta reserva"/>
                             </group>
                             <group>
-                                <field name="reserva_ids"/>
+                                <field name="reserva_ids" nolabel="1"/>
                             </group>
                         </page>
                         <page name='prestados' string='Objetos Prestados' attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}">
                             <group>
-                                <field name="prestados" widget="one2many_list">
+                                <field name="prestados" widget="one2many_list" nolabel="1">
                                     <tree editable="bottom">
                                         <control>
                                             <create string="Prestar objeto"/>
@@ -170,7 +170,7 @@
                         </page>
                         <page name="consumos" string="Consumos" attrs="{'invisible':[('estado','not in',['OO','OA','LQ'])]}">
                             <group>
-                                <field name="consumos" widget="one2many_list" readonly="1">
+                                <field name="consumos" widget="one2many_list" readonly="1"  nolabel="1">
                                     <tree>
                                         <field name="producto_id" string="Producto"/>
                                         <field name="vlrUnitario" string="Valor Unitario $"/>

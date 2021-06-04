@@ -35,6 +35,7 @@ class MotgamaRecaudo(models.Model):
     modificado = fields.Boolean(string="Modificado",default=False)
     active = fields.Boolean(string='Activo',default=True)
     anula_id = fields.Many2one(string="Recaudo de anulación",comodel_name="motgama.recaudo")
+    move_id = fields.Many2one(string="Asiento contable",comodel_name="account.move")
 
     @api.model
     def create(self,values):
@@ -43,29 +44,104 @@ class MotgamaRecaudo(models.Model):
         return super().create(values)
 
     @api.multi
-    def anular(self):
+    def anular(self, **kwargs):
         self.ensure_one()
 
+        mediopago_id = self.env.ref('motgama.mediopago_abono').id
+        abonos = self.pagos.filtered(lambda r: r.mediopago.id == mediopago_id)
+        if 'force' in kwargs and kwargs['force']:
+            force = True
+        else:
+            force = False
+        if abonos and not force:
+            return {
+                'name': 'Anular recaudo con abonos',
+                'type': 'ir.actions.act_window',
+                'res_model': 'motgama.wizard_anula_recaudo',
+                'view_mode': 'form',
+                'view_type': 'form',
+                'target': 'new'
+            }
+
         valoresPagos = []
+
+        move_lines_reconcile = []
         for pago in self.pagos:
             payment = False
             if pago.pago_id:
-                move_lines = self.env['account.move.line'].search([('payment_id','=',pago.pago_id.id)])
+                move_lines = self.env['account.move.line'].search([('payment_id','=',pago.pago_id.id)]).filtered(lambda r: r.account_id.reconcile)
+                if self.tipo_recaudo in ['abonos','anticipos'] and self.move_id:
+                    move_lines += self.move_id.line_ids.filtered(lambda r: r.account_id.reconcile)
+                    recaudos = self.movimiento_id.recaudo_ids.filtered(lambda r: r.move_id.id == self.move_id.id and r.id != self.id)
+                    for recaudo in recaudos:
+                        pagos = recaudo.pagos.filtered(lambda r: r.pago_id)
+                        for pago_id in pagos:
+                            move_lines += self.env['account.move.line'].search([('payment_id','=',pago_id.id)]).filtered(lambda r: r.account_id.reconcile)
                 move_lines.sudo().remove_move_reconcile()
                 valoresPayment = {
                     'amount': pago.pago_id.amount,
                     'currency_id': pago.pago_id.currency_id.id,
                     'journal_id': pago.pago_id.journal_id.id,
                     'payment_date': fields.Datetime().now(),
-                    'payment_type': 'outbound',
+                    'payment_type': 'outbound' if pago.pago_id.payment_type == 'inbound' else 'inbound',
                     'payment_method_id': 1,
                     'partner_type': 'customer',
                     'partner_id': pago.pago_id.partner_id.id
                 }
+                paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+                if paramAnticipos and self.tipo_recaudo in ['abonos','anticipos']:
+                    ant = self.cliente.property_account_receivable_id
+                    cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
+                    if not cuenta:
+                        raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+                    self.cliente.write({'property_account_receivable_id': cuenta.id})
                 payment = self.env['account.payment'].sudo().create(valoresPayment)
                 if not payment:
                     raise Warning('No fue posible cancelar el registro del pago')
                 payment.sudo().post()
+                if paramAnticipos and self.tipo_recaudo in ['abonos','anticipos']:
+                    self.cliente.write({'property_account_receivable_id':ant.id})
+                move_lines_reconcile.extend(self.env['account.move.line'].search([('payment_id','=',pago.pago_id.id)]).filtered(lambda r: r.account_id.reconcile).ids)
+                move_lines_reconcile.extend(self.env['account.move.line'].search([('payment_id','=',payment.id)]).filtered(lambda r: r.account_id.reconcile).ids)
+        
+        if self.tipo_recaudo in ['abonos','anticipos'] and self.move_id:
+            self.move_id.sudo().button_cancel()
+            restar = self.valor_pagado
+            zero = False
+            tups = []
+            for line in self.move_id.line_ids:
+                abonado_ant = line.debit if line.debit > line.credit else line.credit
+                abonado_new = abonado_ant - restar
+                if abonado_new <= 0:
+                    zero = True
+                    continue
+                tups.append((1,line.id,{
+                    'debit': abonado_new if line.debit > line.credit else 0,
+                    'credit': abonado_new if line.credit > line.debit else 0
+                }))
+            self.move_id.sudo().write({'line_ids':tups})
+            if not zero:
+                self.move_id.post()
+                recaudos = self.movimiento_id.recaudo_ids.filtered(lambda r: r.move_id.id == self.move_id.id and r.id != self.id)
+                for recaudo in recaudos:
+                    pagos = recaudo.pagos.filtered(lambda r: r.pago_id)
+                    for pago in pagos:
+                        move_lines = self.env['account.move.line'].search([('payment_id','=',pago.id)]).filtered(lambda r: r.account_id.reconcile)
+                        move_lines_reconcile.extend(move_lines.ids)
+                move_lines_reconcile.extend(self.move_id.line_ids.filtered(lambda r: r.account_id.reconcile).ids)
+                move_lines_reconcile.extend(self.factura.move_id.line_ids.filtered(lambda r: r.account_id.reconcile).ids)
+            else:
+                self.move_id.unlink()
+
+        account_ids = []
+        move_lines_reconcile = self.env['account.move.line'].browse(move_lines_reconcile)
+        for line in move_lines_reconcile:
+            if line.account_id.id in account_ids:
+                continue
+            account_ids.append(line.account_id.id)
+        for account_id in account_ids:
+            lines = move_lines_reconcile.filtered(lambda r: r.account_id.id == account_id)
+            lines.reconcile()
             valoresPago = {
                 'movimiento_id': self.movimiento_id.id if self.movimiento_id else False,
                 'cliente_id': self.cliente.id,
@@ -87,13 +163,14 @@ class MotgamaRecaudo(models.Model):
             'tipo_recaudo': 'habitaciones' if self.habitacion else 'otros',
             'recepcion_id': self.recepcion_id.id,
             'pagos': [(0,0,valores) for valores in valoresPagos],
-            'estado': 'anulado'
+            'estado': 'anulado',
+            'active': False
         }
         nuevoRecaudo = self.env['motgama.recaudo'].create(valoresRecaudo)
         if not nuevoRecaudo:
             raise Warning('No fue posible anular el recaudo')
 
-        self.sudo().write({'estado': 'anulado'})
+        self.sudo().write({'estado': 'anulado','active': False})
     
     @api.multi
     def editar(self):

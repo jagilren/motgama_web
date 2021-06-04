@@ -1,4 +1,6 @@
 from odoo import models, fields, api
+import time
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as dt
 
 class MotgamaMovimiento(models.Model):#ok
 #    Fields: MOVIMIENTO: .Modification date:  Mayo 9 del 2019: 

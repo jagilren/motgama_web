@@ -94,6 +94,7 @@ class MotgamaWizardAbonos(models.TransientModel):
 
         valoresRecaudo = {
             'movimiento_id': self.movimiento_id.id,
+            'cliente': self.env.ref('motgama.cliente_contado').id,
             'habitacion': hab.id,
             'total_pagado': self.abonado,
             'valor_pagado': self.abonado,
@@ -190,18 +191,40 @@ class MotgamaRevertirAbonos(models.TransientModel):
         if self.total_revertir == 0:
             raise Warning("No puede devolver $0")
 
+        cliente = self.env.ref('motgama.cliente_contado')
+
         valoresPayment = {
             'payment_type': 'outbound',
             'partner_type': 'customer',
-            'partner_id': self.env.ref('motgama.cliente_contado').id,
+            'partner_id': cliente.id,
             'amount': self.total_revertir,
             'journal_id': self.mediopago.diario_id.id,
             'payment_date': fields.Date().today(),
             'payment_method_id': 1,
             'communication': 'Revertir abono de movimiento con id: ' + str(self.habitacion_id.ultmovimiento.id)
         }
+        paramAnticipos = self.env['motgama.parametros'].search([('codigo','=','CTAANTICIPO')],limit=1)
+        if paramAnticipos:
+            ant = cliente.property_account_receivable_id
+            cuenta = self.env['account.account'].sudo().search([('code','=',paramAnticipos.valor)],limit=1)
+            if not cuenta:
+                raise Warning('Se ha definido el parámetro: "CTAANTICIPO" como ' + paramAnticipos.valor + ', pero no existe una cuenta con ese código')
+            cliente.write({'property_account_receivable_id': cuenta.id})
         payment = self.env['account.payment'].sudo().create(valoresPayment)
         payment.sudo().post()
+        if paramAnticipos:
+                cliente.write({'property_account_receivable_id':ant.id})
+
+        move_lines_ids = []
+        for abono in self.abono_ids:
+            for pago in abono.pagos:
+                move_name = pago.pago_id.move_name
+                move = self.env['account.move'].sudo().search([('name','=',move_name)],limit=1)
+                move_lines_ids.extend(move.line_ids.filtered(lambda r: r.account_id.reconcile).ids)
+        move = self.env['account.move'].sudo().search([('name','=',payment.move_name)],limit=1)
+        move_lines_ids.extend(move.line_ids.filtered(lambda r: r.account_id.reconcile).ids)
+        lines = self.env['account.move.line'].sudo().browse(move_lines_ids)
+        lines.sudo().reconcile()
 
         valoresRecaudo = {
             'movimiento_id': self.habitacion_id.ultmovimiento.id,

@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='deprecated']" position="after">
                     <field name="ccosto"/>
+                    <field name="con_nit"/>
                     <field name="lleva_nit"/>
                     <field name="nit" attrs="{'invisible':[('lleva_nit','=',False)]}"/>
                 </xpath>

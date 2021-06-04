@@ -2,11 +2,12 @@ from odoo import models, fields, api
 import pytz
 from datetime import datetime, timedelta
 
+
 class MotgamaWizardHabitacion(models.TransientModel):
     _name = 'motgama.wizardhabitacion'
     _description = 'Asignacion de habitacion'
     placa = fields.Char(string='Ingrese Placa',)
-    tipovehiculo = fields.Selection(string='Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')],default='peaton',required=True)
+    tipovehiculo = fields.Selection(string='Tipo de vehiculo',selection=[('particular', 'Particular'), ('moto', 'Moto'), ('peaton', 'Peatón'),('taxi','Taxi')],default='particular',required=True)
     asignatipo = fields.Selection(string='La Asignacion es Amanecida?',selection=[('OO', 'No'), ('OA', 'Si')],required=True,default='OO')
     
     valorocasional = fields.Float(string='Valor Hospedaje Ocasional',readonly=True,compute='_compute_valores')

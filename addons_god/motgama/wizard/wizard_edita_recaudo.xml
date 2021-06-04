@@ -46,4 +46,23 @@
             </form>
         </field>
     </record>
+
+    <record id="wizard_anula_recaudo" model="ir.ui.view">
+        <field name="name">Wizard Anula Recaudo</field>
+        <field name="model">motgama.wizard_anula_recaudo</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="tipo_anulacion" widget="radio"/>
+                </group>
+                <group>
+                    <field name="descripcion" nolabel="1"/>
+                </group>
+                <footer>
+                    <button name="anular" string="Anular" type="object" class="btn btn-primary"/>
+                    <button special="cancel" string="Cancelar" class="btn"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 </odoo>
