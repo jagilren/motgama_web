@@ -221,7 +221,7 @@ class MotgamaRevertirAbonos(models.TransientModel):
                 move_name = pago.pago_id.move_name
                 move = self.env['account.move'].sudo().search([('name','=',move_name)],limit=1)
                 move_lines_ids.extend(move.line_ids.filtered(lambda r: r.account_id.reconcile).ids)
-        move = self.env['account.move'].sudo().search([('name','=',payment.move_name)],limit=1)
+        move = self.env['account.move'].sudo().search([('name','=',payment.sudo().move_name)],limit=1)
         move_lines_ids.extend(move.line_ids.filtered(lambda r: r.account_id.reconcile).ids)
         lines = self.env['account.move.line'].sudo().browse(move_lines_ids)
         lines.sudo().reconcile()

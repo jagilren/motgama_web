@@ -223,7 +223,7 @@ class MotgamaWizardEditaPago(models.TransientModel):
     _name = 'motgama.wizard.editapago'
     _description = 'Wizard Edita Pago'
 
-    mediopago_id = fields.Many2one(string='Medio de pago',comodel_name="motgama.mediopago")
+    mediopago_id = fields.Many2one(string='Medio de pago',comodel_name="motgama.mediopago",required=True)
     valor = fields.Float(string="Valor",required=True)
     pago_readonly = fields.Boolean(string="Solo lectura",default=False,compute="_compute_readonly")
     original = fields.Boolean(string="Original")

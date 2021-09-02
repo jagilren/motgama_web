@@ -273,7 +273,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
                 continue
             valoresPayment = {
                 'amount': pago.valor,
-                'currency_id': pago.mediopago.diario_id.company_id.currency_id.id,
+                'currency_id': pago.mediopago.diario_id.company_id.currency_id.id, 
                 'journal_id': pago.mediopago.diario_id.id,
                 'payment_date': fields.Datetime().now(),
                 'payment_type': 'inbound',
@@ -285,7 +285,7 @@ class MotgamaWizardRecaudo(models.TransientModel):
             if not payment:
                 raise Warning('No fue posible sentar el registro del pago')
             payment.sudo().post()
-            move_name = payment.move_name
+            move_name = payment.sudo().move_name
             move = self.env['account.move'].sudo().search([('name','=',move_name)],limit=1)
             lines = move.line_ids.filtered(lambda r: r.account_id.reconcile)
             move_lines_reconcile.extend(lines.ids)

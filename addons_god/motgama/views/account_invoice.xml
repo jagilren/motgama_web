@@ -31,7 +31,8 @@
                         <field name="recaudo_ids" readonly="1" string="Todos los recaudos"/>
                     </group>
                     <group>
-                        <field name="factura_anomalia" readonly="1"/>
+                        <field name="factura_anomalia" invisible="1"/>
+                        <field name="factura_anomalia" attrs="{'readonly':[('factura_anomalia','=',False)]}"/>
                         <field name="motivo_anomalia" readonly="1"/>
                     </group>
                 </xpath>

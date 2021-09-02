@@ -131,7 +131,7 @@ class MotgamaLineaConsumos(models.TransientModel):
     @api.depends()
     def _compute_cambia_recepcion(self):
         for record in self:
-            self.cambia_recepcion = self.env.ref('motgama.motgama_consumo_recepcion') in self.env.user.permisos
+            record.cambia_recepcion = self.env.ref('motgama.motgama_consumo_recepcion') in self.env.user.permisos
 
     @api.depends('vlrUnitario_save','cantidad')
     def _compute_subtotal(self):
@@ -142,13 +142,13 @@ class MotgamaLineaConsumos(models.TransientModel):
     @api.depends('producto_id')
     def _producto_id_save(self):
         for record in self:
-            if self.producto_id:
+            if record.producto_id:
                 record.producto_id_save = record.producto_id
     
     @api.depends('vlrSubtotal')
     def _vlrSubtotal_save(self):
         for record in self:
-            if self.vlrSubtotal:
+            if record.vlrSubtotal:
                 record.vlrSubtotal_save = record.vlrSubtotal
 
     @api.model
