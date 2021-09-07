@@ -15,8 +15,19 @@ class PDFEstadoCuenta(models.AbstractModel):
                 impCons = False
         else:
             impCons = False
+
+        totales = {}
+        for doc in docs:
+            recaudos = doc.movimiento.recaudo_ids
+            total = doc.amount_total
+            for recaudo in recaudos:
+                for pago in recaudo.pagos:
+                    total -= pago.valor
+            total = "{:0,.2f}".format(total).replace(',','¿').replace('.',',').replace('¿','.')
+            totales[doc.id] = total
         
         return {
             'docs': docs,
-            'impCons': impCons
+            'impCons': impCons,
+            'totales': totales
         }

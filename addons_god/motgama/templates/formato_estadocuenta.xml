@@ -89,6 +89,30 @@
                                 </table>
                             </div>
                         </t>
+                        <t t-if="len(doc.movimiento.recaudo_ids) > 0">
+                            <p style="font-size:8px">Abonos</p>
+                            <div style="width: 100%;">
+                                <table style="width: 100%" class="table table-condensed table-bordered">
+                                    <thead>
+                                        <th class="text-left" style="font-size:8px">Fecha y hora</th>
+                                        <th class="text-left" style="font-size:8px">Valor</th>
+                                        <th class="text-left" style="font-size:8px">Medio de pago</th>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.movimiento.recaudo_ids" t-as="recaudo">
+                                            <t t-foreach="recaudo.pagos" t-as="pago">
+                                                <tr>
+                                                    <td style="font-size:8px"><span t-field="pago.create_date"/></td>
+                                                    <td style="font-size:8px"><span t-field="pago.valor"/></td>
+                                                    <td style="font-size:8px"><span t-field="pago.mediopago"/></td>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </t>
+                        <strong style="font-size:8px">Total a pagar: $ <span t-esc="totales[doc.id]"/></strong>
                         <p style="font-size:8px">Su propina es voluntaria</p>
                     </div>
                 </t>
