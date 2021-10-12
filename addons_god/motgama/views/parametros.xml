@@ -25,6 +25,7 @@
             <field name="codigo" />
             <field name="nombre" />
             <field name="valor" />
+            <field name="valor_text"/>
             <field name="active" />
         </group>     
     </sheet>    

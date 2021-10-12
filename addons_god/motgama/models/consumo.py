@@ -26,6 +26,7 @@ class MotgamaConsumo(models.Model):
     asigna_uid = fields.Many2one(comodel_name='res.users',string='Usuario responsable',default=lambda self: self.env.user.id)
     permitecambiarvalor = fields.Boolean(string='Permite cambiar valor',default=False,compute="_compute_valorUnitario",store=True)
     es_adicional = fields.Boolean(string="Facturado aparte",default=False)
+    line_id = fields.Many2one(string="Línea de la orden",comodel_name="sale.order.line")
 
     @api.onchange('producto_id')
     def onchange_producto(self):
@@ -222,6 +223,7 @@ class MotgamaConsumo(models.Model):
         nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLinea)
         if not nuevaLinea:
             raise Warning('Error al registrar el consumo: No se pudo agregar el consumo a la orden de venta')
+        record.sudo().write({'line_id':nuevaLinea.id})
 
         if esNegativo:
             move_line.write({'sale_line_id':nuevaLinea.id})
@@ -273,9 +275,9 @@ class MotgamaConsumo(models.Model):
         if not hab:
             raise Warning('Error al consultar la habitación')
         
-        cod_adic = self.env['motgama.parametros'].search([('codigo','=','PERSADIC')],limit=1)
+        cod_adic = self.env['motgama.parametros'].search([('codigo','=','CODPERADIC')],limit=1)
         if not cod_adic:
-            raise Warning('Error: no se ha definido el parámetro "PERSADIC"')
+            raise Warning('Error: no se ha definido el parámetro "CODPERADIC"')
         if record.producto_id.default_code == cod_adic.valor and hab.inmotica:
             valoresInmotica = {
                 'habitacion': self.habitacion.codigo,

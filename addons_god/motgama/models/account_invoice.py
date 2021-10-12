@@ -66,6 +66,11 @@ class AccountInvoiceRefund(models.TransientModel):
                 new_invoice.write({'movimiento_id': invoice.movimiento_id.id,'habitacion_id': invoice.habitacion_id.id})
         return result
 
+class InvoiceLine(models.Model):
+    _inherit = 'account.invoice.line'
+
+    base_line = fields.Many2one(string="Línea de base de descuento",comodel_name="account.invoice.line")
+
 class PDFFactura(models.AbstractModel):
     _name = 'report.motgama.formato_factura'
 

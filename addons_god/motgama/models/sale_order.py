@@ -18,3 +18,4 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
     
     es_hospedaje = fields.Boolean(string="¿Es hospedaje?",default=False)
+    base_line = fields.Many2one(string="Línea de base de descuento",comodel_name="sale.order.line")

@@ -1,7 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import Warning
 from datetime import datetime
-import pytz
+import pytz, json
 
 class MotgamaHabitacion(models.Model):#ok
     _name = 'motgama.habitacion'
@@ -384,10 +384,11 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             else:
                 self.write({'puede_liquidar': True})
         
-        if movimiento.bono_id:
-            desc_hosp = 0.0
-            desc_cons = 0.0
-            desc_rest = 0.0
+        param_bonos = self.env['motgama.parametros'].search([('codigo','=','CODBONOS')],limit=1)
+        param_bono = self.env['motgama.parametros'].search([('codigo','=','CODBONOPROM')],limit=1)
+        if movimiento.bono_id: # TODO: Cambiar
+            if not param_bonos and not param_bono:
+                raise Warning('Error: No se han definido los parámetros para liquidar bonos')
         
         # Se calculan las horas adicionales si es amanecida
         if self.estado == 'OA':
@@ -455,9 +456,6 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             
             horasAdicionales = horasAntes + horasDespues
 
-            if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
-                desc_hosp = movimiento.tarifamanecida * movimiento.bono_id.porcpagoefectivo / 100
-
             ordenVenta = self.env['sale.order'].sudo().search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
             if not ordenVenta:
                 cliente = self.env['res.partner'].sudo().search([('vat','=','1')], limit=1)
@@ -490,6 +488,30 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaAmanecida)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de amanecida a la orden de venta')
+
+            if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
+                desc_hosp = movimiento.tarifamanecida * movimiento.bono_id.porcpagoefectivo / 100
+                if param_bonos:
+                    obj = json.loads(param_bonos.valor_text) if param_bonos.valor_text else False
+                    if obj and producto.categ_id.name in obj:
+                        producto = self.env['product.template'].search([('default_code','=',obj[producto.categ_id.name])],limit=1)
+                    elif param_bono:
+                        producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                else:
+                    producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                valores_bono = {
+                    'customer_lead' : 0,
+                    'name' : f'{producto.name}: {nuevaLinea.name}',
+                    'order_id': ordenVenta.id,
+                    'price_unit' : 0 - desc_hosp,
+                    'product_uom_qty' : 1,
+                    'product_id' : producto.product_variant_id.id,
+                    'es_hospedaje' : True,
+                    'base_line': nuevaLinea.id
+                }
+                nuevaLinea = self.env['sale.order.line'].sudo().create(valores_bono)
+                if not nuevaLinea:
+                    raise Warning('Error al liquidar: No se pudo agregar el descuento a la orden de venta')
 
         elif self.estado == 'OO':
             tiempoOcasionalStr = movimiento.tiemponormalocasional
@@ -529,9 +551,6 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             else:
                 horasAdicionales = 0
             
-            if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
-                desc_hosp = movimiento.tarifaocasional * movimiento.bono_id.porcpagoefectivo / 100
-            
             ordenVenta = self.env['sale.order'].sudo().search([('movimiento','=',movimiento.id),('state','=','sale')],limit=1)
             if not ordenVenta:
                 cliente = self.env['res.partner'].sudo().search([('vat','=','1')], limit=1)
@@ -562,9 +581,35 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                 'product_id' : producto.product_variant_id.id,
                 'es_hospedaje' : True
             }
-            nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaOcasional)
-            if not nuevaLinea:
+            lineaOcasional = self.env['sale.order.line'].sudo().create(valoresLineaOcasional)
+            if not lineaOcasional:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje ocasional a la orden de venta')
+            
+            if movimiento.bono_id and movimiento.bono_id.aplicahospedaje:
+                desc_hosp = movimiento.tarifaocasional * movimiento.bono_id.porcpagoefectivo / 100
+                if param_bonos:
+                    obj = json.loads(param_bonos.valor_text) if param_bonos.valor_text else False
+                    if obj and producto.categ_id.name in obj:
+                        producto = self.env['product.template'].search([('default_code','=',obj[producto.categ_id.name])],limit=1)
+                    elif param_bono:
+                        producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                else:
+                    producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                valores_bono = {
+                    'customer_lead' : 0,
+                    'name' : f'{producto.name}: {lineaOcasional.name}',
+                    'order_id': ordenVenta.id,
+                    'price_unit' : 0 - desc_hosp,
+                    'product_uom_qty' : 1,
+                    'product_id' : producto.product_variant_id.id,
+                    'es_hospedaje' : True,
+                    'base_line': lineaOcasional.id
+                }
+                nuevaLinea = self.env['sale.order.line'].sudo().create(valores_bono)
+                if not nuevaLinea:
+                    raise Warning('Error al liquidar: No se pudo agregar el descuento a la orden de venta')
+            else:
+                desc_hosp = 0.0
 
             # Descuento poco tiempo
             horasDelta = segundos / 3600
@@ -578,7 +623,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             if horasDelta < tiempoDesc:
                 paramCodDesc = self.env['motgama.parametros'].search([('codigo','=','CODDESCOCUP')],limit=1)
                 if not paramCodDesc:
-                    raise Warning('No se ha definido el parámetro "CODDECOCUP"')
+                    raise Warning('No se ha definido el parámetro "CODDESCOCUP"')
                 prod_desc_ocup = self.env['product.template'].sudo().search([('default_code','=',paramCodDesc.valor)],limit=1)
                 if not prod_desc_ocup:
                     raise Warning('No existe el producto con referencia interna "' + paramCodDesc.codigo + '"')
@@ -590,7 +635,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                         desc_tiempo = float(paramDesc.valor)
                 except ValueError:
                     raise Warning('El parámetro "' + paramDesc.codigo + '" está mal definido')
-                dcto = -1 * movimiento.tarifaocasional * desc_tiempo / 100
+                dcto = -1 * (movimiento.tarifaocasional - desc_hosp) * desc_tiempo / 100
                 if abs(dcto) >= 0.01:
                     valoresLineaDesc = {
                         'customer_lead' : 0,
@@ -599,7 +644,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                         'price_unit' : dcto,
                         'product_uom_qty' : 1,
                         'product_id' : prod_desc_ocup.product_variant_id.id,
-                        'es_hospedaje' : True
+                        'es_hospedaje' : True,
+                        'base_line': lineaOcasional.id
                     }
                     nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaDesc)
                     if not nuevaLinea:
@@ -616,9 +662,6 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             if not producto:
                 raise Warning('No existe producto con Referencia interna: ' + codAdicionales.valor + ' para Hospedaje Adicional')
 
-            if movimiento.bono_id and movimiento.bono_id.aplica_adicional:
-                desc_hosp += movimiento.tarifaocasional * movimiento.bono_id.porcpagoefectivo / 100
-
             valoresLineaAdicionales = {
                 'customer_lead' : 0,
                 'name' : producto.name,
@@ -631,33 +674,57 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             nuevaLinea = self.env['sale.order.line'].sudo().create(valoresLineaAdicionales)
             if not nuevaLinea:
                 raise Warning('Error al liquidar: No se pudo agregar el hospedaje de horas adicionales a la orden de venta')
+            
+            if movimiento.bono_id and movimiento.bono_id.aplica_adicional:
+                desc_adic = (round(movimiento.tarifahoradicional) * horasAdicionales) * movimiento.bono_id.porcpagoefectivo / 100
+                if param_bonos:
+                    obj = json.loads(param_bonos.valor_text) if param_bonos.valor_text else False
+                    if obj and producto.categ_id.name in obj:
+                        producto = self.env['product.template'].search([('default_code','=',obj[producto.categ_id.name])],limit=1)
+                    elif param_bono:
+                        producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                else:
+                    producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                valores_bono = {
+                    'customer_lead' : 0,
+                    'name' : f'{producto.name}: {nuevaLinea.name}',
+                    'order_id': ordenVenta.id,
+                    'price_unit' : 0 - desc_adic,
+                    'product_uom_qty' : 1,
+                    'product_id' : producto.product_variant_id.id,
+                    'es_hospedaje' : True,
+                    'base_line': nuevaLinea.id
+                }
+                nuevaLinea = self.env['sale.order.line'].sudo().create(valores_bono)
+                if not nuevaLinea:
+                    raise Warning('Error al liquidar: No se pudo agregar el descuento a la orden de venta')
         
         if movimiento.bono_id and (movimiento.bono_id.aplicarestaurante or movimiento.bono_id.aplicaconsumos):
             for consumo in self.consumos:
-                if consumo.llevaComanda and movimiento.bono_id.aplicarestaurante:
-                    desc_rest += consumo.vlrSubtotal * movimiento.bono_id.porcpagoefectivo / 100
-                elif (not consumo.llevaComanda) and movimiento.bono_id.aplicaconsumos:
-                    desc_cons += consumo.vlrSubtotal * movimiento.bono_id.porcpagoefectivo / 100
-
-        if movimiento.bono_id:
-            param_bono = self.env['motgama.parametros'].search([('codigo','=','CODBONOPROM')],limit=1)
-            if not param_bono:
-                raise Warning('No se ha definido el parámetro: "CODBONOPROM"')
-            prod_bono = self.env['product.template'].sudo().search([('default_code','=',param_bono.valor)],limit=1)
-            if not prod_bono:
-                raise Warning('No existe el producto con referencia interna "CODBONOPROM"')
-            valoresLineaBono = {
-                'customer_lead' : 0,
-                'name' : prod_bono.name,
-                'order_id' : ordenVenta.id,
-                'price_unit' : -1 * (desc_cons + desc_hosp + desc_rest),
-                'product_uom_qty' : 1,
-                'product_id' : prod_bono.product_variant_id.id,
-                'es_hospedaje' : True
-            }
-            nuevo = self.env['sale.order.line'].sudo().create(valoresLineaBono)
-            if not nuevo:
-                raise Warning('Error al liquidar: No se pudo aplicar el bono al estado de cuenta')
+                if (movimiento.bono_id.aplicarestaurante and consumo.llevaComanda) or (movimiento.bono_id.aplicaconsumos and not consumo.llevaComanda):
+                    desc_cons = consumo.vlrUnitario * movimiento.bono_id.porcpagoefectivo / 100
+                    producto = consumo.producto_id
+                    if param_bonos:
+                        obj = json.loads(param_bonos.valor_text) if param_bonos.valor_text else False
+                        if obj and producto.categ_id.name in obj:
+                            producto = self.env['product.template'].search([('default_code','=',obj[producto.categ_id.name])],limit=1)
+                        elif param_bono:
+                            producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                    else:
+                        producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
+                    valores_bono = {
+                        'customer_lead' : 0,
+                        'name' : f'{producto.name}: {consumo.line_id.name}',
+                        'order_id': ordenVenta.id,
+                        'price_unit' : 0 - desc_cons,
+                        'product_uom_qty' : consumo.cantidad,
+                        'product_id' : producto.product_variant_id.id,
+                        'es_hospedaje' : True,
+                        'base_line': consumo.line_id.id
+                    }
+                    nuevaLinea = self.env['sale.order.line'].sudo().create(valores_bono)
+                    if not nuevaLinea:
+                        raise Warning('Error al liquidar: No se pudo agregar el descuento a la orden de venta')
 
         self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
