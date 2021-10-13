@@ -702,7 +702,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
         if movimiento.bono_id and (movimiento.bono_id.aplicarestaurante or movimiento.bono_id.aplicaconsumos):
             for consumo in self.consumos:
                 if (movimiento.bono_id.aplicarestaurante and consumo.llevaComanda) or (movimiento.bono_id.aplicaconsumos and not consumo.llevaComanda):
-                    desc_cons = consumo.vlrUnitario * movimiento.bono_id.porcpagoefectivo / 100
+                    desc_cons = (consumo.vlrUnitario * consumo.cantidad) * movimiento.bono_id.porcpagoefectivo / 100
                     producto = consumo.producto_id
                     if param_bonos:
                         obj = json.loads(param_bonos.valor_text) if param_bonos.valor_text else False
