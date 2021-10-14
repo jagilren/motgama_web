@@ -501,7 +501,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                     producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
                 valores_bono = {
                     'customer_lead' : 0,
-                    'name' : f'{producto.name}: {nuevaLinea.name}',
+                    'name' : producto.name + ': ' + nuevaLinea.name,
                     'order_id': ordenVenta.id,
                     'price_unit' : 0 - desc_hosp,
                     'product_uom_qty' : 1,
@@ -597,7 +597,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                     producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
                 valores_bono = {
                     'customer_lead' : 0,
-                    'name' : f'{producto.name}: {lineaOcasional.name}',
+                    'name' : producto.name + ': ' + lineaOcasional.name,
                     'order_id': ordenVenta.id,
                     'price_unit' : 0 - desc_hosp,
                     'product_uom_qty' : 1,
@@ -687,7 +687,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                     producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
                 valores_bono = {
                     'customer_lead' : 0,
-                    'name' : f'{producto.name}: {nuevaLinea.name}',
+                    'name' : producto.name + ': ' + nuevaLinea.name,
                     'order_id': ordenVenta.id,
                     'price_unit' : 0 - desc_adic,
                     'product_uom_qty' : 1,
@@ -714,7 +714,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                         producto = self.env['product.template'].search([('default_code','=',param_bono.valor)],limit=1)
                     valores_bono = {
                         'customer_lead' : 0,
-                        'name' : f'{producto.name}: {consumo.line_id.name}',
+                        'name' : producto.name + ': ' + consumo.line_id.name,
                         'order_id': ordenVenta.id,
                         'price_unit' : 0 - desc_cons,
                         'product_uom_qty' : consumo.cantidad,
