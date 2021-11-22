@@ -717,7 +717,7 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                         'name' : producto.name + ': ' + consumo.line_id.name,
                         'order_id': ordenVenta.id,
                         'price_unit' : 0 - desc_cons,
-                        'product_uom_qty' : consumo.cantidad,
+                        'product_uom_qty' : 1,
                         'product_id' : producto.product_variant_id.id,
                         'es_hospedaje' : True,
                         'base_line': consumo.line_id.id
