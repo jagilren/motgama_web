@@ -121,19 +121,6 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
                 'limit': 100,
                 'domain': [('recepcion','=',self.env.user.recepcion_id.id)]
             }
-
-    #Función para abrir la información de la habitación cuando el usuario le de click
-    @api.multi 
-    def open_record(self):
-        return {
-            'type': 'ir.actions.act_window', 
-            'res_model': 'motgama.flujohabitacion', 
-            'name': 'boton', 
-            'view_type': 'form', 
-            'view_mode': 'form', 
-            'res_id': self.id, 
-            'target': 'current' 
-        }
     
     @api.multi
     def write(self, values):
@@ -523,9 +510,9 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
             segundos = delta.total_seconds()
             segundosOcasional = tiempoOcasional * 3600
             if segundos > segundosOcasional:
-                segundos -= segundosOcasional
-                horas = segundos // 3600
-                minutos = (segundos // 60) % 60
+                segundos_adicional = segundos - segundosOcasional
+                horas = segundos_adicional // 3600
+                minutos = (segundos_adicional // 60) % 60
                 tiempoGraciaStr = self.env['motgama.parametros'].search([('codigo','=','TIEMPOGRACIA')])
                 if not tiempoGraciaStr:
                     raise Warning('No existe el parámetro "TIEMPOGRACIA"')
@@ -729,8 +716,8 @@ class MotgamaFlujoHabitacion(models.Model):#adicionada por Gabriel sep 10
         self.write({'estado':'LQ','orden_venta':ordenVenta.id,'notificar':True,'sin_alerta':True,'alerta_msg':''})
         movimiento.write({'liquidafecha':fechaActual,'liquida_uid':self.env.user.id,'ordenVenta':ordenVenta.id})
 
-        desc = self.env['motgama.descuento'].search([('movimiento_id','=',movimiento.id)],limit=1)
-        if desc:
+        dctos = self.env['motgama.descuento'].search([('movimiento_id','=',movimiento.id)])
+        for desc in dctos:
             desc.aplica_descuento()
 
         ordenVenta.write({'liquidafecha':fechaActual})

@@ -31,6 +31,12 @@
         <field name="model">motgama.flujohabitacion</field>
         <field name="arch" type="xml">
             <form string="Flujo Habitaciones" create="false" edit="false">
+                <style>
+                    .well {
+                        display: flex;
+                        align-items: center;
+                    }
+                </style>
                 <header>
                     <button type="action" name="%(action_wizard_habitacion)d" string="Asignar habitación" 
                         class="btn btn-primary" attrs="{'invisible':[('estado','not in',['D'])]}" />
@@ -99,16 +105,38 @@
                         <field name="alerta_msg" nolabel="1"/>
                     </div>
                     <group name="group_bottom">
-                        <group name="group_left">            
-                            <field name="codigo" string="Codigo de la habitación" style="width:20%; font-size:20px; font-weight: bold;"/>
-                        </group>
+                        <div style="width:100%;padding:3px;height:50px">
+                            <div class="col-md-12 well">
+                                <div class="col-md-3">
+                                    <img src="/motgama/static/src/img/estado_verde.png" class="oe_module_icon" alt="Disponible" attrs="{'invisible':[('estado','!=','D')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_rojo.png" class="oe_module_icon" alt="Ocupado Ocasional" attrs="{'invisible':[('estado','!=','OO')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_naranjado.png" class="oe_module_icon" alt="Ocupado Amanecida" attrs="{'invisible':[('estado','!=','OA')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_fucsia.png" class="oe_module_icon" alt="Liquidado" attrs="{'invisible':[('estado','!=','LQ')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_azul.png" class="oe_module_icon" alt="Aseo" attrs="{'invisible':[('estado','!=','RC')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_amarillo.png" class="oe_module_icon" alt="Reservado" attrs="{'invisible':[('estado','!=','R')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_azulclaro.png" class="oe_module_icon" alt="Fuera de Servicio" attrs="{'invisible':[('estado','!=','FS')]}" style="max-height:100%;"/>
+                                    <img src="/motgama/static/src/img/estado_cafe.png" class="oe_module_icon" alt="Fuera de Uso" attrs="{'invisible':[('estado','!=','FU')]}" style="max-height:100%;"/>
+                                </div>
+                                <div class="col-md-3">
+                                    <div>
+                                        <field name="codigo" style="font-size:40px; font-weight: bold;"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </group>
+                    <group/>
                     <group name="group_top">
-                        <field name="estado" string="Estado"/>
-                        <br/>
-                        <field name="recepcion" string="Recepción" readonly="1"/>
-                        <br/><br/>
-                    </group><br/>
+                        <group>
+                            <field name="estado" string="Estado"/>
+                            <field name="recepcion" string="Recepción" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="tipo" string="Tipo de Habitación" readonly="1"/>
+                            <field name="tema" string="Tema" readonly="1"/>
+                        </group>
+                        <group/>
+                    </group>
                     
                     <notebook>
                         <page name='cuenta_cobro' string='Estado de Cuenta' attrs="{'invisible':['|',('estado','not in','LQ'),('orden_venta','=',False)]}">
@@ -128,15 +156,7 @@
                         </page>
                         <page name='habitacion' string='Esta habitación'>
                             <group>
-                                <group>
-                                    <field name="tipo" string="Tipo de Habitación" readonly="1"/>
-                                </group>
-                                <group>
-                                    <field name="tema" string="Tema" readonly="1"/>
-                                </group>
-                            </group>
-                            <group>
-                                <field name="comodidades"/>
+                                <field name="comodidades" widget="many2many_tags"/>
                             </group>
                             <group>
                                 <group>
@@ -213,7 +233,7 @@
                 <field name="alerta_msg"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div class="oe_module_vignette">
+                        <div class="oe_module_vignette oe_kanban_global_click">
                             <div class="o_dropdown_kanban dropdown" tabindex="-1">
                                 <a class="dropdown-toggle o-no-caret btn" data-toggle="dropdown" data-display="static" href="#" role="button" aria-label="Dropdown menu" title="Dropdown menu">
                                     <span class="fa fa-ellipsis-v"/>
@@ -244,7 +264,6 @@
                                 </div>
                             </div>
 
-                            <a type='object' name='open_record'>
                             <t t-if="record.estado.raw_value === 'D'">
                                 <img t-attf-src="/motgama/static/src/img/estado_verde.png" class="oe_module_icon" alt="Disponible"/>
                             </t>
@@ -269,33 +288,28 @@
                             <t t-if="record.estado.raw_value === 'FU'">
                                 <img t-attf-src="/motgama/static/src/img/estado_cafe.png" class="oe_module_icon" alt="Fuera de Uso"/>
                             </t>
-                            </a>
 
                             <div class="oe_module_desc" t-att-title="Title">
-                                <a type="object" name="open_record">
-                                    <div>
-                                        <h2 style="text-color: black;">
-                                            &amp;nbsp; <field name="codigo"/>
+                                <div>
+                                    <h2 style="text-color: black;">
+                                        &amp;nbsp; <field name="codigo"/>
+                                    </h2>
+                                </div>
+                                <div>
+                                    <t t-if="!record.sin_alerta.raw_value">
+                                        <h2 class="text-danger float-right mb4">
+                                            <i class="fa fa-circle" role="img" aria-label="Alerta" title="Alerta"/>
                                         </h2>
-                                    </div>
-                                    <div>
-                                        <t t-if="!record.sin_alerta.raw_value">
-                                            <h2 class="text-danger float-right mb4">
-                                                <i class="fa fa-circle" role="img" aria-label="Alerta" title="Alerta"/>
-                                            </h2>
-                                        </t>
-                                    </div>
-                                </a>
-                                <a type="object" name="open_record">
-                                    <p class="oe_module_name">
-                                        <span style="font-size: 10px;">
-                                            &amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
-                                            <t t-if="record.tema">&amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/><br/></t>
-                                            &amp;nbsp;&amp;nbsp; RECEPCIÓN: <field name="recepcion"/><br/>
-                                            &amp;nbsp;&amp;nbsp; ESTADO: <field name="estado"/>
-                                        </span>
-                                    </p>
-                                </a>
+                                    </t>
+                                </div>
+                                <p class="oe_module_name">
+                                    <span style="font-size: 10px;">
+                                        &amp;nbsp;&amp;nbsp; TIPO: <field name="tipo"/><br/>
+                                        <t t-if="record.tema">&amp;nbsp;&amp;nbsp; TEMA: <field name="tema"/><br/></t>
+                                        &amp;nbsp;&amp;nbsp; RECEPCIÓN: <field name="recepcion"/><br/>
+                                        &amp;nbsp;&amp;nbsp; ESTADO: <field name="estado"/>
+                                    </span>
+                                </p>
                             </div>
                         </div>
                     </t>

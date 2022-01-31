@@ -280,7 +280,7 @@ class MotgamaConsumo(models.Model):
             raise Warning('Error: no se ha definido el parámetro "CODPERADIC"')
         if record.producto_id.default_code == cod_adic.valor and hab.inmotica:
             valoresInmotica = {
-                'habitacion': self.habitacion.codigo,
+                'habitacion': record.habitacion.codigo,
                 'mensaje': 'evento',
                 'evento': 'Ingresa persona adicional'
             }

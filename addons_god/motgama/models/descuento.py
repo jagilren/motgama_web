@@ -23,6 +23,20 @@ class MotgamaDescuento(models.Model):
         if not prod_desc:
             raise Warning('Error: No existe el producto de código "' + paramDesc.valor + '"')
 
+        codAmanecida = self.env['motgama.parametros'].search([('codigo','=','CODHOSAMANE')])
+        if not codAmanecida:
+            raise Warning('No existe el parámetro "CODHOSAMANE"')
+        prodAmanecida = self.env['product.product'].search([('default_code','=',codAmanecida.valor)])
+        if not prodAmanecida:
+            raise Warning('No existe producto con Referencia interna: ' + codAmanecida.valor + ' para Hospedaje Amanecida')
+
+        codOcasional = self.env['motgama.parametros'].search([('codigo','=','CODHOSOCASIO')])
+        if not codOcasional:
+            raise Warning('No existe el parámetro "CODHOSOCASIO"')
+        prodOcasional = self.env['product.product'].sudo().search([('default_code','=',codOcasional.valor)])
+        if not prodOcasional:
+            raise Warning('No existe producto con Referencia interna: ' + codOcasional.valor + ' para Hospedaje Ocasional')
+
         valores = {
             'customer_lead' : 0,
             'name' : prod_desc.name,
@@ -32,6 +46,10 @@ class MotgamaDescuento(models.Model):
             'product_id' : prod_desc.product_variant_id.id,
             'es_hospedaje' : True
         }
+        if self.habitacion_id.estado == 'LQ':
+            base_line = ordenVenta.order_line.filtered(lambda r: r.product_id.id in [prodAmanecida.id,prodOcasional.id])
+            if base_line:
+                valores['base_line'] = base_line.id
         nuevo = self.env['sale.order.line'].sudo().create(valores)
         if not nuevo:
             raise Warning('Error: No se pudo agregar el descuento')
